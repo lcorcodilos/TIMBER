@@ -1,6 +1,6 @@
 """@docstring Analyzer.py
 
-Home of main class for HAMMER.
+Home of main classes for HAMMER.
 
 """
 
@@ -8,11 +8,10 @@ import ROOT
 import pprint, time, json, copy, os,sys
 from collections import OrderedDict
 pp = pprint.PrettyPrinter(indent=4)
-sys.path.append('../')
 from Tools.Common import GetHistBinningTuple, CompileCpp
-from Node import *
-from Correction import *
-from Group import *
+import clang.cindex
+cpp_idx = cindex.Index.create()
+cpp_args =  '-x c++ --std=c++11'.split()
 
 class analyzer(object):
     """Main class for HAMMER. 
@@ -505,3 +504,524 @@ class analyzer(object):
 
         return correctionsToApply
 
+
+##############
+# Node Class #
+##############
+class Node(object):
+    """Class to represent nodes in the DataFrame processing graph. Can make new nodes via Define, Cut, and Discriminate and setup relations between nodes (done automatically via Define, Cut, Discriminate)"""
+    def __init__(self, name, DataFrame, parent=None, children=[],action=''):
+        super(Node, self).__init__()
+        self.DataFrame = DataFrame
+        self.name = name
+        self.action = action
+        self.parent = parent # None or specified
+        self.children = children # list of length 0, 1, or 2
+        self._colnames = self.DataFrame.GetColumnNames()
+        
+    def Clone(self,name=''):
+        if name == '':return Node(self.name,self.DataFrame,parent=self.parent,children=self.children,action=self.action)
+        else: return Node(name,self.DataFrame,parent=self.parent,children=self.children,action=self.action)
+
+    # Set parent of type Node
+    def SetParent(self,parent): 
+        if isinstance(parent,Node): self.parent = parent
+        else: raise TypeError('ERROR: Parent is not an instance of Node class for node %s'%self.name)
+
+    # Set one child of type Node
+    def SetChild(self,child,overwrite=False,silence=False):
+        if overwrite: self.children = []
+        # if len(children > 1): raise ValueError("ERROR: More than two children are trying to be added node %s. You may use the overwrite option to erase current children or find your bug."%self.name)
+        # if len(children == 1) and silence == False: raw_input('WARNING: One child is already specified for node %s and you are attempting to add another (max 2). Press enter to confirm and continue.'%self.name)
+
+        if isinstance(child,Node): self.children.append(child)
+        else: raise TypeError('ERROR: Child is not an instance of Node class for node %s' %self.name)
+
+    # Set children of type Node
+    def SetChildren(self,children,overwrite=False):
+        if overwrite: self.children = []
+        # if len(children > 0): raise ValueError("ERROR: More than two children are trying to be added node %s. You may use the overwrite option to erase current children or find your bug."%self.name)
+        
+        if isinstance(children,dict) and 'pass' in children.keys() and 'fail' in children.keys() and len(children.keys()) == 2:
+            self.SetChild(children['pass'])
+            self.SetChild(children['fail'])
+        else:
+            raise TypeError('ERROR: Attempting to add a dictionary of children of incorrect format. Argument must be a dict of format {"pass":class.Node,"fail":class.Node}')
+
+    # Define a new column to calculate
+    def Define(self,name,var):
+        print('Defining %s: %s' %(name,var))
+        newNode = Node(name,self.DataFrame.Define(name,var),parent=self,action=var)
+        self.SetChild(newNode)
+        return newNode
+
+    # Define a new cut to make
+    def Cut(self,name,cut):
+        print('Filtering %s: %s' %(name,cut))
+        newNode = Node(name,self.DataFrame.Filter(cut,name),parent=self,action=cut)
+        self.SetChild(newNode)
+        return newNode
+
+    # Discriminate based on a discriminator
+    def Discriminate(self,name,discriminator):
+        pass_sel = self.DataFrame
+        fail_sel = self.DataFrame
+        passfail = {
+            "pass":Node(name+"_pass",pass_sel.Filter(discriminator,name+"_pass"),parent=self,action=discriminator),
+            "fail":Node(name+"_fail",fail_sel.Filter("!("+discriminator+")",name+"_fail"),parent=self,action="!("+discriminator+")")
+        }
+        self.SetChildren(passfail)
+        return passfail
+            
+    # Applies a bunch of action groups (cut or var) in one-shot in the order they are given
+    def Apply(self,actiongrouplist):
+        if type(actiongrouplist) != list: actiongrouplist = [actiongrouplist]
+        node = self
+        for ag in actiongrouplist:
+            if isinstance(ag,CutGroup):
+                for c in ag.keys():
+                    cut = ag[c]
+                    node = node.Cut(c,cut)
+            elif isinstance(ag,VarGroup):
+                for v in ag.keys():
+                    var = ag[v]
+                    node = node.Define(v,var)
+            else:
+                raise TypeError("ERROR: Group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)                
+
+        return node
+
+
+    # IMPORTANT: When writing a variable size array through Snapshot, it is required that the column indicating its size is also written out and it appears before the array in the columns list.
+    # columns should be an empty string if you'd like to keep everything
+    def Snapshot(self,columns,outfilename,treename,lazy=False): # columns can be a list or a regular expression or 'all'
+        lazy_opt = ROOT.RDF.RSnapshotOptions()
+        lazy_opt.fLazy = lazy
+        print("Snapshotting columns: %s"%columns)
+        print("Saving tree %s to file %s"%(treename,outfilename))
+        if columns == 'all':
+            self.DataFrame.Snapshot(treename,outfilename,'',lazy_opt)
+        if type(columns) == str:
+            self.DataFrame.Snapshot(treename,outfilename,columns,lazy_opt)
+        else:
+            # column_vec = ROOT.std.vector('string')()
+            column_vec = ''
+            for c in columns:
+                column_vec += c+'|'
+            column_vec = column_vec[:-1]
+               # column_vec.push_back(c)
+            self.DataFrame.Snapshot(treename,outfilename,column_vec,lazy_opt)
+
+###############################
+# C script processing classes #
+###############################
+class CommonCscripts(object):
+    """Common c scripts all in analyzer namespace"""
+    def __init__(self):
+        super(CommonCscripts, self).__init__()
+        self.deltaPhi ='''
+        namespace analyzer {
+          double deltaPhi(double phi1,double phi2) {
+            double result = phi1 - phi2;
+            while (result > TMath::Pi()) result -= 2*TMath::Pi();
+            while (result <= -TMath::Pi()) result += 2*TMath::Pi();
+            return result;
+          }
+        }
+        '''
+        self.vector = '''
+        namespace analyzer {
+            ROOT::Math::PtEtaPhiMVector TLvector(float pt,float eta,float phi,float m) {
+                ROOT::Math::PtEtaPhiMVector v(pt,eta,phi,m);
+                return v;
+            }
+        }
+        '''
+        self.invariantMass = '''
+        namespace analyzer {
+            double invariantMass(ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2) {
+                return (v1+v2).M();
+            }
+        }
+        '''
+        self.invariantMassThree = '''
+        namespace analyzer {
+            double invariantMassThree(ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2, ROOT::Math::PtEtaPhiMVector v3) {
+                return (v1+v2+v3).M();
+            }
+        }
+        '''
+        self.HT = '''
+        namespace analyzer {
+            float HT(std::vector<int> v) {
+                float ht = 0.0;
+                for(int pt : v) {
+                    ht = ht + pt
+                }
+                return ht;
+            }
+        }
+        '''
+        
+class CustomCscripts(object):
+    """docstring for CustomCscripts"""
+    def __init__(self):
+        super(CustomCscripts, self).__init__()
+        self.example = '''
+        namespace analyzer {
+            return 0
+        }
+        '''
+        
+    def Import(self,textfilename,name=None):
+        if name == None: name = textfilename.split('/')[-1].replace('.cc','')
+        if not os.path.isfile(textfilename): raise NameError('ERROR: %s does not exist'%textfilename)
+        else: print('Found '+textfilename)
+        f = open(textfilename,'r')
+        blockcode = f.read()
+        setattr(self,name,blockcode)
+        CompileCpp(blockcode)
+
+
+##############################
+# Group class and subclasses #
+##############################
+class Group(object):
+    """Organizes objects in OrderedDict with basic functionality to add and drop items, add Groups together, get keys, and access items."""
+    def __init__(self, name):
+        """Constructor
+
+        Args:
+            name: Name (string) for instance.
+        """
+
+        ## @var name
+        # str
+        #
+        # Name of Group
+        ## @var items
+        # OrderedDict()
+        #
+        # Items stored as an OrderedDict()
+        ## @var type
+        # string
+        #
+        # Group type - "cut", "var", "hist"
+        super(Group, self).__init__()
+        self.name = name
+        self.items = OrderedDict()
+        self.type = None
+
+    def Add(self,name,item):
+        """Add item to Group with a name.
+
+        Args:
+            name (str): Name/key (string) for added item.
+            item (obj): Item to add.
+
+        Returns:
+            None
+        """
+        self.items[name] = item 
+        
+    def Drop(self,name):
+        """Drop item from Group with provided name/key.
+
+        Args:
+            name (str): Name/key (string) for dropped item.
+
+        Returns:
+            New group with item dropped.
+        """
+        dropped = copy.deepcopy(self.items)
+        del dropped[name]
+        if self.type == None: newGroup = Group(self.name+'-'+name)
+        elif self.type == 'var': newGroup = VarGroup(self.name+'-'+name)
+        elif self.type == 'cut': newGroup = CutGroup(self.name+'-'+name)
+        newGroup.items = dropped
+        return newGroup
+
+    def __add__(self,other):
+        """Adds two Groups together.
+
+        Args:
+            other (Group): Group to add to current Group.
+
+        Returns:
+            Addition of the two groups.
+        """
+        added = copy.deepcopy(self.items)
+        added.update(other.items)
+        if self.type == 'var' and other.type == 'var': newGroup = VarGroup(self.name+"+"+other.name)
+        elif self.type == 'cut' and other.type == 'cut': newGroup = CutGroup(self.name+"+"+other.name)
+        else: newGroup = Group(self.name+"+"+other.name)
+        newGroup.items = added
+        return newGroup
+
+    def keys(self):
+        """Gets list of keys from Group.
+        Returns:
+            Names/keys from Group.
+        """
+        return self.items.keys()
+
+    def __getitem__(self,key):
+        """
+        Args:
+            key: Key for name/key in Group.
+        Returns:
+            Item for given key.
+        """
+        return self.items[key]
+
+# Subclass for cuts
+class CutGroup(Group):
+    """Stores Cut actions"""
+    def __init__(self, name):
+        """
+        Args:
+            name: Name (string) for instance.
+        """
+        ## @var type
+        # string
+        #
+        # Group type - "cut", "var", "hist"
+        super(CutGroup,self).__init__(name)
+        self.type = 'cut'
+        
+# Subclass for vars/columns
+class VarGroup(Group):
+    """Stores Define actions"""
+    def __init__(self, name):
+        """
+        Args:
+            name: Name (string) for instance.
+        """
+        ## @var type
+        # string
+        #
+        # Group type - "cut", "var", "hist"
+        super(VarGroup,self).__init__(name)
+        self.type = 'var'
+
+# Subclass for histograms
+class HistGroup(Group):
+    """Stores histograms with dedicated function to use TH1/2/3 methods in a batch"""
+    def __init__(self, name):
+        """
+        Args:
+            name: Name (string) for instance.
+        """
+        ## @var type
+        # string
+        #
+        # Group type - "cut", "var", "hist"
+        super(HistGroup,self).__init__(name)
+        self.type = 'hist'
+
+    #  - THmethod is a string and argsTuple is a tuple of arguments to pass the THmethod
+    def Do(THmethod,argsTuple):
+        '''Batch act on histograms using ROOT TH1/2/3 methods.
+
+        Args:
+            THmethod (str): String of the ROOT TH1/2/3 method to use.
+            argsTuple (tuple): Tuple of arguments to pass to THmethod.
+        Returns:
+            New HistGroup with THmethod applied if THmethod does not return None. Else None.
+        Example:
+            To scale all histograms by 0.5
+                myHistGroup.Do("Scale",(0.5))
+
+        '''
+        # Book new group in case THmethod returns something
+        newGroup = Group(self.name+'_%s%s'%(THmethod,argsTuple))
+        # Initialize check for None return type
+        returnNone = False
+        # Loop over hists
+        for name,hist in self.items.items():
+            out = getattr(hist,THmethod)(*argsTuple)
+            # If None type, set returnNone = True
+            if out == None and returnNone == False: returnNone = True
+            # If return is not None, add 
+            if not returnNone:
+                newGroup.Add(name+'_%s%s'%(THmethod,argsTuple),out)
+
+        if returnNone: del newGroup
+        else: return newGroup
+
+
+####################
+# Correction class #
+####################
+class Correction(object):
+    """Correction class to handle corrections produced by C++ modules.
+
+    Uses clang in python to parse the C++ code and determine function names, 
+    namespaces, and argument names and types. 
+
+    Writing the C++ modules has two requirements:
+
+    (1) the desired branch/column names must be used as the argument variable names
+    to allow the framework to automatically determine what branch/column to use in GetCall(),
+
+    (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
+    <up, down> for "uncert" type.    
+
+    """
+    def __init__(self,name,script,mainFunc=None,corrtype=None,isClone=False):
+        """Constructor
+
+        Args:
+            name (str): Correction name.
+            script (str): Path to C++ script with function to calculate correction.
+            mainFunc (str): Name of the function to use inside script. Defaults to None
+                and the class will try to deduce it.
+            corrtype (str): "weight" (nominal weight to apply with an uncertainty) or 
+                "uncert" (only an uncertainty). Defaults to None and the class will try to
+                deduce it.
+            isClone (bool): For internal use when cloning. Defaults to False.
+
+        """
+
+        ## @var name
+        # str
+        # Correction name
+
+        self.name = name
+        self.__script = script
+        self.__type = self._getType()
+        self.__funcInfo = self._getFuncInfo()
+        self.__funcNames = self.__funcInfo.keys()
+        self.__mainFunc = mainFunc
+
+        if not isClone:
+            if mainFunc != None and self.__mainFunc not in self.__funcNames:
+                raise ValueError('ERROR: Correction() instance provided with mainFunc argument that does not exist in %s'%self.__script)
+            if len(self.__funcNames) == 1: self.__mainFunc = self.__funcNames[0]
+
+            script_file = open(script,'r')
+            CompileCpp(script)
+
+    def Clone(self,name,newMainFunc=self.__mainFunc):
+        """Makes a clone of current instance.
+
+        If multiple functions are in the same script, one can clone the correction and reassign the mainFunc
+        to avoid compiling the same script twice.
+
+        Args:
+            name (str): Clone name.
+            newMainFunc (str): Name of the function to use inside script. Defaults to same as original.
+        Returns:
+            Clone of instance with same script but different function (newMainFunc)
+        """
+        return Correction(name,self.__script,newMainFunc,corrtype=self.__type,isClone=True)
+
+    def __getType(self):
+        self.__type = None
+        if corrtype in ['weight','uncert']:
+            self.__type = corrtype
+        elif corrtype not in ['weight','uncert'] and corrtype != None:
+            print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...')
+
+        if self.__type == None:
+            if '_weight.cc' in self.__script or '_SF.cc' in self.__script:
+                self.__type = 'weight'
+            elif '_uncert.cc' in self.__script:
+                self.__type = 'uncert'
+            else:
+                raise ValueError('ERROR: Attempting to add correction "%s" but script name (%s) does not end in "_weight.cc", "_SF.cc" or "_uncert.cc" and so the type of correction cannot be determined.'%(name))
+
+    def __getFuncInfo(self):
+        translation_unit = cpp_idx.parse(self.__script, args=cpp_args)
+        filename = translation_unit.cursor.spelling
+        funcs = OrderedDict()
+        # Walk cursor over script
+        for c in translation_unit.cursor.walk_preorder():
+            # Pass over file errors
+            if c.location.file is None: pass
+            elif c.location.file.name != filename: pass
+            else:
+                # Check for namespace with functions inside
+                if c.kind == cindex.CursorKind.NAMESPACE:
+                    # Loop over children of namespace
+                    for child in c.get_children():
+                        # If a function, store a name as key with namespace included (does not support nested namespaces)
+                        if child.kind == cindex.CursorKind.FUNCTION_DECL:
+                            funcname = c.spelling+'::'+child.spelling
+                            # If we haven't accounted for it, store key as arg name and value as the type
+                            if funcname not in funcs.keys():
+                                funcs[funcname] = OrderedDict()
+                                for arg in child.get_arguments():
+                                    funcs[funcname][arg.spelling] = arg.type.spelling 
+                # Check for functions
+                elif c.kind == cindex.CursorKind.FUNCTION_DECL:
+                    func_exists = False
+                    # Check it wasn't already found in the namespace
+                    for existing_func in funcs.keys():
+                        this_func = c.spelling
+                        if this_func in existing_func:
+                            func_exists = True
+                    # If we haven't accounted for it, store key as arg name and value as the type
+                    if not func_exists:
+                        funcs[c.spelling] = OrderedDict()
+                        for arg in c.get_arguments():
+                            funcs[c.spelling][arg.spelling] = arg.type.spelling
+
+        return funcs
+
+    def GetCall(self):
+        """Return the call to the function with the branch/column names deduced.
+
+        Returns:
+            String of call to function from C++ script.
+        """
+        out = '%s('
+        for a in self.__funcInfo[self.__mainFunc].keys():
+            out += '%s,'%(self.__funcInfo[self.__mainFunc][a],a)
+        out = out[:-1]+')'
+
+        return out
+
+    def SetMainFunc(self,funcname):
+        """Set the function to consider in the provided script.
+
+        Will check if funcname exists as a function in the script (can also provide a substring of the
+        desired function). If it does, sets the function to the matching one.
+
+        Returns:
+            Self with new function assigned.
+        """
+
+        # Find funcname in case it's abbreviated (which it might be if the user forgot the namespace)
+        full_funcname = ''
+        for f in self.__funcNames:
+            if funcname in f:
+                full_funcname = f
+                break
+
+        if full_funcname not in self.__funcNames:
+            raise ValueError('ERROR: Function name "%s" is not defined for %s'%(funcname,self.__script))
+
+        self.__mainFunc = full_funcname
+        return self
+
+    def GetMainFunc(self):
+        """Gets full main function name.
+        Returns:
+            Name of function assigned from C++ script.
+        """
+        return self.__mainFunc
+
+    def GetType(self):
+        """Gets Correction type.
+        Returns:
+            Correction type.
+        """
+        return self.__type
+
+    def GetFuncNames(self):
+        """Gets list of function names in C++ script.
+        Returns:
+            List of possible function names.
+        """
+        return self.__funcNames
