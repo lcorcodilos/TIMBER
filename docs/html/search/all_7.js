@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['histgroup',['HistGroup',['../class_j_h_uanalyzer_1_1_analyzer_1_1_group_1_1_hist_group.html',1,'JHUanalyzer::Analyzer::Group']]],
+  ['histgroup',['HistGroup',['../class_h_a_m_m_e_r_1_1_analyzer_1_1_hist_group.html',1,'HAMMER::Analyzer']]],
   ['hammer',['HAMMER',['../index.html',1,'']]]
 ];

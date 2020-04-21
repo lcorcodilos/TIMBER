@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['vargroup',['VarGroup',['../class_j_h_uanalyzer_1_1_analyzer_1_1_group_1_1_var_group.html',1,'JHUanalyzer::Analyzer::Group']]]
+  ['vargroup',['VarGroup',['../class_h_a_m_m_e_r_1_1_analyzer_1_1_var_group.html',1,'HAMMER::Analyzer']]]
 ];

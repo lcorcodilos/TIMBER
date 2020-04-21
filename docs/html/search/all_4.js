@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['dataframes',['DataFrames',['../class_j_h_uanalyzer_1_1_analyzer_1_1_analyzer_1_1analyzer.html#a556674dd23fc7380f49ce0b9873f20c3',1,'JHUanalyzer::Analyzer::Analyzer::analyzer']]],
-  ['define',['Define',['../class_j_h_uanalyzer_1_1_analyzer_1_1_analyzer_1_1analyzer.html#a5f20c35fcaff248eb655a7a631831218',1,'JHUanalyzer::Analyzer::Analyzer::analyzer']]],
-  ['discriminate',['Discriminate',['../class_j_h_uanalyzer_1_1_analyzer_1_1_analyzer_1_1analyzer.html#a48340041ebbcb65cda2e7e58c57c325a',1,'JHUanalyzer::Analyzer::Analyzer::analyzer']]],
-  ['do',['Do',['../class_j_h_uanalyzer_1_1_analyzer_1_1_group_1_1_hist_group.html#a17207682ee4e7071119f93d20d611bf9',1,'JHUanalyzer::Analyzer::Group::HistGroup']]],
-  ['drawtemplates',['DrawTemplates',['../class_j_h_uanalyzer_1_1_analyzer_1_1_analyzer_1_1analyzer.html#a30df2dbaec51d0dc4930e8d501159306',1,'JHUanalyzer::Analyzer::Analyzer::analyzer']]],
-  ['drop',['Drop',['../class_j_h_uanalyzer_1_1_analyzer_1_1_group_1_1_group.html#a3e51ebda94c250a855fc7e1660d3f0fa',1,'JHUanalyzer::Analyzer::Group::Group']]],
-  ['data',['Data',['../md__home_lucas__projects__r_d_fanalyzer__j_h_uanalyzer_data__r_e_a_d_m_e.html',1,'']]]
+  ['dataframes',['DataFrames',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#af12979c124da07347bbace72db1edca4',1,'HAMMER::Analyzer::analyzer']]],
+  ['define',['Define',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#a924fb79101bd348229ab63aceda1c970',1,'HAMMER::Analyzer::analyzer']]],
+  ['discriminate',['Discriminate',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#afb8c7c81fcc464191a594d3adf430c2d',1,'HAMMER::Analyzer::analyzer']]],
+  ['do',['Do',['../class_h_a_m_m_e_r_1_1_analyzer_1_1_hist_group.html#aacde683671e10268a447bd166f8437a0',1,'HAMMER::Analyzer::HistGroup']]],
+  ['drawtemplates',['DrawTemplates',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#a2566e4fc5b65984c1f65be7a2214a64e',1,'HAMMER::Analyzer::analyzer']]],
+  ['drop',['Drop',['../class_h_a_m_m_e_r_1_1_analyzer_1_1_group.html#a4cb032e754fd06e5f82afb7c0d2b4863',1,'HAMMER::Analyzer::Group']]],
+  ['data',['Data',['../md__home_lucas__projects__r_d_fanalyzer__h_a_m_m_e_r_data__r_e_a_d_m_e.html',1,'']]]
 ];

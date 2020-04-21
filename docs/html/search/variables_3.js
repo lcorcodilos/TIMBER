@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['dataframes',['DataFrames',['../class_j_h_uanalyzer_1_1_analyzer_1_1_analyzer_1_1analyzer.html#a556674dd23fc7380f49ce0b9873f20c3',1,'JHUanalyzer::Analyzer::Analyzer::analyzer']]]
+  ['dataframes',['DataFrames',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#af12979c124da07347bbace72db1edca4',1,'HAMMER::Analyzer::analyzer']]]
 ];

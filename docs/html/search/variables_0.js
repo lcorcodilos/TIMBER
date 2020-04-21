@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['activenode',['ActiveNode',['../class_j_h_uanalyzer_1_1_analyzer_1_1_analyzer_1_1analyzer.html#a10d1bd46795cf1c0abfd8f16afcc54a1',1,'JHUanalyzer::Analyzer::Analyzer::analyzer']]]
+  ['activenode',['ActiveNode',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#a23cc77dcb6343c2581a84f488db08771',1,'HAMMER::Analyzer::analyzer']]]
 ];

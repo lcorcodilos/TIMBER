@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['maketemplatehistos',['MakeTemplateHistos',['../class_j_h_uanalyzer_1_1_analyzer_1_1_analyzer_1_1analyzer.html#a106e70ee4fd248025121e6764c3b643b',1,'JHUanalyzer::Analyzer::Analyzer::analyzer']]],
-  ['makeweightcols',['MakeWeightCols',['../class_j_h_uanalyzer_1_1_analyzer_1_1_analyzer_1_1analyzer.html#a421485dbfd42516450ecd1084f3266b3',1,'JHUanalyzer::Analyzer::Analyzer::analyzer']]]
+  ['maketemplatehistos',['MakeTemplateHistos',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#a2c4b0786f933895b2c39d6afcc23f9f5',1,'HAMMER::Analyzer::analyzer']]],
+  ['makeweightcols',['MakeWeightCols',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#a4fb4cfc327cf9685a61e731af9b9df53',1,'HAMMER::Analyzer::analyzer']]]
 ];

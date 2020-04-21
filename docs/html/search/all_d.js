@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['name',['name',['../class_j_h_uanalyzer_1_1_analyzer_1_1_correction_1_1_correction.html#ae035b74e10f6b25cc29e95485d077148',1,'JHUanalyzer.Analyzer.Correction.Correction.name()'],['../class_j_h_uanalyzer_1_1_analyzer_1_1_group_1_1_group.html#a4330e29e38f73f2df41fdc0b751ef846',1,'JHUanalyzer.Analyzer.Group.Group.name()']]],
-  ['node',['Node',['../class_j_h_uanalyzer_1_1_analyzer_1_1_node_1_1_node.html',1,'JHUanalyzer::Analyzer::Node']]]
+  ['name',['name',['../class_h_a_m_m_e_r_1_1_analyzer_1_1_group.html#aef507e55b4a23e9eb628e61f6057902c',1,'HAMMER.Analyzer.Group.name()'],['../class_h_a_m_m_e_r_1_1_analyzer_1_1_correction.html#afb74f53a814c1c12268cf73f5c5cb8c7',1,'HAMMER.Analyzer.Correction.name()']]],
+  ['node',['Node',['../class_h_a_m_m_e_r_1_1_analyzer_1_1_node.html',1,'HAMMER::Analyzer']]]
 ];

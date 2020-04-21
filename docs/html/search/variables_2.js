@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['corrections',['Corrections',['../class_j_h_uanalyzer_1_1_analyzer_1_1_analyzer_1_1analyzer.html#a223f55b74322d3fd59411eee2783977a',1,'JHUanalyzer::Analyzer::Analyzer::analyzer']]]
+  ['corrections',['Corrections',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#a032ba7101349935c0791f9e6c295403e',1,'HAMMER::Analyzer::analyzer']]]
 ];
