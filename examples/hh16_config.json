@@ -1,0 +1,27 @@
+{
+    "lumi":35917.213466,
+    "qcd_lumi":5466.09,
+    "XSECS":{
+        "ttbar":831.76,
+        "QCDHT700":6802,
+        "QCDHT1000":1206,
+        "QCDHT1500":120.4,
+        "QCDHT2000":25.25,
+        "QCDHT700ext":6802,
+        "QCDHT1000ext":1206,
+        "QCDHT1500ext":120.4,
+        "QCDHT2000ext":25.25,
+        "singletop_s":10.32,
+        "singletop_t":136.02,
+        "singletop_tW":35.85,
+        "singletop_tB":80.95,
+        "singletop_tWB":35.85,
+        "WjetsHT600":68.57,
+        "RadNar-1000":0.0212,
+        "RadNar-1500":0.0044,
+        "RadNar-2000":0.001155,
+        "RadNar-2500":0.000348,
+        "RadNar-3000":0.000112,
+        "RadNar-3500":1.0        
+    }
+}

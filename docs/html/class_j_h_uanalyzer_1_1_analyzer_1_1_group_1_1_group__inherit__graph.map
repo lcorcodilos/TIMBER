@@ -1,0 +1,5 @@
+<map id="JHUanalyzer.Analyzer.Group.Group" name="JHUanalyzer.Analyzer.Group.Group">
+<area shape="rect" id="node3" href="$class_j_h_uanalyzer_1_1_analyzer_1_1_group_1_1_cut_group.html" title="Stores Cut actions. " alt="" coords="355,5,551,47"/>
+<area shape="rect" id="node4" href="$class_j_h_uanalyzer_1_1_analyzer_1_1_group_1_1_hist_group.html" title="Stores histograms with dedicated function to use TH1/2/3 methods in a batch. " alt="" coords="355,71,551,112"/>
+<area shape="rect" id="node5" href="$class_j_h_uanalyzer_1_1_analyzer_1_1_group_1_1_var_group.html" title="Stores Define actions. " alt="" coords="355,136,551,177"/>
+</map>

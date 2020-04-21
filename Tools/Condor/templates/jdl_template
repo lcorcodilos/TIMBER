@@ -1,0 +1,12 @@
+universe = vanilla
+Executable = TEMPSCRIPT
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+request_cpus = 4
+request_memory = 4000
+Output = logs/output_$(Cluster)_$(Process).stdout
+Error = logs/output_$(Cluster)_$(Process).stderr
+Log = logs/output_$(Cluster)_$(Process).log
+transfer_input_files = tarball.tgz
+Arguments = "$(args)"
+Queue args from TEMPARGS

@@ -1,0 +1,17 @@
+-i NanoAOD16_lists/signalLH2000_loc.txt -o tt16_presel_signalLH2000.root -c tt16_config.json 
+-i NanoAOD16_lists/dataF_loc.txt -o tt16_presel_dataF.root -c tt16_config.json 
+-i NanoAOD16_lists/dataH_loc.txt -o tt16_presel_dataH.root -c tt16_config.json 
+-i NanoAOD16_lists/QCDHT700ext_loc.txt -o tt16_presel_QCDHT700ext.root -c tt16_config.json 
+-i NanoAOD16_lists/dataE_loc.txt -o tt16_presel_dataE.root -c tt16_config.json 
+-i NanoAOD16_lists/QCDHT1000ext_loc.txt -o tt16_presel_QCDHT1000ext.root -c tt16_config.json 
+-i NanoAOD16_lists/QCDHT1000_loc.txt -o tt16_presel_QCDHT1000.root -c tt16_config.json 
+-i NanoAOD16_lists/QCDHT2000ext_loc.txt -o tt16_presel_QCDHT2000ext.root -c tt16_config.json 
+-i NanoAOD16_lists/QCDHT1500ext_loc.txt -o tt16_presel_QCDHT1500ext.root -c tt16_config.json 
+-i NanoAOD16_lists/dataC_loc.txt -o tt16_presel_dataC.root -c tt16_config.json 
+-i NanoAOD16_lists/QCDHT700_loc.txt -o tt16_presel_QCDHT700.root -c tt16_config.json 
+-i NanoAOD16_lists/dataG_loc.txt -o tt16_presel_dataG.root -c tt16_config.json 
+-i NanoAOD16_lists/dataD_loc.txt -o tt16_presel_dataD.root -c tt16_config.json 
+-i NanoAOD16_lists/QCDHT2000_loc.txt -o tt16_presel_QCDHT2000.root -c tt16_config.json 
+-i NanoAOD16_lists/ttbar_loc.txt -o tt16_presel_ttbar.root -c tt16_config.json 
+-i NanoAOD16_lists/QCDHT1500_loc.txt -o tt16_presel_QCDHT1500.root -c tt16_config.json 
+-i NanoAOD16_lists/dataB2_loc.txt -o tt16_presel_dataB2.root -c tt16_config.json 

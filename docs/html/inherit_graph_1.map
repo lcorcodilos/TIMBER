@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$class_j_h_uanalyzer_1_1_analyzer_1_1_analyzer_1_1analyzer.html" title="Main class for HAMMER. " alt="" coords="5,143,267,170"/>
+<area shape="rect" id="node2" href="$class_j_h_uanalyzer_1_1_analyzer_1_1_correction_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. " alt="" coords="315,5,537,47"/>
+<area shape="rect" id="node3" href="$class_j_h_uanalyzer_1_1_analyzer_1_1_cscripts_1_1_common_cscripts.html" title="Common c scripts all in analyzer namespace. " alt="" coords="321,71,531,112"/>
+<area shape="rect" id="node4" href="$class_j_h_uanalyzer_1_1_analyzer_1_1_cscripts_1_1_custom_cscripts.html" title="docstring for CustomCscripts " alt="" coords="321,136,531,177"/>
+<area shape="rect" id="node5" href="$class_j_h_uanalyzer_1_1_analyzer_1_1_group_1_1_group.html" title="Organizes objects in OrderedDict with basic functionality to add and drop items, add Groups together..." alt="" coords="328,201,524,243"/>
+<area shape="rect" id="node9" href="$class_j_h_uanalyzer_1_1_analyzer_1_1_node_1_1_node.html" title="Node Class #. " alt="" coords="315,267,537,294"/>
+<area shape="rect" id="node6" href="$class_j_h_uanalyzer_1_1_analyzer_1_1_group_1_1_cut_group.html" title="Stores Cut actions. " alt="" coords="585,136,781,177"/>
+<area shape="rect" id="node7" href="$class_j_h_uanalyzer_1_1_analyzer_1_1_group_1_1_hist_group.html" title="Stores histograms with dedicated function to use TH1/2/3 methods in a batch. " alt="" coords="585,201,781,243"/>
+<area shape="rect" id="node8" href="$class_j_h_uanalyzer_1_1_analyzer_1_1_group_1_1_var_group.html" title="Stores Define actions. " alt="" coords="585,267,781,308"/>
+</map>
