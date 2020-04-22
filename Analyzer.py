@@ -590,11 +590,9 @@ class Node(object):
 
     # Discriminate based on a discriminator
     def Discriminate(self,name,discriminator):
-        pass_sel = self.DataFrame
-        fail_sel = self.DataFrame
         passfail = {
-            "pass":Node(name+"_pass",pass_sel.Filter(discriminator,name+"_pass"),parent=self,action=discriminator),
-            "fail":Node(name+"_fail",fail_sel.Filter("!("+discriminator+")",name+"_fail"),parent=self,action="!("+discriminator+")")
+            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),parent=self,action=discriminator),
+            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),parent=self,action="!("+discriminator+")")
         }
         self.SetChildren(passfail)
         return passfail
@@ -847,7 +845,7 @@ class HistGroup(Group):
         self.type = 'hist'
 
     #  - THmethod is a string and argsTuple is a tuple of arguments to pass the THmethod
-    def Do(THmethod,argsTuple):
+    def Do(self,THmethod,argsTuple=()):
         '''Batch act on histograms using ROOT TH1/2/3 methods.
 
         Args:
