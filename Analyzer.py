@@ -620,15 +620,16 @@ class Node(object):
 
     # IMPORTANT: When writing a variable size array through Snapshot, it is required that the column indicating its size is also written out and it appears before the array in the columns list.
     # columns should be an empty string if you'd like to keep everything
-    def Snapshot(self,columns,outfilename,treename,lazy=False): # columns can be a list or a regular expression or 'all'
-        lazy_opt = ROOT.RDF.RSnapshotOptions()
-        lazy_opt.fLazy = lazy
+    def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='RECREATE'): # columns can be a list or a regular expression or 'all'
+        opts = ROOT.RDF.RSnapshotOptions()
+        opts.fLazy = lazy
+        opts.fMode = openOption
         print("Snapshotting columns: %s"%columns)
         print("Saving tree %s to file %s"%(treename,outfilename))
         if columns == 'all':
-            self.DataFrame.Snapshot(treename,outfilename,'',lazy_opt)
+            self.DataFrame.Snapshot(treename,outfilename,'',opts)
         elif type(columns) == str:
-            self.DataFrame.Snapshot(treename,outfilename,columns,lazy_opt)
+            self.DataFrame.Snapshot(treename,outfilename,columns,opts)
         else:
             # column_vec = ROOT.std.vector('string')()
             column_vec = ''
@@ -636,7 +637,7 @@ class Node(object):
                 column_vec += c+'|'
             column_vec = column_vec[:-1]
                # column_vec.push_back(c)
-            self.DataFrame.Snapshot(treename,outfilename,column_vec,lazy_opt)
+            self.DataFrame.Snapshot(treename,outfilename,column_vec,opts)
 
 ###############################
 # C script processing classes #
