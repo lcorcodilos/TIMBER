@@ -9,7 +9,7 @@ import pprint, time, json, copy, os,sys
 from collections import OrderedDict
 pp = pprint.PrettyPrinter(indent=4)
 from Tools.Common import GetHistBinningTuple, CompileCpp
-import clang.cindex
+from clang import cindex
 cpp_idx = cindex.Index.create()
 cpp_args =  '-x c++ --std=c++11'.split()
 
@@ -155,7 +155,7 @@ class analyzer(object):
 
         """
         if isinstance(node,Node):
-            if node.Name in self.DataFrames.keys():
+            if node.name in self.DataFrames.keys():
                 raise ValueError('ERROR: Attempting to track a node with the same name as one that is already being tracked (%s). Please provide a unique node.'%(node.name))
             self.DataFrames[node.name] = node
         else:
@@ -169,12 +169,23 @@ class analyzer(object):
         """
         return self.Corrections.keys()
 
+    def FilterColumnNames(self,columns,node=None):
+        '''Takes a list of possible columns and returns only those that exist in the RDataFrame of the supplied node'''
+        if node == None: node = self.BaseNode
+        cols_in_node = node.DataFrame.GetColumnNames()
+        out = []
+        for i in columns:
+            if i in cols_in_node: out.append(i)
+            else: print ("WARNING: Column %s not found and will be dropped."%i)
+
+        return out
+
     #-----------------------------------------------------------#
     # Node operations - degenerate with Node class methods but  #
     # have benefit of keeping track of an Active Node (reset by #
     # each action and used by default).                         #
     #-----------------------------------------------------------#
-    def Cut(self,name='',cuts='',node=self.ActiveNode):
+    def Cut(self,name='',cuts='',node=None):
         """Apply a cut/filter to a provided node or the #ActiveNode by default.
 
         Will add the resulting node to tracking and set it as the #ActiveNode.
@@ -188,6 +199,7 @@ class analyzer(object):
             New active Node.
 
         """
+        if node == None: node = self.ActiveNode
         newNode = node.Clone()
 
         if isinstance(cuts,CutGroup):
@@ -203,7 +215,7 @@ class analyzer(object):
         self.SetActiveNode(newNode)
         return newNode 
 
-    def Define(self,name='',variables='',node=self.ActiveNode):
+    def Define(self,name='',variables='',node=None):
         """Defines a variable/column on top of a provided node or the #ActiveNode by default.
 
         Will add the resulting node to tracking and set it as the #ActiveNode
@@ -218,6 +230,7 @@ class analyzer(object):
             New active Node.
 
         """
+        if node == None: node = self.ActiveNode
         newNode = node.Clone()
 
         if isinstance(variables,VarGroup):
@@ -234,7 +247,7 @@ class analyzer(object):
         return newNode  
 
     # Applies a bunch of action groups (cut or var) in one-shot in the order they are given
-    def Apply(self,actionGroupList,node=self.ActiveNode):
+    def Apply(self,actionGroupList,node=None):
         """Applies a single CutGroup/VarGroup or an ordered list of Groups to the provided node or the #ActiveNode by default.
 
         Args:
@@ -245,12 +258,15 @@ class analyzer(object):
         Returns:
             New active Node.
         """
+        if node == None: node = self.ActiveNode
+        newNode = node.Clone()
+
         if not isinstance(actionGroupList, list): actionGroupList = [actionGroupList]
         for ag in actionGroupList:
             if ag.type == 'cut':
-                newNode = self.Cut(name=ag.name,cuts=ag,node=node)
+                newNode = self.Cut(name=ag.name,cuts=ag,node=newNode)
             elif ag.type == 'var':
-                newNode = self.Define(name=ag.name,variables=ag,node=node)
+                newNode = self.Define(name=ag.name,variables=ag,node=newNode)
             else:
                 raise TypeError("ERROR: Apply() group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)
 
@@ -258,7 +274,7 @@ class analyzer(object):
         self.SetActiveNode(newNode)
         return newNode
 
-    def Discriminate(self,name,discriminator,node=self.ActiveNode,passAsActiveNode=None):
+    def Discriminate(self,name,discriminator,node=None,passAsActiveNode=None):
         """Forks a node based upon a discriminator being True or False (#ActiveNode by default).
 
         Args:
@@ -272,7 +288,9 @@ class analyzer(object):
             Dictionary with keys "pass" and "fail" corresponding to the passing and failing Nodes stored as values.
             
         """
-        newNodes = node.Discriminate(name,cut)
+        if node == None: node = self.ActiveNode
+
+        newNodes = node.Discriminate(name,discriminator)
 
         self.TrackNode(newNodes['pass'])
         self.TrackNode(newNodes['fail'])
@@ -286,7 +304,7 @@ class analyzer(object):
     # Corrections/Weights #
     #---------------------#
     # Want to correct with analyzer class so we can track what corrections have been made for final weights and if we want to save them out in a group when snapshotting
-    def AddCorrection(self,correction,node=self.ActiveNode):
+    def AddCorrection(self,correction,node=None):
         """Add a Correction to track.
 
         Args:
@@ -297,6 +315,8 @@ class analyzer(object):
             New active Node.
 
         """
+        if node == None: node = self.ActiveNode
+
         # Quick type checking
         if not isinstance(node,Node): raise TypeError('ERROR: AddCorrection() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
         elif not isinstance(correction,Correction): raise TypeError('ERROR: AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
@@ -315,7 +335,7 @@ class analyzer(object):
         self.SetActiveNode(returnNode)
         return returnNode
 
-    def AddCorrections(self,correctionList=[],node=self.ActiveNode):
+    def AddCorrections(self,correctionList=[],node=None):
         """Add multiple Corrections to track.
 
         Args:
@@ -326,6 +346,8 @@ class analyzer(object):
             New active Node.
 
         """
+        if node == None: node = self.ActiveNode
+
         newNode = node
         for c in correctionList:
             newNode = self.AddCorrection(newNode,c)
@@ -334,7 +356,7 @@ class analyzer(object):
         self.SetActiveNode(newNode)
         return newNode
 
-    def MakeWeightCols(self,node=self.ActiveNode,correctionNames=None,dropList=[]):
+    def MakeWeightCols(self,node=None,correctionNames=None,dropList=[]):
         """Makes columns/variables to store total weights based on the Corrections that have been added.
 
         This function automates the calculation of the columns that store the nominal weight and the 
@@ -359,6 +381,8 @@ class analyzer(object):
             New active Node.
 
         """
+        if node == None: node = self.ActiveNode
+
         correctionsToApply = _checkCorrections(correctionNames,dropList)
         
         # Build nominal weight first (only "weight", no "uncert")
@@ -390,7 +414,7 @@ class analyzer(object):
         self.SetActiveNode(returnNode)
         return returnNode 
 
-    def MakeTemplateHistos(self,templateHist,variables,node=self.ActiveNode):
+    def MakeTemplateHistos(self,templateHist,variables,node=None):
         """Generates the uncertainty template histograms based on the weights created by MakeWeightCols(). 
 
         Args:
@@ -402,6 +426,8 @@ class analyzer(object):
             HistGroup object which stores the uncertainty template histograms.
 
         """
+        if node == None: node = self.ActiveNode
+
         out = HistGroup('Templates')
 
         weight_cols = [cname for cname in node.GetColumnNames() if 'weight__' in cname]
@@ -601,7 +627,7 @@ class Node(object):
         print("Saving tree %s to file %s"%(treename,outfilename))
         if columns == 'all':
             self.DataFrame.Snapshot(treename,outfilename,'',lazy_opt)
-        if type(columns) == str:
+        elif type(columns) == str:
             self.DataFrame.Snapshot(treename,outfilename,columns,lazy_opt)
         else:
             # column_vec = ROOT.std.vector('string')()
@@ -902,7 +928,7 @@ class Correction(object):
             script_file = open(script,'r')
             CompileCpp(script)
 
-    def Clone(self,name,newMainFunc=self.__mainFunc):
+    def Clone(self,name,newMainFunc=None):
         """Makes a clone of current instance.
 
         If multiple functions are in the same script, one can clone the correction and reassign the mainFunc
@@ -914,6 +940,7 @@ class Correction(object):
         Returns:
             Clone of instance with same script but different function (newMainFunc)
         """
+        if newMainFunc == None: newMainFunc = self.__mainFunc
         return Correction(name,self.__script,newMainFunc,corrtype=self.__type,isClone=True)
 
     def __getType(self):

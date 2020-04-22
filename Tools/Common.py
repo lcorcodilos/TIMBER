@@ -72,7 +72,7 @@ def Nminus1(node,cutgroup):
 # Generic #
 ###########
 def CompileCpp(blockcode):
-    if isinstance(blockcode,str):
+    if '.cc' not in blockcode:
         ROOT.gInterpreter.Declare(blockcode)
     else:
         blockcode_str = open(blockcode,'r').read()
