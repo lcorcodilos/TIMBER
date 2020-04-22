@@ -270,7 +270,7 @@ class analyzer(object):
             else:
                 raise TypeError("ERROR: Apply() group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)
 
-        self.TrackNode(newNode)
+        # self.TrackNode(newNode)
         self.SetActiveNode(newNode)
         return newNode
 
