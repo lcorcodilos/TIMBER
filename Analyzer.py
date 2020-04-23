@@ -622,6 +622,8 @@ class Node(object):
         opts = ROOT.RDF.RSnapshotOptions()
         opts.fLazy = lazy
         opts.fMode = openOption
+        opts.fCompressionAlgorithm =1 
+        opts.fCompressionLevel = 1
         print("Snapshotting columns: %s"%columns)
         print("Saving tree %s to file %s"%(treename,outfilename))
         if columns == 'all':
