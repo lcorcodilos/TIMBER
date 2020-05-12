@@ -40,34 +40,6 @@ def CutflowHist(name,node):
 
     return h
 
-#----------------------------------------------#
-# Build N-1 "tree" and outputs the final nodes #
-# Beneficial to put most aggressive cuts first #
-# Return dictionary of N-1 nodes keyed by the  #
-# cut that gets dropped                        #
-#----------------------------------------------#
-def Nminus1(node,cutgroup):
-    # Initialize
-    nminusones = {}
-    thisnode = node
-    thiscutgroup = cutgroup
-
-    # Loop over all cuts (`cut` is the name not the string to filter on)
-    for cut in cutgroup.keys():
-        # Get the N-1 group of this cut (where N is determined by thiscutgroup)
-        minusgroup = thiscutgroup.Drop(cut)
-        thiscutgroup = minusgroup
-        # Store the node with N-1 applied
-        nminusones[cut] = thisnode.Apply(minusgroup)
-        
-        # If there are any more cuts left, go to the next node with current cut applied (this is how we keep N as the total N and not just the current N)
-        if len(minusgroup.keys()) > 0:
-            thisnode = thisnode.Cut(cut,cutgroup[cut])
-        else:
-            nminusones['full'] = thisnode.Cut(cut,cutgroup[cut])
-
-    return nminusones
-
 ###########
 # Generic #
 ###########
