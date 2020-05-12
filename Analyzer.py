@@ -88,9 +88,9 @@ class analyzer(object):
             raise Exception("File name extension not supported. Please provide a single .root file or a .txt file with a line-separated list of .root files to chain together.")
 
         # Make base RDataFrame
-        self.BaseDataFrame = ROOT.RDataFrame(self.__eventsChain) 
-        self.BaseNode = Node('base',self.BaseDataFrame) 
-        self.DataFrames = {} 
+        BaseDataFrame = ROOT.RDataFrame(self.__eventsChain) 
+        self.BaseNode = Node('base',BaseDataFrame) 
+        self.AllNodes = [] 
         self.Corrections = {} 
 
         # Check if dealing with data
@@ -121,10 +121,12 @@ class analyzer(object):
             node: Node to set as #ActiveNode
 
         Returns:
-            None
+            New #ActiveNode
         """
         if not isinstance(node,Node): raise ValueError('ERROR: SetActiveNode() does not support argument of type %s. Please provide a Node.'%(type(node)))
         else: self.ActiveNode = node
+
+        return self.ActiveNode
 
     def GetActiveNode(self):
         """Get the active node.
@@ -154,12 +156,16 @@ class analyzer(object):
             None
 
         """
+        
         if isinstance(node,Node):
-            if node.name in self.DataFrames.keys():
+            if node.name in self.GetTrackedNodeNames():
                 raise ValueError('ERROR: Attempting to track a node with the same name as one that is already being tracked (%s). Please provide a unique node.'%(node.name))
-            self.DataFrames[node.name] = node
+            self.AllNodes.append(node)
         else:
             raise TypeError('ERROR: TrackNode() does not support arguments of type %s. Please provide a Node.'%(type(node)))
+
+    def GetTrackedNodeNames(self):
+        return [n.name for n in self.AllNodes]
 
     def GetCorrectionNames(self):
         """Get names of all corrections being tracked.
@@ -180,11 +186,11 @@ class analyzer(object):
 
         return out
 
-    #-----------------------------------------------------------#
-    # Node operations - degenerate with Node class methods but  #
-    # have benefit of keeping track of an Active Node (reset by #
-    # each action and used by default).                         #
-    #-----------------------------------------------------------#
+    #------------------------------------------------------------#
+    # Node operations - same as Node class methods but have      #
+    # benefit of class keeping track of an Active Node (reset by #
+    # each action and used by default).                          #
+    #------------------------------------------------------------#
     def Cut(self,name='',cuts='',node=None):
         """Apply a cut/filter to a provided node or the #ActiveNode by default.
 
@@ -200,20 +206,23 @@ class analyzer(object):
 
         """
         if node == None: node = self.ActiveNode
-        newNode = node.Clone()
+        newNode = node
 
         if isinstance(cuts,CutGroup):
             for c in cuts.keys():
                 cut = cuts[c]
                 newNode = newNode.Cut(c,cut)
+                newNode.name = cuts.name+'__'+c
+                self.TrackNode(newNode)
+            # newNode.name = cuts.name
         elif isinstance(cuts,str):
             newNode = newNode.Cut(name,cuts)
+            self.TrackNode(newNode)
         else:
             raise TypeError("ERROR: Second argument to Cut method must be a string of a single cut or of type CutGroup (which provides an OrderedDict).")
 
-        self.TrackNode(newNode)
-        self.SetActiveNode(newNode)
-        return newNode 
+        # self.TrackNode(newNode)
+        return self.SetActiveNode(newNode)
 
     def Define(self,name='',variables='',node=None):
         """Defines a variable/column on top of a provided node or the #ActiveNode by default.
@@ -231,23 +240,26 @@ class analyzer(object):
 
         """
         if node == None: node = self.ActiveNode
-        newNode = node.Clone()
+        newNode = node
 
         if isinstance(variables,VarGroup):
             for v in variables.keys():
                 var = variables[v]
                 newNode = newNode.Define(v,var)
+                newNode.name = variables.name+'__'+v
+                self.TrackNode(newNode)
+            # newNode.name = variables.name
         elif isinstance(variables,str):
             newNode = newNode.Define(name,variables)
+            self.TrackNode(newNode)
         else:
             raise TypeError("ERROR: Second argument to Define method must be a string of a single var or of type VarGroup (which provides an OrderedDict).")
 
-        self.TrackNode(newNode)
-        self.SetActiveNode(newNode)
-        return newNode  
+        # self.TrackNode(newNode)
+        return self.SetActiveNode(newNode)
 
     # Applies a bunch of action groups (cut or var) in one-shot in the order they are given
-    def Apply(self,actionGroupList,node=None):
+    def Apply(self,actionGroupList,node=None,trackEach=True):
         """Applies a single CutGroup/VarGroup or an ordered list of Groups to the provided node or the #ActiveNode by default.
 
         Args:
@@ -259,20 +271,22 @@ class analyzer(object):
             New active Node.
         """
         if node == None: node = self.ActiveNode
-        newNode = node.Clone()
+        newNode = node
 
         if not isinstance(actionGroupList, list): actionGroupList = [actionGroupList]
-        for ag in actionGroupList:
-            if ag.type == 'cut':
-                newNode = self.Cut(name=ag.name,cuts=ag,node=newNode)
-            elif ag.type == 'var':
-                newNode = self.Define(name=ag.name,variables=ag,node=newNode)
-            else:
-                raise TypeError("ERROR: Apply() group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)
 
-        # self.TrackNode(newNode)
-        self.SetActiveNode(newNode)
-        return newNode
+        if not trackEach:
+            newNode = node.Apply(actionGroupList)
+        else:
+            for ag in actionGroupList:
+                if ag.type == 'cut':
+                    newNode = self.Cut(name=ag.name,cuts=ag,node=newNode)
+                elif ag.type == 'var':
+                    newNode = self.Define(name=ag.name,variables=ag,node=newNode)
+                else:
+                    raise TypeError("ERROR: Apply() group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)
+
+        return self.SetActiveNode(newNode)
 
     def Discriminate(self,name,discriminator,node=None,passAsActiveNode=None):
         """Forks a node based upon a discriminator being True or False (#ActiveNode by default).
@@ -332,8 +346,7 @@ class analyzer(object):
             returnNode = newNode.Define(correction.name+'__up',correction.name+'__vec[0]').Define(correction.name+'__down',correction.name+'__vec[1]')
 
         self.TrackNode(returnNode)
-        self.SetActiveNode(returnNode)
-        return returnNode
+        return self.SetActiveNode(returnNode)
 
     def AddCorrections(self,correctionList=[],node=None):
         """Add multiple Corrections to track.
@@ -353,8 +366,7 @@ class analyzer(object):
             newNode = self.AddCorrection(newNode,c)
 
         self.TrackNode(newNode)
-        self.SetActiveNode(newNode)
-        return newNode
+        return self.SetActiveNode(newNode)
 
     def MakeWeightCols(self,node=None,correctionNames=None,dropList=[]):
         """Makes columns/variables to store total weights based on the Corrections that have been added.
@@ -411,8 +423,7 @@ class analyzer(object):
             returnNode = returnNode.Define('weight__'+weight,weights[weight])
         
         self.TrackNode(returnNode)
-        self.SetActiveNode(returnNode)
-        return returnNode 
+        return self.SetActiveNode(returnNode)
 
     def MakeTemplateHistos(self,templateHist,variables,node=None):
         """Generates the uncertainty template histograms based on the weights created by MakeWeightCols(). 
@@ -450,9 +461,9 @@ class analyzer(object):
 
         return out
 
-    ##################################################################
+    #----------------------------------------------------------------#
     # Draw templates together to see up/down effects against nominal #
-    ##################################################################
+    #----------------------------------------------------------------#
     def DrawTemplates(hGroup,saveLocation,projection='X',projectionArgs=(),fileType='pdf'):
         """Draw the template uncertainty histograms created by MakeTemplateHistos(). 
 
@@ -543,11 +554,10 @@ class Node(object):
         self.action = action
         self.parent = parent # None or specified
         self.children = children # list of length 0, 1, or 2
-        self._colnames = self.DataFrame.GetColumnNames()
         
     def Clone(self,name=''):
-        if name == '':return Node(self.name,self.DataFrame,parent=self.parent,children=self.children,action=self.action)
-        else: return Node(name,self.DataFrame,parent=self.parent,children=self.children,action=self.action)
+        if name == '':return Node(self.name,self.DataFrame,parent=[],children=[],action=self.action)
+        else: return Node(name,self.DataFrame,parent=[],children=[],action=self.action)
 
     # Set parent of type Node
     def SetParent(self,parent): 
@@ -577,22 +587,22 @@ class Node(object):
     # Define a new column to calculate
     def Define(self,name,var):
         print('Defining %s: %s' %(name,var))
-        newNode = Node(name,self.DataFrame.Define(name,var),parent=self,action=var)
+        newNode = Node(name,self.DataFrame.Define(name,var),parent=self,children=[],action=var)
         self.SetChild(newNode)
         return newNode
 
     # Define a new cut to make
     def Cut(self,name,cut):
         print('Filtering %s: %s' %(name,cut))
-        newNode = Node(name,self.DataFrame.Filter(cut,name),parent=self,action=cut)
+        newNode = Node(name,self.DataFrame.Filter(cut,name),parent=self,children=[],action=cut)
         self.SetChild(newNode)
         return newNode
 
     # Discriminate based on a discriminator
     def Discriminate(self,name,discriminator):
         passfail = {
-            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),parent=self,action=discriminator),
-            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),parent=self,action="!("+discriminator+")")
+            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),parent=self,children=[],action=discriminator),
+            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),parent=self,children=[],action="!("+discriminator+")")
         }
         self.SetChildren(passfail)
         return passfail
