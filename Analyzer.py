@@ -1148,4 +1148,11 @@ class Correction(object):
         Returns:
             List of possible function names.
         """
-        return self.__funcNames
+        return self.__funcInfo.keys()
+
+def LoadColumnNames(source=None):
+    file = 'HAMMER/data/NanoAODv6_cols.txt' if source == None else source
+    f = open(file,'r')
+    cols = f.readlines()
+    f.close()
+    return cols
