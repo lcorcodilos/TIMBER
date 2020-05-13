@@ -588,20 +588,6 @@ class analyzer(object):
             this_node_label = node.name
             if verbose: this_node_label += '\n%s'%node.action
 
-            # # Build larger label if requested
-            # for o in options:
-            #     if 'statusFlags' in o:
-            #         flag = o.split(':')[1]
-            #         this_node_label += '\n%s=%s'%(flag,n.statusFlags[flag])
-            #     elif 'vect' in o:
-            #         kin = o.split(':')[1]
-            #         this_node_label += '\n%s=%s'%(kin,getattr(n.vect,kin)())
-            #     else:
-            #         this_node_label += '\n%s=%s'%(o,getattr(n,o))
-            #
-            # if jet != None:
-            #     this_node_label += '\n%s=%.2f'%('\Delta R with jet',n.DeltaR(jet))
-
             dot.node(this_node_name, this_node_label)
             for child in node.children:
                 dot.edge(this_node_name,child.name)
@@ -993,7 +979,7 @@ class Correction(object):
     <up, down> for "uncert" type.    
 
     """
-    def __init__(self,name,script,mainFunc=None,corrtype=None,isClone=False):
+    def __init__(self,name,script,mainFunc='eval',args=[],corrtype=None,isClone=False,columnList=None):
         """Constructor
 
         Args:
@@ -1014,18 +1000,23 @@ class Correction(object):
 
         self.name = name
         self.__script = script
-        self.__type = self._getType()
-        self.__funcInfo = self._getFuncInfo()
-        self.__funcNames = self.__funcInfo.keys()
-        self.__mainFunc = mainFunc
+        self.__type = self._getType() if corrtype == None else corrtype:
+        if self.__type not in ['weight','uncert']:
+            raise ValueError('Correction() type provided to %s is not "weight" or "uncert".'%self.name)
+
+        self.__funcInfo = self._getFuncInfo(mainFunc)
+        self.__mainFunc = self.__funcInfo.keys()[0]
+        self.__columnNames = LoadColumnNames() if columnList == None else columnList
+        # self.__funcNames = self.__funcInfo.keys()        
 
         if not isClone:
-            if mainFunc != None and self.__mainFunc not in self.__funcNames:
+            if self.__mainFunc not in self.__funcInfo.keys():
                 raise ValueError('ERROR: Correction() instance provided with mainFunc argument that does not exist in %s'%self.__script)
-            if len(self.__funcNames) == 1: self.__mainFunc = self.__funcNames[0]
 
             script_file = open(script,'r')
             CompileCpp(script)
+
+        self.__call = self.__makeCall(args)
 
     def Clone(self,name,newMainFunc=None):
         """Makes a clone of current instance.
@@ -1057,79 +1048,96 @@ class Correction(object):
             else:
                 raise ValueError('ERROR: Attempting to add correction "%s" but script name (%s) does not end in "_weight.cc", "_SF.cc" or "_uncert.cc" and so the type of correction cannot be determined.'%(name))
 
-    def __getFuncInfo(self):
+    def __getFuncInfo(self,funcname):
+        cpp_idx = cindex.Index.create()
+
         translation_unit = cpp_idx.parse(self.__script, args=cpp_args)
         filename = translation_unit.cursor.spelling
         funcs = OrderedDict()
+        namespace = ''
+        classname = None
+        methodname = None
         # Walk cursor over script
         for c in translation_unit.cursor.walk_preorder():
             # Pass over file errors
             if c.location.file is None: pass
             elif c.location.file.name != filename: pass
             else:
+
                 # Check for namespace with functions inside
                 if c.kind == cindex.CursorKind.NAMESPACE:
-                    # Loop over children of namespace
-                    for child in c.get_children():
-                        # If a function, store a name as key with namespace included (does not support nested namespaces)
-                        if child.kind == cindex.CursorKind.FUNCTION_DECL:
-                            funcname = c.spelling+'::'+child.spelling
-                            # If we haven't accounted for it, store key as arg name and value as the type
-                            if funcname not in funcs.keys():
-                                funcs[funcname] = OrderedDict()
-                                for arg in child.get_arguments():
-                                    funcs[funcname][arg.spelling] = arg.type.spelling 
-                # Check for functions
-                elif c.kind == cindex.CursorKind.FUNCTION_DECL:
-                    func_exists = False
-                    # Check it wasn't already found in the namespace
-                    for existing_func in funcs.keys():
-                        this_func = c.spelling
-                        if this_func in existing_func:
-                            func_exists = True
-                    # If we haven't accounted for it, store key as arg name and value as the type
-                    if not func_exists:
-                        funcs[c.spelling] = OrderedDict()
-                        for arg in c.get_arguments():
-                            funcs[c.spelling][arg.spelling] = arg.type.spelling
+                    namespace = c.spelling
+                elif c.kind == cindex.CursorKind.CLASS_DECL:
+                    classname = c.spelling
+                elif c.kind == cindex.CursorKind.CXX_METHOD:
+                    methodname = classname+'::'+c.spelling
+                    if namespace != '': # this will not support classes outside of the namespace and always assume it's inside
+                        methodname = namespace + '::' + methodname
+
+                    print methodname
+                    if methodname.split('::')[-1] == funcname:
+                        if methodname not in funcs.keys():
+                            funcs[methodname] = OrderedDict()
+                            for arg in c.get_arguments():
+                                funcs[methodname][arg.spelling] = arg.type.spelling 
 
         return funcs
 
-    def GetCall(self):
-        """Return the call to the function with the branch/column names deduced.
+    def __makeCall(self,in_args):
+        """Return the call to the function with the branch/column names deduced or added from input.
 
         Returns:
             String of call to function from C++ script.
         """
-        out = '%s('
-        for a in self.__funcInfo[self.__mainFunc].keys():
-            out += '%s,'%(self.__funcInfo[self.__mainFunc][a],a)
+
+        args_to_use = []
+
+        if len(in_args) == 0:
+            print ('Determining arguments for correction %s automatically'%self.__name)
+            for a in self.__funcInfo[self.__mainFunc].keys():
+                if a not in self.__columnNames:
+                    raise ValueError('Not able to find arg %s written in %s in available columns'%(a,self.__script))
+                else:
+                    args_to_use.append(a)
+
+        else:
+            if len(in_args) != len(self.__funcInfo[self.__mainFunc].keys()):
+                raise ValueError('Provided number of arguments (%s) does not match required (%s).'%(len(in_args),len(self.__funcInfo[self.__mainFunc].keys())))
+            args_to_use = in_args
+
+        var_types = [self.__funcInfo[self.__mainFunc][a] for a in self.__funcInfo[self.__mainFunc].keys()]
+        out = '%s('%self.__mainFunc
+        for i,a in enumerate(args_to_use):
+            out += '%s,'%(var_types[i],a)
         out = out[:-1]+')'
 
         return out
 
-    def SetMainFunc(self,funcname):
-        """Set the function to consider in the provided script.
+    def GetCall():
+        return self.__call
 
-        Will check if funcname exists as a function in the script (can also provide a substring of the
-        desired function). If it does, sets the function to the matching one.
+    # def SetMainFunc(self,funcname):
+    #     """Set the function to consider in the provided script.
 
-        Returns:
-            Self with new function assigned.
-        """
+    #     Will check if funcname exists as a function in the script (can also provide a substring of the
+    #     desired function). If it does, sets the function to the matching one.
 
-        # Find funcname in case it's abbreviated (which it might be if the user forgot the namespace)
-        full_funcname = ''
-        for f in self.__funcNames:
-            if funcname in f:
-                full_funcname = f
-                break
+    #     Returns:
+    #         Self with new function assigned.
+    #     """
 
-        if full_funcname not in self.__funcNames:
-            raise ValueError('ERROR: Function name "%s" is not defined for %s'%(funcname,self.__script))
+    #     # Find funcname in case it's abbreviated (which it might be if the user forgot the namespace)
+    #     full_funcname = ''
+    #     for f in self.__funcNames:
+    #         if funcname in f:
+    #             full_funcname = f
+    #             break
 
-        self.__mainFunc = full_funcname
-        return self
+    #     if full_funcname not in self.__funcNames:
+    #         raise ValueError('ERROR: Function name "%s" is not defined for %s'%(funcname,self.__script))
+
+    #     self.__mainFunc = full_funcname
+    #     return self
 
     def GetMainFunc(self):
         """Gets full main function name.
