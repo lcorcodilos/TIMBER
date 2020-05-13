@@ -567,6 +567,8 @@ class analyzer(object):
             else:
                 nminusones['full'] = self.Cut('full_'+cutgroup.name,cutgroup[cut],node=thisnode)
 
+        self.SetActiveNode(node)
+
         return nminusones
 
     def PrintNodeTree(self,outfilename,verbose=False):
