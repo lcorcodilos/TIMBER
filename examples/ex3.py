@@ -55,5 +55,3 @@ out = ROOT.TFile.Open('ex3_out.root','UPDATE')
 myHist1.Write() 
 myHist2.Write()
 out.Close()
-
-a.PrintNodeTree('test.pdf')
