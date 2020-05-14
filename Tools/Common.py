@@ -4,7 +4,7 @@ Home to commonly used tools available for use that can be generic or HAMMER spec
 
 '''
 
-import json, ROOT
+import json, ROOT, os
 from ROOT import RDataFrame
 import CMS_lumi, tdrstyle
 from contextlib import contextmanager
@@ -43,12 +43,30 @@ def CutflowHist(name,node):
 ###########
 # Generic #
 ###########
-def CompileCpp(blockcode):
-    if '.cc' not in blockcode:
-        ROOT.gInterpreter.Declare(blockcode)
-    else:
-        blockcode_str = open(blockcode,'r').read()
-        ROOT.gInterpreter.Declare(blockcode_str)
+def CompileCpp(blockcode,library=False):
+    if not library:
+        if '.cc' not in blockcode:
+            ROOT.gInterpreter.Declare(blockcode)
+        else:
+            blockcode_str = open(blockcode,'r').read()
+            ROOT.gInterpreter.Declare(blockcode_str)
+    elif '.c' in blockcode:
+        lib_path = blockcode.replace('.','_')+'.so'
+        # If library exists and is older than the cc file, just load
+        loaded = False
+        if os.path.exists(lib_path):
+            mod_time_lib = os.path.getmtime(lib_path)
+            mod_time_cc = os.path.getmtime(blockcode)
+            if mod_time_lib > mod_time_cc:
+                print ('Loading library...')
+                ROOT.gSystem.Load(lib_path)
+                loaded = True
+               
+        # Else compile a new lib
+        if not loaded:
+            ROOT.gSystem.AddIncludePath(" -I%s "%os.getcwd())
+            print ('Processing library...')
+            ROOT.gROOT.ProcessLine(".L "+blockcode+"+")
 
 def openJSON(f):
     return json.load(open(f,'r'), object_hook=ascii_encode_dict) 
