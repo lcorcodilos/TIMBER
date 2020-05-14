@@ -1,15 +1,15 @@
 // without CMSSW / standalone:
-#include "../ExternalTools/BTagCalibrationStandalone.h"
-#include "../ExternalTools/BTagCalibrationStandalone.cpp"
+#include "HAMMER/Framework/ExternalTools/BTagCalibrationStandalone.h"
+#include "HAMMER/Framework/ExternalTools/BTagCalibrationStandalone.cpp"
 #include <ROOT/RVec.hxx>
 
 using namespace ROOT::VecOps;
 
-class Btag_SF {
+class SJBtag_SF {
     public:
-        Btag_SF(int year, std::string tagger, std::string op_string);
-        ~Btag_SF();
-        RVec<std::vector<float, std::allocator<float> > > eval(RVec<float> pt_vec, RVec<float> eta_vec);
+        SJBtag_SF(int year, std::string tagger, std::string op_string);
+        ~SJBtag_SF(){};
+        RVec<float> eval(float pt, float eta);
     private:
         std::string csv_file;
         BTagEntry::OperatingPoint operating_point;
@@ -17,7 +17,7 @@ class Btag_SF {
         BTagCalibrationReader reader;
 };
 
-Btag_SF::Btag_SF(int year, std::string tagger, std::string op_string) {
+SJBtag_SF::SJBtag_SF(int year, std::string tagger, std::string op_string) {
         if (op_string == "loose") {
             operating_point = BTagEntry::OP_LOOSE;
         } else if (op_string == "medium") {
@@ -47,24 +47,31 @@ Btag_SF::Btag_SF(int year, std::string tagger, std::string op_string) {
                     BTagEntry::FLAV_B,    // btag flavour
                     "comb");               // measurement type
 
-};
-    
+}; 
 
-RVec<std::vector<float, std::allocator<float> > > Btag_SF::eval(RVec<float> pt_vec, RVec<float> eta_vec) {
-    std::cout << typeid(reader).name();
-
+RVec<float> SJBtag_SF::eval(float pt, float eta) {
     // Note: this is for b jets, for c jets (light jets) use FLAV_C (FLAV_UDSG)
-    auto sf_lookup = [this](float eta, float pt){
-        std::vector<float> v;
+    // auto sf_lookup = [this](float eta, float pt){
+    //     std::vector<float> v;
 
-        v.push_back(reader.eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt));
-        v.push_back(reader.eval_auto_bounds("up", BTagEntry::FLAV_B, eta, pt));
-        v.push_back(reader.eval_auto_bounds("down", BTagEntry::FLAV_B, eta, pt));
+    //     v.push_back(reader.eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt));
+    //     v.push_back(reader.eval_auto_bounds("up", BTagEntry::FLAV_B, eta, pt));
+    //     v.push_back(reader.eval_auto_bounds("down", BTagEntry::FLAV_B, eta, pt));
 
-        return v;
-    };
+    //     return v;
+    // };
 
-    auto jet_scalefactor = Map(pt_vec, eta_vec, sf_lookup);
+    // auto jet_scalefactor = Map(pt_vec, eta_vec, sf_lookup);
+
+    RVec<float> jet_scalefactor(3);
+
+    float nom = reader.eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt);
+    float up = reader.eval_auto_bounds("up", BTagEntry::FLAV_B, eta, pt);
+    float down = reader.eval_auto_bounds("down", BTagEntry::FLAV_B, eta, pt);
+
+    jet_scalefactor[0] = nom;
+    jet_scalefactor[1] = up;
+    jet_scalefactor[2] = down;
 
     return jet_scalefactor;
 };
