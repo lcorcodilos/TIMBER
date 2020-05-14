@@ -19,10 +19,12 @@ The name of the file is used to determine which type of output to expect for tem
 An output of the first type should have a file name that end in `_SF.cc` or `_weight.cc` and outputs of
 of the second type should have a file name that ends in `_uncert.cc`.
 
-It's also possible to output a vector of vectors. For example, if all jets in a vector need the same 
-correction, a vector of `[nominal,up,down]` vectors could be calculated where the index of each 
-`[nominal,up,down]` matches the index of the matching jet in the jet vector. Just make sure to document 
-this for users so accessing the output is clear!
+Outputing a vector of vectors is not currently supported. One might want to do this
+if, for example, all jets in a vector need the same 
+correction in which case a vector of `[nominal,up,down]` vectors could be calculated where the index of each 
+`[nominal,up,down]` matches the index of the matching jet in the jet vector. While this would be 
+useful, some development would be needed to determine how to handle the various output value with
+the automated correction tools.
 
 The arguments to the `eval` function can be the names of the branches that you'd like to 
 evaluate if you know these ahead of time (for example, if there are specific NanoAOD branches that
