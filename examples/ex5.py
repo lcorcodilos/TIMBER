@@ -32,16 +32,6 @@ myCuts.Add('pt_cut',      'FatJet_pt[0] > 400 && FatJet_pt[1] > 400')
 myCuts.Add('eta_cut',     'FatJet_eta[0] < 2.4 && FatJet_eta[1] < 2.4')
 myCuts.Add('tau2', 'FatJet_tau2[0] > 0 && FatJet_tau2[1] > 0')
 
-# Add a correction
-lead_sjbt_corr = Correction('lead_sjbtag_corr',
-                       'HAMMER/Framework/Corrections/SJBtag_SF.cc',
-                       ['16','"DeepCSV"','"loose"'])
-# Clone it and make the sublead version (cpObj to use same object instance of SJBtag_SF class)
-sublead_sjbt_corr = lead_sjbt_corr.Clone('sublead_sjbtag_corr',cpObj=True)
-# Add both
-a.AddCorrection(lead_sjbt_corr, eval_args=['FatJet_pt[0]','FatJet_eta[0]'])
-a.AddCorrection(sublead_sjbt_corr, eval_args=['FatJet_pt[1]','FatJet_eta[1]'])
-
 ###################
 # Make a VarGroup #
 ###################
@@ -68,12 +58,21 @@ topCuts.Add('lead_mass_cut','lead_mass > 105 && lead_mass < 220')
 topCuts.Add('sublead_mass_cut','sublead_mass > 105 && sublead_mass < 220')
 
 a.Apply([myCuts,myVars,topCuts])
-# a.GetActiveNode().Snapshot(['.*lead_sjbtag_corr.*'],'ex5_out.root','mySnapshot',lazy=False,openOption='RECREATE')
 
-# # Make weights based on the corrections
+# Add a correction
+lead_sjbt_corr = Correction('lead_sjbtag_corr',
+                       'HAMMER/Framework/Corrections/SJBtag_SF.cc',
+                       ['16','"DeepCSV"','"loose"'])
+# Clone it and make the sublead version (cpObj to use same object instance of SJBtag_SF class)
+sublead_sjbt_corr = lead_sjbt_corr.Clone('sublead_sjbtag_corr',cpObj=True)
+# Add both
+a.AddCorrection(lead_sjbt_corr, eval_args=['FatJet_pt[0]','FatJet_eta[0]'])
+a.AddCorrection(sublead_sjbt_corr, eval_args=['FatJet_pt[1]','FatJet_eta[1]'])
+
+# Make weights based on the corrections
 a.MakeWeightCols()
 
-# # Make HistGroup of uncertainty templates and draw them in pdf
+# Make HistGroup of uncertainty templates and draw them in pdf
 templateGroup = a.MakeTemplateHistos(ROOT.TH1F('mtt','m_{tt}',30,500,3500), 'invariantMass')
 
 a.DrawTemplates(templateGroup,'test_templates/')

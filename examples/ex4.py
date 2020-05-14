@@ -91,5 +91,5 @@ out = ROOT.TFile.Open('ex4_out.root','UPDATE')
 nminus1Hists.Do('Write')
 out.Close()
 
-# NOTE: Can plot full node to tree to ensure selections were made accurately (requires graphviz python package)
+# NOTE: Can plot full node to tree to ensure selections were made accurately (requires graphviz python package and Graphviz installation)
 a.PrintNodeTree('ex4_tree')
