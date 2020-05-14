@@ -425,34 +425,34 @@ class analyzer(object):
         """
         if node == None: node = self.ActiveNode
 
-        correctionsToApply = _checkCorrections(correctionNames,dropList)
+        correctionsToApply = self.__checkCorrections(correctionNames,dropList)
         
         # Build nominal weight first (only "weight", no "uncert")
         weights = {'nominal':''}
         for corrname in correctionsToApply:
-            corr = self.Corrections[corrname] # MIGHT BE ABLE TO REMOVE THIS LINE AND THE STORING OF Correction INSTANCES ENTIRELY (ie just store names)
+            corr = self.Corrections[corrname] 
             if corr.GetType() == 'weight':
-                weights['nominal']+=corrname+'__nom * '
-            weights['nominal'] = weights['nominal'][:-3]
+                weights['nominal']+=' '+corrname+'__nom *'
+        weights['nominal'] = weights['nominal'][:-2]
 
         # Vary nominal weight for each correction ("weight" and "uncert")
         for corrname in correctionsToApply:
             corr = self.Corrections[corrname]
             if corr.GetType() == 'weight':
-                weights[corrname+'_up'] = weights['nominal'].replace(corrname+'__nom',corrname+'__up')
-                weights[corrname+'_down'] = weights['nominal'].replace(corrname+'__nom',corrname+'__down')
+                weights[corrname+'_up'] = weights['nominal'].replace(' '+corrname+'__nom',' '+corrname+'__up') #extra space at beginning of replace to avoid substrings
+                weights[corrname+'_down'] = weights['nominal'].replace(' '+corrname+'__nom',' '+corrname+'__down')
             elif corr.GetType() == 'uncert':
                 weights[corrname+'_up'] = weights['nominal']+' * '+corrname+'__up'
                 weights[corrname+'_down'] = weights['nominal']+' * '+corrname+'__down'
             else:
-                raise TypeError('ERROR: Correction "%s" not identified as either "weight" or "uncert"'%(corrname))
+                raise TypeError('Correction "%s" not identified as either "weight" or "uncert"'%(corrname))
 
         # Make a node with all weights calculated
         returnNode = node
         for weight in weights.keys():
-            returnNode = returnNode.Define('weight__'+weight,weights[weight])
+            returnNode = self.Define('weight__'+weight,weights[weight],returnNode)
         
-        self.TrackNode(returnNode)
+        # self.TrackNode(returnNode)
         return self.SetActiveNode(returnNode)
 
     def MakeTemplateHistos(self,templateHist,variables,node=None):
@@ -471,22 +471,33 @@ class analyzer(object):
 
         out = HistGroup('Templates')
 
-        weight_cols = [cname for cname in node.GetColumnNames() if 'weight__' in cname]
+        weight_cols = [cname for cname in node.DataFrame.GetColumnNames() if 'weight__' in cname]
         baseName = templateHist.GetName()
         baseTitle = templateHist.GetTitle()
         binningTuple,dimension = GetHistBinningTuple(templateHist)
 
-        for c in weight_cols:
+        if isinstance(variables,str): variables = [variables]
+
+        for cname in weight_cols:
             histname = '%s__%s'%(baseName,cname.replace('weight__',''))
-            histtitle = '%s__%s'%(baseTitle,cname.replace('weight__',''))
+            histtitle = '%s__%s'%(baseTitle,cname.replace('weight__','').replace('__nominal',''))
 
             # Build the tuple to give as argument for template
             template_attr = (histname,histtitle) + binningTuple
 
-            if dimension == 1: thishist = node.DataFrame.Histo1D(template_attr,variables[0],cname)
-            elif dimension == 2: thishist = node.DataFrame.Histo2D(template_attr,variables[0],variables[1],cname)
-            elif dimension == 3: thishist = node.DataFrame.Histo3D(template_attr,variables[0],variables[1],variables[2],cname)
-           
+            if dimension == 1: 
+                thishist = node.DataFrame.Histo1D(template_attr,variables[0],cname)
+                thishist.GetXaxis().SetTitle(variables[0])
+            elif dimension == 2: 
+                thishist = node.DataFrame.Histo2D(template_attr,variables[0],variables[1],cname)
+                thishist.GetXaxis().SetTitle(variables[0])
+                thishist.GetYaxis().SetTitle(variables[1])
+            elif dimension == 3: 
+                thishist = node.DataFrame.Histo3D(template_attr,variables[0],variables[1],variables[2],cname)
+                thishist.GetXaxis().SetTitle(variables[0])
+                thishist.GetYaxis().SetTitle(variables[1])
+                thishist.GetZaxis().SetTitle(variables[2])
+
             out.Add(histname,thishist)
 
         return out
@@ -494,7 +505,7 @@ class analyzer(object):
     #----------------------------------------------------------------#
     # Draw templates together to see up/down effects against nominal #
     #----------------------------------------------------------------#
-    def DrawTemplates(hGroup,saveLocation,projection='X',projectionArgs=(),fileType='pdf'):
+    def DrawTemplates(self,hGroup,saveLocation,projection='X',projectionArgs=(),fileType='pdf'):
         """Draw the template uncertainty histograms created by MakeTemplateHistos(). 
 
         Args:
@@ -508,7 +519,9 @@ class analyzer(object):
             None
 
         """
-        canvas = TCanvas('c','',800,700)
+        ROOT.gStyle.SetOptStat(0)
+
+        canvas = ROOT.TCanvas('c','',800,700)
 
         # Initial setup
         baseName = list(hGroup.keys())[0].split('__')[0]
@@ -516,17 +529,20 @@ class analyzer(object):
         if isinstance(hGroup[baseName+'__nominal'],ROOT.TH2):
             projectedGroup = hGroup.Do("Projection"+projection.upper(),projectionArgs)
         if isinstance(hGroup[baseName+'__nominal'],ROOT.TH3): 
-            raise TypeError("ERROR: DrawTemplates() does not currently support TH3 templates.")
+            raise TypeError("DrawTemplates() does not currently support TH3 templates.")
         else:
             projectedGroup = hGroup
 
         nominal = projectedGroup[baseName+'__nominal']
-        nominal.SetLineColor(kBlack)
-        nominal.SetFillColor(kYellow-2)
+        nominal.SetLineColor(ROOT.kBlack)
+        nominal.SetFillColor(ROOT.kOrange)
+        nominal.SetMaximum(1.3*nominal.GetMaximum())
+        nominal.SetTitle('')
+
         corrections = []
         for name in projectedGroup.keys():
-            corr = name.split('__')[1].split('_')[0]
-            if corr not in corrections:
+            corr = name.split('__')[1].replace('_up','').replace('_down','')
+            if corr not in corrections and corr != "nominal":
                 corrections.append(corr)
 
         # Loop over corrections
@@ -536,19 +552,19 @@ class analyzer(object):
             up = projectedGroup[baseName+'__'+corr+'_up']
             down = projectedGroup[baseName+'__'+corr+'_down']
 
-            up.SetLineColor(kRed)
-            down.SetLineColor(kBlue)
+            up.SetLineColor(ROOT.kRed)
+            down.SetLineColor(ROOT.kBlue)
 
-            leg = TLegend(0.8,0.8,0.9,0.9)
-            leg.AddEntry('Nominal',nominal,'lf')
-            leg.AddEntry('Up',up,'l')
-            leg.AddEntry('Down',down,'l')
+            leg = ROOT.TLegend(0.7,0.7,0.9,0.9)
+            leg.AddEntry(nominal.GetName(),'Nominal','lf')
+            leg.AddEntry(up.GetName(),'Up','l')
+            leg.AddEntry(down.GetName(),'Down','l')
 
             up.Draw('same hist')
             down.Draw('same hist')
             leg.Draw()
 
-            canvas.Print('%s/%s_%s.%s'%(saveLocation,baseName,corr,fileType),fileType)
+            canvas.Print('%s%s_%s.%s'%(saveLocation,baseName,corr,fileType),fileType)
 
     #----------------------------------------------#
     # Build N-1 "tree" and outputs the final nodes #
