@@ -129,7 +129,7 @@ class analyzer(object):
         Returns:
             New #ActiveNode
         """
-        if not isinstance(node,Node): raise ValueError('ERROR: SetActiveNode() does not support argument of type %s. Please provide a Node.'%(type(node)))
+        if not isinstance(node,Node): raise ValueError('SetActiveNode() does not support argument of type %s. Please provide a Node.'%(type(node)))
         else: self.ActiveNode = node
 
         return self.ActiveNode
@@ -165,10 +165,10 @@ class analyzer(object):
         
         if isinstance(node,Node):
             if node.name in self.GetTrackedNodeNames():
-                raise ValueError('ERROR: Attempting to track a node with the same name as one that is already being tracked (%s). Please provide a unique node.'%(node.name))
+                raise ValueError('Attempting to track a node with the same name as one that is already being tracked (%s). Please provide a unique node.'%(node.name))
             self.AllNodes.append(node)
         else:
-            raise TypeError('ERROR: TrackNode() does not support arguments of type %s. Please provide a Node.'%(type(node)))
+            raise TypeError('TrackNode() does not support arguments of type %s. Please provide a Node.'%(type(node)))
 
     def GetTrackedNodeNames(self):
         return [n.name for n in self.AllNodes]
@@ -225,7 +225,7 @@ class analyzer(object):
             newNode = newNode.Cut(name,cuts)
             self.TrackNode(newNode)
         else:
-            raise TypeError("ERROR: Second argument to Cut method must be a string of a single cut or of type CutGroup (which provides an OrderedDict).")
+            raise TypeError("Second argument to Cut method must be a string of a single cut or of type CutGroup (which provides an OrderedDict).")
 
         # self.TrackNode(newNode)
         return self.SetActiveNode(newNode)
@@ -259,7 +259,7 @@ class analyzer(object):
             newNode = newNode.Define(name,variables)
             self.TrackNode(newNode)
         else:
-            raise TypeError("ERROR: Second argument to Define method must be a string of a single var or of type VarGroup (which provides an OrderedDict).")
+            raise TypeError("Second argument to Define method must be a string of a single var or of type VarGroup (which provides an OrderedDict).")
 
         # self.TrackNode(newNode)
         return self.SetActiveNode(newNode)
@@ -290,7 +290,7 @@ class analyzer(object):
                 elif ag.type == 'var':
                     newNode = self.Define(name=ag.name,variables=ag,node=newNode)
                 else:
-                    raise TypeError("ERROR: Apply() group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)
+                    raise TypeError("Apply() group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)
 
         return self.SetActiveNode(newNode)
 
@@ -626,7 +626,7 @@ class Node(object):
         self.DataFrame = DataFrame
         self.name = name
         self.action = action
-        self.parent = parent # None or specified
+        # self.parent = parent # None or specified
         self.children = children # list of length 0, 1, or 2
         
     def Clone(self,name=''):
@@ -634,29 +634,29 @@ class Node(object):
         else: return Node(name,self.DataFrame,parent=[],children=[],action=self.action)
 
     # Set parent of type Node
-    def SetParent(self,parent): 
-        if isinstance(parent,Node): self.parent = parent
-        else: raise TypeError('ERROR: Parent is not an instance of Node class for node %s'%self.name)
+    # def SetParent(self,parent): 
+    #     if isinstance(parent,Node): self.parent = parent
+    #     else: raise TypeError('Parent is not an instance of Node class for node %s'%self.name)
 
     # Set one child of type Node
     def SetChild(self,child,overwrite=False,silence=False):
         if overwrite: self.children = []
-        # if len(children > 1): raise ValueError("ERROR: More than two children are trying to be added node %s. You may use the overwrite option to erase current children or find your bug."%self.name)
+        # if len(children > 1): raise ValueError("More than two children are trying to be added node %s. You may use the overwrite option to erase current children or find your bug."%self.name)
         # if len(children == 1) and silence == False: raw_input('WARNING: One child is already specified for node %s and you are attempting to add another (max 2). Press enter to confirm and continue.'%self.name)
 
         if isinstance(child,Node): self.children.append(child)
-        else: raise TypeError('ERROR: Child is not an instance of Node class for node %s' %self.name)
+        else: raise TypeError('Child is not an instance of Node class for node %s' %self.name)
 
     # Set children of type Node
     def SetChildren(self,children,overwrite=False):
         if overwrite: self.children = []
-        # if len(children > 0): raise ValueError("ERROR: More than two children are trying to be added node %s. You may use the overwrite option to erase current children or find your bug."%self.name)
+        # if len(children > 0): raise ValueError("More than two children are trying to be added node %s. You may use the overwrite option to erase current children or find your bug."%self.name)
         
         if isinstance(children,dict) and 'pass' in children.keys() and 'fail' in children.keys() and len(children.keys()) == 2:
             self.SetChild(children['pass'])
             self.SetChild(children['fail'])
         else:
-            raise TypeError('ERROR: Attempting to add a dictionary of children of incorrect format. Argument must be a dict of format {"pass":class.Node,"fail":class.Node}')
+            raise TypeError('Attempting to add a dictionary of children of incorrect format. Argument must be a dict of format {"pass":class.Node,"fail":class.Node}')
 
     # Define a new column to calculate
     def Define(self,name,var):
@@ -695,7 +695,7 @@ class Node(object):
                     var = ag[v]
                     node = node.Define(v,var)
             else:
-                raise TypeError("ERROR: Group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)                
+                raise TypeError("Group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)                
 
         return node
 
@@ -786,7 +786,7 @@ class CustomCscripts(object):
         
     def Import(self,textfilename,name=None):
         if name == None: name = textfilename.split('/')[-1].replace('.cc','')
-        if not os.path.isfile(textfilename): raise NameError('ERROR: %s does not exist'%textfilename)
+        if not os.path.isfile(textfilename): raise NameError('%s does not exist'%textfilename)
         else: print('Found '+textfilename)
         f = open(textfilename,'r')
         blockcode = f.read()
@@ -1134,7 +1134,7 @@ class Correction(object):
     #             break
 
     #     if full_funcname not in self.__funcNames:
-    #         raise ValueError('ERROR: Function name "%s" is not defined for %s'%(funcname,self.__script))
+    #         raise ValueError('Function name "%s" is not defined for %s'%(funcname,self.__script))
 
     #     self.__mainFunc = full_funcname
     #     return self
