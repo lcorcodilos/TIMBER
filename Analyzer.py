@@ -15,7 +15,6 @@ from clang import cindex
 from clang import cindex
 libs = subprocess.Popen('$ROOTSYS/bin/root-config --libs',shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
 rootpath = subprocess.Popen('echo $ROOTSYS',shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
-cpp_idx = cindex.Index.create()
 cpp_args =  '-x c++ -c --std=c++11 -I %s/include %s -lstdc++'%(rootpath,libs)
 cpp_args = cpp_args.split(' ')
 
@@ -324,7 +323,7 @@ class analyzer(object):
     # Corrections/Weights #
     #---------------------#
     # Want to correct with analyzer class so we can track what corrections have been made for final weights and if we want to save them out in a group when snapshotting
-    def AddCorrection(self,correction,node=None):
+    def AddCorrection(self,correction,eval_args,node=None):
         """Add a Correction to track.
 
         Args:
@@ -338,21 +337,29 @@ class analyzer(object):
         if node == None: node = self.ActiveNode
 
         # Quick type checking
-        if not isinstance(node,Node): raise TypeError('ERROR: AddCorrection() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
-        elif not isinstance(correction,Correction): raise TypeError('ERROR: AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
+        if not isinstance(node,Node): raise TypeError('AddCorrection() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
+        elif not isinstance(correction,Correction): raise TypeError('AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
+
+        # Make the call
+        correction.MakeCall(eval_args)
 
         # Add correction to track
         self.Corrections[correction.name] = correction
 
         # Make new node
-        newNode = node.Define(correction.name+'__vec',correction.GetCall())
-        if correction.type == 'weight':
-            returnNode = newNode.Define(correction.name+'__nom',correction.name+'__vec[0]').Define(correction.name+'__up',correction.name+'__vec[1]').Define(correction.name+'__down',correction.name+'__vec[2]')
-        elif correction.type == 'uncert':
-            returnNode = newNode.Define(correction.name+'__up',correction.name+'__vec[0]').Define(correction.name+'__down',correction.name+'__vec[1]')
+        newNode = self.Define(correction.name+'__vec',correction.GetCall(),node)
+        if correction.GetType() == 'weight':
+            variations = ['nom','up','down']
+        elif correction.GetType() == 'uncert':
+            variations = ['up','down']
+        else:
+            raise ValueError('Correction.GetType() returns %s'%correction.GetType())
 
-        self.TrackNode(returnNode)
-        return self.SetActiveNode(returnNode)
+        for i,v in enumerate(variations):
+            newNode = self.Define(correction.name+'__'+v,correction.name+'__vec[%s]'%i,newNode)
+
+        # self.TrackNode(returnNode)
+        return self.SetActiveNode(newNode)
 
     def AddCorrections(self,correctionList=[],node=None):
         """Add multiple Corrections to track.
@@ -371,8 +378,25 @@ class analyzer(object):
         for c in correctionList:
             newNode = self.AddCorrection(newNode,c)
 
-        self.TrackNode(newNode)
         return self.SetActiveNode(newNode)
+
+    def __checkCorrections(self,correctionNames,dropList):
+        # Quick type checking
+        if correctionNames == None: correctionsToApply = self.Corrections.keys()
+        elif not isinstance(correctionNames,list):
+            raise ValueError('MakeWeights() does not support correctionNames argument of type %s. Please provide a list.'%(type(correctionNames)))
+        else: correctionsToApply = correctionNames
+
+        # Drop specified weights from consideration
+        if not isinstance(dropList,list):
+            raise ValueError('MakeWeights() does not support dropList argument of type %s. Please provide a list.'%(type(dropList)))
+        else: 
+            newCorrsToApply = []
+            for corr in correctionsToApply:
+                if corr not in dropList: newCorrsToApply.append(corr)
+            correctionsToApply = newCorrsToApply
+
+        return correctionsToApply
 
     def MakeWeightCols(self,node=None,correctionNames=None,dropList=[]):
         """Makes columns/variables to store total weights based on the Corrections that have been added.
@@ -594,26 +618,7 @@ class analyzer(object):
         
         dot.render(outfilename)
 
-    #-------------------#
-    # Private functions #
-    #-------------------#
-    def __checkCorrections(self,correctionNames,dropList):
-        # Quick type checking
-        if correctionNames == None: correctionsToApply = self.Corrections.keys()
-        elif not isinstance(correctionNames,list):
-            raise ValueError('ERROR: MakeWeights() does not support correctionNames argument of type %s. Please provide a list.'%(type(correctionNames)))
-        else: correctionsToApply = correctionNames
-
-        # Drop specified weights from consideration
-        if not isinstance(dropList,list):
-            raise ValueError('ERROR: MakeWeights() does not support dropList argument of type %s. Please provide a list.'%(type(dropList)))
-        else: 
-            newCorrsToApply = []
-            for corr in correctionsToApply:
-                if corr not in dropList: newCorrsToApply.append(corr)
-            correctionsToApply = newCorrsToApply
-
-        return correctionsToApply
+    
 
 
 ##############
@@ -979,7 +984,7 @@ class Correction(object):
     <up, down> for "uncert" type.    
 
     """
-    def __init__(self,name,script,mainFunc='eval',args=[],corrtype=None,isClone=False,columnList=None):
+    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False,existingObject=None):
         """Constructor
 
         Args:
@@ -1000,25 +1005,26 @@ class Correction(object):
 
         self.name = name
         self.__script = script
-        self.__type = self._getType() if corrtype == None else corrtype:
-        if self.__type not in ['weight','uncert']:
-            raise ValueError('Correction() type provided to %s is not "weight" or "uncert".'%self.name)
-
-        self.__funcInfo = self._getFuncInfo(mainFunc)
+        self.__setType(corrtype)
+        self.__funcInfo = self.__getFuncInfo(mainFunc)
         self.__mainFunc = self.__funcInfo.keys()[0]
         self.__columnNames = LoadColumnNames() if columnList == None else columnList
+        self.__constructor = constructor 
+        self.__objectName = self.name if existingObject == None else existingObject
+        self.__call = None
         # self.__funcNames = self.__funcInfo.keys()        
 
-        if not isClone:
+        if not isClone or existingObject == None:
             if self.__mainFunc not in self.__funcInfo.keys():
-                raise ValueError('ERROR: Correction() instance provided with mainFunc argument that does not exist in %s'%self.__script)
+                raise ValueError('Correction() instance provided with mainFunc argument that does not exist in %s'%self.__script)
+            CompileCpp(self.__script,library=True)
 
-            script_file = open(script,'r')
-            CompileCpp(script)
+        if existingObject == None:
+            self.__instantiate(constructor)      
 
-        self.__call = self.__makeCall(args)
+        
 
-    def Clone(self,name,newMainFunc=None):
+    def Clone(self,name,newMainFunc=None,cpObj=False):
         """Makes a clone of current instance.
 
         If multiple functions are in the same script, one can clone the correction and reassign the mainFunc
@@ -1030,40 +1036,46 @@ class Correction(object):
         Returns:
             Clone of instance with same script but different function (newMainFunc)
         """
-        if newMainFunc == None: newMainFunc = self.__mainFunc
-        return Correction(name,self.__script,newMainFunc,corrtype=self.__type,isClone=True)
+        if newMainFunc == None: newMainFunc = self.__mainFunc.split('::')[-1]
 
-    def __getType(self):
-        self.__type = None
-        if corrtype in ['weight','uncert']:
-            self.__type = corrtype
-        elif corrtype not in ['weight','uncert'] and corrtype != None:
+        useObj = None if not cpObj else self.name
+
+        return Correction(name,self.__script,self.__constructor,newMainFunc,corrtype=self.__type,isClone=True,columnList=self.__columnNames,existingObject=useObj)
+
+    def __setType(self,in_type):
+        out_type = None
+        if in_type in ['weight','uncert']:
+            out_type = in_type
+        elif in_type not in ['weight','uncert'] and in_type != None:
             print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...')
 
-        if self.__type == None:
+        if out_type == None:
             if '_weight.cc' in self.__script or '_SF.cc' in self.__script:
-                self.__type = 'weight'
+                out_type = 'weight'
             elif '_uncert.cc' in self.__script:
-                self.__type = 'uncert'
+                out_type = 'uncert'
             else:
-                raise ValueError('ERROR: Attempting to add correction "%s" but script name (%s) does not end in "_weight.cc", "_SF.cc" or "_uncert.cc" and so the type of correction cannot be determined.'%(name))
+                raise ValueError('Attempting to add correction "%s" but script name (%s) does not end in "_weight.cc", "_SF.cc" or "_uncert.cc" and so the type of correction cannot be determined.'%(self.name,self.__script))
+
+        self.__type = out_type
 
     def __getFuncInfo(self,funcname):
         cpp_idx = cindex.Index.create()
-
         translation_unit = cpp_idx.parse(self.__script, args=cpp_args)
         filename = translation_unit.cursor.spelling
         funcs = OrderedDict()
         namespace = ''
         classname = None
         methodname = None
+
+        print ('Parsing %s with clang...'%self.__script)
         # Walk cursor over script
         for c in translation_unit.cursor.walk_preorder():
             # Pass over file errors
             if c.location.file is None: pass
             elif c.location.file.name != filename: pass
             else:
-
+                # print '%s \t\t %s'%(c.kind,c.spelling)
                 # Check for namespace with functions inside
                 if c.kind == cindex.CursorKind.NAMESPACE:
                     namespace = c.spelling
@@ -1074,16 +1086,32 @@ class Correction(object):
                     if namespace != '': # this will not support classes outside of the namespace and always assume it's inside
                         methodname = namespace + '::' + methodname
 
-                    print methodname
+                    # print methodname.split('::')[-1]
+                    # print funcname
                     if methodname.split('::')[-1] == funcname:
+                        # print methodname
                         if methodname not in funcs.keys():
+                            # print methodname
                             funcs[methodname] = OrderedDict()
                             for arg in c.get_arguments():
                                 funcs[methodname][arg.spelling] = arg.type.spelling 
 
+        # print funcs
         return funcs
 
-    def __makeCall(self,in_args):
+    def __instantiate(self,args):
+        classname = self.__mainFunc.split('::')[-2]
+        # constructor_name = classname+'::'+classname
+
+        line = classname + ' ' + self.name+'('
+        for a in args:
+            line += a+', '
+        line = line[:-2] + ');'
+
+        print ('Instantiating...')
+        ROOT.gInterpreter.Declare(line)
+
+    def MakeCall(self,in_args):
         """Return the call to the function with the branch/column names deduced or added from input.
 
         Returns:
@@ -1093,7 +1121,7 @@ class Correction(object):
         args_to_use = []
 
         if len(in_args) == 0:
-            print ('Determining arguments for correction %s automatically'%self.__name)
+            print ('Determining arguments for correction %s automatically'%self.name)
             for a in self.__funcInfo[self.__mainFunc].keys():
                 if a not in self.__columnNames:
                     raise ValueError('Not able to find arg %s written in %s in available columns'%(a,self.__script))
@@ -1105,15 +1133,15 @@ class Correction(object):
                 raise ValueError('Provided number of arguments (%s) does not match required (%s).'%(len(in_args),len(self.__funcInfo[self.__mainFunc].keys())))
             args_to_use = in_args
 
-        var_types = [self.__funcInfo[self.__mainFunc][a] for a in self.__funcInfo[self.__mainFunc].keys()]
-        out = '%s('%self.__mainFunc
+        # var_types = [self.__funcInfo[self.__mainFunc][a] for a in self.__funcInfo[self.__mainFunc].keys()]
+        out = '%s('%(self.__objectName+'.'+self.__mainFunc.split('::')[-1])
         for i,a in enumerate(args_to_use):
-            out += '%s,'%(var_types[i],a)
-        out = out[:-1]+')'
+            out += '%s, '%(a)
+        out = out[:-2]+')'
 
-        return out
+        self.__call = out
 
-    def GetCall():
+    def GetCall(self):
         return self.__call
 
     # def SetMainFunc(self,funcname):
