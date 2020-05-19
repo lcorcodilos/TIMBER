@@ -8,6 +8,7 @@ import json, ROOT, os
 from ROOT import RDataFrame
 import CMS_lumi, tdrstyle
 from contextlib import contextmanager
+from collections import OrderedDict
 ###################
 # HAMMER specific #
 ###################
@@ -39,6 +40,16 @@ def CutflowHist(name,node):
         h.SetBinContent(i+1,cut.GetPass())
 
     return h
+
+def CutflowTxt(name,node):
+    filters = node.DataFrame.GetFilterNames()
+    rdf_report = node.DataFrame.Report()
+    ncuts = len(filters)
+    out = open(name,'w')
+    for i,filtername in enumerate(filters): 
+        out.write('%s %s'%(filtername,cut.GetPass()))
+    out.close()
+
 
 ###########
 # Generic #
