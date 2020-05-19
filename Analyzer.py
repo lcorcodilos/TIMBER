@@ -87,8 +87,10 @@ class analyzer(object):
         elif ".txt" in self.__fileName: 
             txt_file = open(self.__fileName,"r")
             for l in txt_file.readlines():
-                self.__eventsChain.Add(l.strip())
-                RunChain.Add(l.strip())
+                thisfile = l.strip()
+                if 'root://' not in thisfile and '/store/' in thisfile: thisfile='root://cmsxrootd.fnal.gov/'+thisfile
+                self.__eventsChain.Add(thisfile)
+                RunChain.Add(thisfile)
         else: 
             raise Exception("File name extension not supported. Please provide a single .root file or a .txt file with a line-separated list of .root files to chain together.")
 
