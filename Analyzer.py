@@ -193,6 +193,14 @@ class analyzer(object):
 
         return out
 
+    def GetFileName(self):
+        """Get input file name.
+
+        Returns:
+            File name
+        """
+        return self.__fileName
+
     #------------------------------------------------------------#
     # Node operations - same as Node class methods but have      #
     # benefit of class keeping track of an Active Node (reset by #
@@ -386,12 +394,12 @@ class analyzer(object):
         # Quick type checking
         if correctionNames == None: correctionsToApply = self.Corrections.keys()
         elif not isinstance(correctionNames,list):
-            raise ValueError('MakeWeights() does not support correctionNames argument of type %s. Please provide a list.'%(type(correctionNames)))
+            raise ValueError('MakeWeightCols() does not support correctionNames argument of type %s. Please provide a list.'%(type(correctionNames)))
         else: correctionsToApply = correctionNames
 
         # Drop specified weights from consideration
         if not isinstance(dropList,list):
-            raise ValueError('MakeWeights() does not support dropList argument of type %s. Please provide a list.'%(type(dropList)))
+            raise ValueError('MakeWeightCols() does not support dropList argument of type %s. Please provide a list.'%(type(dropList)))
         else: 
             newCorrsToApply = []
             for corr in correctionsToApply:
