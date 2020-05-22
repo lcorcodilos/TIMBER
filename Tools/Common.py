@@ -47,6 +47,7 @@ def CutflowTxt(name,node):
     ncuts = len(filters)
     out = open(name,'w')
     for i,filtername in enumerate(filters): 
+        cut = rdf_report.At(filtername)
         out.write('%s %s'%(filtername,cut.GetPass()))
     out.close()
 
