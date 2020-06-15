@@ -699,9 +699,17 @@ class Node(object):
     # Define a new cut to make
     def Cut(self,name,cut):
         print('Filtering %s: %s' %(name,cut))
-        newNode = Node(name,self.DataFrame.Filter(cut,name),parent=self,children=[],action=cut)
-        self.SetChild(newNode)
-        return newNode
+
+        try:
+          self.DataFrame.HasColumn(cut.split('==')[0])
+          newNode = Node(name,self.DataFrame.Filter(cut,name),parent=self,children=[],action=cut)
+          self.SetChild(newNode)
+          return newNode
+        except TypeError as type_err:
+          print('!!!Exception: The column {0} does not exist'.format(cut.split('==')[0]))
+          print(type_err)
+          return self
+
 
     # Discriminate based on a discriminator
     def Discriminate(self,name,discriminator):
