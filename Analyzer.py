@@ -703,12 +703,12 @@ class Node(object):
         try:
           self.DataFrame.HasColumn(cut.split('==')[0])
           newNode = Node(name,self.DataFrame.Filter(cut,name),parent=self,children=[],action=cut)
-          self.SetChild(newNode)
-          return newNode
         except TypeError as type_err:
-          print('!!!Exception: The column {0} does not exist'.format(cut.split('==')[0]))
+          print('!!!Exception: The column {0} does not exist, creating it with value 0'.format(cut.split('==')[0]))
           print(type_err)
-          return self
+          newNode = Node(name, self.Define(cut.split('==')[0], "0").DataFrame.Filter(cut, name), parent=self, children=[], action=cut)
+        self.SetChild(newNode)
+        return newNode
 
 
     # Discriminate based on a discriminator
