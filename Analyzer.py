@@ -908,7 +908,7 @@ class Group(object):
         return self.items.keys()
     
     def __setitem__(self, key, value):
-            self.__dict__[key] = value
+        self.items[key] = value
 
     def __getitem__(self,key):
         """
