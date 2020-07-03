@@ -906,6 +906,9 @@ class Group(object):
             Names/keys from Group.
         """
         return self.items.keys()
+    
+    def __setitem__(self, key, value):
+            self.__dict__[key] = value
 
     def __getitem__(self,key):
         """
