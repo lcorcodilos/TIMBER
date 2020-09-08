@@ -65,7 +65,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a href="https://lcorcodilos.github.io/TIMBER/">Full Documentation</a></p>
-<p>TIMBER is an easy-to-use and fast python analysis framework used to quickly process CMS data sets. Default arguments assume the use of the NanoAOD format but any ROOT TTree can be processed.</p>
+<p>TIMBER (**T**ree **I**nterface for **M**aking **B**inned **E**vents with **R**DataFrame) is an easy-to-use and fast python analysis framework used to quickly process CMS data sets. Default arguments assume the use of the NanoAOD format but any ROOT TTree can be processed.</p>
 <h2>The RDataFrame Backbone</h2>
 <p>TIMBER's speed comes from the use of <a href="https://root.cern/doc/master/classROOT_1_1RDataFrame.html">ROOT's RDataFrame</a>. RDataFrame offers "multi-threading and other low-level optimisations" which make analysis level processing faster and more efficient than traditional python <code>for</code> loops. However, RDataFrame derives its speed from its C++ back-end and while an RDataFrame object can be instantiated and manipulated in python, any actions on it are written in C++ (even if you're using python).</p>
 <h2>No more <code>for</code> loops</h2>
