@@ -1,6 +1,6 @@
 """@docstring Analyzer.py
 
-Home of main classes for HAMMER.
+Home of main classes for TIMBER.
 
 """
 
@@ -19,7 +19,7 @@ cpp_args =  '-x c++ -c --std=c++11 -I %s/include %s -lstdc++'%(rootpath,libs)
 cpp_args = cpp_args.split(' ')
 
 class analyzer(object):
-    """Main class for HAMMER. 
+    """Main class for TIMBER. 
 
     Implements an interface with ROOT's RDataFrame (RDF). The default values assume the data is in
     NanoAOD format. However, any TTree can be used. The class works on the basis of nodes and actions
@@ -1218,7 +1218,7 @@ class Correction(object):
         return self.__funcInfo.keys()
 
 def LoadColumnNames(source=None):
-    file = 'HAMMER/data/NanoAODv6_cols.txt' if source == None else source
+    file = 'TIMBER/data/NanoAODv6_cols.txt' if source == None else source
     f = open(file,'r')
     cols = f.readlines()
     f.close()

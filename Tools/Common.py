@@ -1,6 +1,6 @@
 '''@docstring Common.py
 
-Home to commonly used tools available for use that can be generic or HAMMER specific
+Home to commonly used tools available for use that can be generic or TIMBER specific
 
 '''
 
@@ -10,7 +10,7 @@ import CMS_lumi, tdrstyle
 from contextlib import contextmanager
 from collections import OrderedDict
 ###################
-# HAMMER specific #
+# TIMBER specific #
 ###################
 # Returns OR string of triggers that can be given to a cut group
 def GetValidTriggers(self,trigList,DataFrame):

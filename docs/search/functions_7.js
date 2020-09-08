@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['makecall',['MakeCall',['../class_h_a_m_m_e_r_1_1_analyzer_1_1_correction.html#ac20dcfd139399fa95255e37c57c2e002',1,'HAMMER::Analyzer::Correction']]],
-  ['maketemplatehistos',['MakeTemplateHistos',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#a8a733fb28d6b945f5e84a3a3f5690955',1,'HAMMER::Analyzer::analyzer']]],
-  ['makeweightcols',['MakeWeightCols',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#aad2a8d36d013ba3f3fcfe013f8f9c181',1,'HAMMER::Analyzer::analyzer']]]
+  ['makecall',['MakeCall',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#a023b82a12dbc2a1a994bb1458f5f8396',1,'TIMBER::Analyzer::Correction']]],
+  ['maketemplatehistos',['MakeTemplateHistos',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ab2e50aad13204266ea2c43bfe7b77ccb',1,'TIMBER::Analyzer::analyzer']]],
+  ['makeweightcols',['MakeWeightCols',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a7609bf648d55b5253c29a8588a63f7e4',1,'TIMBER::Analyzer::analyzer']]]
 ];

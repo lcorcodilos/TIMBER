@@ -2,7 +2,7 @@
 # and plot a histogram of the new variable. Cover some of the common mistakes via NOTES
 # Prerequisite: Requires having a valid proxy for xrootd
 
-from HAMMER.Analyzer import *
+from TIMBER.Analyzer import *
 import ROOT,sys
 
 sys.path.append('../../')
@@ -11,7 +11,7 @@ sys.path.append('../../')
 ROOT.ROOT.EnableImplicitMT(4)
 
 file_name = 'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16NanoAODv6/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v2/20000/740B9BA3-8A64-B743-9439-2930CE247191.root'
-# file_name = 'HAMMER/examples/ttbar16_sample.root'
+# file_name = 'TIMBER/examples/ttbar16_sample.root'
 
 # Create analyzer instance
 a = analyzer(file_name)

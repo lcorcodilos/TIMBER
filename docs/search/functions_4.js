@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['filtercolumnnames',['FilterColumnNames',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#a7ab4c83c6a9f9d12712fd7b45fbb93fc',1,'HAMMER::Analyzer::analyzer']]]
+  ['filtercolumnnames',['FilterColumnNames',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a0c5e48c4caea8a9402a5003f6d9d5218',1,'TIMBER::Analyzer::analyzer']]]
 ];

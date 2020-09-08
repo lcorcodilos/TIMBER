@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['name',['name',['../class_h_a_m_m_e_r_1_1_analyzer_1_1_group.html#aef507e55b4a23e9eb628e61f6057902c',1,'HAMMER.Analyzer.Group.name()'],['../class_h_a_m_m_e_r_1_1_analyzer_1_1_correction.html#afb74f53a814c1c12268cf73f5c5cb8c7',1,'HAMMER.Analyzer.Correction.name()']]],
-  ['nminus1',['Nminus1',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#a718138010e29212399a4a4778ddd5625',1,'HAMMER::Analyzer::analyzer']]],
-  ['node',['Node',['../class_h_a_m_m_e_r_1_1_analyzer_1_1_node.html',1,'HAMMER::Analyzer']]]
+  ['name',['name',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#aacb9171e34799a5b9e86f5f687230ef2',1,'TIMBER.Analyzer.Group.name()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#a14c46c4d02dec27db914b3b567737b09',1,'TIMBER.Analyzer.Correction.name()']]],
+  ['nminus1',['Nminus1',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ad5eb8461f4feeb8bf98509a63a4634d1',1,'TIMBER::Analyzer::analyzer']]],
+  ['node',['Node',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html',1,'TIMBER::Analyzer']]]
 ];

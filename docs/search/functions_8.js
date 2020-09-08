@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nminus1',['Nminus1',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#a718138010e29212399a4a4778ddd5625',1,'HAMMER::Analyzer::analyzer']]]
+  ['nminus1',['Nminus1',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ad5eb8461f4feeb8bf98509a63a4634d1',1,'TIMBER::Analyzer::analyzer']]]
 ];

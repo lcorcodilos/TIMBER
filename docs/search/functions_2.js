@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['clone',['Clone',['../class_h_a_m_m_e_r_1_1_analyzer_1_1_correction.html#a523d9e9616ca0c2b26f745a1d3e04a8b',1,'HAMMER::Analyzer::Correction']]],
-  ['cut',['Cut',['../class_h_a_m_m_e_r_1_1_analyzer_1_1analyzer.html#ac474f8e685e430d67c907f53d81bafef',1,'HAMMER::Analyzer::analyzer']]]
+  ['clone',['Clone',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#add4b66f448eca6c52b88b07864c57d8f',1,'TIMBER::Analyzer::Correction']]],
+  ['cut',['Cut',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a39d3baf72bf749abff4d81b1e94e6c76',1,'TIMBER::Analyzer::analyzer']]]
 ];

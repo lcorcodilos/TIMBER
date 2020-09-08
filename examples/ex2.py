@@ -2,8 +2,8 @@
 # Cover some of the common mistakes via NOTES.
 # Prerequisite: Requires having a valid proxy for xrootd
 
-from HAMMER.Analyzer import *
-from HAMMER.Tools.Common import *
+from TIMBER.Analyzer import *
+from TIMBER.Tools.Common import *
 import ROOT,sys
 
 sys.path.append('../../')
@@ -12,13 +12,13 @@ sys.path.append('../../')
 ROOT.ROOT.EnableImplicitMT(4)
 
 file_name = 'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16NanoAODv6/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v2/20000/740B9BA3-8A64-B743-9439-2930CE247191.root'
-# file_name = 'HAMMER/examples/ttbar16_sample.root'
+# file_name = 'TIMBER/examples/ttbar16_sample.root'
 
 # Import the C++
 cc = CommonCscripts() # library of simple C++ functions
 CompileCpp(cc.vector) # Compile (via gInterpreter) the string of C++ code
 CompileCpp(cc.invariantMass)
-CompileCpp('HAMMER/examples/example.cc') # Compile a full file - currently does nothing
+CompileCpp('TIMBER/examples/example.cc') # Compile a full file - currently does nothing
 
 # Create analyzer instance
 a = analyzer(file_name)

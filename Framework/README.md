@@ -4,7 +4,7 @@ Home to generic C++ modules.
 
 # Developer Notes
 
-Adding C++ modules for use in HAMMER is relatively simple but the code makes several
+Adding C++ modules for use in TIMBER is relatively simple but the code makes several
 assumptions about the structure of the module if you'd like to use it as a #Correction.
 
 A correction module should be built as a class so that the initializer can be used to book
@@ -29,11 +29,11 @@ the automated correction tools.
 The arguments to the `eval` function can be the names of the branches that you'd like to 
 evaluate if you know these ahead of time (for example, if there are specific NanoAOD branches that
 are used every time).
-HAMMER will use clang to read the argument names defined in the function and match them to
+TIMBER will use clang to read the argument names defined in the function and match them to
 the branches available in the RDataFrame analyzed automatically so the user does not need to provide
 the arguments (this is useful if your function needs many arguments that are laborious to write out
 several times). If there are no matches to available branches, the user will have to
 provide the arguments (for example, if the module is very general).
 
 Finally, the use of the module should be well documented for manipulation by [Doxygen](http://www.doxygen.nl/manual/docblocks.html)
-so that users can easily understand the input and output in the HAMMER documentation.
+so that users can easily understand the input and output in the TIMBER documentation.

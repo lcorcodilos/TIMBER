@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['group',['Group',['../class_h_a_m_m_e_r_1_1_analyzer_1_1_group.html',1,'HAMMER::Analyzer']]]
+  ['group',['Group',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html',1,'TIMBER::Analyzer']]]
 ];
