@@ -4,6 +4,21 @@
 TIMBER (**T**ree **I**nterface for **M**aking **B**inned **E**vents with **R**DataFrame) is an easy-to-use and fast python analysis framework used to quickly process CMS data sets. 
 Default arguments assume the use of the NanoAOD format but any ROOT TTree can be processed.
 
+## Quick install
+Python 3 is recommended since 2.7 is now no longer supported. Remember to make sure your 
+ROOT version has been built with python3 compatibility.
+Working in a virtual environment is also recommended. Below are the commands for using virtualenv but
+you're obviously free to use your favorite tool for the job (you can install virtualenv for Python 3 with 
+`pip3 install virtualenv`).
+
+```
+virtualenv timber-env
+source timber-env/bin/activate
+git clone https://github.com/lcorcodilos/TIMBER.git
+cd TIMBER
+python setup.py install
+```
+
 ## The RDataFrame Backbone
 TIMBER's speed comes from the use of 
 [ROOT's RDataFrame](https://root.cern/doc/master/classROOT_1_1RDataFrame.html). 
@@ -21,7 +36,6 @@ though until the data frame needs to be evaluated (ex. you ask to plot a histogr
 
 In this way, there are no more `for` loops and instead just actions on the data frame table that 
 transform it into a final table of values that the analyzer cares about. 
-
 
 ## Anatomy of a data frame
 Each row of the table is a separate event and each
@@ -45,10 +59,10 @@ TIMBER automates opening one or many ROOT files, calculating the number of event
 (provided the ROOT files are NanoAOD simulation), loading in C++ scripts for use while looping over
 the data frame, and grouping actions for easy manipulation.
 
-In addition, TIMBER treats each step in the RDataFrame processing as a "node" and keeps track of these nodes. Each action (or group of actions) performed on a node produces another node and nodes store information about their parents or children. This makes it possible to write tools like `Nminus1()` which takes as input a node and a group of cuts to apply and returns N new nodes, each with every cut but one applied.
+In addition, TIMBER treats each step in the RDataFrame processing as a "node" and keeps track of these nodes as a larger tree. 
+Each action (or group of actions) performed on a node produces another node and nodes store information about their parents or children. This makes it possible to write tools like `Nminus1()` which takes as input a node and a group of cuts to apply and returns N new nodes, each with every cut but one applied.
 
 Finally, the RDataFrame for each node is always kept easily accessible so that any of the [native RDataFrame tools](https://root.cern/doc/master/classROOT_1_1RDataFrame.html) are at the user's fingertips.
-
 
 ## Sharing is caring
 TIMBER includes a repository of common algorithms used frequently in CMS 

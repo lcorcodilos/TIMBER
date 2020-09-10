@@ -6,7 +6,7 @@ Home to commonly used tools available for use that can be generic or TIMBER spec
 
 import json, ROOT, os
 from ROOT import RDataFrame
-import CMS_lumi, tdrstyle
+import Tools.CMS_lumi, Tools.tdrstyle
 from contextlib import contextmanager
 from collections import OrderedDict
 ###################
