@@ -5,7 +5,19 @@ TIMBER (**T**ree **I**nterface for **M**aking **B**inned **E**vents with **R**Da
 Default arguments assume the use of the NanoAOD format but any ROOT TTree can be processed.
 
 ## Quick install
+Python 3 is recommended since 2.7 is now no longer supported. Remember to make sure your 
+ROOT version has been built with python3 compatibility.
+Working in a virtual environment is also recommended. Below are the commands for using virtualenv but
+you're obviously free to use your favorite tool for the job (you can install virtualenv for Python 3 with 
+`pip3 install virtualenv`).
 
+```
+virtualenv timber-env
+source timber-env/bin/activate
+git clone https://github.com/lcorcodilos/TIMBER.git
+cd TIMBER
+python setup.py install
+```
 
 ## The RDataFrame Backbone
 TIMBER's speed comes from the use of 
