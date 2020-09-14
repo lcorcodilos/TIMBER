@@ -12,22 +12,6 @@ from collections import OrderedDict
 ###################
 # TIMBER specific #
 ###################
-# Returns OR string of triggers that can be given to a cut group
-def GetValidTriggers(self,trigList,DataFrame):
-    trigOR = ""
-    colnames = DataFrame.GetColumnNames()
-    for i,t in enumerate(trigList):
-        if t in colnames: 
-            if trigOR == '': trigOR = "(("+t+"==1)" 
-            else: trigOR += " || ("+t+"==1)"
-        else:
-            print("Trigger %s does not exist in TTree. Skipping." %(t))
-
-    if trigOR != "": 
-        trigOR += ")" 
-        
-    return trigOR
-
 # Draws a cutflow histogram using the report feature of RDF.
 def CutflowHist(name,node):
     filters = node.DataFrame.GetFilterNames()

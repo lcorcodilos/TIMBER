@@ -88,7 +88,7 @@ class analyzer(object):
             txt_file = open(self.__fileName,"r")
             for l in txt_file.readlines():
                 thisfile = l.strip()
-                if 'root://' not in thisfile and '/store/' in thisfile: thisfile='root://cmsxrootd.fnal.gov/'+thisfile
+                if 'root://' not in thisfile and '/store/' in thisfile: thisfile='root://cms-xrd-global.cern.ch/'+thisfile
                 self.__eventsChain.Add(thisfile)
                 RunChain.Add(thisfile)
         else: 
@@ -192,6 +192,55 @@ class analyzer(object):
             else: print ("WARNING: Column %s not found and will be dropped."%i)
 
         return out
+
+    def ConcatCols(self,colnames,val='1',connector='&&'):
+        '''Concatenates a list of column names evaluating to a common `val` (usually 1 or 0) 
+        with some `connector` (boolean logic operator).
+
+        Returns:
+            str: List concatenated as a string with the assigned evaluations (`val`) and `connector`
+        '''
+        concat = ''
+        for i,c in enumerate(colnames):
+            if concat == '': 
+                concat = '((%s==%s)'%(c,val)
+            else: 
+                concat += ' %s (%s==%s)'%(connector,c,val)
+
+        if concat != '': 
+            concat += ')' 
+            
+        return concat
+
+    def GetTriggerString(self,trigList):
+        '''Checks input list for missing triggers and drops those missing (FilterColumnNames)
+        and then concatenates those remaining into an OR string (ConcatCols)
+
+        Args:
+            trigList [str]: List of trigger names 
+
+        Returns:
+            str: Statement to evaluate as the set of triggers.
+        '''
+        trig_string = ''
+        available_trigs = self.FilterColumnNames(trigList)
+        trig_string = self.ConcatCols(available_trigs,'1','||')
+        return trig_string
+
+    def GetFlagString(self,flagList):
+        '''Checks input list for missing flags and drops those missing (FilterColumnNames)
+        and then concatenates those remaining into an AND string (ConcatCols)
+
+        Args:
+            flagList [str]: List of flag names 
+
+        Returns:
+            str: Statement to evaluate as the set of flags.
+        '''
+        flag_string = ''
+        available_flags = self.FilterColumnNames(flagList)
+        flag_string = self.ConcatCols(available_flags,'1','&&')
+        return flag_string
 
     def GetFileName(self):
         """Get input file name.
