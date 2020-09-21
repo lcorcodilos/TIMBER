@@ -810,6 +810,8 @@ class CommonCscripts(object):
     """Common c scripts all in analyzer namespace"""
     def __init__(self):
         super(CommonCscripts, self).__init__()
+        self.VecOps = 'using namespace ROOT::VecOps;'
+
         self.deltaPhi ='''
         namespace analyzer {
           double deltaPhi(double phi1,double phi2) {
@@ -854,26 +856,6 @@ class CommonCscripts(object):
         }
         '''
         
-class CustomCscripts(object):
-    """docstring for CustomCscripts"""
-    def __init__(self):
-        super(CustomCscripts, self).__init__()
-        self.example = '''
-        namespace analyzer {
-            return 0
-        }
-        '''
-        
-    def Import(self,textfilename,name=None):
-        if name == None: name = textfilename.split('/')[-1].replace('.cc','')
-        if not os.path.isfile(textfilename): raise NameError('%s does not exist'%textfilename)
-        else: print('Found '+textfilename)
-        f = open(textfilename,'r')
-        blockcode = f.read()
-        setattr(self,name,blockcode)
-        CompileCpp(blockcode)
-
-
 ##############################
 # Group class and subclasses #
 ##############################
