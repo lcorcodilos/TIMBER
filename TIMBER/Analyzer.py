@@ -1050,6 +1050,7 @@ class Correction(object):
         Args:
             name (str): Correction name.
             script (str): Path to C++ script with function to calculate correction.
+            constructor ([str]): Arguments to script class constructor.
             mainFunc (str): Name of the function to use inside script. Defaults to None
                 and the class will try to deduce it.
             corrtype (str): "weight" (nominal weight to apply with an uncertainty) or 
