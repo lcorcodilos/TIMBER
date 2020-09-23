@@ -13,8 +13,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/lcorcodilos/TIMBER",
     packages=setuptools.find_packages(),
+    package_data={'TIMBER': ['data/*','data/OfficialSFs/*','data/pileup/*.root']},
     install_requires = [
         "graphviz",
-        "clang"
+        "clang==6.0.0.2"
     ]
 )
