@@ -3,3 +3,7 @@
 *.d
 *.so
 *.pcm
+__pycache__
+build
+*.egg-info
+dist
