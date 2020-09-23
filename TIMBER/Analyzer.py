@@ -1178,16 +1178,17 @@ class Correction(object):
         print ('Instantiating...')
         ROOT.gInterpreter.Declare(line)
 
-    def MakeCall(self,in_args):
+    def MakeCall(self,inArgs):
         """Return the call to the function with the branch/column names deduced or added from input.
 
         Returns:
+            inArgs ([str]): List of arguments (NanoAOD branch names) to provide to per-event evaluation method.
             String of call to function from C++ script.
         """
 
         args_to_use = []
 
-        if len(in_args) == 0:
+        if len(inArgs) == 0:
             print ('Determining arguments for correction %s automatically'%self.name)
             for a in self.__funcInfo[self.__mainFunc].keys():
                 if a not in self.__columnNames:
@@ -1196,9 +1197,9 @@ class Correction(object):
                     args_to_use.append(a)
 
         else:
-            if len(in_args) != len(self.__funcInfo[self.__mainFunc].keys()):
+            if len(inArgs) != len(self.__funcInfo[self.__mainFunc].keys()):
                 raise ValueError('Provided number of arguments (%s) does not match required (%s).'%(len(in_args),len(self.__funcInfo[self.__mainFunc].keys())))
-            args_to_use = in_args
+            args_to_use = inArgs
 
         # var_types = [self.__funcInfo[self.__mainFunc][a] for a in self.__funcInfo[self.__mainFunc].keys()]
         out = '%s('%(self.__objectName+'.'+self.__mainFunc.split('::')[-1])
