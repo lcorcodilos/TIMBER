@@ -117,6 +117,10 @@ class analyzer(object):
                 if self.preV6: self.genEventCount+= RunChain.genEventCount
                 else: self.genEventCount+= RunChain.genEventCount_
         
+        # Tell ROOT about TIMBERPATH
+        self.TIMBERPATH = os.path.dirname(os.path.abspath(__file__))
+        CompileCpp('std::string TIMBERPATH = "%s";'%(self.TIMBERPATH)
+
         # Cleanup
         del RunChain
         self.ActiveNode = self.BaseNode
