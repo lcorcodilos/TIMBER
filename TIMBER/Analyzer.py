@@ -386,11 +386,13 @@ class analyzer(object):
     # Corrections/Weights #
     #---------------------#
     # Want to correct with analyzer class so we can track what corrections have been made for final weights and if we want to save them out in a group when snapshotting
-    def AddCorrection(self,correction,eval_args,node=None):
+    def AddCorrection(self,correction,evalArgs=[],node=None):
         """Add a Correction to track.
 
         Args:
             correction (Correction): Correction object to add.
+            evalArgs ([str]): List of arguments (NanoAOD branch names) to provide to per-event evaluation method.
+                              Default empty and clang will deduce if method definition argument names match columns in RDataFrame.
             node (Node): Node to add correction on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
 
         Returns:
@@ -404,7 +406,7 @@ class analyzer(object):
         elif not isinstance(correction,Correction): raise TypeError('AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
 
         # Make the call
-        correction.MakeCall(eval_args)
+        correction.MakeCall(evalArgs)
 
         # Add correction to track
         self.Corrections[correction.name] = correction
