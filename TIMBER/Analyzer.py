@@ -1117,9 +1117,9 @@ class Correction(object):
             print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...')
 
         if out_type == None:
-            if '_weight.cc' in self.__script or '_SF.cc' in self.__script:
+            if '_weight.cc' in self.__script.lower() or '_sf.cc' in self.__script.lower():
                 out_type = 'weight'
-            elif '_uncert.cc' in self.__script:
+            elif '_uncert.cc' in self.__script.lower():
                 out_type = 'uncert'
             else:
                 raise ValueError('Attempting to add correction "%s" but script name (%s) does not end in "_weight.cc", "_SF.cc" or "_uncert.cc" and so the type of correction cannot be determined.'%(self.name,self.__script))
