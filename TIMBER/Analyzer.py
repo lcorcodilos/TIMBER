@@ -119,7 +119,7 @@ class analyzer(object):
         
         # Tell ROOT about TIMBERPATH
         self.TIMBERPATH = os.path.dirname(os.path.abspath(__file__))
-        CompileCpp('std::string TIMBERPATH = "%s";'%(self.TIMBERPATH)
+        CompileCpp('std::string TIMBERPATH = "%s";'%(self.TIMBERPATH))
 
         # Cleanup
         del RunChain

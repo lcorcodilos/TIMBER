@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['sjbtag_5fsf',['SJBtag_SF',['../class_s_j_btag___s_f.html',1,'']]]
+  ['histgroup',['HistGroup',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_hist_group.html',1,'TIMBER::Analyzer']]]
 ];
