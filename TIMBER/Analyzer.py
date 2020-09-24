@@ -891,6 +891,13 @@ class Group(object):
         """
         return self.items.keys()
     
+    def values(self):
+        """Gets list of values from Group.
+        Returns:
+            Values from Group.
+        """
+        return self.items.values()
+    
     def __setitem__(self, key, value):
         self.items[key] = value
 
