@@ -18,6 +18,8 @@ rootpath = subprocess.Popen('echo $ROOTSYS',shell=True, stdout=subprocess.PIPE).
 cpp_args =  '-x c++ -c --std=c++11 -I %s/include %s -lstdc++'%(rootpath,libs)
 cpp_args = cpp_args.split(' ')
 
+TIMBERPATH = os.environ["TIMBERPATH"]
+
 class analyzer(object):
     """Main class for TIMBER. 
 
@@ -116,10 +118,6 @@ class analyzer(object):
                 RunChain.GetEntry(i)
                 if self.preV6: self.genEventCount+= RunChain.genEventCount
                 else: self.genEventCount+= RunChain.genEventCount_
-        
-        # Tell ROOT about TIMBERPATH
-        self.TIMBERPATH = os.path.dirname(os.path.abspath(__file__))
-        CompileCpp('std::string TIMBERPATH = "%s";'%(self.TIMBERPATH))
 
         # Cleanup
         del RunChain
@@ -808,7 +806,7 @@ class Node(object):
             column_vec = column_vec[:-1]
                # column_vec.push_back(c)
             self.DataFrame.Snapshot(treename,outfilename,column_vec,opts)
-
+      
 ##############################
 # Group class and subclasses #
 ##############################
@@ -890,7 +888,7 @@ class Group(object):
             Names/keys from Group.
         """
         return self.items.keys()
-    
+
     def values(self):
         """Gets list of values from Group.
         Returns:
@@ -1096,11 +1094,10 @@ class Correction(object):
             if c.location.file is None: pass
             elif c.location.file.name != filename: pass
             else:
-                # print '%s \t\t %s'%(c.kind,c.spelling)
                 # Check for namespace with functions inside
                 if c.kind == cindex.CursorKind.NAMESPACE:
                     namespace = c.spelling
-                elif c.kind == cindex.CursorKind.CLASS_DECL:
+                elif c.kind == cindex.CursorKind.CLASS_DECL or c.kind == cindex.CursorKind.CONSTRUCTOR:
                     classname = c.spelling
                 elif c.kind == cindex.CursorKind.CXX_METHOD:
                     methodname = classname+'::'+c.spelling
@@ -1211,7 +1208,10 @@ class Correction(object):
         return self.__funcInfo.keys()
 
 def LoadColumnNames(source=None):
-    file = 'TIMBER/data/NanoAODv6_cols.txt' if source == None else source
+    if source == None: 
+        file = TIMBERPATH+'/data/NanoAODv6_cols.txt'
+    else:
+        file = source
     f = open(file,'r')
     cols = f.readlines()
     f.close()
