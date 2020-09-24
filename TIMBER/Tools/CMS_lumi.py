@@ -26,13 +26,16 @@ relExtraDY = 1.2
 extraOverCmsTextSize  = 0.76
 
 lumi_13TeV = "137 fb^{-1}"
+lumi_2016_13TeV = "35.9 fb^{-1}"
+lumi_2017_13TeV = "41.5 fb^{-1}"
+lumi_2018_13TeV = "60 fb^{-1}"
 lumi_8TeV  = "19.7 fb^{-1}" 
 lumi_7TeV  = "5.1 fb^{-1}"
 lumi_sqrtS = ""
 
 drawLogo      = False
 
-def CMS_lumi(pad,  iPeriod=4,  iPosX=11 ):
+def CMS_lumi(pad,  iPeriod=4,  iPosX=11, sim=False ):
     outOfFrame    = False
     if(iPosX/10==0 ): outOfFrame = True
 
@@ -56,38 +59,52 @@ def CMS_lumi(pad,  iPeriod=4,  iPosX=11 ):
     pad.cd()
 
     lumiText = ""
-    if( iPeriod==1 ):
-        lumiText += lumi_7TeV
-        lumiText += " (7 TeV)"
-    elif ( iPeriod==2 ):
-        lumiText += lumi_8TeV
-        lumiText += " (8 TeV)"
+    # if( iPeriod==1 ):
+    #     lumiText += lumi_7TeV
+    #     lumiText += " (7 TeV)"
+    # elif ( iPeriod==2 ):
+    #     lumiText += lumi_8TeV
+    #     lumiText += " (8 TeV)"
 
-    elif( iPeriod==3 ):      
-        lumiText = lumi_8TeV 
-        lumiText += " (8 TeV)"
-        lumiText += " + "
-        lumiText += lumi_7TeV
-        lumiText += " (7 TeV)"
-    elif ( iPeriod==4 ):
+    # elif( iPeriod==3 ):      
+    #     lumiText = lumi_8TeV 
+    #     lumiText += " (8 TeV)"
+    #     lumiText += " + "
+    #     lumiText += lumi_7TeV
+    #     lumiText += " (7 TeV)"
+    if ( iPeriod==1 ):
         lumiText += lumi_13TeV
         lumiText += " (13 TeV)"
-    elif ( iPeriod==7 ):
-        if( outOfFrame ):lumiText += "#scale[0.85]{"
-        lumiText += lumi_13TeV 
+    elif ( iPeriod==16 ):
+        lumiText += lumi_2016_13TeV
         lumiText += " (13 TeV)"
-        lumiText += " + "
-        lumiText += lumi_8TeV 
-        lumiText += " (8 TeV)"
-        lumiText += " + "
-        lumiText += lumi_7TeV
-        lumiText += " (7 TeV)"
-        if( outOfFrame): lumiText += "}"
-    elif ( iPeriod==12 ):
-        lumiText += "8 TeV"
+    elif ( iPeriod==17 ):
+        lumiText += lumi_2017_13TeV
+        lumiText += " (13 TeV)"
+    elif ( iPeriod==18 ):
+        lumiText += lumi_2018_13TeV
+        lumiText += " (13 TeV)"
+    elif ( iPeriod==2 ):
+        lumiText += lumi_2016_13TeV+' + '+lumi_2017_13TeV + ' + ' + lumi_2018_13TeV
+        lumiText += " (13 TeV)"
+    # elif ( iPeriod==7 ):
+    #     if( outOfFrame ):lumiText += "#scale[0.85]{"
+    #     lumiText += lumi_13TeV 
+    #     lumiText += " (13 TeV)"
+    #     lumiText += " + "
+    #     lumiText += lumi_8TeV 
+    #     lumiText += " (8 TeV)"
+    #     lumiText += " + "
+    #     lumiText += lumi_7TeV
+    #     lumiText += " (7 TeV)"
+    #     if( outOfFrame): lumiText += "}"
+    # elif ( iPeriod==12 ):
+    #     lumiText += "8 TeV"
     elif ( iPeriod==0 ):
         lumiText += lumi_sqrtS
             
+    # print lumiText
+
     latex = rt.TLatex()
     latex.SetNDC()
     latex.SetTextAngle(0)
@@ -99,13 +116,13 @@ def CMS_lumi(pad,  iPeriod=4,  iPosX=11 ):
     latex.SetTextAlign(31) 
     latex.SetTextSize(lumiTextSize*t)    
 
-    latex.DrawLatex(1-r,1-t+lumiTextOffset*t,lumiText)
+    latex.DrawLatex(1-r,1-t+cmsTextOffset*t,lumiText)
 
     if( outOfFrame ):
         latex.SetTextFont(cmsTextFont)
         latex.SetTextAlign(11) 
         latex.SetTextSize(cmsTextSize*t)    
-        latex.DrawLatex(l,1-t+lumiTextOffset*t,cmsText)
+        latex.DrawLatex(l,1-t+cmsTextOffset*t,cmsText)
   
     pad.cd()
 
@@ -143,7 +160,8 @@ def CMS_lumi(pad,  iPeriod=4,  iPosX=11 ):
                 latex.SetTextFont(extraTextFont)
                 latex.SetTextAlign(align_)
                 latex.SetTextSize(extraTextSize*t)
-                latex.DrawLatex(posX_, posY_- relExtraDY*cmsTextSize*t, extraText)
+                if not sim: latex.DrawLatex(posX_, posY_- relExtraDY*cmsTextSize*t, extraText)
+                else: latex.DrawLatex(posX_, posY_- relExtraDY*cmsTextSize*t, extraText + ' simulation')
     elif( writeExtraText ):
         if( iPosX==0):
             posX_ =   l +  relPosX*(1-l-r)
@@ -152,7 +170,8 @@ def CMS_lumi(pad,  iPeriod=4,  iPosX=11 ):
         latex.SetTextFont(extraTextFont)
         latex.SetTextSize(extraTextSize*t)
         latex.SetTextAlign(align_)
-        latex.DrawLatex(posX_, posY_, extraText)      
+        if not sim: latex.DrawLatex(posX_, posY_, extraText)
+        else: latex.DrawLatex(posX_, posY_, extraText + ' simulation')
 
     pad.Update()
 
