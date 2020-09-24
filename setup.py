@@ -1,4 +1,4 @@
-import setuptools
+import setuptools, subprocess, os
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -13,9 +13,11 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/lcorcodilos/TIMBER",
     packages=setuptools.find_packages(),
-    package_data={'TIMBER': ['data/*','data/OfficialSFs/*','data/pileup/*.root']},
+    include_package_data=True,
+    # cmdclass={'install': AddToPath},
     install_requires = [
         "graphviz",
         "clang==6.0.0.2"
     ]
 )
+
