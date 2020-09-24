@@ -1,7 +1,7 @@
-if grep -q '${new_path}' <<< '${PATH}'
+if grep -q '${TIMBERPATH}' <<< '${PATH}'
 then
   echo 'TIMBER already on PATH'
 else
-  export PATH=${PATH}:$new_path/Framework:$new_path/data
+  export PATH=${PATH}:$TIMBERPATH/Framework:$TIMBERPATH/data
   echo 'TIMBER added to PATH'
 fi

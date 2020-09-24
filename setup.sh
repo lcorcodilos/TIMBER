@@ -7,14 +7,14 @@ fi
 
 python setup.py install
 activate_path=$VIRTUAL_ENV/bin/activate
-new_path="$PWD/TIMBER/"
+TIMBERPATH="$PWD/TIMBER"
 
-if grep -q $new_path $activate_path
+if grep -q $TIMBERPATH $activate_path
 then
   echo "TIMBER path already in activate"
 else 
   printf "\n\n" > activate_ext.sh.cpy
-  echo new_path=${PWD}/TIMBER/ >> activate_ext.sh.cpy
+  echo "export TIMBERPATH=${TIMBERPATH}" >> activate_ext.sh.cpy
   cat activate_ext.sh >> activate_ext.sh.cpy
   source activate_ext.sh.cpy
   cat activate_ext.sh.cpy >> $activate_path
