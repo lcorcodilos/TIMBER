@@ -40,6 +40,9 @@ def CutflowTxt(name,node):
 # Generic #
 ###########
 def CompileCpp(blockcode,library=False):
+    if os.environ["TIMBERPATH"] not in ROOT.gSystem.GetIncludePath():
+        ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"]+'/')
+
     if not library:
         if '.cc' not in blockcode:
             ROOT.gInterpreter.Declare(blockcode)
