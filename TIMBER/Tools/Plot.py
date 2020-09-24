@@ -29,7 +29,7 @@ def StitchQCD(QCDdict,normDict=None):
 
     return out
 
-def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},colors={},scale=True):
+def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},colors={},scale=True,stackBkg=False):
     '''Create a plot that compares the shapes of backgrounds versus signal.
        Backgrounds will be stacked together and signals will be plot separately.
        Total background and signals are scaled to 1 if scale = True. Inputs organized 
@@ -46,23 +46,26 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     '''
     # Initialize
     c = ROOT.TCanvas('c','c',800,700)
-    legend = ROOT.TLegend(0.6,0.72,0.87,0.93)
+    legend = ROOT.TLegend(0.6,0.72,0.87,0.88)
     legend.SetBorderSize(0)
-    bkgStack = ROOT.THStack('Totbkg','Total Bkg - '+prettyvarname)
-    bkgStack.SetTitle(';%s;%s'%(prettyvarname,'A.U.'))
+    ROOT.gStyle.SetTextFont(42)
+    ROOT.gStyle.SetOptStat(0)
+    if stackBkg:
+        bkgStack = ROOT.THStack('Totbkg','Total Bkg - '+prettyvarname)
+        bkgStack.SetTitle(';%s;%s'%(prettyvarname,'A.U.'))
+         # Add bkgs to integral
+        for bkey in bkgs.keys():
+            tot_bkg_int += bkgs[bkey].Integral()
 
     tot_bkg_int = 0
     if colors == None:
         colors = {'signal':ROOT.kBlue,'qcd':ROOT.kYellow,'ttbar':ROOT.kRed,'multijet':ROOT.kYellow}
-
-    # Add bkgs to integral
-    for bkey in bkgs.keys():
-        tot_bkg_int += bkgs[bkey].Integral()
         
     if scale:
         # Scale bkgs to total integral
         for bkey in bkgs.keys():
-            bkgs[bkey].Scale(1.0/tot_bkg_int)
+            if stackBkg: bkgs[bkey].Scale(1.0/tot_bkg_int)
+            else: bkgs[bkey].Scale(1.0/bkgs[bkey].Integral())
         # Scale signals
         for skey in signals.keys():
             signals[skey].Scale(1.0/signals[skey].Integral())
@@ -79,9 +82,9 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
         else: leg_name = pname
         # If bkg, set fill color and add to stack
         if pname in bkgs.keys():
-            h.SetFillColor(colors[pname])
-            h.SetLineWidth(0)
-            bkgStack.Add(h)
+            h.SetFillColorAlpha(colors[pname],0.2)
+            h.SetLineWidth(0) 
+            if stackBkg: bkgStack.Add(h)
             if colors[pname] not in colors_in_legend:
                 legend.AddEntry(h,leg_name,'f')
                 colors_in_legend.append(colors[pname])
@@ -94,14 +97,25 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
                 legend.AddEntry(h,leg_name,'l')
                 colors_in_legend.append(colors[pname])
 
-    maximum =  bkgStack.GetMaximum()*1.5
-    bkgStack.SetMaximum(maximum)
-    ROOT.gStyle.SetTextFont(42)
+    if stackBkg:
+        maximum =  bkgStack.GetMaximum()*1.8
+        bkgStack.SetMaximum(maximum)
+    else:
+        maximum = bkgs.values()[0].GetMaximum()*2
+        for p in procs.values():
+            p.SetMaximum(maximum)
+    
 
     c.cd()
-    bkgStack.Draw('hist')
-    bkgStack.GetXaxis().SetTitleOffset(1.1)
-    bkgStack.Draw('hist')
+    if len(bkgs.keys()) > 0:
+        if stackBkg:
+            bkgStack.Draw('hist')
+            bkgStack.GetXaxis().SetTitleOffset(1.1)
+            bkgStack.Draw('hist')
+        else:
+            for bkg in bkgs.values():
+                bkg.GetXaxis().SetTitleOffset(1.1)
+                bkg.Draw('same hist')
     for h in signals.values():
         h.Draw('same hist')
     legend.Draw()

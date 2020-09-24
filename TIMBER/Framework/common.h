@@ -31,6 +31,12 @@ namespace analyzer {
     double invariantMass(ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2) {
         return (v1+v2).M();
     }
+    double invariantMass(int idx1, int idx2, RVec<float> pts, RVec<float> etas, RVec<float> phis, RVec<float> masses) {
+        ROOT::Math::PtEtaPhiMVector v1, v2;
+        v1.SetCoordinates(pts[idx1],etas[idx1],phis[idx1],masses[idx1]);
+        v2.SetCoordinates(pts[idx2],etas[idx2],phis[idx2],masses[idx2]);
+        return invariantMass(v1,v2);
+    }
 
     double invariantMassThree(ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2, ROOT::Math::PtEtaPhiMVector v3) {
         return (v1+v2+v3).M();
