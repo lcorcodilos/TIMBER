@@ -50,14 +50,17 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     legend.SetBorderSize(0)
     ROOT.gStyle.SetTextFont(42)
     ROOT.gStyle.SetOptStat(0)
+    tot_bkg_int = 0
     if stackBkg:
         bkgStack = ROOT.THStack('Totbkg','Total Bkg - '+prettyvarname)
         bkgStack.SetTitle(';%s;%s'%(prettyvarname,'A.U.'))
          # Add bkgs to integral
         for bkey in bkgs.keys():
             tot_bkg_int += bkgs[bkey].Integral()
+    else:
+        for bkey in bkgs.keys():
+            bkgs[bkey].SetTitle(';%s;%s'%(prettyvarname,'A.U.'))
 
-    tot_bkg_int = 0
     if colors == None:
         colors = {'signal':ROOT.kBlue,'qcd':ROOT.kYellow,'ttbar':ROOT.kRed,'multijet':ROOT.kYellow}
         
