@@ -50,14 +50,17 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     legend.SetBorderSize(0)
     ROOT.gStyle.SetTextFont(42)
     ROOT.gStyle.SetOptStat(0)
+    tot_bkg_int = 0
     if stackBkg:
         bkgStack = ROOT.THStack('Totbkg','Total Bkg - '+prettyvarname)
         bkgStack.SetTitle(';%s;%s'%(prettyvarname,'A.U.'))
          # Add bkgs to integral
         for bkey in bkgs.keys():
             tot_bkg_int += bkgs[bkey].Integral()
+    else:
+        for bkey in bkgs.keys():
+            bkgs[bkey].SetTitle(';%s;%s'%(prettyvarname,'A.U.'))
 
-    tot_bkg_int = 0
     if colors == None:
         colors = {'signal':ROOT.kBlue,'qcd':ROOT.kYellow,'ttbar':ROOT.kRed,'multijet':ROOT.kYellow}
         
@@ -82,7 +85,7 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
         else: leg_name = pname
         # If bkg, set fill color and add to stack
         if pname in bkgs.keys():
-            h.SetFillColorAlpha(colors[pname],0.2)
+            h.SetFillColorAlpha(colors[pname],0.2 if not stackBkg else 1)
             h.SetLineWidth(0) 
             if stackBkg: bkgStack.Add(h)
             if colors[pname] not in colors_in_legend:
@@ -98,10 +101,10 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
                 colors_in_legend.append(colors[pname])
 
     if stackBkg:
-        maximum =  bkgStack.GetMaximum()*1.8
+        maximum =  max(bkgStack.GetMaximum(),signals.values()[0].GetMaximum())*1.4
         bkgStack.SetMaximum(maximum)
     else:
-        maximum = bkgs.values()[0].GetMaximum()*2
+        maximum = max(bkgs.values()[0].GetMaximum(),signals.values()[0].GetMaximum())*1.4
         for p in procs.values():
             p.SetMaximum(maximum)
     
