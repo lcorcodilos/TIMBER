@@ -1,7 +1,7 @@
 # TIMBER {#mainpage}
 [Full Documentation](https://lcorcodilos.github.io/TIMBER/)
 
-TIMBER (**T**ree **I**nterface for **M**aking **B**inned **E**vents with **R**DataFrame) is an easy-to-use and fast python analysis framework used to quickly process CMS data sets. 
+TIMBER (Tree Interface for Making Binned Events with RDataFrame) is an easy-to-use and fast python analysis framework used to quickly process CMS data sets. 
 Default arguments assume the use of the NanoAOD format but any ROOT TTree can be processed.
 
 ## Quick install
@@ -16,7 +16,7 @@ virtualenv timber-env
 source timber-env/bin/activate
 git clone https://github.com/lcorcodilos/TIMBER.git
 cd TIMBER
-python setup.py install
+source setup.sh
 ```
 
 ## The RDataFrame Backbone
@@ -52,8 +52,8 @@ This can make accessing values tricky! For example, if there's one electron in a
 ## Happy Analyzers
 TIMBER is meant to keep both the processing fast via RDataFrame and the analyzer fast via python scripting.
 
-To maintain python's appeal in HEP as a quick scripting language, TIMBER handles many of the 
-intricacies of interfacing with RDataFrame so the analyzer can focus on writing their analysis.
+To maintain python's appeal in HEP as a quick scripting language, TIMBER handles
+interfacing with RDataFrame so the analyzer can focus on writing their analysis.
 
 TIMBER automates opening one or many ROOT files, calculating the number of events generated 
 (provided the ROOT files are NanoAOD simulation), loading in C++ scripts for use while looping over
@@ -71,4 +71,3 @@ in C++ for use in `Cut` and `Define` arguments and are provided so that users ha
 Additionally, the AnalysisModules folder welcomes additions of custom C++ modules on a 
 per-analysis basis so that the code can be properly archived for future reference and for sharing
 with other analyzers.
-
