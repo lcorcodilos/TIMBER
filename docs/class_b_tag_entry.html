@@ -72,7 +72,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="_b_tag_calibration_standalone_8h_source.html">BTagCalibrationStandalone.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="build_2lib_8linux-x86__64-2_87_2_t_i_m_b_e_r_2_framework_2_external_tools_2_b_tag_calibration_standalone_8h_source.html">BTagCalibrationStandalone.h</a>&gt;</code></p>
 <div class="dynheader">
 Collaboration diagram for BTagEntry:</div>
 <div class="dyncontent">
@@ -89,20 +89,72 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a1031a5dca9c8ce2606a19b8f76ee18f4"><td class="memItemLeft" align="right" valign="top"><a id="a1031a5dca9c8ce2606a19b8f76ee18f4"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>OperatingPoint</b> { <b>OP_LOOSE</b> =0, 
+<tr class="memitem:a1031a5dca9c8ce2606a19b8f76ee18f4"><td class="memItemLeft" align="right" valign="top"><a id="a1031a5dca9c8ce2606a19b8f76ee18f4"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>OperatingPoint</b> { <br />
+&#160;&#160;<b>OP_LOOSE</b> =0, 
+<b>OP_MEDIUM</b> =1, 
+<b>OP_TIGHT</b> =2, 
+<b>OP_RESHAPING</b> =3, 
+<br />
+&#160;&#160;<b>OP_LOOSE</b> =0, 
 <b>OP_MEDIUM</b> =1, 
 <b>OP_TIGHT</b> =2, 
 <b>OP_RESHAPING</b> =3
+<br />
  }</td></tr>
 <tr class="separator:a1031a5dca9c8ce2606a19b8f76ee18f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0b62b49b3c9f52e3904efbde2fd5a34"><td class="memItemLeft" align="right" valign="top"><a id="ab0b62b49b3c9f52e3904efbde2fd5a34"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>JetFlavor</b> { <b>FLAV_B</b> =0, 
+<tr class="memitem:ab0b62b49b3c9f52e3904efbde2fd5a34"><td class="memItemLeft" align="right" valign="top"><a id="ab0b62b49b3c9f52e3904efbde2fd5a34"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>JetFlavor</b> { <br />
+&#160;&#160;<b>FLAV_B</b> =0, 
 <b>FLAV_C</b> =1, 
+<b>FLAV_UDSG</b> =2, 
+<b>FLAV_B</b> =0, 
+<br />
+&#160;&#160;<b>FLAV_C</b> =1, 
 <b>FLAV_UDSG</b> =2
+<br />
+ }</td></tr>
+<tr class="separator:ab0b62b49b3c9f52e3904efbde2fd5a34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1031a5dca9c8ce2606a19b8f76ee18f4"><td class="memItemLeft" align="right" valign="top"><a id="a1031a5dca9c8ce2606a19b8f76ee18f4"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>OperatingPoint</b> { <br />
+&#160;&#160;<b>OP_LOOSE</b> =0, 
+<b>OP_MEDIUM</b> =1, 
+<b>OP_TIGHT</b> =2, 
+<b>OP_RESHAPING</b> =3, 
+<br />
+&#160;&#160;<b>OP_LOOSE</b> =0, 
+<b>OP_MEDIUM</b> =1, 
+<b>OP_TIGHT</b> =2, 
+<b>OP_RESHAPING</b> =3
+<br />
+ }</td></tr>
+<tr class="separator:a1031a5dca9c8ce2606a19b8f76ee18f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0b62b49b3c9f52e3904efbde2fd5a34"><td class="memItemLeft" align="right" valign="top"><a id="ab0b62b49b3c9f52e3904efbde2fd5a34"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>JetFlavor</b> { <br />
+&#160;&#160;<b>FLAV_B</b> =0, 
+<b>FLAV_C</b> =1, 
+<b>FLAV_UDSG</b> =2, 
+<b>FLAV_B</b> =0, 
+<br />
+&#160;&#160;<b>FLAV_C</b> =1, 
+<b>FLAV_UDSG</b> =2
+<br />
  }</td></tr>
 <tr class="separator:ab0b62b49b3c9f52e3904efbde2fd5a34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:ae2023de00a2ae07cab150295dba88001"><td class="memItemLeft" align="right" valign="top"><a id="ae2023de00a2ae07cab150295dba88001"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BTagEntry</b> (const std::string &amp;csvLine)</td></tr>
+<tr class="separator:ae2023de00a2ae07cab150295dba88001"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65cc903d99c4293e07fe63982dd78015"><td class="memItemLeft" align="right" valign="top"><a id="a65cc903d99c4293e07fe63982dd78015"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BTagEntry</b> (const std::string &amp;func, <a class="el" href="struct_b_tag_entry_1_1_parameters.html">Parameters</a> p)</td></tr>
+<tr class="separator:a65cc903d99c4293e07fe63982dd78015"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20a048aa9be02b7259c0ff5b4a0d96c7"><td class="memItemLeft" align="right" valign="top"><a id="a20a048aa9be02b7259c0ff5b4a0d96c7"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BTagEntry</b> (const TF1 *func, <a class="el" href="struct_b_tag_entry_1_1_parameters.html">Parameters</a> p)</td></tr>
+<tr class="separator:a20a048aa9be02b7259c0ff5b4a0d96c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d669384391c444ba8b59f7da3dbbf6c"><td class="memItemLeft" align="right" valign="top"><a id="a8d669384391c444ba8b59f7da3dbbf6c"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BTagEntry</b> (const TH1 *histo, <a class="el" href="struct_b_tag_entry_1_1_parameters.html">Parameters</a> p)</td></tr>
+<tr class="separator:a8d669384391c444ba8b59f7da3dbbf6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63e43da8807ae884b7f3ed21d6ce0c0c"><td class="memItemLeft" align="right" valign="top"><a id="a63e43da8807ae884b7f3ed21d6ce0c0c"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>makeCSVLine</b> () const</td></tr>
+<tr class="separator:a63e43da8807ae884b7f3ed21d6ce0c0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2023de00a2ae07cab150295dba88001"><td class="memItemLeft" align="right" valign="top"><a id="ae2023de00a2ae07cab150295dba88001"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BTagEntry</b> (const std::string &amp;csvLine)</td></tr>
 <tr class="separator:ae2023de00a2ae07cab150295dba88001"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -127,6 +179,12 @@ static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>makeCSV
 <tr class="memitem:a62e4493a9bf28a0982ecc95d102282fb"><td class="memItemLeft" align="right" valign="top"><a id="a62e4493a9bf28a0982ecc95d102282fb"></a>
 static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>trimStr</b> (std::string str)</td></tr>
 <tr class="separator:a62e4493a9bf28a0982ecc95d102282fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0ecee960caee07fbfabae5b04623a59"><td class="memItemLeft" align="right" valign="top"><a id="ab0ecee960caee07fbfabae5b04623a59"></a>
+static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>makeCSVHeader</b> ()</td></tr>
+<tr class="separator:ab0ecee960caee07fbfabae5b04623a59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e14b57d19c271a0e3e9e33f21577686"><td class="memItemLeft" align="right" valign="top"><a id="a5e14b57d19c271a0e3e9e33f21577686"></a>
+static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>trimStr</b> (std::string str)</td></tr>
+<tr class="separator:a5e14b57d19c271a0e3e9e33f21577686"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -143,8 +201,8 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>formula</b></t
 <p>measurement_type: e.g. comb, ttbar, di-mu, boosted, ... sys_type: e.g. central, plus, minus, plus_JEC, plus_JER, ...</p>
 <p>Everything is converted into a function, as it is easiest to store it in a txt or json file. </p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
-<li>TIMBER/Framework/ExternalTools/<a class="el" href="_b_tag_calibration_standalone_8h_source.html">BTagCalibrationStandalone.h</a></li>
-<li>TIMBER/Framework/ExternalTools/BTagCalibrationStandalone.cpp</li>
+<li>build/lib.linux-x86_64-2.7/TIMBER/Framework/ExternalTools/<a class="el" href="build_2lib_8linux-x86__64-2_87_2_t_i_m_b_e_r_2_framework_2_external_tools_2_b_tag_calibration_standalone_8h_source.html">BTagCalibrationStandalone.h</a></li>
+<li>build/lib.linux-x86_64-2.7/TIMBER/Framework/ExternalTools/BTagCalibrationStandalone.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
