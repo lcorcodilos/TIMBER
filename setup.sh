@@ -7,7 +7,7 @@ fi
 
 python setup.py install
 activate_path=$VIRTUAL_ENV/bin/activate
-TIMBERPATH="$PWD/TIMBER"
+TIMBERPATH="$PWD/"
 
 if grep -q $TIMBERPATH $activate_path
 then

@@ -30,11 +30,11 @@ SJBtag_SF::SJBtag_SF(int year, std::string tagger, std::string op_string) {
 
         
         if (year == 16) {
-            csv_file = "TIMBER/data/OfficialSFs/DeepCSV_2016LegacySF_V1.csv";
+            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/DeepCSV_2016LegacySF_V1.csv";
         } else if (year == 17) {
-            csv_file = "TIMBER/data/OfficialSFs/subjet_DeepCSV_94XSF_V4_B_F.csv";
+            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/subjet_DeepCSV_94XSF_V4_B_F.csv";
         } else if (year == 18) {
-            csv_file = "TIMBER/data/OfficialSFs/DeepCSV_102XSF_V1.csv";
+            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/DeepCSV_102XSF_V1.csv";
         }
 
         // setup calibration + reader

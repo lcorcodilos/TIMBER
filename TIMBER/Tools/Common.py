@@ -41,16 +41,23 @@ def CutflowTxt(name,node):
 ###########
 def CompileCpp(blockcode,library=False):
     if os.environ["TIMBERPATH"] not in ROOT.gSystem.GetIncludePath():
-        ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"]+'/')
+        ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"])
 
     if not library:
-        if '.cc' not in blockcode:
+        if '\n' in blockcode: # must be multiline string
             ROOT.gInterpreter.Declare(blockcode)
-        else:
-            blockcode_str = open(blockcode,'r').read()
+        else: # must be file name to compile
+            if ('TIMBER/Framework/' in blockcode) and (os.environ['TIMBERPATH'] not in blockcode):
+                path = os.environ['TIMBERPATH']
+            else:
+                path = ''
+            blockcode_str = open(path+blockcode,'r').read()
             ROOT.gInterpreter.Declare(blockcode_str)
-    elif '.c' in blockcode:
-        lib_path = blockcode.replace('.','_')+'.so'
+    else:
+        if '.so' not in blockcode:
+            lib_path = blockcode.replace('.','_')+'.so'
+        else: 
+            lib_path = blockcode
         # If library exists and is older than the cc file, just load
         loaded = False
         if os.path.exists(lib_path):
@@ -60,7 +67,6 @@ def CompileCpp(blockcode,library=False):
                 print ('Loading library...')
                 ROOT.gSystem.Load(lib_path)
                 loaded = True
-               
         # Else compile a new lib
         if not loaded:
             ROOT.gSystem.AddIncludePath(" -I%s "%os.getcwd())

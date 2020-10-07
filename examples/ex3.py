@@ -11,13 +11,11 @@ sys.path.append('../../')
 # Enable using 4 threads
 ROOT.ROOT.EnableImplicitMT(4)
 
-file_name = 'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16NanoAODv6/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v2/20000/740B9BA3-8A64-B743-9439-2930CE247191.root'
-# file_name = 'TIMBER/examples/ttbar16_sample.root'
+# file_name = 'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16NanoAODv6/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v2/20000/740B9BA3-8A64-B743-9439-2930CE247191.root'
+file_name = 'TIMBER/examples/ttbar16_sample.root'
 
 # Import the C++
-cc = CommonCscripts() # library of simple C++ functions
-CompileCpp(cc.vector) # Compile (via gInterpreter) the string of C++ code
-CompileCpp(cc.invariantMass)
+CompileCpp('TIMBER/Framework/common.h') # Compile (via gInterpreter) commonly used c++ code
 CompileCpp('TIMBER/examples/example.cc') # Compile a full file
 
 # Create analyzer instance

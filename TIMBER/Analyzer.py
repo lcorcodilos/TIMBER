@@ -1023,7 +1023,7 @@ class Correction(object):
         # Correction name
 
         self.name = name
-        self.__script = script
+        self.__script = self.__getScript(script)
         self.__setType(corrtype)
         self.__funcInfo = self.__getFuncInfo(mainFunc)
         self.__mainFunc = self.__funcInfo.keys()[0]
@@ -1060,6 +1060,16 @@ class Correction(object):
         useObj = None if not cpObj else self.name
 
         return Correction(name,self.__script,self.__constructor,newMainFunc,corrtype=self.__type,isClone=True,columnList=self.__columnNames,existingObject=useObj)
+
+    def __getScript(self,script):
+        if ('TIMBER/Framework' not in script) or (TIMBERPATH in script):
+            outname = script
+        else:
+            outname = TIMBERPATH+script
+        
+        if not os.path.isfile(outname):
+            raise NameError('File %s does not exist'%outname)
+        return outname
 
     def __setType(self,in_type):
         out_type = None
@@ -1209,7 +1219,7 @@ class Correction(object):
 
 def LoadColumnNames(source=None):
     if source == None: 
-        file = TIMBERPATH+'/data/NanoAODv6_cols.txt'
+        file = TIMBERPATH+'TIMBER/data/NanoAODv6_cols.txt'
     else:
         file = source
     f = open(file,'r')

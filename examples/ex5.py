@@ -11,13 +11,11 @@ sys.path.append('../../')
 # Enable using 4 threads
 ROOT.ROOT.EnableImplicitMT(4)
 
-file_name = 'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16NanoAODv6/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v2/20000/740B9BA3-8A64-B743-9439-2930CE247191.root'
-# file_name = 'TIMBER/examples/ttbar16_sample.root'
+# file_name = 'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16NanoAODv6/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v2/20000/740B9BA3-8A64-B743-9439-2930CE247191.root'
+file_name = 'TIMBER/examples/ttbar16_sample.root'
 
 # Import the C++
-cc = CommonCscripts() # library of simple C++ functions
-CompileCpp(cc.vector) # Compile (via gInterpreter) the string of C++ code
-CompileCpp(cc.invariantMass)
+CompileCpp('TIMBER/Framework/common.h') # Compile (via gInterpreter) commonly used c++ code
 CompileCpp('TIMBER/examples/example.cc') # Compile a full file 
 
 # Create analyzer instance
@@ -66,8 +64,8 @@ lead_sjbt_corr = Correction('lead_sjbtag_corr',
 # Clone it and make the sublead version (cpObj to use same object instance of SJBtag_SF class)
 sublead_sjbt_corr = lead_sjbt_corr.Clone('sublead_sjbtag_corr',cpObj=True)
 # Add both
-a.AddCorrection(lead_sjbt_corr, eval_args=['FatJet_pt[0]','FatJet_eta[0]'])
-a.AddCorrection(sublead_sjbt_corr, eval_args=['FatJet_pt[1]','FatJet_eta[1]'])
+a.AddCorrection(lead_sjbt_corr, evalArgs=['FatJet_pt[0]','FatJet_eta[0]'])
+a.AddCorrection(sublead_sjbt_corr, evalArgs=['FatJet_pt[1]','FatJet_eta[1]'])
 
 # Make weights based on the corrections
 a.MakeWeightCols()
