@@ -123,6 +123,10 @@ class analyzer(object):
         del RunChain
         self.ActiveNode = self.BaseNode
  
+    @property
+    def DataFrame(self):
+        return self.ActiveNode.DataFrame
+
     def SetActiveNode(self,node):
         """Sets the active node.
 
