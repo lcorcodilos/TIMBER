@@ -1,6 +1,0 @@
-include TIMBER/Framework/common.h
-include TIMBER/Framework/Corrections/*.cc
-include TIMBER/Framework/ExternalTools/*
-include data/*.txt
-include data/OfficialSFs/*
-include data/pileup/*.root
