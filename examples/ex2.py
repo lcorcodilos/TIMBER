@@ -15,7 +15,7 @@ file_name = 'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16NanoAODv6/TT_T
 # file_name = 'TIMBER/examples/ttbar16_sample.root'
 
 # Import the C++
-CompileCpp('TIMBER/Framework/common.h') # Compile (via gInterpreter) commonly used c++ code
+CompileCpp('TIMBER/Framework/include/common.h') # Compile (via gInterpreter) commonly used c++ code
 CompileCpp('TIMBER/examples/example.cc') # Compile a full file - currently does nothing
 
 # Create analyzer instance
