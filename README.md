@@ -6,13 +6,14 @@ Default arguments assume the use of the NanoAOD format but any ROOT TTree can be
 
 ## Quick install
 Python 3 is recommended since 2.7 is now no longer supported. Remember to make sure your 
-ROOT version has been built with python3 compatibility.
+ROOT version has been built with Python 3 compatibility. For information on how to do this, see
+[this explanation](doxysetup/Python3.md).
 Working in a virtual environment is also recommended. Below are the commands for using virtualenv but
 you're obviously free to use your favorite tool for the job (you can install virtualenv for Python 3 with 
 `pip3 install virtualenv`).
 
 ```
-virtualenv timber-env
+python -m virtualenv timber-env
 source timber-env/bin/activate
 git clone https://github.com/lcorcodilos/TIMBER.git
 cd TIMBER

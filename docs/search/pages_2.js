@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['frequently_20asked_20questions',['Frequently Asked Questions',['../md_doxysetup__f_a_q.html',1,'']]],
-  ['framework',['Framework',['../md__t_i_m_b_e_r__framework__r_e_a_d_m_e.html',1,'']]]
+  ['getting_20a_20python_203_20compatible_20version_20of_20root',['Getting a Python 3 compatible version of ROOT',['../md_doxysetup__python3.html',1,'']]]
 ];
