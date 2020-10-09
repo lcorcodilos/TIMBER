@@ -10,7 +10,7 @@ ROOT version has been built with Python 3 compatibility. For information on how 
 [this explanation](doxysetup/Python3.md).
 Working in a virtual environment is also recommended. Below are the commands for using virtualenv but
 you're obviously free to use your favorite tool for the job (you can install virtualenv for Python 3 with 
-`pip3 install virtualenv`).
+`pip install virtualenv` (`pip3` for Python 3)).
 
 ```
 python -m virtualenv timber-env
