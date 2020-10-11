@@ -7,3 +7,6 @@ __pycache__
 build
 *.egg-info
 dist
+experimental/
+.vscode/
+examples/*.root

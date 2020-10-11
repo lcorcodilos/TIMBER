@@ -13,6 +13,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -67,8 +68,8 @@ $(function() {
 <div class="textblock"><p><a href="https://lcorcodilos.github.io/TIMBER/">Full Documentation</a></p>
 <p>TIMBER (Tree Interface for Making Binned Events with RDataFrame) is an easy-to-use and fast python analysis framework used to quickly process CMS data sets. Default arguments assume the use of the NanoAOD format but any ROOT TTree can be processed.</p>
 <h2>Quick install</h2>
-<p>Python 3 is recommended since 2.7 is now no longer supported. Remember to make sure your ROOT version has been built with python3 compatibility. Working in a virtual environment is also recommended. Below are the commands for using virtualenv but you're obviously free to use your favorite tool for the job (you can install virtualenv for Python 3 with <code>pip3 install virtualenv</code>).</p>
-<div class="fragment"><div class="line">virtualenv timber-env</div><div class="line">source timber-env/bin/activate</div><div class="line">git clone https://github.com/lcorcodilos/TIMBER.git</div><div class="line">cd TIMBER</div><div class="line">source setup.sh</div></div><!-- fragment --><h2>The RDataFrame Backbone</h2>
+<p>Python 3 is recommended since 2.7 is now no longer supported. Remember to make sure your ROOT version has been built with Python 3 compatibility. For information on how to do this, see <a class="el" href="md_doxysetup__python3.html">this explanation</a>. Working in a virtual environment is also recommended. Below are the commands for using virtualenv but you're obviously free to use your favorite tool for the job (you can install virtualenv for Python 3 with <code>pip3 install virtualenv</code>).</p>
+<div class="fragment"><div class="line">python -m virtualenv timber-env</div><div class="line">source timber-env/bin/activate</div><div class="line">git clone https://github.com/lcorcodilos/TIMBER.git</div><div class="line">cd TIMBER</div><div class="line">source setup.sh</div></div><!-- fragment --><h2>The RDataFrame Backbone</h2>
 <p>TIMBER's speed comes from the use of <a href="https://root.cern/doc/master/classROOT_1_1RDataFrame.html">ROOT's RDataFrame</a>. RDataFrame offers "multi-threading and other low-level optimisations" which make analysis level processing faster and more efficient than traditional python <code>for</code> loops. However, RDataFrame derives its speed from its C++ back-end and while an RDataFrame object can be instantiated and manipulated in python, any actions on it are written in C++ (even if you're using python).</p>
 <h2>No more <code>for</code> loops</h2>
 <p>Using RDataFrame means a fundamental re-thinking of how we treat a block of data or simulation. Instead of looping over the events or entries of a TTree (or other data format), the TTree is converted into a table called the "data frame". A user then books a number of "lazy" actions on the data frame such as filtering out events or calculating new values. These actions aren't performed though until the data frame needs to be evaluated (ex. you ask to plot a histogram from it).</p>

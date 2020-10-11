@@ -44,7 +44,7 @@ def CompileCpp(blockcode,library=False):
         ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"])
 
     if not library:
-        if '\n' in blockcode: # must be multiline string
+        if '\n' in blockcode or ';' in blockcode: # must be multiline string
             ROOT.gInterpreter.Declare(blockcode)
         else: # must be file name to compile
             if ('TIMBER/Framework/' in blockcode) and (os.environ['TIMBERPATH'] not in blockcode):

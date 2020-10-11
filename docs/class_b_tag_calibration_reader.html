@@ -13,6 +13,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -69,8 +70,6 @@ $(function() {
 <div class="title">BTagCalibrationReader Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="build_2lib_8linux-x86__64-2_87_2_t_i_m_b_e_r_2_framework_2_external_tools_2_b_tag_calibration_standalone_8h_source.html">BTagCalibrationStandalone.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -94,34 +93,19 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>eval_auto_bounds</b
 <tr class="memitem:a623105812065d4e80b4718f208272fda"><td class="memItemLeft" align="right" valign="top"><a id="a623105812065d4e80b4718f208272fda"></a>
 std::pair&lt; float, float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>min_max_pt</b> (BTagEntry::JetFlavor jf, float eta, float discr=0.) const</td></tr>
 <tr class="separator:a623105812065d4e80b4718f208272fda"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28cacf8934288d7fcce178d840da431d"><td class="memItemLeft" align="right" valign="top"><a id="a28cacf8934288d7fcce178d840da431d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BTagCalibrationReader</b> (BTagEntry::OperatingPoint op, const std::string &amp;sysType=&quot;central&quot;, const std::vector&lt; std::string &gt; &amp;otherSysTypes={})</td></tr>
-<tr class="separator:a28cacf8934288d7fcce178d840da431d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1030f6dfc028a32f73416d25068bba69"><td class="memItemLeft" align="right" valign="top"><a id="a1030f6dfc028a32f73416d25068bba69"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>load</b> (const <a class="el" href="class_b_tag_calibration.html">BTagCalibration</a> &amp;c, BTagEntry::JetFlavor jf, const std::string &amp;measurementType=&quot;comb&quot;)</td></tr>
-<tr class="separator:a1030f6dfc028a32f73416d25068bba69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8917fe089a0ce411f05da50d2f9057d3"><td class="memItemLeft" align="right" valign="top"><a id="a8917fe089a0ce411f05da50d2f9057d3"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>eval</b> (BTagEntry::JetFlavor jf, float eta, float pt, float discr=0.) const</td></tr>
-<tr class="separator:a8917fe089a0ce411f05da50d2f9057d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade92ac46c5e62a9cf62304a4c7f74687"><td class="memItemLeft" align="right" valign="top"><a id="ade92ac46c5e62a9cf62304a4c7f74687"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>eval_auto_bounds</b> (const std::string &amp;sys, BTagEntry::JetFlavor jf, float eta, float pt, float discr=0.) const</td></tr>
-<tr class="separator:ade92ac46c5e62a9cf62304a4c7f74687"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9e083d47bdf6c0146ff0db01896974b"><td class="memItemLeft" align="right" valign="top"><a id="ab9e083d47bdf6c0146ff0db01896974b"></a>
-std::pair&lt; float, float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>min_max_pt</b> (BTagEntry::JetFlavor jf, float eta, float discr=0.) const</td></tr>
-<tr class="separator:ab9e083d47bdf6c0146ff0db01896974b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a06795cbfea506af0281ad0837ecbaa98"><td class="memItemLeft" align="right" valign="top"><a id="a06795cbfea506af0281ad0837ecbaa98"></a>
+<tr class="memitem:af7d3fd4dbcb1f4200f24ea007698e86c"><td class="memItemLeft" align="right" valign="top"><a id="af7d3fd4dbcb1f4200f24ea007698e86c"></a>
 std::shared_ptr&lt; <a class="el" href="class_b_tag_calibration_reader_1_1_b_tag_calibration_reader_impl.html">BTagCalibrationReaderImpl</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>pimpl</b></td></tr>
-<tr class="separator:a06795cbfea506af0281ad0837ecbaa98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:af7d3fd4dbcb1f4200f24ea007698e86c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="class_b_tag_calibration_reader.html">BTagCalibrationReader</a></p>
 <p>Helper class to pull out a specific set of <a class="el" href="class_b_tag_entry.html">BTagEntry</a>'s out of a <a class="el" href="class_b_tag_calibration.html">BTagCalibration</a>. TF1 functions are set up at initialization time. </p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
-<li>build/lib.linux-x86_64-2.7/TIMBER/Framework/ExternalTools/<a class="el" href="build_2lib_8linux-x86__64-2_87_2_t_i_m_b_e_r_2_framework_2_external_tools_2_b_tag_calibration_standalone_8h_source.html">BTagCalibrationStandalone.h</a></li>
-<li>build/lib.linux-x86_64-2.7/TIMBER/Framework/ExternalTools/BTagCalibrationStandalone.cpp</li>
+<li>TIMBER/Framework/ExternalTools/<a class="el" href="_b_tag_calibration_standalone_8h_source.html">BTagCalibrationStandalone.h</a></li>
+<li>TIMBER/Framework/ExternalTools/BTagCalibrationStandalone.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

@@ -119,10 +119,35 @@ class analyzer(object):
                 if self.preV6: self.genEventCount+= RunChain.genEventCount
                 else: self.genEventCount+= RunChain.genEventCount_
 
+        # Get LHAID from LHEPdfWeights branch
+        self.lhaid = "-1"
+        if not self.isData:
+            pdfbranch = self.__eventsChain.GetBranch("LHEPdfWeight")
+            if pdfbranch != None:
+                branch_title = pdfbranch.GetTitle()
+                self.lhaid = ''
+                for c in branch_title:
+                    if c.isdigit(): 
+                        self.lhaid+=str(c)
+                    elif self.lhaid == '':
+                        continue
+                    else:
+                        break
+            self.lhaid = str(int(self.lhaid)-1)
+            print ('LHA ID: '+self.lhaid)
+
         # Cleanup
         del RunChain
         self.ActiveNode = self.BaseNode
  
+    @property
+    def DataFrame(self):
+        '''
+        Returns:
+            RDataFrame: Dataframe for the active node
+        '''        
+        return self.ActiveNode.DataFrame
+
     def SetActiveNode(self,node):
         """Sets the active node.
 
@@ -1223,6 +1248,8 @@ def LoadColumnNames(source=None):
     else:
         file = source
     f = open(file,'r')
-    cols = f.readlines()
+    cols = []
+    for c in f.readlines():
+        cols.append(c.strip('\n'))
     f.close()
     return cols

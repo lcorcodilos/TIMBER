@@ -1,0 +1,16 @@
+code {
+    padding: .2em .4em;
+    margin: 0;
+    font-size: 85%;
+    background-color: rgba(38, 45, 49, 0.103);
+    border-radius: 6px;
+}
+
+div.fragment {
+    padding: 16px;
+    overflow: auto;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f6f8fa;
+    border-radius: 6px;
+}

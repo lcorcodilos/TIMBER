@@ -19,7 +19,7 @@ The name of the file is used to determine which type of output to expect for tem
 An output of the first type should have a file name that end in `_SF.cc` or `_weight.cc` and outputs of
 of the second type should have a file name that ends in `_uncert.cc`.
 
-Outputing a vector of vectors is not currently supported. One might want to do this
+Outputting a vector of vectors is not currently supported. One might want to do this
 if, for example, all jets in a vector need the same 
 correction in which case a vector of `[nominal,up,down]` vectors could be calculated where the index of each 
 `[nominal,up,down]` matches the index of the matching jet in the jet vector. While this would be 

@@ -15,7 +15,7 @@ file_name = 'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16NanoAODv6/TT_T
 # file_name = 'TIMBER/examples/ttbar16_sample.root'
 
 # Import the C++
-CompileCpp('TIMBER/Framework/common.h') # Compile (via gInterpreter) commonly used c++ code
+CompileCpp('TIMBER/Framework/include/common.h') # Compile (via gInterpreter) commonly used c++ code
 CompileCpp('TIMBER/examples/example.cc') # Compile a full file 
 
 # Create analyzer instance
@@ -59,7 +59,7 @@ a.Apply([myCuts,myVars,topCuts])
 
 # Add a correction
 lead_sjbt_corr = Correction('lead_sjbtag_corr',
-                       'TIMBER/Framework/Corrections/SJBtag_SF.cc',
+                       'TIMBER/Framework/src/SJBtag_SF.cc',
                        ['16','"DeepCSV"','"loose"'])
 # Clone it and make the sublead version (cpObj to use same object instance of SJBtag_SF class)
 sublead_sjbt_corr = lead_sjbt_corr.Clone('sublead_sjbtag_corr',cpObj=True)
