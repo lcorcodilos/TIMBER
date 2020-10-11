@@ -174,4 +174,3 @@ def CMS_lumi(pad,  iPeriod=4,  iPosX=11, sim=False ):
         else: latex.DrawLatex(posX_, posY_, extraText + ' simulation')
 
     pad.Update()
-
