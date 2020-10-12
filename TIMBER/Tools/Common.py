@@ -4,9 +4,9 @@ Home to commonly used tools available for use that can be generic or TIMBER spec
 
 '''
 
-import json, ROOT, os
+import json, ROOT, os, subprocess
 from ROOT import RDataFrame
-import CMS_lumi, tdrstyle
+from TIMBER.Tools.CMS import CMS_lumi, tdrstyle
 from contextlib import contextmanager
 from collections import OrderedDict
 ###################
@@ -181,7 +181,7 @@ def dictToLatexTable(dict2convert,outfilename,roworder=[],columnorder=[]):
     column_string = ' &'
     for c in columns:
         column_string += str(c)+'\t& '
-    column_string = column_string[:-2]+'\\\ \n'
+    column_string = column_string[:-2]+'\\\\ \n'
     latexout.write(column_string)
 
     latexout.write('\\hline \n')
@@ -192,7 +192,7 @@ def dictToLatexTable(dict2convert,outfilename,roworder=[],columnorder=[]):
                 row_string += str(dict2convert[r][c])+'\t& '
             else:
                 row_string += '- \t& '
-        row_string = row_string[:-2]+'\\\ \n'
+        row_string = row_string[:-2]+'\\\\ \n'
         latexout.write(row_string)
 
     latexout.write('\\hline \n')

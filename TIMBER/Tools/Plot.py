@@ -1,4 +1,4 @@
-import CMS_lumi
+from TIMBER.Tools.CMS import CMS_lumi
 import ROOT, collections
 from collections import OrderedDict
 from TIMBER.Analyzer import HistGroup
