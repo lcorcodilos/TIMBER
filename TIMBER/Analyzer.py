@@ -31,7 +31,11 @@ class analyzer(object):
     the active node and assigns the output node as the new active node"""
     def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs"):
         """
-        Constructor
+        Constructor. Setups the tracking of actions on an RDataFrame as nodes. Also
+        looks up and stores common information in NanoAOD such as the number of generated
+        events in a file (#genEventCount), the LHA ID of the PDF set in the `LHEPdfWeights`
+        branch (#lhaid), if the file is data (#isData), and if the file is before NanoAOD
+        version 6 (#preV6).
 
         Args:
             fileName (str): A ROOT file path or the path to a txt file which contains several ROOT file paths separated by 
@@ -70,7 +74,11 @@ class analyzer(object):
         ## @var genEventCount
         # int
         #
-        # Number of generated events in imported simulation files. Zero if data.
+        # Number of generated events in imported simulation files. Zero if not found or data.
+        ## @var lhaid
+        # int
+        #
+        # LHA ID of the PDF weight set in the NanoAOD. -1 if not found or data.
         ## @var ActiveNode
         # Node
         #
