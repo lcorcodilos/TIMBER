@@ -1,4 +1,5 @@
-from TIMBER.Tools.Common import *
+from TIMBER.Analyzer import analyzer
+from TIMBER.Tools.Common import CompileCpp
 
 class CommonTest():
     def setup(self):
