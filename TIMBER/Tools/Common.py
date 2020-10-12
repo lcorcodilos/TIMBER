@@ -4,7 +4,7 @@ Home to commonly used tools available for use that can be generic or TIMBER spec
 
 '''
 
-import json, ROOT, os
+import json, ROOT, os, subprocess
 from ROOT import RDataFrame
 from TIMBER.Tools.CMS import CMS_lumi, tdrstyle
 from contextlib import contextmanager

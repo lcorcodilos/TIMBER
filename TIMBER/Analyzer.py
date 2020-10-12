@@ -722,9 +722,6 @@ class analyzer(object):
         
         dot.render(outfilename)
 
-    
-
-
 ##############
 # Node Class #
 ##############
@@ -1184,7 +1181,7 @@ class Correction(object):
 
         else:
             if len(inArgs) != len(self.__funcInfo[self.__mainFunc].keys()):
-                raise ValueError('Provided number of arguments (%s) does not match required (%s).'%(len(in_args),len(self.__funcInfo[self.__mainFunc].keys())))
+                raise ValueError('Provided number of arguments (%s) does not match required (%s).'%(len(inArgs),len(self.__funcInfo[self.__mainFunc].keys())))
             args_to_use = inArgs
 
         # var_types = [self.__funcInfo[self.__mainFunc][a] for a in self.__funcInfo[self.__mainFunc].keys()]
