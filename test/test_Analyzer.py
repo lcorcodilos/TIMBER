@@ -1,6 +1,6 @@
 import ROOT
 ROOT.gROOT.SetBatch(True)
-from TIMBER.Analyzer import *
+from TIMBER.Analyzer import analyzer, CutGroup, VarGroup
 from TIMBER.Tools.Common import CompileCpp
 
 class TestAnalyzer():

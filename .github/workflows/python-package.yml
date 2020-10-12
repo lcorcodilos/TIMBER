@@ -15,28 +15,32 @@ jobs:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
+        python-version: [2.7,3.6] #3.6.9,
 
     steps:
     - uses: actions/checkout@v2
+    - name: Hack to get setup-python to work on act
+      run: |
+        if [ ! -f "/etc/lsb-release" ] ; then
+          echo "DISTRIB_RELEASE=18.04" > /etc/lsb-release
+        fi
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: Setup environment
       run: |
         python -m pip install --upgrade pip
-        pip install pytest flake8
-        wget http://rig.lucascorcodilos.com/root_v6-22-00_build.tgz
-        tar -xzvf root_v6-22-00_build.tgz
-        source root_v6.22.00.build/bin/thisroot.sh
-        source setup.sh
-    # - name: Lint with flake8
-    #   run: |
-    #     # stop the build if there are Python syntax errors or undefined names
-    #     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude build/ --e
-    #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-    #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
+        pip install virtualenv
+        python -m virtualenv timber-env
+        source timber-env/bin/activate
+        pip install pytest gdown
+        gdown https://drive.google.com/uc?id=11dXffndcD3OkHqJ3x2iaVZj5C8HVLeg_ -O root_v6-22-00_build.tgz
+        tar -xzf root_v6-22-00_build.tgz
+    - name: Pytest
       run: |
-        pytest
+        source timber-env/bin/activate
+        source setup.sh
+        source root_v6.22.00.build/bin/thisroot.sh
+        export TIMBERPATH=$TIMBERPATH
+        pytest test/

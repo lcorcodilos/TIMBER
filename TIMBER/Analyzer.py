@@ -8,7 +8,7 @@ import ROOT
 import pprint, time, json, copy, os, sys, subprocess
 from collections import OrderedDict
 pp = pprint.PrettyPrinter(indent=4)
-from Tools.Common import GetHistBinningTuple, CompileCpp
+from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp
 from clang import cindex
 
 # For parsing c++ modules
