@@ -156,6 +156,10 @@ class analyzer(object):
         '''        
         return self.ActiveNode.DataFrame
 
+    def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='RECREATE'):
+        '''@see Node#Snapshot'''
+        self.ActiveNode.Snapshot(columns,outfilename,treename,lazy,openOption)
+
     def SetActiveNode(self,node):
         """Sets the active node.
 
@@ -817,6 +821,17 @@ class Node(object):
     # IMPORTANT: When writing a variable size array through Snapshot, it is required that the column indicating its size is also written out and it appears before the array in the columns list.
     # columns should be an empty string if you'd like to keep everything
     def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='RECREATE'): # columns can be a list or a regular expression or 'all'
+        '''Takes a snapshot of the RDataFrame corresponding to this Node.
+        Compression algorithm set to 1 (ZLIB) and compression level are set to 1.
+
+        Args:
+            columns ([str] or str): List of columns to keep (str) with regex matching.
+                Provide single string 'all' to include all columns.
+            outfilename (str): Name of the output file
+            treename ([type]): Name of the output TTree
+            lazy (bool, optional): If False, the RDataFrame actions until this point will be executed here. Defaults to False.
+            openOption (str, optional): TFile opening options. Defaults to 'RECREATE'.
+        '''
         opts = ROOT.RDF.RSnapshotOptions()
         opts.fLazy = lazy
         opts.fMode = openOption
