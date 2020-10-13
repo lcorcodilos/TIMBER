@@ -5,7 +5,7 @@ TIMBER (Tree Interface for Making Binned Events with RDataFrame) is an easy-to-u
 Default arguments assume the use of the NanoAOD format but any ROOT TTree can be processed.
 
 ## Quick install
-Python 3 is recommended since 2.7 is now no longer supported. Remember to make sure your 
+Python 3 is recommended since Python 2.7 reached end-of-life on January 1st, 2020. Remember to make sure your 
 ROOT version has been built with Python 3 compatibility. For information on how to do this, see
 [this explanation](doxysetup/Python3.md).
 Working in a virtual environment is also recommended. Below are the commands for using virtualenv but
