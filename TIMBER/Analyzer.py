@@ -4,15 +4,16 @@ Home of main classes for TIMBER.
 
 """
 
-import ROOT
-import pprint, time, json, copy, os, sys, subprocess
-from collections import OrderedDict
-pp = pprint.PrettyPrinter(indent=4)
 from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp
 from clang import cindex
+from collections import OrderedDict
+
+import ROOT
+import pprint, copy, os, subprocess
+pp = pprint.PrettyPrinter(indent=4)
+
 
 # For parsing c++ modules
-from clang import cindex
 libs = subprocess.Popen('$ROOTSYS/bin/root-config --libs',shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
 rootpath = subprocess.Popen('echo $ROOTSYS',shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
 cpp_args =  '-x c++ -c --std=c++11 -I %s/include %s -lstdc++'%(rootpath,libs)
@@ -825,11 +826,13 @@ class Node(object):
         '''
         if overwrite: self.children = []
 
+        print ('Current children %s'%self.children)
+
         if isinstance(child,Node):
             if child.name not in [c.name for c in self.children]:
                 self.children.append(child)
             else:
-                raise NameError('Attempting to add child node "%s" but one with this name already exists in node "%s".'%(child.name, self.name))
+                raise NameError('Attempting to add child node "%s" but one with this name already exists in node "%s" (%s).'%(child.name, self.name, [c.name for c in self.children]))
         else:
             raise TypeError('Child is not an instance of Node class for node %s' %self.name)
 
@@ -847,14 +850,14 @@ class Node(object):
         
         if isinstance(children,dict):
             for c in children.keys():
-                if isinstance(child,Node):
+                if isinstance(c,Node):
                     self.SetChild(children[c])
                 else:
                     raise TypeError('Child is not an instance of Node class for node %s' %self.name)
 
         elif isinstance(children,list):
             for c in children:
-                if isinstance(child,node):
+                if isinstance(c,Node):
                     self.SetChild(c)
                 else:
                     raise TypeError('Child is not an instance of Node class for node %s' %self.name)
@@ -952,6 +955,9 @@ class Node(object):
             treename ([type]): Name of the output TTree
             lazy (bool, optional): If False, the RDataFrame actions until this point will be executed here. Defaults to False.
             openOption (str, optional): TFile opening options. Defaults to 'RECREATE'.
+
+        Returns:
+            None
         '''
         opts = ROOT.RDF.RSnapshotOptions()
         opts.fLazy = lazy
@@ -975,14 +981,14 @@ class Node(object):
 # Group class and subclasses #
 ##############################
 class Group(object):
-    """Organizes objects in OrderedDict with basic functionality to add and drop items, add Groups together, get keys, and access items."""
+    '''Organizes objects in OrderedDict with basic functionality to add and
+    drop items, add Groups together, get keys, and access items.'''
     def __init__(self, name):
-        """Constructor
+        '''Constructor
 
         Args:
-            name: Name (string) for instance.
-        """
-
+            name (str): Name for instance.
+        '''
         ## @var name
         # str
         #
@@ -1000,124 +1006,138 @@ class Group(object):
         self.items = OrderedDict()
         self.type = None
 
-    def Add(self,name,item):
-        """Add item to Group with a name.
+    def Add(self,name,item,copy=False):
+        '''Add item to Group with a name. Modifies in-place.
 
         Args:
-            name (str): Name/key (string) for added item.
+            name (str): Name/key for added item.
             item (obj): Item to add.
 
         Returns:
             None
-        """
+        '''
         self.items[name] = item 
         
-    def Drop(self,name):
-        """Drop item from Group with provided name/key.
+    def Drop(self,name,copy=False):
+        '''Drop item from Group with provided name/key. Modifies in-place.
 
         Args:
-            name (str): Name/key (string) for dropped item.
+            name (str): Name/key for dropped item.
 
         Returns:
-            New group with item dropped.
-        """
-        dropped = copy.deepcopy(self.items)
-        del dropped[name]
-        if self.type == None: newGroup = Group(self.name+'-'+name)
-        elif self.type == 'var': newGroup = VarGroup(self.name+'-'+name)
-        elif self.type == 'cut': newGroup = CutGroup(self.name+'-'+name)
-        newGroup.items = dropped
+            None
+        '''
+        del self.items[name]
+
+    def Clone(self,name):
+        '''Clone the current group with a new name.
+
+        Args:
+            name (str): Name for clone.
+
+        Returns:
+            Group: Group clone (will be VarGroup, CutGroup, or HistGroup if applicable).
+        '''
+        newGroup = copy.deepcopy(self.items)
+        if self.type == None: newGroup = Group(name)
+        elif self.type == 'var': newGroup = VarGroup(name)
+        elif self.type == 'cut': newGroup = CutGroup(name)
+        elif self.type == 'hist': newGroup = HistGroup(name)
         return newGroup
 
     def __add__(self,other):
-        """Adds two Groups together.
+        '''Adds two Groups together. Items in `other` override duplicates. 
+        If groups do not have matching #type, a generic Group will be returned.
+        Ex. `newgroup = group1 + group2`
 
         Args:
-            other (Group): Group to add to current Group.
+            other (Group): Group to add to current Group. 
 
         Returns:
-            Addition of the two groups.
-        """
+            Group: Addition of the two groups (will be VarGroup, CutGroup, or HistGroup if applicable).
+        '''
         added = copy.deepcopy(self.items)
         added.update(other.items)
         if self.type == 'var' and other.type == 'var': newGroup = VarGroup(self.name+"+"+other.name)
         elif self.type == 'cut' and other.type == 'cut': newGroup = CutGroup(self.name+"+"+other.name)
+        elif self.type == 'hist' and other.type == 'hist': newGroup = HistGroup(self.name+"+"+other.name)
         else: newGroup = Group(self.name+"+"+other.name)
         newGroup.items = added
         return newGroup
 
     def keys(self):
-        """Gets list of keys from Group.
+        '''Gets list of keys from Group.
+
         Returns:
-            Names/keys from Group.
-        """
+            list: Names/keys from Group.
+        '''
         return self.items.keys()
 
     def values(self):
-        """Gets list of values from Group.
+        '''Gets list of values from Group.
+
         Returns:
-            Values from Group.
-        """
+            list: Values from Group.
+        '''
         return self.items.values()
     
     def __setitem__(self, key, value):
+        '''Set key-value pair as you would with dictionary.
+        Ex. `mygroup["item_name"] = new_value`
+
+        Args:
+            key (obj): Key for value.
+            value (obj): Value to store.
+        '''
         self.items[key] = value
 
     def __getitem__(self,key):
-        """
+        '''Get value from key as you would with dictionary.
+        Ex. `val = mygroup["item_name"]`
+
         Args:
-            key: Key for name/key in Group.
+            key (obj): Key for name/key in Group.
         Returns:
-            Item for given key.
-        """
+            obj: Item for given key.
+        '''
         return self.items[key]
 
 # Subclass for cuts
 class CutGroup(Group):
-    """Stores Cut actions"""
+    '''Stores Cut actions'''
     def __init__(self, name):
-        """
+        '''Constructor
+
         Args:
-            name: Name (string) for instance.
-        """
-        ## @var type
-        # string
-        #
-        # Group type - "cut", "var", "hist"
+            name (str): Name for instance.
+        '''
         super(CutGroup,self).__init__(name)
         self.type = 'cut'
         
 # Subclass for vars/columns
 class VarGroup(Group):
-    """Stores Define actions"""
+    '''Stores Define actions'''
     def __init__(self, name):
-        """
+        '''Constructor
+
         Args:
-            name: Name (string) for instance.
-        """
-        ## @var type
-        # string
-        #
-        # Group type - "cut", "var", "hist"
+            name (str): Name for instance.
+        '''
         super(VarGroup,self).__init__(name)
         self.type = 'var'
 
 # Subclass for histograms
 class HistGroup(Group):
-    """Stores histograms with dedicated function to use TH1/2/3 methods in a batch"""
+    '''Stores histograms with dedicated function to use TH1/2/3 methods in a batch'''
     def __init__(self, name):
-        """
+        '''Constructor
+
         Args:
-            name: Name (string) for instance.
-        """
-        ## @var type
-        # string
-        #
-        # Group type - "cut", "var", "hist"
+            name (str): Name for instance.
+        '''
         super(HistGroup,self).__init__(name)
         self.type = 'hist'
 
-    #  - THmethod is a string and argsTuple is a tuple of arguments to pass the THmethod
     def Do(self,THmethod,argsTuple=()):
         '''Batch act on histograms using ROOT TH1/2/3 methods.
 
@@ -1125,7 +1145,7 @@ class HistGroup(Group):
             THmethod (str): String of the ROOT TH1/2/3 method to use.
             argsTuple (tuple): Tuple of arguments to pass to THmethod.
         Returns:
-            New HistGroup with THmethod applied if THmethod does not return None. Else None.
+            HistGroup or None: New HistGroup with THmethod applied if THmethod does not return None; else None.
         Example:
             To scale all histograms by 0.5
                 myHistGroup.Do("Scale",(0.5))
@@ -1147,12 +1167,11 @@ class HistGroup(Group):
         if returnNone: del newGroup
         else: return newGroup
 
-
 ####################
 # Correction class #
 ####################
 class Correction(object):
-    """Correction class to handle corrections produced by C++ modules.
+    '''Correction class to handle corrections produced by C++ modules.
 
     Uses clang in python to parse the C++ code and determine function names, 
     namespaces, and argument names and types. 
@@ -1165,22 +1184,24 @@ class Correction(object):
     (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
     <up, down> for "uncert" type.    
 
-    """
-    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False,existingObject=None):
-        """Constructor
+    '''
+    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype='',columnList=None,isClone=False):
+        '''Constructor
 
         Args:
             name (str): Correction name.
             script (str): Path to C++ script with function to calculate correction.
-            constructor ([str]): Arguments to script class constructor.
-            mainFunc (str): Name of the function to use inside script. Defaults to None
+            constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
+            mainFunc (str, optional): Name of the function to use inside script. Defaults to None
                 and the class will try to deduce it.
-            corrtype (str): "weight" (nominal weight to apply with an uncertainty) or 
-                "uncert" (only an uncertainty). Defaults to None and the class will try to
+            corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty) or 
+                "uncert" (only an uncertainty). Defaults to '' and the class will try to
                 deduce it.
-            isClone (bool): For internal use when cloning. Defaults to False.
-
-        """
+            columnList ([str], optional): List of column names to search mainFunc arguments against.
+                Defaults to None and the standard NanoAOD columns from #LoadColumnNames() will be used.
+            isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
+                not duplicately recompile the same script if two functions are needed in one C++ script.
+        '''
 
         ## @var name
         # str
@@ -1193,53 +1214,73 @@ class Correction(object):
         self.__mainFunc = self.__funcInfo.keys()[0]
         self.__columnNames = LoadColumnNames() if columnList == None else columnList
         self.__constructor = constructor 
-        self.__objectName = self.name if existingObject == None else existingObject
+        self.__objectName = self.name
         self.__call = None
         # self.__funcNames = self.__funcInfo.keys()        
 
-        if not isClone or existingObject == None:
+        if not isClone:
             if self.__mainFunc not in self.__funcInfo.keys():
-                raise ValueError('Correction() instance provided with mainFunc argument that does not exist in %s'%self.__script)
+                raise ValueError('Correction() instance provided with mainFunc argument does not exist in %s'%self.__script)
             CompileCpp(self.__script,library=True)
-
-        if existingObject == None:
+        else:
             self.__instantiate(constructor)      
 
-        
-
-    def Clone(self,name,newMainFunc=None,cpObj=False):
-        """Makes a clone of current instance.
+    def Clone(self,name,newMainFunc=None):
+        '''Makes a clone of current instance.
 
         If multiple functions are in the same script, one can clone the correction and reassign the mainFunc
         to avoid compiling the same script twice.
 
         Args:
             name (str): Clone name.
-            newMainFunc (str): Name of the function to use inside script. Defaults to same as original.
+            newMainFunc (str, optional): Name of the function to use inside script. Defaults to None and the original is used.
         Returns:
-            Clone of instance with same script but different function (newMainFunc)
-        """
+            Correction: Clone of instance with same script but different function (newMainFunc).
+        '''
         if newMainFunc == None: newMainFunc = self.__mainFunc.split('::')[-1]
-
-        useObj = None if not cpObj else self.name
-
-        return Correction(name,self.__script,self.__constructor,newMainFunc,corrtype=self.__type,isClone=True,columnList=self.__columnNames,existingObject=useObj)
+        return Correction(name,self.__script,self.__constructor,newMainFunc,corrtype=self.__type,isClone=True,columnList=self.__columnNames)
 
     def __getScript(self,script):
-        if ('TIMBER/Framework' not in script) or (TIMBERPATH in script):
-            outname = script
-        else:
-            outname = TIMBERPATH+script
-        
-        if not os.path.isfile(outname):
-            raise NameError('File %s does not exist'%outname)
-        return outname
+        '''Does a basic check that script file exists and modifies path if necessary
+        so relative paths to TIMBER/Framework/ can be used.
 
-    def __setType(self,in_type):
+        Args:
+            script (str): Name of script (must exist on system PATH).
+
+        Raises:
+            NameError: If file does not exist.
+
+        Returns:
+            str: File name.
+        '''
+        if TIMBERPATH in script: # global path given to TIMBER module
+            outname = script
+        elif 'TIMBER/Framework' in script: # relative path given to TIMBER module
+            outname = TIMBERPATH+script
+        else: # non-TIMBER module
+            outname = script
+        
+        if not os.path.isfile(script):
+            raise NameError('File %s does not exist'%script)
+        return script
+
+    def __setType(self,inType):
+        '''Sets the type of correction.
+        Will attempt to deduce from input script name if inType=''. File name
+        must have suffic '_weight' or '_SF' for weight type (correction plus uncertainties)
+        or '_uncert' for 'uncert' type (only uncertainties).
+
+        Args:
+            inType (str): Type of Correction. Use '' to deduce from input script name.
+
+        Raises:
+            NameError: If inType is '' and the type cannot be deduced from the input
+                script name.
+        '''
         out_type = None
-        if in_type in ['weight','uncert']:
-            out_type = in_type
-        elif in_type not in ['weight','uncert'] and in_type != None:
+        if inType in ['weight','uncert']:
+            out_type = inType
+        elif inType not in ['weight','uncert'] and inType != None:
             print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...')
 
         if out_type == None:
@@ -1248,11 +1289,19 @@ class Correction(object):
             elif '_uncert.cc' in self.__script.lower():
                 out_type = 'uncert'
             else:
-                raise ValueError('Attempting to add correction "%s" but script name (%s) does not end in "_weight.cc", "_SF.cc" or "_uncert.cc" and so the type of correction cannot be determined.'%(self.name,self.__script))
+                raise NameError('Attempting to add correction "%s" but script name (%s) does not end in "_weight.cc", "_SF.cc" or "_uncert.cc" and so the type of correction cannot be determined.'%(self.name,self.__script))
 
         self.__type = out_type
 
     def __getFuncInfo(self,funcname):
+        '''Parses script with clang to get the function information including name, namespace, and argument names.
+
+        Args:
+            funcname (str): C++ class method name to search for in script.
+
+        Returns:
+            OrderedDict: Dictionary organized as `myreturn[methodname][argname] = argtype`.
+        '''
         cpp_idx = cindex.Index.create()
         translation_unit = cpp_idx.parse(self.__script, args=cpp_args)
         filename = translation_unit.cursor.spelling
@@ -1292,6 +1341,12 @@ class Correction(object):
         return funcs
 
     def __instantiate(self,args):
+        '''Instantiates the class in the provided script with the provided arguments.
+
+        Args:
+            args ([str]): Ordered list of arguments to provide to C++ class to instantiate
+                the object in memory.
+        '''
         classname = self.__mainFunc.split('::')[-2]
         # constructor_name = classname+'::'+classname
 
@@ -1303,21 +1358,32 @@ class Correction(object):
         print ('Instantiating...')
         ROOT.gInterpreter.Declare(line)
 
-    def MakeCall(self,inArgs):
-        """Return the call to the function with the branch/column names deduced or added from input.
+    def MakeCall(self,inArgs = []):
+        '''Makes the call (stored in class instance) to the method with the branch/column names deduced or added from input.
 
-        Returns:
-            inArgs ([str]): List of arguments (NanoAOD branch names) to provide to per-event evaluation method.
-            String of call to function from C++ script.
+        Args:
+            inArgs (list, optional): [description]. Defaults to [].
+
+        Raises:
+            NameError: If argument written in C++ script cannot be found in available columns.
+            ValueError: If provided number of arguments does not match the number in the method.
+        '''
         """
 
+        Args:
+            inArgs ([str], optional): List of arguments (branch/column names) to provide to per-event evaluation method.
+                Defaults to [] in which case the arguements are deduced from what is written in the C++ script.
+
+        Returns
+            str: Call to function from C++ script.
+        """
         args_to_use = []
 
         if len(inArgs) == 0:
             print ('Determining arguments for correction %s automatically'%self.name)
             for a in self.__funcInfo[self.__mainFunc].keys():
                 if a not in self.__columnNames:
-                    raise ValueError('Not able to find arg %s written in %s in available columns'%(a,self.__script))
+                    raise NameError('Not able to find arg %s written in %s in available columns'%(a,self.__script))
                 else:
                     args_to_use.append(a)
 
@@ -1334,7 +1400,19 @@ class Correction(object):
 
         self.__call = out
 
-    def GetCall(self):
+    def GetCall(self,inArgs = []):
+        '''Gets the call to the method to be evaluated per-event.
+
+        Args:
+            inArgs (list, optional): Args to use for eval if #MakeCall() has not already been called. Defaults to [].
+                If #MakeCall() has not already been called and inArgs == [], then the arguments to the method will
+                be deduced from the C++ method definition argument names.
+
+        Returns:
+            str: The string that calls the method to evaluate per-event. Pass to Analyzer.Define(), Analyzer.Cut(), etc.
+        '''
+        if self.__call == None:
+            self.MakeCall(self, inArgs)
         return self.__call
 
     # def SetMainFunc(self,funcname):
@@ -1361,28 +1439,37 @@ class Correction(object):
     #     return self
 
     def GetMainFunc(self):
-        """Gets full main function name.
+        '''Gets full main function name.
         Returns:
-            Name of function assigned from C++ script.
-        """
+            str: Name of function assigned from C++ script.
+        '''
         return self.__mainFunc
 
     def GetType(self):
-        """Gets Correction type.
+        '''Gets Correction type.
         Returns:
-            Correction type.
-        """
+            str: Correction type.
+        '''
         return self.__type
 
     def GetFuncNames(self):
-        """Gets list of function names in C++ script.
+        '''Gets list of function names in C++ script.
         Returns:
-            List of possible function names.
-        """
+            [str]: List of possible function names found in C++ script.
+        '''
         return self.__funcInfo.keys()
 
-def LoadColumnNames(source=None):
-    if source == None: 
+def LoadColumnNames(source=''):
+    '''Loads column names from a text file.
+
+    Args:
+        source (str, optional): File location if default TIMBER/data/NanoAODv6_cols.txt
+            is not to be used. Defaults to ''.
+
+    Returns:
+        [str]: List of all column names.
+    '''
+    if source == '': 
         file = TIMBERPATH+'TIMBER/data/NanoAODv6_cols.txt'
     else:
         file = source
