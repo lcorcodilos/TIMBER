@@ -1,8 +1,9 @@
 from TIMBER.Tools.Common import *
 
 class CommonTest():
-    def setup(self):
-        self.a = analyzer('examples/GluGluToHToTauTau.root')
+    @classmethod
+    def setup_class(cls):
+        cls.a = analyzer('examples/GluGluToHToTauTau.root')
 
     def test_CutflowHist(self):
         pass
