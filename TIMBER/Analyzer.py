@@ -28,7 +28,7 @@ class analyzer(object):
     where nodes are an RDF instance and an action (or series of actions) can transform the RDF to create a new node(s).
 
     When using class functions to perform actions, an active node will always be tracked so that the next action uses 
-    the active node and assigns the output node as the new active node"""
+    the active node and assigns the output node as the new #ActiveNode"""
     def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs"):
         """
         Constructor. Setups the tracking of actions on an RDataFrame as nodes. Also
@@ -50,27 +50,27 @@ class analyzer(object):
         ## @var BaseDataFrame 
         # ROOT.RDataFrame
         #
-        # Initial RDataFrame - no modifications
+        # Initial RDataFrame - no modifications.
         ## @var BaseNode
         # Node
         #
-        # Initial Node - no modifications
+        # Initial Node - no modifications.
         ## @var DataFrames
         # dict
         #
-        # All data frames
+        # All data frames.
         ## @var Corrections
         # dict
         #
-        # All corrections added to track
+        # All corrections added to track.
         ## @var isData
         # bool
         #
-        # Is data (true) or simulation (false) based on existence of _genEventCount branch
+        # Is data (true) or simulation (false) based on existence of _genEventCount branch.
         ## @var preV6
         # bool
         #
-        # Is pre-NanoAODv6 (true) or not (false) based on existence of _genEventCount branch
+        # Is pre-NanoAODv6 (true) or not (false) based on existence of _genEventCount branch.
         ## @var genEventCount
         # int
         #
@@ -152,7 +152,7 @@ class analyzer(object):
     def DataFrame(self):
         '''
         Returns:
-            RDataFrame: Dataframe for the active node
+            RDataFrame: Dataframe for the active node.
         '''        
         return self.ActiveNode.DataFrame
 
@@ -161,68 +161,85 @@ class analyzer(object):
         self.ActiveNode.Snapshot(columns,outfilename,treename,lazy,openOption)
 
     def SetActiveNode(self,node):
-        """Sets the active node.
+        '''Sets the active node.
 
         Args:
-            node: Node to set as #ActiveNode
+            node (Node): Node to set as #ActiveNode.
+
+        Raises:
+            ValueError: If argument type is not Node.
 
         Returns:
-            New #ActiveNode
-        """
+            Node: New #ActiveNode.
+        '''
         if not isinstance(node,Node): raise ValueError('SetActiveNode() does not support argument of type %s. Please provide a Node.'%(type(node)))
         else: self.ActiveNode = node
 
         return self.ActiveNode
 
     def GetActiveNode(self):
-        """Get the active node.
+        '''Get the active node.
 
         Returns: 
-            Value of #ActiveNode (Node)
-        """
+            Node: Value of #ActiveNode.
+        '''
         return self.ActiveNode
 
     def GetBaseNode(self):
-        """Get the base node.
+        '''Get the base node.
 
         Returns: 
-            Value of #BaseNode (Node)
-        """
+            Node: Value of #BaseNode.
+        '''
         return self.BaseNode
 
     def TrackNode(self,node):
-        """Add a node to track. 
-
-        Will add the node to #DataFrames dictionary with key node.name. Will raise ValueError if attempting to overwrite an already tracked Node.
+        '''Add a node to track.
+        Will add the node to #DataFrames dictionary with key node.name.
 
         Args:
-            node (Node): Node to start tracking. 
+            node (Node): Node to start tracking.
+
+        Raises:
+            NameError: If attempting to track nodes of the same name.
+            TypeError: If argument type is not Node.
 
         Returns:
             None
-
-        """
-        
+        '''        
         if isinstance(node,Node):
             if node.name in self.GetTrackedNodeNames():
-                raise ValueError('Attempting to track a node with the same name as one that is already being tracked (%s). Please provide a unique node.'%(node.name))
+                raise NameError('Attempting to track a node with the same name as one that is already being tracked (%s). Please provide a unique node.'%(node.name))
             self.AllNodes.append(node)
         else:
             raise TypeError('TrackNode() does not support arguments of type %s. Please provide a Node.'%(type(node)))
 
     def GetTrackedNodeNames(self):
+        '''
+        Returns:
+            [str]: List of names of nodes being tracked.
+        '''
         return [n.name for n in self.AllNodes]
 
     def GetCorrectionNames(self):
-        """Get names of all corrections being tracked.
+        '''Get names of all corrections being tracked.
 
         Returns:
-            List of Correction keys/names
-        """
+            [str]: List of Correction keys/names.
+        '''
         return self.Corrections.keys()
 
     def FilterColumnNames(self,columns,node=None):
-        '''Takes a list of possible columns and returns only those that exist in the RDataFrame of the supplied node'''
+        '''Takes a list of possible columns and returns only those that
+        exist in the RDataFrame of the supplied node.
+
+        Args:
+            columns ([str]): List of column names (str)
+            node (Node, optional): Node to compare against. Defaults to #BaseNode.
+
+        Returns:
+            [str]: List of column names that union with those in the RDataFrame.
+        '''
         if node == None: node = self.BaseNode
         cols_in_node = node.DataFrame.GetColumnNames()
         out = []
@@ -236,8 +253,13 @@ class analyzer(object):
         '''Concatenates a list of column names evaluating to a common `val` (usually 1 or 0) 
         with some `connector` (boolean logic operator).
 
+        Args:
+            colnames ([str]): List of column names (str).
+            val (str, optional): Value to test equality of all columns. Defaults to '1'.
+            connector (str, optional): C++ boolean logic operator between column equality checks. Defaults to '&&'.
+
         Returns:
-            str: List concatenated as a string with the assigned evaluations (`val`) and `connector`
+            str: Concatenated string of the entire evaluation that in C++ will return a bool.
         '''
         concat = ''
         for i,c in enumerate(colnames):
@@ -252,8 +274,8 @@ class analyzer(object):
         return concat
 
     def GetTriggerString(self,trigList):
-        '''Checks input list for missing triggers and drops those missing (FilterColumnNames)
-        and then concatenates those remaining into an OR string (ConcatCols)
+        '''Checks input list for missing triggers and drops those missing (#FilterColumnNames)
+        and then concatenates those remaining into an OR (`||`) string (#ConcatCols)
 
         Args:
             trigList [str]: List of trigger names 
@@ -267,8 +289,8 @@ class analyzer(object):
         return trig_string
 
     def GetFlagString(self,flagList):
-        '''Checks input list for missing flags and drops those missing (FilterColumnNames)
-        and then concatenates those remaining into an AND string (ConcatCols)
+        '''Checks input list for missing flags and drops those missing (#FilterColumnNames)
+        and then concatenates those remaining into an AND string (#ConcatCols)
 
         Args:
             flagList [str]: List of flag names 
@@ -282,11 +304,11 @@ class analyzer(object):
         return flag_string
 
     def GetFileName(self):
-        """Get input file name.
+        '''Get input file name.
 
         Returns:
-            File name
-        """
+            str: File name
+        '''
         return self.__fileName
 
     #------------------------------------------------------------#
@@ -294,20 +316,21 @@ class analyzer(object):
     # benefit of class keeping track of an Active Node (reset by #
     # each action and used by default).                          #
     #------------------------------------------------------------#
-    def Cut(self,name='',cuts='',node=None):
-        """Apply a cut/filter to a provided node or the #ActiveNode by default.
-
+    def Cut(self,name,cuts,node=None):
+        '''Apply a cut/filter to a provided node or the #ActiveNode by default.
         Will add the resulting node to tracking and set it as the #ActiveNode.
 
         Args:
             name (str): Name for the cut for internal tracking and later reference.
-            cuts (str,CutGroup): A one-line C++ string that evaluates as a boolean or a CutGroup object which contains multiple C++ strings that evaluate as booleans. 
-            node (Node): Node to apply the cut/filter. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
+            cuts (str,#CutGroup): A one-line C++ string that evaluates as a boolean or a CutGroup object which contains multiple actions that evaluate as booleans.
+            node (Node, optional): Node on which to apply the cut/filter. Defaults to #ActiveNode.
+
+        Raises:
+            TypeError: If argument type is not Node.
 
         Returns:
-            New active Node.
-
-        """
+            Node: New #ActiveNode.
+        '''
         if node == None: node = self.ActiveNode
         newNode = node
 
@@ -317,31 +340,30 @@ class analyzer(object):
                 newNode = newNode.Cut(c,cut)
                 newNode.name = cuts.name+'__'+c
                 self.TrackNode(newNode)
-            # newNode.name = cuts.name
         elif isinstance(cuts,str):
             newNode = newNode.Cut(name,cuts)
             self.TrackNode(newNode)
         else:
             raise TypeError("Second argument to Cut method must be a string of a single cut or of type CutGroup (which provides an OrderedDict).")
 
-        # self.TrackNode(newNode)
         return self.SetActiveNode(newNode)
 
-    def Define(self,name='',variables='',node=None):
-        """Defines a variable/column on top of a provided node or the #ActiveNode by default.
-
-        Will add the resulting node to tracking and set it as the #ActiveNode
+    def Define(self,name,variables,node=None):
+        '''Defines a variable/column on top of a provided node or the #ActiveNode by default.
+        Will add the resulting node to tracking and set it as the #ActiveNode.
 
         Args:
-
             name (str): Name for the column for internal tracking and later reference.
-            cuts (str,CutGroup): A one-line C++ string that evaluates to desired value to store or a VarGroup object which contains multiple C++ strings that evaluate to the desired value(s). 
-            node (Node): Node to create the new variable/column on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
+            cuts (str,#VarGroup): A one-line C++ string that evaluates to desired value to store
+                or a #VarGroup object which contains multiple actions that evaluate to the desired values. 
+            node (Node, optional): Node to create the new variable/column on top of. Defaults to #ActiveNode.
+
+        Raises:
+            TypeError: If argument type is not Node.
 
         Returns:
-            New active Node.
-
-        """
+            Node: New #ActiveNode.
+        '''
         if node == None: node = self.ActiveNode
         newNode = node
 
@@ -363,16 +385,19 @@ class analyzer(object):
 
     # Applies a bunch of action groups (cut or var) in one-shot in the order they are given
     def Apply(self,actionGroupList,node=None,trackEach=True):
-        """Applies a single CutGroup/VarGroup or an ordered list of Groups to the provided node or the #ActiveNode by default.
+        '''Applies a single CutGroup/VarGroup or an ordered list of Groups to the provided node or the #ActiveNode by default.
 
         Args:
-
             actionGroupList (Group, list(Group)): The CutGroup or VarGroup to act on node or a list of CutGroups or VarGroups to act (in order) on node.
-            node (Node): Node to create the new variable/column on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
+            node ([type], optional): Node to create the new variable/column on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
+            trackEach (bool, optional): [description]. Defaults to True.
+
+        Raises:
+            TypeError: If argument type is not Node.
 
         Returns:
-            New active Node.
-        """
+            Node: New #ActiveNode.
+        '''
         if node == None: node = self.ActiveNode
         newNode = node
 
@@ -392,19 +417,18 @@ class analyzer(object):
         return self.SetActiveNode(newNode)
 
     def Discriminate(self,name,discriminator,node=None,passAsActiveNode=None):
-        """Forks a node based upon a discriminator being True or False (#ActiveNode by default).
+        '''Forks a node based upon a discriminator being True or False (#ActiveNode by default).
 
         Args:
             name (str): Name for the discrimination for internal tracking and later reference.
             discriminator (str): A one-line C++ string that evaluates as a boolean to discriminate for the forking of the node.
-            node (Node): Node to discriminate. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
-            passAsActiveNode (bool): True if the #ActiveNode should be set to the node that passes the discriminator.
+            node (Node, optional): Node to discriminate. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
+            passAsActiveNode (bool, optional): True if the #ActiveNode should be set to the node that passes the discriminator.
                 False if the #ActiveNode should be set to the node that fails the discriminator. Defaults to None in which case the #ActiveNode does not change.
 
         Returns:
-            Dictionary with keys "pass" and "fail" corresponding to the passing and failing Nodes stored as values.
-            
-        """
+            dict: Dictionary with keys "pass" and "fail" corresponding to the passing and failing Nodes stored as values.
+        '''
         if node == None: node = self.ActiveNode
 
         newNodes = node.Discriminate(name,discriminator)
@@ -422,18 +446,22 @@ class analyzer(object):
     #---------------------#
     # Want to correct with analyzer class so we can track what corrections have been made for final weights and if we want to save them out in a group when snapshotting
     def AddCorrection(self,correction,evalArgs=[],node=None):
-        """Add a Correction to track.
+        '''Add a Correction to track. Sets new active node with all correction
+        variations calculated as new columns.
 
         Args:
             correction (Correction): Correction object to add.
-            evalArgs ([str]): List of arguments (NanoAOD branch names) to provide to per-event evaluation method.
+            evalArgs ([str], optional): List of arguments (NanoAOD branch names) to provide to per-event evaluation method.
                               Default empty and clang will deduce if method definition argument names match columns in RDataFrame.
-            node (Node): Node to add correction on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
+            node (Node, optional): Node to add correction on top of. Defaults to #ActiveNode.
+
+        Raises:
+            TypeError: If argument types are not Node and Correction.
+            ValueError: If Correction type is not a weight or uncertainty.
 
         Returns:
-            New active Node.
-
-        """
+            Node: New #ActiveNode.
+        '''
         if node == None: node = self.ActiveNode
 
         # Quick type checking
@@ -461,17 +489,17 @@ class analyzer(object):
         # self.TrackNode(returnNode)
         return self.SetActiveNode(newNode)
 
-    def AddCorrections(self,correctionList=[],node=None):
-        """Add multiple Corrections to track.
+    def AddCorrections(self,correctionList,node=None):
+        '''Add multiple Corrections to track. Sets new #ActiveNode with all correction
+        variations calculated as new columns.
 
         Args:
-            correctionList (list(Correction)): List of Correction objects to add.
-            node (Node): Node to add corrections on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
+            correctionList ([Correction]): List of Correction objects to add.
+            node (Node, optional): [description]. Defaults to None.
 
         Returns:
-            New active Node.
-
-        """
+            Node: New #ActiveNode.
+        '''
         if node == None: node = self.ActiveNode
 
         newNode = node
@@ -481,6 +509,18 @@ class analyzer(object):
         return self.SetActiveNode(newNode)
 
     def __checkCorrections(self,correctionNames,dropList):
+        '''Does type checking and drops specified corrections by name.
+
+        Args:
+            correctionNames ([str]): List of correction names to include.
+            dropList ([type]): List of correction names to drop.
+
+        Raises:
+            ValueError: If lists aren't provided.
+
+        Returns:
+            [str]: List of remaining correction names.
+        '''
         # Quick type checking
         if correctionNames == None: correctionsToApply = self.Corrections.keys()
         elif not isinstance(correctionNames,list):
@@ -499,7 +539,7 @@ class analyzer(object):
         return correctionsToApply
 
     def MakeWeightCols(self,node=None,correctionNames=None,dropList=[]):
-        """Makes columns/variables to store total weights based on the Corrections that have been added.
+        '''Makes columns/variables to store total weights based on the Corrections that have been added.
 
         This function automates the calculation of the columns that store the nominal weight and the 
         variation of weights based on the corrections in consideration. The nominal weight will be the product
@@ -520,9 +560,8 @@ class analyzer(object):
                 are dropped from consideration.
 
         Returns:
-            New active Node.
-
-        """
+            Node: New #ActiveNode.
+        '''
         if node == None: node = self.ActiveNode
 
         correctionsToApply = self.__checkCorrections(correctionNames,dropList)
@@ -556,17 +595,16 @@ class analyzer(object):
         return self.SetActiveNode(returnNode)
 
     def MakeTemplateHistos(self,templateHist,variables,node=None):
-        """Generates the uncertainty template histograms based on the weights created by MakeWeightCols(). 
+        '''Generates the uncertainty template histograms based on the weights created by #MakeWeightCols(). 
 
         Args:
-            templateHist (TH1,TH2,TH3): An TH1, TH2, or TH3 used as a template to create the histograms.
-            variables (list(str)): A list of the columns/variables to plot (["x","y","z"]).
-            node (Node): Node to plot histograms from. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
+            templateHist (TH1,TH2,TH3): A TH1, TH2, or TH3 used as a template to create the histograms.
+            variables ([str]): A list of the columns/variables to plot (ex. ["x","y","z"]).
+            node (Node): Node to plot histograms from. Defaults to #ActiveNode.
 
         Returns:
-            HistGroup object which stores the uncertainty template histograms.
-
-        """
+            HistGroup: Uncertainty template histograms.
+        '''
         if node == None: node = self.ActiveNode
 
         out = HistGroup('Templates')
@@ -606,19 +644,18 @@ class analyzer(object):
     # Draw templates together to see up/down effects against nominal #
     #----------------------------------------------------------------#
     def DrawTemplates(self,hGroup,saveLocation,projection='X',projectionArgs=(),fileType='pdf'):
-        """Draw the template uncertainty histograms created by MakeTemplateHistos(). 
+        '''Draw the template uncertainty histograms created by #MakeTemplateHistos(). 
 
         Args:
-            hGroup (HistGroup): A HistGroup object storing the uncertainty template histograms.
+            hGroup (HistGroup): Uncertainty template histograms.
             saveLocation (str): Path to folder to save histograms.
-            projection (str): "X" (Default), "Y", or "Z". Axis to project onto if templates are not 1D.
-            projectionArgs (tuple): A tuple of arguments provided to ROOT TH1 ProjectionX(Y)(Z).
-            fileType (str): File type - "pdf", "png", etc (must be supported by TCanvas.Print()).
+            projection (str, optional): "X" (Default), "Y", or "Z". Axis to project onto if templates are not 1D.
+            projectionArgs (tuple, optional): A tuple of arguments provided to ROOT TH1 ProjectionX(Y)(Z).
+            fileType (str, optional): File type - "pdf", "png", etc (must be supported by TCanvas.Print()).
 
         Returns:
             None
-
-        """
+        '''
         ROOT.gStyle.SetOptStat(0)
 
         canvas = ROOT.TCanvas('c','',800,700)
@@ -673,17 +710,19 @@ class analyzer(object):
     # cut that gets dropped                        #
     #----------------------------------------------#
     def Nminus1(self,node,cutgroup):
-        """Print a PDF image of the node structure of the analysis. 
-        Requires python graphviz package (`pip install graphviz`) 
+        '''Create an N-1 tree structure of nodes building off of `node`
+        with the N cuts from `cutgroup`.
+
+        The structure is optimized so that as many actions are shared as possible
+        so that the N different nodes can be made. Use #PrintNodeTree() to visualize. 
 
         Args:
-            cutgroup (CutGroup): CutGroup that you'd like to scan.
+            node (Node): Node to build on.
+            cutgroup (CutGroup): Group of N cuts to apply.
 
         Returns:
-            Dictionary with the final nodes
-
-        """
-
+            dict: N nodes in dictionary with keys indicating the cut that was not applied.
+        '''
         # Initialize
         print ('Performing N-1 scan for CutGroup %s'%cutgroup.name)
 
@@ -712,15 +751,16 @@ class analyzer(object):
         return nminusones
 
     def PrintNodeTree(self,outfilename,verbose=False):
-        """Print a PDF image of the node structure of the analysis. Requires python graphviz package (`pip install graphviz`) 
+        '''Print a PDF image of the node structure of the analysis.
+        Requires python graphviz package which should be an installed dependency.
 
         Args:
             outfilename (str): Name of output PDF file.
+            verbose (bool, optional): Turns on verbose node labels. Defaults to False.
 
         Returns:
             None
-
-        """
+        '''
         from graphviz import Digraph
         dot = Digraph(comment='Node processing tree')
         for node in self.AllNodes:
@@ -738,69 +778,149 @@ class analyzer(object):
 # Node Class #
 ##############
 class Node(object):
-    """Class to represent nodes in the DataFrame processing graph. Can make new nodes via Define, Cut, and Discriminate and setup relations between nodes (done automatically via Define, Cut, Discriminate)"""
-    def __init__(self, name, DataFrame, parent=None, children=[],action=''):
+    '''Class to represent nodes in the DataFrame processing graph. 
+    Can make new nodes via Define, Cut, and Discriminate and setup
+    relations between nodes (done automatically via Define, Cut, Discriminate)'''
+    def __init__(self, name, DataFrame, action='', children=[]):
+        '''Constructor. Holds the RDataFrame and other associated information
+        for tracking in the #analyzer().
+
+        Methods which act on the RDataFrame always return a new node
+        since RDataFrame is not modified in place.
+
+        Args:
+            name (str): Name for the node. Duplicate named nodes cannot be tracked simultaneously in the analyzer.
+            DataFrame (RDataFrame): Dataframe to track.
+            children ([Node], optional): Child nodes if they exist. Defaults to [].
+            action (str, optional): Action performed (the C++ line). Default is '' but should only be used for a base RDataFrame.
+        '''
         super(Node, self).__init__()
         self.DataFrame = DataFrame
         self.name = name
         self.action = action
-        # self.parent = parent # None or specified
-        self.children = children # list of length 0, 1, or 2
+        self.children = children
         
     def Clone(self,name=''):
-        if name == '':return Node(self.name,self.DataFrame,parent=[],children=[],action=self.action)
-        else: return Node(name,self.DataFrame,parent=[],children=[],action=self.action)
+        '''Clones Node instance without child information and with new name if specified.
 
-    # Set parent of type Node
-    # def SetParent(self,parent): 
-    #     if isinstance(parent,Node): self.parent = parent
-    #     else: raise TypeError('Parent is not an instance of Node class for node %s'%self.name)
+        Args:
+            name (str, optional): Name for clone. Defaults to current name.
 
-    # Set one child of type Node
-    def SetChild(self,child,overwrite=False,silence=False):
+        Returns:
+            Node: Clone of current instance.
+        '''
+        if name == '':return Node(self.name,self.DataFrame,children=[],action=self.action)
+        else: return Node(name,self.DataFrame,children=[],action=self.action)
+
+    def SetChild(self,child,overwrite=False):
+        '''Set one of child for the node.
+
+        Args:
+            child (Node): Child node to add.
+            overwrite (bool, optional): Overwrites all current children stored. Defaults to False.
+
+        Raises:
+            TypeError: If argument type is not Node.
+        '''
         if overwrite: self.children = []
-        # if len(children > 1): raise ValueError("More than two children are trying to be added node %s. You may use the overwrite option to erase current children or find your bug."%self.name)
-        # if len(children == 1) and silence == False: raw_input('WARNING: One child is already specified for node %s and you are attempting to add another (max 2). Press enter to confirm and continue.'%self.name)
 
-        if isinstance(child,Node): self.children.append(child)
-        else: raise TypeError('Child is not an instance of Node class for node %s' %self.name)
-
-    # Set children of type Node
-    def SetChildren(self,children,overwrite=False):
-        if overwrite: self.children = []
-        # if len(children > 0): raise ValueError("More than two children are trying to be added node %s. You may use the overwrite option to erase current children or find your bug."%self.name)
-        
-        if isinstance(children,dict) and 'pass' in children.keys() and 'fail' in children.keys() and len(children.keys()) == 2:
-            self.SetChild(children['pass'])
-            self.SetChild(children['fail'])
+        if isinstance(child,Node):
+            if child.name not in [c.name for c in self.children]:
+                self.children.append(child)
+            else:
+                raise NameError('Attempting to add child node "%s" but one with this name already exists in node "%s".'%(child.name, self.name))
         else:
-            raise TypeError('Attempting to add a dictionary of children of incorrect format. Argument must be a dict of format {"pass":class.Node,"fail":class.Node}')
+            raise TypeError('Child is not an instance of Node class for node %s' %self.name)
 
-    # Define a new column to calculate
+    def SetChildren(self,children,overwrite=False):
+        '''Set multiple children for the node.
+
+        Args:
+            children ([Node], {str:Node}): List of children or dictionary of children.
+            overwrite (bool, optional): Overwrites all current children stored. Defaults to False.
+
+        Raises:
+            TypeError: If argument type is not dict or list of Node.
+        '''
+        if overwrite: self.children = []
+        
+        if isinstance(children,dict):
+            for c in children.keys():
+                if isinstance(child,Node):
+                    self.SetChild(children[c])
+                else:
+                    raise TypeError('Child is not an instance of Node class for node %s' %self.name)
+
+        elif isinstance(children,list):
+            for c in children:
+                if isinstance(child,node):
+                    self.SetChild(c)
+                else:
+                    raise TypeError('Child is not an instance of Node class for node %s' %self.name)
+        else:
+            raise TypeError('Attempting to add chidren that are not in a list or dict.')
+
     def Define(self,name,var):
+        '''Produces a new Node with the provided variable/column added.
+
+        Args:
+            name (str): Name for the column for internal tracking and later reference.
+            cuts (str): A one-line C++ string that evaluates to desired value to store. 
+
+        Returns:
+            Node: New Node object with new column added.
+        '''
         print('Defining %s: %s' %(name,var))
-        newNode = Node(name,self.DataFrame.Define(name,var),parent=self,children=[],action=var)
+        newNode = Node(name,self.DataFrame.Define(name,var),children=[],action=var)
         self.SetChild(newNode)
         return newNode
 
-    # Define a new cut to make
     def Cut(self,name,cut):
+        '''Produces a new Node with the provided cut/filter applied.
+
+        Args:
+            name (str): Name for the cut for internal tracking and later reference.
+            cuts (str): A one-line C++ string that evaluates as a boolean.
+
+        Returns:
+            Node: New #ActiveNode.
+        '''
         print('Filtering %s: %s' %(name,cut))
-        newNode = Node(name,self.DataFrame.Filter(cut,name),parent=self,children=[],action=cut)
+        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],action=cut)
         self.SetChild(newNode)
         return newNode
 
-    # Discriminate based on a discriminator
     def Discriminate(self,name,discriminator):
+        '''Produces a dictionary with two new Nodes made by forking the current node based upon a discriminator being True or False.
+
+        Args:
+            name (str): Name for the discrimination for internal tracking and later reference.
+            discriminator (str): A one-line C++ string that evaluates as a boolean to discriminate on.
+
+        Returns:
+            dict: Dictionary with keys "pass" and "fail" corresponding to the passing and failing Nodes stored as values.
+        '''
         passfail = {
-            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),parent=self,children=[],action=discriminator),
-            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),parent=self,children=[],action="!("+discriminator+")")
+            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),children=[],action=discriminator),
+            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),children=[],action="!("+discriminator+")")
         }
         self.SetChildren(passfail)
         return passfail
             
-    # Applies a bunch of action groups (cut or var) in one-shot in the order they are given
     def Apply(self,actiongrouplist):
+        '''Applies a single CutGroup/VarGroup or an ordered list of Groups to the provided node or the #ActiveNode by default.
+
+        Args:
+            actionGroupList (Group, list(Group)): The CutGroup or VarGroup to act on node or a list of CutGroups or VarGroups to act (in order) on node.
+            node ([type], optional): Node to create the new variable/column on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
+            trackEach (bool, optional): [description]. Defaults to True.
+
+        Raises:
+            TypeError: If argument type is not Node.
+
+        Returns:
+            Node: New #ActiveNode.
+        '''
         if type(actiongrouplist) != list: actiongrouplist = [actiongrouplist]
         node = self
         for ag in actiongrouplist:
@@ -844,12 +964,10 @@ class Node(object):
         elif type(columns) == str:
             self.DataFrame.Snapshot(treename,outfilename,columns,opts)
         else:
-            # column_vec = ROOT.std.vector('string')()
             column_vec = ''
             for c in columns:
                 column_vec += c+'|'
             column_vec = column_vec[:-1]
-               # column_vec.push_back(c)
             self.DataFrame.Snapshot(treename,outfilename,column_vec,opts)
       
 ##############################
