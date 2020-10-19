@@ -133,16 +133,17 @@ class analyzer(object):
             pdfbranch = self.__eventsChain.GetBranch("LHEPdfWeight")
             if pdfbranch != None:
                 branch_title = pdfbranch.GetTitle()
-                self.lhaid = ''
-                for c in branch_title:
-                    if c.isdigit(): 
-                        self.lhaid+=str(c)
-                    elif self.lhaid == '':
-                        continue
-                    else:
-                        break
-            self.lhaid = str(int(self.lhaid)-1)
-            print ('LHA ID: '+self.lhaid)
+                if branch_title != '': 
+                    self.lhaid = ''
+                    for c in branch_title:
+                        if c.isdigit(): 
+                            self.lhaid+=str(c)
+                        elif self.lhaid == '':
+                            continue
+                        else:
+                            break
+                    self.lhaid = str(int(self.lhaid)-1)
+                    print ('LHA ID: '+self.lhaid)
 
         # Cleanup
         del RunChain
