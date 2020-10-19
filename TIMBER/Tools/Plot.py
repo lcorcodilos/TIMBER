@@ -1,48 +1,28 @@
+'''@docstring Plot.py
+
+Functions to easily plot histograms together in various configurations.
+
+'''
+
 from TIMBER.Tools.CMS import CMS_lumi
 import ROOT, collections
 from collections import OrderedDict
 from TIMBER.Analyzer import HistGroup
 
-def StitchQCD(QCDdict,normDict=None):
-    '''Stitches together histograms in QCD hist groups.
-
-    Args:
-        QCDdict ({string:HistGroup}): Dictionary of HistGroup objects
-        normDict ([string:float]): Default to None and assume normalization has already been done.
-            Factors to normalize each sample to where keys must match QCDdict keys.
-    Returns:
-        New HistGroup with histograms in group being the final stitched versions
-    '''
-    # Normalize first if needed
-    if normDict != None:
-        for k in normDict.keys():
-            for hkey in QCDdict[k].keys():
-                QCDdict[k][hkey].Scale(normDict[k])
-    # Stitch
-    out = HistGroup("QCD")
-    for ksample in QCDdict.keys(): 
-        for khist in QCDdict[ksample].keys():
-            if khist not in out.keys():
-                out[khist] = QCDdict[ksample][khist].Clone()
-            else:
-                out[khist].Add(QCDdict[ksample][khist])
-
-    return out
-
 def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},colors={},scale=True,stackBkg=False):
     '''Create a plot that compares the shapes of backgrounds versus signal.
        Backgrounds will be stacked together and signals will be plot separately.
-       Total background and signals are scaled to 1 if scale = True. Inputs organized 
+       Total background and signals are scaled to 1 if scale == True. Inputs organized 
        as dicts so that keys can match across dicts (ex. bkgs and bkgNames).
 
     Args:
         outfilename (string): Path where plot will be saved.
         prettyvarname (string): What will be assigned to as the axis title.
-        bkgs ({string:TH1}, optional): . Defaults to {}.
-        signals ({string:TH1], optional): [description]. Defaults to {}.
+        bkgs ({string:TH1}, optional): Dictionary of backgrounds to plot. Defaults to {}.
+        signals ({string:TH1}, optional): Dictionary of signals to plot. Defaults to {}.
         names ({string:string}, optional): Formatted version of names for backgrounds and signals to appear in legend. Keys must match those in bkgs and signal. Defaults to {}. 
         colors ({string:int}, optional): TColor code for backgrounds and signals to appear in plot. Keys must match those in bkgs and signal. Defaults to {}.
-        scale (bool, optional): Scales everything to unity if true. Defaults to True.
+        scale (bool, optional): If True, scales total background to unity and signals (separately) to unity. Defaults to True.
     '''
     # Initialize
     c = ROOT.TCanvas('c','c',800,700)
