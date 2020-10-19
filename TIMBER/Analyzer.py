@@ -1066,6 +1066,9 @@ class CutGroup(Group):
         @param name (str): Name for instance.
         '''
         super(CutGroup,self).__init__(name)
+        ## @var type
+        #
+        # Set to 'cut' so group is treated as cut/filter actions.
         self.type = 'cut'
         
 # Subclass for vars/columns
@@ -1077,6 +1080,9 @@ class VarGroup(Group):
         @param name (str): Name for instance.
         '''
         super(VarGroup,self).__init__(name)
+        ## @var type
+        #
+        # Set to 'var' so group is treated as column definition actions.
         self.type = 'var'
 
 # Subclass for histograms
@@ -1088,6 +1094,9 @@ class HistGroup(Group):
         @param name (str): Name for instance.
         '''
         super(HistGroup,self).__init__(name)
+        ## @var type
+        #
+        # Set to 'hist' so group is treated as histograms.
         self.type = 'hist'
 
     def Do(self,THmethod,argsTuple=()):
