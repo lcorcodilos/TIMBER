@@ -12,8 +12,19 @@ from collections import OrderedDict
 ###################
 # TIMBER specific #
 ###################
-# Draws a cutflow histogram using the report feature of RDF.
-def CutflowHist(name,node):
+def CutflowHist(name,node,efficiency=False):
+    '''Draws a cutflow histogram using the report feature of RDF.
+
+    Args:
+        name (str): Name of output histogram
+        node (Node): Input Node from which to get the cutflow.
+        efficiency (bool, optional): Reports an efficiency instead of yields
+            (relative to number of events before any cuts on Node).
+
+    Returns:
+        TH1: Histogram with each bin showing yield (or efficiency) for
+            progressive cuts.
+    '''
     filters = node.DataFrame.GetFilterNames()
     rdf_report = node.DataFrame.Report()
     ncuts = len(filters)
@@ -21,25 +32,84 @@ def CutflowHist(name,node):
     for i,filtername in enumerate(filters): 
         cut = rdf_report.At(filtername)
         h.GetXaxis().SetBinLabel(i+1,filtername)
-        h.SetBinContent(i+1,cut.GetPass())
+        if efficiency:
+            if i == 0:
+                base = float(cut.GetPass())
+            h.SetBinContent(i+1,cut.GetPass()/base)
+        else:
+            h.SetBinContent(i+1,cut.GetPass())
 
     return h
 
-def CutflowTxt(name,node):
+def CutflowTxt(name,node,efficiency=False):
+    '''Writes out the cutflow as a text file using the report feature of RDF.
+
+    Args:
+        name (str): Name of output text file.
+        node (Node): Input Node from which to get the cutflow.
+        efficiency (bool, optional): Reports an efficiency instead of yields
+            (relative to number of events before any cuts on Node).
+
+    Returns:
+        None
+    '''
     filters = node.DataFrame.GetFilterNames()
     rdf_report = node.DataFrame.Report()
     ncuts = len(filters)
     out = open(name,'w')
     for i,filtername in enumerate(filters): 
         cut = rdf_report.At(filtername)
-        out.write('%s %s'%(filtername,cut.GetPass()))
+        if efficiency:
+            if i == 0:
+                base = float(cut.GetPass())
+            out.write('%s %s'%(filtername,cut.GetPass()/base))
+        else:
+            out.write('%s %s'%(filtername,cut.GetPass()))
     out.close()
 
+def StitchQCD(QCDdict,normDict=None):
+    '''Stitches together histograms in QCD hist groups.
+
+    Args:
+        QCDdict ({string:HistGroup}): Dictionary of HistGroup objects
+        normDict ({string:float}): Factors to normalize each sample to where keys must match QCDdict keys.
+            Default to None and assume normalization has already been done.
+    Returns:
+        HistGroup: New HistGroup with histograms in group being the final stitched versions
+    '''
+    # Normalize first if needed
+    if normDict != None:
+        for k in normDict.keys():
+            for hkey in QCDdict[k].keys():
+                QCDdict[k][hkey].Scale(normDict[k])
+    # Stitch
+    out = HistGroup("QCD")
+    for ksample in QCDdict.keys(): 
+        for khist in QCDdict[ksample].keys():
+            if khist not in out.keys():
+                out[khist] = QCDdict[ksample][khist].Clone()
+            else:
+                out[khist].Add(QCDdict[ksample][khist])
+
+    return out
 
 ###########
 # Generic #
 ###########
 def CompileCpp(blockcode,library=False):
+    '''Compiles C++ code via the gInterpreter.
+
+    A python string (the actual code) can be passed or a file name 
+    (the file will be opened and read). If a file is passed,
+    the C++ code can be compiled
+    as a library and if in the future the C++ script is older than the library,
+    then the library will be loaded instead.
+
+    Args:
+        blockcode (str): Either a block of C++ code or a file name to open.
+        library (bool, optional): Compiles a library which can be later loaded
+            to avoid compilation time. Defaults to False.
+    '''
     if os.environ["TIMBERPATH"] not in ROOT.gSystem.GetIncludePath():
         ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"])
 
@@ -58,25 +128,43 @@ def CompileCpp(blockcode,library=False):
             lib_path = blockcode.replace('.','_')+'.so'
         else: 
             lib_path = blockcode
-        # If library exists and is older than the cc file, just load
+        
         loaded = False
-        if os.path.exists(lib_path):
+        if os.path.exists(lib_path): # If library exists and is older than the cc file, just load
             mod_time_lib = os.path.getmtime(lib_path)
             mod_time_cc = os.path.getmtime(blockcode)
             if mod_time_lib > mod_time_cc:
                 print ('Loading library...')
                 ROOT.gSystem.Load(lib_path)
                 loaded = True
-        # Else compile a new lib
-        if not loaded:
+        
+        if not loaded: # Else compile a new lib
             ROOT.gSystem.AddIncludePath(" -I%s "%os.getcwd())
-            print ('Processing library...')
+            print ('Compiling library...')
             ROOT.gROOT.ProcessLine(".L "+blockcode+"+")
 
-def openJSON(f):
-    return json.load(open(f,'r'), object_hook=ascii_encode_dict) 
+def OpenJSON(filename):
+    '''Opens JSON file as a dictionary (accounting for unicode encoding)
 
-def ascii_encode_dict(data):    
+    Args:
+        filename (str): JSON file name to open.
+
+    Returns:
+        dict: Python dictionary with JSON content.
+    '''
+    return json.load(open(f,'r'), object_hook=AsciiEncodeDict) 
+
+def AsciiEncodeDict(data):
+    '''Encodes dict to ascii from unicode
+
+    Credit Andrew Clark on [StackOverflow](https://stackoverflow.com/questions/9590382/forcing-python-json-module-to-work-with-ascii/28339920).
+
+    Args:
+        data (dict): Input dictionary.
+
+    Returns:
+        dict: New dictionary with unicode converted to ascii.
+    '''
     ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x 
     return dict(map(ascii_encode, pair) for pair in data.items())
 
@@ -119,7 +207,20 @@ def GetHistBinningTuple(h):
 
     return xbinning + ybinning + zbinning, dimension
 
-def colliMate(myString,width=18):
+def ColliMate(myString,width=18):
+    '''Collimates strings to have consistent spacing between first character
+    of word i with the first character of word i+1 and i-1.
+
+    Recommended instead to use format() method of python strings as 
+    described [here](https://stackoverflow.com/questions/10623727/python-spacing-and-aligning-strings).
+
+    Args:
+        myString (str): String to space (words only separated by single space).
+        width (int, optional): Column widths. Defaults to 18.
+
+    Returns:
+        str: String with new spacing between words.
+    '''
     sub_strings = myString.split(' ')
     new_string = ''
     for i,sub_string in enumerate(sub_strings):
@@ -133,7 +234,15 @@ def colliMate(myString,width=18):
             new_string += sub_string
     return new_string
 
-def dictStructureCopy(inDict):
+def DictStructureCopy(inDict):
+    '''Recursively copies the structure of a dictionary with non-dict items replaced with 0.
+
+    Args:
+        inDict (dict): Dictionary with structure to copy.
+
+    Returns:
+        dict: Output dict.
+    '''
     newDict = {}
     for k1,v1 in inDict.items():
         if type(v1) == dict:
@@ -142,7 +251,15 @@ def dictStructureCopy(inDict):
             newDict[k1] = 0
     return newDict
 
-def dictCopy(inDict):
+def DictCopy(inDict):
+    '''Recursively copy dictionary structure and values.
+
+    Args:
+        inDict (dict): Dictionary to copy.
+
+    Returns:
+        dict: Output copy.
+    '''
     newDict = {}
     for k1,v1 in inDict.items():
         if type(v1) == dict:
@@ -151,13 +268,30 @@ def dictCopy(inDict):
             newDict[k1] = v1
     return newDict
 
-def executeCmd(cmd,dryrun=False):
+def ExecuteCmd(cmd,dryrun=False):
+    '''Executes shell command via `subprocess.call()` and prints
+    the command for posterity.
+
+    Args:
+        cmd (str): Shell command to run.
+        dryrun (bool, optional): Prints command but doesn't execute it. Defaults to False.
+    '''
     print('Executing: '+cmd)
     if not dryrun:
         subprocess.call([cmd],shell=True)
 
-def dictToLatexTable(dict2convert,outfilename,roworder=[],columnorder=[]):
-    # First set of keys are row, second are column
+def DictToLatexTable(dict2convert,outfilename,roworder=[],columnorder=[]):
+    '''Converts a dictionary with two layers (ie. only one set of sub-keys) to 
+    a LaTeX table. First set of keys (ie. external) are rows, second (ie. internal) are columns.
+    If the column entry for a given row is not provided (ie. missing key), then '-' is substituted.
+
+    Args:
+        dict2convert (dict): Input dictionary.
+        outfilename (str): Output .tex file name.
+        roworder (list, optional): Custom ordering of rows. Defaults to [] in which case the sorted keys are used.
+        columnorder (list, optional): Custom ordering of columns. Defaults to [] in which case the sorted keys are used.
+    '''
+    # Determine order of rows and columns
     if len(roworder) == 0:
         rows = sorted(dict2convert.keys())
     else:
@@ -172,18 +306,18 @@ def dictToLatexTable(dict2convert,outfilename,roworder=[],columnorder=[]):
         columns.sort()
     else:
         columns = columnorder
-
+    # Book output
     latexout = open(outfilename,'w')
     latexout.write('\\begin{table}[] \n')
     latexout.write('\\begin{tabular}{|c|'+len(columns)*'c'+'|} \n')
     latexout.write('\\hline \n')
-
+    # Write first line with column names
     column_string = ' &'
     for c in columns:
         column_string += str(c)+'\t& '
     column_string = column_string[:-2]+'\\\\ \n'
     latexout.write(column_string)
-
+    # Write rows
     latexout.write('\\hline \n')
     for r in rows:
         row_string = '\t'+r+'\t& '
@@ -200,248 +334,15 @@ def dictToLatexTable(dict2convert,outfilename,roworder=[],columnorder=[]):
     latexout.write('\\end{table}')
     latexout.close()
 
-def easyPlot(name, tag, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=False,rootfile=False,xtitle='',ytitle='',dataOff=False,datastyle='pe'):  
-    # histlist is just the generic list but if bkglist is specified (non-empty)
-    # then this function will stack the backgrounds and compare against histlist as if 
-    # it is data. The important bit is that bkglist is a list of lists. The first index
-    # of bkglist corresponds to the index in histlist (the corresponding data). 
-    # For example you could have:
-    #   histlist = [data1, data2]
-    #   bkglist = [[bkg1_1,bkg2_1],[bkg1_2,bkg2_2]]
+def FindCommonString(string_list):
+    '''Finds a common string between a list of strings.
 
-    if len(histlist) == 1:
-        width = 800
-        height = 700
-        padx = 1
-        pady = 1
-    elif len(histlist) == 2:
-        width = 1200
-        height = 700
-        padx = 2
-        pady = 1
-    elif len(histlist) == 3:
-        width = 1600
-        height = 700
-        padx = 3
-        pady = 1
-    elif len(histlist) == 4:
-        width = 1200
-        height = 1000
-        padx = 2
-        pady = 2
-    elif len(histlist) == 6 or len(histlist) == 5:
-        width = 1600
-        height = 1000
-        padx = 3
-        pady = 2
-    else:
-        raise ValueError('histlist of size ' + str(len(histlist)) + ' not currently supported')
+    Args:
+        string_list ([str]): List of strings to compare.
 
-    tdrstyle.setTDRStyle()
-
-    myCan = TCanvas(name,name,width,height)
-    myCan.Divide(padx,pady)
-
-    # Just some colors that I think work well together and a bunch of empty lists for storage if needed
-    default_colors = [kRed,kMagenta,kGreen,kCyan,kBlue]
-    if len(colors) == 0:   
-        colors = default_colors
-    stacks = []
-    tot_hists = []
-    legends = []
-    mains = []
-    subs = []
-    pulls = []
-    logString = ''
-
-    # For each hist/data distribution
-    for hist_index, hist in enumerate(histlist):
-        # Grab the pad we want to draw in
-        myCan.cd(hist_index+1)
-        # if len(histlist) > 1:
-        thisPad = myCan.GetPrimitive(name+'_'+str(hist_index+1))
-        thisPad.cd()
-
-        # If this is a TH2, just draw the lego
-        if hist.ClassName().find('TH2') != -1:
-            if logy == True:
-                gPad.SetLogy()
-            gPad.SetLeftMargin(0.2)
-            hist.GetXaxis().SetTitle(xtitle)
-            hist.GetYaxis().SetTitle(ytitle)
-            hist.GetXaxis().SetTitleOffset(1.5)
-            hist.GetYaxis().SetTitleOffset(2.3)
-            hist.GetZaxis().SetTitleOffset(1.8)
-            if len(titles) > 0:
-                hist.SetTitle(titles[hist_index])
-
-            hist.Draw('lego')
-            if len(bkglist) > 0:
-                print('ERROR: It seems you are trying to plot backgrounds with data on a 2D plot. This is not supported since there is no good way to view this type of distribution.')
-        
-        # Otherwise it's a TH1 hopefully
-        else:
-            alpha = 1
-            if dataOff:
-                alpha = 0
-            hist.SetLineColorAlpha(kBlack,alpha)
-            if 'pe' in datastyle.lower():
-                hist.SetMarkerColorAlpha(kBlack,alpha)
-                hist.SetMarkerStyle(8)
-            if 'hist' in datastyle.lower():
-                hist.SetFillColorAlpha(0,0)
-            
-            # If there are no backgrounds, only plot the data (semilog if desired)
-            if len(bkglist) == 0:
-                hist.GetXaxis().SetTitle(xtitle)
-                hist.GetYaxis().SetTitle(ytitle)
-                if len(titles) > 0:
-                    hist.SetTitle(titles[hist_index])
-                hist.Draw(datastyle)
-            
-            # Otherwise...
-            else:
-                # Create some subpads, a legend, a stack, and a total bkg hist that we'll use for the error bars
-                if not dataOff:
-                    mains.append(TPad(hist.GetName()+'_main',hist.GetName()+'_main',0, 0.3, 1, 1))
-                    subs.append(TPad(hist.GetName()+'_sub',hist.GetName()+'_sub',0, 0, 1, 0.3))
-
-                else:
-                    mains.append(TPad(hist.GetName()+'_main',hist.GetName()+'_main',0, 0.1, 1, 1))
-                    subs.append(TPad(hist.GetName()+'_sub',hist.GetName()+'_sub',0, 0, 0, 0))
-
-                legends.append(TLegend(0.65,0.6,0.95,0.93))
-                stacks.append(THStack(hist.GetName()+'_stack',hist.GetName()+'_stack'))
-                tot_hist = hist.Clone(hist.GetName()+'_tot')
-                tot_hist.Reset()
-                tot_hist.SetTitle(hist.GetName()+'_tot')
-                tot_hist.SetMarkerStyle(0)
-                tot_hists.append(tot_hist)
-
-
-                # Set margins and make these two pads primitives of the division, thisPad
-                mains[hist_index].SetBottomMargin(0.0)
-                mains[hist_index].SetLeftMargin(0.16)
-                mains[hist_index].SetRightMargin(0.05)
-                mains[hist_index].SetTopMargin(0.1)
-
-                subs[hist_index].SetLeftMargin(0.16)
-                subs[hist_index].SetRightMargin(0.05)
-                subs[hist_index].SetTopMargin(0)
-                subs[hist_index].SetBottomMargin(0.3)
-                mains[hist_index].Draw()
-                subs[hist_index].Draw()
-
-                # Build the stack
-                for bkg_index,bkg in enumerate(bkglist[hist_index]):     # Won't loop if bkglist is empty
-                    # bkg.Sumw2()
-                    tot_hists[hist_index].Add(bkg)
-                    bkg.SetLineColor(kBlack)
-                    if logy:
-                        bkg.SetMinimum(1e-3)
-
-                    if bkg.GetName().find('qcd') != -1:
-                        bkg.SetFillColor(kYellow)
-
-                    else:
-                        if colors[bkg_index] != None:
-                            bkg.SetFillColor(colors[bkg_index])
-                        else:
-                            bkg.SetFillColor(default_colors[bkg_index])
-
-                    stacks[hist_index].Add(bkg)
-
-                    legends[hist_index].AddEntry(bkg,bkg.GetName().split('_')[0],'f')
-                    
-                # Go to main pad, set logy if needed
-                mains[hist_index].cd()
-
-                # Set y max of all hists to be the same to accomodate the tallest
-                histList = [stacks[hist_index],tot_hists[hist_index],hist]
-
-                yMax = histList[0].GetMaximum()
-                maxHist = histList[0]
-                for h in range(1,len(histList)):
-                    if histList[h].GetMaximum() > yMax:
-                        yMax = histList[h].GetMaximum()
-                        maxHist = histList[h]
-                for h in histList:
-                    h.SetMaximum(yMax*1.1)
-                    if logy == True:
-                        h.SetMaximum(yMax*10)
-
-                
-                mLS = 0.06
-                # Now draw the main pad
-                data_leg_title = hist.GetTitle()
-                if len(titles) > 0:
-                    hist.SetTitle(titles[hist_index])
-                hist.SetTitleOffset(1.5,"xy")
-                hist.GetYaxis().SetTitle('Events')
-                hist.GetYaxis().SetLabelSize(mLS)
-                hist.GetYaxis().SetTitleSize(mLS)
-                if logy == True:
-                    hist.SetMinimum(1e-3)
-                hist.Draw(datastyle)
-
-                stacks[hist_index].Draw('same hist')
-
-                # Do the signals
-                if len(signals) > 0: 
-                    signals[hist_index].SetLineColor(kBlue)
-                    signals[hist_index].SetLineWidth(2)
-                    if logy == True:
-                        signals[hist_index].SetMinimum(1e-3)
-                    legends[hist_index].AddEntry(signals[hist_index],signals[hist_index].GetName().split('_')[0],'L')
-                    signals[hist_index].Draw('hist same')
-
-                tot_hists[hist_index].SetFillColor(kBlack)
-                tot_hists[hist_index].SetFillStyle(3354)
-
-                tot_hists[hist_index].Draw('e2 same')
-                # legends[hist_index].Draw()
-
-                if not dataOff:
-                    legends[hist_index].AddEntry(hist,'data',datastyle)
-                    hist.Draw(datastyle+' same')
-
-                gPad.RedrawAxis()
-
-                # Draw the pull
-                subs[hist_index].cd()
-                # Build the pull
-                pulls.append(Make_Pull_plot(hist,tot_hists[hist_index]))
-                pulls[hist_index].SetFillColor(kBlue)
-                pulls[hist_index].SetTitle(";"+hist.GetXaxis().GetTitle()+";(Data-Bkg)/#sigma")
-                pulls[hist_index].SetStats(0)
-
-                LS = .13
-
-                pulls[hist_index].GetYaxis().SetRangeUser(-2.9,2.9)
-                pulls[hist_index].GetYaxis().SetTitleOffset(0.4)
-                pulls[hist_index].GetXaxis().SetTitleOffset(0.9)
-                             
-                pulls[hist_index].GetYaxis().SetLabelSize(LS)
-                pulls[hist_index].GetYaxis().SetTitleSize(LS)
-                pulls[hist_index].GetYaxis().SetNdivisions(306)
-                pulls[hist_index].GetXaxis().SetLabelSize(LS)
-                pulls[hist_index].GetXaxis().SetTitleSize(LS)
-
-                pulls[hist_index].GetXaxis().SetTitle(xtitle)
-                pulls[hist_index].GetYaxis().SetTitle("(Data-Bkg)/#sigma")
-                pulls[hist_index].Draw('hist')
-
-                if logy == True:
-                    mains[hist_index].SetLogy()
-
-                CMS_lumi.CMS_lumi(thisPad, 4, 11)
-
-    if rootfile:
-        myCan.Print(tag+'plots/'+name+'.root','root')
-    else:
-        myCan.Print(tag+'plots/'+name+'.png','png')
-
-def findCommonString(string_list):
+    Returns:
+        str: Matched sub-string.
+    '''
     to_match = ''   # initialize the string we're looking for/building
     for s in string_list[0]:    # for each character in the first string
         passed = True
@@ -459,70 +360,16 @@ def findCommonString(string_list):
         return to_match[:-1]                # if not, return to_match minus final character
 
     return to_match[:-2]
-        
-def makePullPlot( DATA,BKG):
-    BKGUP, BKGDOWN = Make_up_down(BKG)
-    pull = DATA.Clone(DATA.GetName()+"_pull")
-    pull.Add(BKG,-1)
-    sigma = 0.0
-    FScont = 0.0
-    BKGcont = 0.0
-    for ibin in range(1,pull.GetNbinsX()+1):
-        FScont = DATA.GetBinContent(ibin)
-        BKGcont = BKG.GetBinContent(ibin)
-        if FScont>=BKGcont:
-            FSerr = DATA.GetBinErrorLow(ibin)
-            BKGerr = abs(BKGUP.GetBinContent(ibin)-BKG.GetBinContent(ibin))
-        if FScont<BKGcont:
-            FSerr = DATA.GetBinErrorUp(ibin)
-            BKGerr = abs(BKGDOWN.GetBinContent(ibin)-BKG.GetBinContent(ibin))
-        if FSerr != None:
-            sigma = sqrt(FSerr*FSerr + BKGerr*BKGerr)
-        else:
-            sigma = sqrt(BKGerr*BKGerr)
-        if FScont == 0.0:
-            pull.SetBinContent(ibin, 0.0 )  
-        else:
-            if sigma != 0 :
-                pullcont = (pull.GetBinContent(ibin))/sigma
-                pull.SetBinContent(ibin, pullcont)
-            else :
-                pull.SetBinContent(ibin, 0.0 )
-    return pull
-
-def makeUpDown(hist):
-    hist_up = hist.Clone(hist.GetName()+'_up')
-    hist_down = hist.Clone(hist.GetName()+'_down')
-
-    for xbin in range(1,hist.GetNbinsX()+1):
-        errup = hist.GetBinErrorUp(xbin)
-        errdown = hist.GetBinErrorLow(xbin)
-        nom = hist.GetBinContent(xbin)
-
-        hist_up.SetBinContent(xbin,nom+errup)
-        hist_down.SetBinContent(xbin,nom-errdown)
-
-    return hist_up,hist_down
-
-# Taken from Kevin's limit_plot_shape.py
-def makeSmoothGraph(h2,h3):
-    h2 = TGraph(h2)
-    h3 = TGraph(h3)
-    npoints = h3.GetN()
-    h3.Set(2*npoints+2)
-    for b in range(npoints+2):
-        x1, y1 = (ROOT.Double(), ROOT.Double())
-        if b == 0:
-            h3.GetPoint(npoints-1, x1, y1)
-        elif b == 1:
-            h2.GetPoint(npoints-b, x1, y1)
-        else:
-            h2.GetPoint(npoints-b+1, x1, y1)
-        h3.SetPoint(npoints+b, x1, y1)
-    return h3
 
 @contextmanager
 def cd(newdir):
+    '''Context manager to cd to another folder in the middle of
+    a python script. Useful to use if you're producing a lot of files
+    in a dedicated folder. Change into the folder and then produce the files.
+
+    Args:
+        newdir (str): Directory to cd into.
+    '''
     prevdir = os.getcwd()
     os.chdir(os.path.expanduser(newdir))
     try:
