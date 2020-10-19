@@ -16,3 +16,6 @@ class CommonTest():
 
     def test_GetHistBinningTuple(self):
         pass
+
+    def test_StitchQCD(self):
+        pass
