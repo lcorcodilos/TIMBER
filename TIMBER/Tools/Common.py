@@ -15,10 +15,9 @@ from collections import OrderedDict
 def CutflowHist(name,node,efficiency=False):
     '''Draws a cutflow histogram using the report feature of RDF.
 
-    Args:
-        name (str): Name of output histogram
-        node (Node): Input Node from which to get the cutflow.
-        efficiency (bool, optional): Reports an efficiency instead of yields
+    @param name (str): Name of output histogram
+    @param node (Node): Input Node from which to get the cutflow.
+    @param efficiency (bool, optional): Reports an efficiency instead of yields
             (relative to number of events before any cuts on Node).
 
     Returns:
@@ -44,10 +43,9 @@ def CutflowHist(name,node,efficiency=False):
 def CutflowTxt(name,node,efficiency=False):
     '''Writes out the cutflow as a text file using the report feature of RDF.
 
-    Args:
-        name (str): Name of output text file.
-        node (Node): Input Node from which to get the cutflow.
-        efficiency (bool, optional): Reports an efficiency instead of yields
+    @param name (str): Name of output text file.
+    @param node (Node): Input Node from which to get the cutflow.
+    @param efficiency (bool, optional): Reports an efficiency instead of yields
             (relative to number of events before any cuts on Node).
 
     Returns:
@@ -70,9 +68,8 @@ def CutflowTxt(name,node,efficiency=False):
 def StitchQCD(QCDdict,normDict=None):
     '''Stitches together histograms in QCD hist groups.
 
-    Args:
-        QCDdict ({string:HistGroup}): Dictionary of HistGroup objects
-        normDict ({string:float}): Factors to normalize each sample to where keys must match QCDdict keys.
+    @param QCDdict ({string:HistGroup}): Dictionary of HistGroup objects
+    @param normDict ({string:float}): Factors to normalize each sample to where keys must match QCDdict keys.
             Default to None and assume normalization has already been done.
     Returns:
         HistGroup: New HistGroup with histograms in group being the final stitched versions
@@ -105,9 +102,8 @@ def CompileCpp(blockcode,library=False):
     as a library and if in the future the C++ script is older than the library,
     then the library will be loaded instead.
 
-    Args:
-        blockcode (str): Either a block of C++ code or a file name to open.
-        library (bool, optional): Compiles a library which can be later loaded
+    @param blockcode (str): Either a block of C++ code or a file name to open.
+    @param library (bool, optional): Compiles a library which can be later loaded
             to avoid compilation time. Defaults to False.
     '''
     if os.environ["TIMBERPATH"] not in ROOT.gSystem.GetIncludePath():
@@ -146,8 +142,7 @@ def CompileCpp(blockcode,library=False):
 def OpenJSON(filename):
     '''Opens JSON file as a dictionary (accounting for unicode encoding)
 
-    Args:
-        filename (str): JSON file name to open.
+    @param filename (str): JSON file name to open.
 
     Returns:
         dict: Python dictionary with JSON content.
@@ -159,14 +154,36 @@ def AsciiEncodeDict(data):
 
     Credit Andrew Clark on [StackOverflow](https://stackoverflow.com/questions/9590382/forcing-python-json-module-to-work-with-ascii/28339920).
 
-    Args:
-        data (dict): Input dictionary.
+    @param data (dict): Input dictionary.
 
     Returns:
         dict: New dictionary with unicode converted to ascii.
     '''
     ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x 
     return dict(map(ascii_encode, pair) for pair in data.items())
+
+def ConcatCols(self,colnames,val='1',connector='&&'):
+        '''Concatenates a list of column names evaluating to a common `val` (usually 1 or 0) 
+        with some `connector` (boolean logic operator).
+
+        @param colnames ([str]): List of column names.
+        @param val (str): Value to test equality of all columns. Defaults to '1'.
+        @param connector (str): C++ boolean logic operator between column equality checks. Defaults to '&&'.
+
+        Returns:
+            str: Concatenated string of the entire evaluation that in C++ will return a bool.
+        '''
+        concat = ''
+        for i,c in enumerate(colnames):
+            if concat == '': 
+                concat = '((%s==%s)'%(c,val)
+            else: 
+                concat += ' %s (%s==%s)'%(connector,c,val)
+
+        if concat != '': 
+            concat += ')' 
+            
+        return concat
 
 def GetHistBinningTuple(h):
     # At least 1D (since TH2 and TH3 inherit from TH1)
@@ -214,9 +231,8 @@ def ColliMate(myString,width=18):
     Recommended instead to use format() method of python strings as 
     described [here](https://stackoverflow.com/questions/10623727/python-spacing-and-aligning-strings).
 
-    Args:
-        myString (str): String to space (words only separated by single space).
-        width (int, optional): Column widths. Defaults to 18.
+    @param myString (str): String to space (words only separated by single space).
+    @param width (int, optional): Column widths. Defaults to 18.
 
     Returns:
         str: String with new spacing between words.
@@ -237,8 +253,7 @@ def ColliMate(myString,width=18):
 def DictStructureCopy(inDict):
     '''Recursively copies the structure of a dictionary with non-dict items replaced with 0.
 
-    Args:
-        inDict (dict): Dictionary with structure to copy.
+    @param inDict (dict): Dictionary with structure to copy.
 
     Returns:
         dict: Output dict.
@@ -254,8 +269,7 @@ def DictStructureCopy(inDict):
 def DictCopy(inDict):
     '''Recursively copy dictionary structure and values.
 
-    Args:
-        inDict (dict): Dictionary to copy.
+    @param inDict (dict): Dictionary to copy.
 
     Returns:
         dict: Output copy.
@@ -272,9 +286,8 @@ def ExecuteCmd(cmd,dryrun=False):
     '''Executes shell command via `subprocess.call()` and prints
     the command for posterity.
 
-    Args:
-        cmd (str): Shell command to run.
-        dryrun (bool, optional): Prints command but doesn't execute it. Defaults to False.
+    @param cmd (str): Shell command to run.
+    @param dryrun (bool, optional): Prints command but doesn't execute it. Defaults to False.
     '''
     print('Executing: '+cmd)
     if not dryrun:
@@ -285,11 +298,10 @@ def DictToLatexTable(dict2convert,outfilename,roworder=[],columnorder=[]):
     a LaTeX table. First set of keys (ie. external) are rows, second (ie. internal) are columns.
     If the column entry for a given row is not provided (ie. missing key), then '-' is substituted.
 
-    Args:
-        dict2convert (dict): Input dictionary.
-        outfilename (str): Output .tex file name.
-        roworder (list, optional): Custom ordering of rows. Defaults to [] in which case the sorted keys are used.
-        columnorder (list, optional): Custom ordering of columns. Defaults to [] in which case the sorted keys are used.
+    @param dict2convert (dict): Input dictionary.
+    @param outfilename (str): Output .tex file name.
+    @param roworder (list, optional): Custom ordering of rows. Defaults to [] in which case the sorted keys are used.
+    @param columnorder (list, optional): Custom ordering of columns. Defaults to [] in which case the sorted keys are used.
     '''
     # Determine order of rows and columns
     if len(roworder) == 0:
@@ -337,8 +349,7 @@ def DictToLatexTable(dict2convert,outfilename,roworder=[],columnorder=[]):
 def FindCommonString(string_list):
     '''Finds a common string between a list of strings.
 
-    Args:
-        string_list ([str]): List of strings to compare.
+    @param string_list ([str]): List of strings to compare.
 
     Returns:
         str: Matched sub-string.
@@ -367,8 +378,7 @@ def cd(newdir):
     a python script. Useful to use if you're producing a lot of files
     in a dedicated folder. Change into the folder and then produce the files.
 
-    Args:
-        newdir (str): Directory to cd into.
+    @param newdir (str): Directory to cd into.
     '''
     prevdir = os.getcwd()
     os.chdir(os.path.expanduser(newdir))

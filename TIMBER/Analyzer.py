@@ -4,7 +4,7 @@ Home of main classes for TIMBER.
 
 """
 
-from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp
+from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols
 from clang import cindex
 from collections import OrderedDict
 
@@ -31,20 +31,18 @@ class analyzer(object):
     When using class functions to perform actions, an active node will always be tracked so that the next action uses 
     the active node and assigns the output node as the new #ActiveNode"""
     def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs"):
-        """
-        Constructor. Setups the tracking of actions on an RDataFrame as nodes. Also
+        """Constructor.
+        
+        Sets up the tracking of actions on an RDataFrame as nodes. Also
         looks up and stores common information in NanoAOD such as the number of generated
         events in a file (#genEventCount), the LHA ID of the PDF set in the `LHEPdfWeights`
         branch (#lhaid), if the file is data (#isData), and if the file is before NanoAOD
         version 6 (#preV6).
 
-        Args:
-            fileName (str): A ROOT file path or the path to a txt file which contains several ROOT file paths separated by 
+        @param fileName (str): A ROOT file path or the path to a txt file which contains several ROOT file paths separated by 
                 new line characters.
-
-            eventsTreeName (str): Name of TTree in fileName where events are stored. Defaults to "Events" (for NanoAOD)
-            
-            runTreeName (str): NAme of TTree in fileName where run information is stored (for generated event info in 
+        @param eventsTreeName (str, optional): Name of TTree in fileName where events are stored. Defaults to "Events" (for NanoAOD)
+        @param runTreeName (str, optional): NAme of TTree in fileName where run information is stored (for generated event info in 
                 simulation). Defaults to "Runs" (for NanoAOD) 
         """
 
@@ -56,10 +54,10 @@ class analyzer(object):
         # Node
         #
         # Initial Node - no modifications.
-        ## @var DataFrames
-        # dict
+        ## @var AllNodes
+        # {str:Node}
         #
-        # All data frames.
+        # List of all nodes being tracked.
         ## @var Corrections
         # dict
         #
@@ -153,6 +151,8 @@ class analyzer(object):
     @property
     def DataFrame(self):
         '''
+        DataFrame of the ActiveNode
+
         Returns:
             RDataFrame: Dataframe for the active node.
         '''        
@@ -165,8 +165,7 @@ class analyzer(object):
     def SetActiveNode(self,node):
         '''Sets the active node.
 
-        Args:
-            node (Node): Node to set as #ActiveNode.
+        @param node (Node): Node to set as #ActiveNode.
 
         Raises:
             ValueError: If argument type is not Node.
@@ -197,10 +196,9 @@ class analyzer(object):
 
     def TrackNode(self,node):
         '''Add a node to track.
-        Will add the node to #DataFrames dictionary with key node.name.
+        Will add the node to #AllNodes dictionary with key node.name.
 
-        Args:
-            node (Node): Node to start tracking.
+        @param node (Node): Node to start tracking.
 
         Raises:
             NameError: If attempting to track nodes of the same name.
@@ -217,7 +215,8 @@ class analyzer(object):
             raise TypeError('TrackNode() does not support arguments of type %s. Please provide a Node.'%(type(node)))
 
     def GetTrackedNodeNames(self):
-        '''
+        '''Gets the names of the nodes currently being tracked.
+
         Returns:
             [str]: List of names of nodes being tracked.
         '''
@@ -235,9 +234,8 @@ class analyzer(object):
         '''Takes a list of possible columns and returns only those that
         exist in the RDataFrame of the supplied node.
 
-        Args:
-            columns ([str]): List of column names (str)
-            node (Node, optional): Node to compare against. Defaults to #BaseNode.
+        @param columns ([str]): List of column names (str)
+        @param node (Node, optional): Node to compare against. Defaults to #BaseNode.
 
         Returns:
             [str]: List of column names that union with those in the RDataFrame.
@@ -251,58 +249,32 @@ class analyzer(object):
 
         return out
 
-    def ConcatCols(self,colnames,val='1',connector='&&'):
-        '''Concatenates a list of column names evaluating to a common `val` (usually 1 or 0) 
-        with some `connector` (boolean logic operator).
-
-        Args:
-            colnames ([str]): List of column names (str).
-            val (str, optional): Value to test equality of all columns. Defaults to '1'.
-            connector (str, optional): C++ boolean logic operator between column equality checks. Defaults to '&&'.
-
-        Returns:
-            str: Concatenated string of the entire evaluation that in C++ will return a bool.
-        '''
-        concat = ''
-        for i,c in enumerate(colnames):
-            if concat == '': 
-                concat = '((%s==%s)'%(c,val)
-            else: 
-                concat += ' %s (%s==%s)'%(connector,c,val)
-
-        if concat != '': 
-            concat += ')' 
-            
-        return concat
-
     def GetTriggerString(self,trigList):
         '''Checks input list for missing triggers and drops those missing (#FilterColumnNames)
-        and then concatenates those remaining into an OR (`||`) string (#ConcatCols)
+        and then concatenates those remaining into an OR (`||`) string.
 
-        Args:
-            trigList [str]: List of trigger names 
+        @param trigList [str]: List of trigger names 
 
         Returns:
             str: Statement to evaluate as the set of triggers.
         '''
         trig_string = ''
         available_trigs = self.FilterColumnNames(trigList)
-        trig_string = self.ConcatCols(available_trigs,'1','||')
+        trig_string = ConcatCols(available_trigs,'1','||')
         return trig_string
 
     def GetFlagString(self,flagList):
         '''Checks input list for missing flags and drops those missing (#FilterColumnNames)
-        and then concatenates those remaining into an AND string (#ConcatCols)
+        and then concatenates those remaining into an AND string.
 
-        Args:
-            flagList [str]: List of flag names 
+        @param flagList [str]: List of flag names 
 
         Returns:
             str: Statement to evaluate as the set of flags.
         '''
         flag_string = ''
         available_flags = self.FilterColumnNames(flagList)
-        flag_string = self.ConcatCols(available_flags,'1','&&')
+        flag_string = ConcatCols(available_flags,'1','&&')
         return flag_string
 
     def GetFileName(self):
@@ -322,10 +294,9 @@ class analyzer(object):
         '''Apply a cut/filter to a provided node or the #ActiveNode by default.
         Will add the resulting node to tracking and set it as the #ActiveNode.
 
-        Args:
-            name (str): Name for the cut for internal tracking and later reference.
-            cuts (str,#CutGroup): A one-line C++ string that evaluates as a boolean or a CutGroup object which contains multiple actions that evaluate as booleans.
-            node (Node, optional): Node on which to apply the cut/filter. Defaults to #ActiveNode.
+        @param name (str): Name for the cut for internal tracking and later reference.
+        @param cuts (str, CutGroup): A one-line C++ string that evaluates as a boolean or a CutGroup object which contains multiple actions that evaluate as booleans.
+        @param node (Node, optional): Node on which to apply the cut/filter. Defaults to #ActiveNode.
 
         Raises:
             TypeError: If argument type is not Node.
@@ -354,17 +325,16 @@ class analyzer(object):
         '''Defines a variable/column on top of a provided node or the #ActiveNode by default.
         Will add the resulting node to tracking and set it as the #ActiveNode.
 
-        Args:
-            name (str): Name for the column for internal tracking and later reference.
-            cuts (str,#VarGroup): A one-line C++ string that evaluates to desired value to store
-                or a #VarGroup object which contains multiple actions that evaluate to the desired values. 
-            node (Node, optional): Node to create the new variable/column on top of. Defaults to #ActiveNode.
+        @param name (str): Name for the column for internal tracking and later reference.
+        @param variables (str, VarGroup): A one-line C++ string that evaluates to desired value to store
+                or a VarGroup object which contains multiple actions that evaluate to the desired values. 
+        @param node (Node, optional): Node to create the new variable/column on top of. Defaults to #ActiveNode.
 
         Raises:
             TypeError: If argument type is not Node.
 
         Returns:
-            Node: New #ActiveNode.
+            Node: New ActiveNode.
         '''
         if node == None: node = self.ActiveNode
         newNode = node
@@ -389,10 +359,9 @@ class analyzer(object):
     def Apply(self,actionGroupList,node=None,trackEach=True):
         '''Applies a single CutGroup/VarGroup or an ordered list of Groups to the provided node or the #ActiveNode by default.
 
-        Args:
-            actionGroupList (Group, list(Group)): The CutGroup or VarGroup to act on node or a list of CutGroups or VarGroups to act (in order) on node.
-            node ([type], optional): Node to create the new variable/column on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
-            trackEach (bool, optional): [description]. Defaults to True.
+        @param actionGroupList (Group, list(Group)): The CutGroup or VarGroup to act on node or a list of CutGroups or VarGroups to act (in order) on node.
+        @param node ([type], optional): Node to create the new variable/column on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
+        @param trackEach (bool, optional): [description]. Defaults to True.
 
         Raises:
             TypeError: If argument type is not Node.
@@ -421,11 +390,10 @@ class analyzer(object):
     def Discriminate(self,name,discriminator,node=None,passAsActiveNode=None):
         '''Forks a node based upon a discriminator being True or False (#ActiveNode by default).
 
-        Args:
-            name (str): Name for the discrimination for internal tracking and later reference.
-            discriminator (str): A one-line C++ string that evaluates as a boolean to discriminate for the forking of the node.
-            node (Node, optional): Node to discriminate. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
-            passAsActiveNode (bool, optional): True if the #ActiveNode should be set to the node that passes the discriminator.
+        @param name (str): Name for the discrimination for internal tracking and later reference.
+        @param discriminator (str): A one-line C++ string that evaluates as a boolean to discriminate for the forking of the node.
+        @param node (Node, optional): Node to discriminate. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
+        @param passAsActiveNode (bool, optional): True if the #ActiveNode should be set to the node that passes the discriminator.
                 False if the #ActiveNode should be set to the node that fails the discriminator. Defaults to None in which case the #ActiveNode does not change.
 
         Returns:
@@ -451,11 +419,10 @@ class analyzer(object):
         '''Add a Correction to track. Sets new active node with all correction
         variations calculated as new columns.
 
-        Args:
-            correction (Correction): Correction object to add.
-            evalArgs ([str], optional): List of arguments (NanoAOD branch names) to provide to per-event evaluation method.
+        @param correction (Correction): Correction object to add.
+        @param evalArgs ([str], optional): List of arguments (NanoAOD branch names) to provide to per-event evaluation method.
                               Default empty and clang will deduce if method definition argument names match columns in RDataFrame.
-            node (Node, optional): Node to add correction on top of. Defaults to #ActiveNode.
+        @param node (Node, optional): Node to add correction on top of. Defaults to #ActiveNode.
 
         Raises:
             TypeError: If argument types are not Node and Correction.
@@ -495,9 +462,8 @@ class analyzer(object):
         '''Add multiple Corrections to track. Sets new #ActiveNode with all correction
         variations calculated as new columns.
 
-        Args:
-            correctionList ([Correction]): List of Correction objects to add.
-            node (Node, optional): [description]. Defaults to None.
+        @param correctionList ([Correction]): List of Correction objects to add.
+        @param node (Node, optional): [description]. Defaults to None.
 
         Returns:
             Node: New #ActiveNode.
@@ -513,9 +479,8 @@ class analyzer(object):
     def __checkCorrections(self,correctionNames,dropList):
         '''Does type checking and drops specified corrections by name.
 
-        Args:
-            correctionNames ([str]): List of correction names to include.
-            dropList ([type]): List of correction names to drop.
+        @param correctionNames ([str]): List of correction names to include.
+        @param dropList ([type]): List of correction names to drop.
 
         Raises:
             ValueError: If lists aren't provided.
@@ -554,11 +519,10 @@ class analyzer(object):
         A list of correction names can be provided if only a subset of the corrections being tracked are 
         desired. A drop list can also be supplied to remove a subset of corrections.
 
-        Args:
-            node (Node): Node to calculate weights on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
-            correctionNames list(str): List of correction names (strings) to consider. Default is None in which case all corrections
+        @param node (Node): Node to calculate weights on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
+        @param correctionNames list(str): List of correction names (strings) to consider. Default is None in which case all corrections
                 being tracked are considered.
-            dropList list(str): List of correction names (strings) to not consider. Default is empty lists in which case no corrections
+        @param dropList list(str): List of correction names (strings) to not consider. Default is empty lists in which case no corrections
                 are dropped from consideration.
 
         Returns:
@@ -599,10 +563,9 @@ class analyzer(object):
     def MakeTemplateHistos(self,templateHist,variables,node=None):
         '''Generates the uncertainty template histograms based on the weights created by #MakeWeightCols(). 
 
-        Args:
-            templateHist (TH1,TH2,TH3): A TH1, TH2, or TH3 used as a template to create the histograms.
-            variables ([str]): A list of the columns/variables to plot (ex. ["x","y","z"]).
-            node (Node): Node to plot histograms from. Defaults to #ActiveNode.
+        @param templateHist (TH1,TH2,TH3): A TH1, TH2, or TH3 used as a template to create the histograms.
+        @param variables ([str]): A list of the columns/variables to plot (ex. ["x","y","z"]).
+        @param node (Node): Node to plot histograms from. Defaults to #ActiveNode.
 
         Returns:
             HistGroup: Uncertainty template histograms.
@@ -648,12 +611,11 @@ class analyzer(object):
     def DrawTemplates(self,hGroup,saveLocation,projection='X',projectionArgs=(),fileType='pdf'):
         '''Draw the template uncertainty histograms created by #MakeTemplateHistos(). 
 
-        Args:
-            hGroup (HistGroup): Uncertainty template histograms.
-            saveLocation (str): Path to folder to save histograms.
-            projection (str, optional): "X" (Default), "Y", or "Z". Axis to project onto if templates are not 1D.
-            projectionArgs (tuple, optional): A tuple of arguments provided to ROOT TH1 ProjectionX(Y)(Z).
-            fileType (str, optional): File type - "pdf", "png", etc (must be supported by TCanvas.Print()).
+        @param hGroup (HistGroup): Uncertainty template histograms.
+        @param saveLocation (str): Path to folder to save histograms.
+        @param projection (str, optional): "X" (Default), "Y", or "Z". Axis to project onto if templates are not 1D.
+        @param projectionArgs (tuple, optional): A tuple of arguments provided to ROOT TH1 ProjectionX(Y)(Z).
+        @param fileType (str, optional): File type - "pdf", "png", etc (must be supported by TCanvas.Print()).
 
         Returns:
             None
@@ -718,9 +680,8 @@ class analyzer(object):
         The structure is optimized so that as many actions are shared as possible
         so that the N different nodes can be made. Use #PrintNodeTree() to visualize. 
 
-        Args:
-            node (Node): Node to build on.
-            cutgroup (CutGroup): Group of N cuts to apply.
+        @param node (Node): Node to build on.
+        @param cutgroup (CutGroup): Group of N cuts to apply.
 
         Returns:
             dict: N nodes in dictionary with keys indicating the cut that was not applied.
@@ -756,9 +717,8 @@ class analyzer(object):
         '''Print a PDF image of the node structure of the analysis.
         Requires python graphviz package which should be an installed dependency.
 
-        Args:
-            outfilename (str): Name of output PDF file.
-            verbose (bool, optional): Turns on verbose node labels. Defaults to False.
+        @param outfilename (str): Name of output PDF file.
+        @param verbose (bool, optional): Turns on verbose node labels. Defaults to False.
 
         Returns:
             None
@@ -785,17 +745,29 @@ class Node(object):
     relations between nodes (done automatically via Define, Cut, Discriminate)'''
     def __init__(self, name, DataFrame, action='', children=[]):
         '''Constructor. Holds the RDataFrame and other associated information
-        for tracking in the #analyzer().
+        for tracking in the {@link analyzer}.
 
         Methods which act on the RDataFrame always return a new node
         since RDataFrame is not modified in place.
 
-        Args:
-            name (str): Name for the node. Duplicate named nodes cannot be tracked simultaneously in the analyzer.
-            DataFrame (RDataFrame): Dataframe to track.
-            children ([Node], optional): Child nodes if they exist. Defaults to [].
-            action (str, optional): Action performed (the C++ line). Default is '' but should only be used for a base RDataFrame.
+        @param name (str): Name for the node. Duplicate named nodes cannot be tracked simultaneously in the analyzer.
+        @param DataFrame (RDataFrame): Dataframe to track.
+        @param children ([Node], optional): Child nodes if they exist. Defaults to [].
+        @param action (str, optional): Action performed (the C++ line). Default is '' but should only be used for a base RDataFrame.
         '''
+        ## @var DataFrame
+        #
+        # DataFrame for the Node.
+        ## @var name
+        #
+        # Name of the Node.
+        ## @var action
+        #
+        # Action performed to create this Node.
+        ## @var children
+        #
+        # List of child nodes.
+
         super(Node, self).__init__()
         self.DataFrame = DataFrame
         self.name = name
@@ -805,8 +777,7 @@ class Node(object):
     def Clone(self,name=''):
         '''Clones Node instance without child information and with new name if specified.
 
-        Args:
-            name (str, optional): Name for clone. Defaults to current name.
+        @param name (str, optional): Name for clone. Defaults to current name.
 
         Returns:
             Node: Clone of current instance.
@@ -817,9 +788,8 @@ class Node(object):
     def SetChild(self,child,overwrite=False):
         '''Set one of child for the node.
 
-        Args:
-            child (Node): Child node to add.
-            overwrite (bool, optional): Overwrites all current children stored. Defaults to False.
+        @param child (Node): Child node to add.
+        @param overwrite (bool, optional): Overwrites all current children stored. Defaults to False.
 
         Raises:
             TypeError: If argument type is not Node.
@@ -839,9 +809,8 @@ class Node(object):
     def SetChildren(self,children,overwrite=False):
         '''Set multiple children for the node.
 
-        Args:
-            children ([Node], {str:Node}): List of children or dictionary of children.
-            overwrite (bool, optional): Overwrites all current children stored. Defaults to False.
+        @param children ([Node], {str:Node}): List of children or dictionary of children.
+        @param overwrite (bool, optional): Overwrites all current children stored. Defaults to False.
 
         Raises:
             TypeError: If argument type is not dict or list of Node.
@@ -867,9 +836,8 @@ class Node(object):
     def Define(self,name,var):
         '''Produces a new Node with the provided variable/column added.
 
-        Args:
-            name (str): Name for the column for internal tracking and later reference.
-            cuts (str): A one-line C++ string that evaluates to desired value to store. 
+        @param name (str): Name for the column for internal tracking and later reference.
+        @param var (str): A one-line C++ string that evaluates to desired value to store. 
 
         Returns:
             Node: New Node object with new column added.
@@ -882,12 +850,11 @@ class Node(object):
     def Cut(self,name,cut):
         '''Produces a new Node with the provided cut/filter applied.
 
-        Args:
-            name (str): Name for the cut for internal tracking and later reference.
-            cuts (str): A one-line C++ string that evaluates as a boolean.
+        @param name (str): Name for the cut for internal tracking and later reference.
+        @param cut (str): A one-line C++ string that evaluates as a boolean.
 
         Returns:
-            Node: New #ActiveNode.
+            Node: New Node object with cut applied.
         '''
         print('Filtering %s: %s' %(name,cut))
         newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],action=cut)
@@ -895,11 +862,10 @@ class Node(object):
         return newNode
 
     def Discriminate(self,name,discriminator):
-        '''Produces a dictionary with two new Nodes made by forking the current node based upon a discriminator being True or False.
+        '''Produces a dictionary with two new Nodes made by forking this Node based upon a discriminator being True or False.
 
-        Args:
-            name (str): Name for the discrimination for internal tracking and later reference.
-            discriminator (str): A one-line C++ string that evaluates as a boolean to discriminate on.
+        @param name (str): Name for the discrimination for internal tracking and later reference.
+        @param discriminator (str): A one-line C++ string that evaluates as a boolean to discriminate on.
 
         Returns:
             dict: Dictionary with keys "pass" and "fail" corresponding to the passing and failing Nodes stored as values.
@@ -911,23 +877,20 @@ class Node(object):
         self.SetChildren(passfail)
         return passfail
             
-    def Apply(self,actiongrouplist):
-        '''Applies a single CutGroup/VarGroup or an ordered list of Groups to the provided node or the #ActiveNode by default.
+    def Apply(self,actionGroupList):
+        '''Applies a single CutGroup/VarGroup or an ordered list of Groups to this Node to produce a new final Node.
 
-        Args:
-            actionGroupList (Group, list(Group)): The CutGroup or VarGroup to act on node or a list of CutGroups or VarGroups to act (in order) on node.
-            node ([type], optional): Node to create the new variable/column on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
-            trackEach (bool, optional): [description]. Defaults to True.
+        @param actionGroupList (Group, list(Group)): The CutGroup or VarGroup to act on node or a list of CutGroups or VarGroups to act (in order) on node.
 
         Raises:
             TypeError: If argument type is not Node.
 
         Returns:
-            Node: New #ActiveNode.
+            Node: New Node with all actions applied.
         '''
-        if type(actiongrouplist) != list: actiongrouplist = [actiongrouplist]
+        if type(actionGroupList) != list: actionGroupList = [actionGroupList]
         node = self
-        for ag in actiongrouplist:
+        for ag in actionGroupList:
             if isinstance(ag,CutGroup):
                 for c in ag.keys():
                     cut = ag[c]
@@ -948,13 +911,12 @@ class Node(object):
         '''Takes a snapshot of the RDataFrame corresponding to this Node.
         Compression algorithm set to 1 (ZLIB) and compression level are set to 1.
 
-        Args:
-            columns ([str] or str): List of columns to keep (str) with regex matching.
+        @param columns ([str] or str): List of columns to keep (str) with regex matching.
                 Provide single string 'all' to include all columns.
-            outfilename (str): Name of the output file
-            treename ([type]): Name of the output TTree
-            lazy (bool, optional): If False, the RDataFrame actions until this point will be executed here. Defaults to False.
-            openOption (str, optional): TFile opening options. Defaults to 'RECREATE'.
+        @param outfilename (str): Name of the output file
+        @param treename ([type]): Name of the output TTree
+        @param lazy (bool, optional): If False, the RDataFrame actions until this point will be executed here. Defaults to False.
+        @param openOption (str, optional): TFile opening options. Defaults to 'RECREATE'.
 
         Returns:
             None
@@ -986,7 +948,6 @@ class Group(object):
     def __init__(self, name):
         '''Constructor
 
-        Args:
             name (str): Name for instance.
         '''
         ## @var name
@@ -1009,9 +970,8 @@ class Group(object):
     def Add(self,name,item,copy=False):
         '''Add item to Group with a name. Modifies in-place.
 
-        Args:
-            name (str): Name/key for added item.
-            item (obj): Item to add.
+        @param name (str): Name/key for added item.
+        @param item (obj): Item to add.
 
         Returns:
             None
@@ -1021,8 +981,7 @@ class Group(object):
     def Drop(self,name,copy=False):
         '''Drop item from Group with provided name/key. Modifies in-place.
 
-        Args:
-            name (str): Name/key for dropped item.
+        @param name (str): Name/key for dropped item.
 
         Returns:
             None
@@ -1032,8 +991,7 @@ class Group(object):
     def Clone(self,name):
         '''Clone the current group with a new name.
 
-        Args:
-            name (str): Name for clone.
+        @param name (str): Name for clone.
 
         Returns:
             Group: Group clone (will be VarGroup, CutGroup, or HistGroup if applicable).
@@ -1050,8 +1008,7 @@ class Group(object):
         If groups do not have matching #type, a generic Group will be returned.
         Ex. `newgroup = group1 + group2`
 
-        Args:
-            other (Group): Group to add to current Group. 
+        @param other (Group): Group to add to current Group. 
 
         Returns:
             Group: Addition of the two groups (will be VarGroup, CutGroup, or HistGroup if applicable).
@@ -1085,9 +1042,8 @@ class Group(object):
         '''Set key-value pair as you would with dictionary.
         Ex. `mygroup["item_name"] = new_value`
 
-        Args:
-            key (obj): Key for value.
-            value (obj): Value to store.
+        @param key (obj): Key for value.
+        @param value (obj): Value to store.
         '''
         self.items[key] = value
 
@@ -1095,8 +1051,7 @@ class Group(object):
         '''Get value from key as you would with dictionary.
         Ex. `val = mygroup["item_name"]`
 
-        Args:
-            key (obj): Key for name/key in Group.
+        @param key (obj): Key for name/key in Group.
         Returns:
             obj: Item for given key.
         '''
@@ -1108,8 +1063,7 @@ class CutGroup(Group):
     def __init__(self, name):
         '''Constructor
 
-        Args:
-            name (str): Name for instance.
+        @param name (str): Name for instance.
         '''
         super(CutGroup,self).__init__(name)
         self.type = 'cut'
@@ -1120,8 +1074,7 @@ class VarGroup(Group):
     def __init__(self, name):
         '''Constructor
 
-        Args:
-            name (str): Name for instance.
+        @param name (str): Name for instance.
         '''
         super(VarGroup,self).__init__(name)
         self.type = 'var'
@@ -1132,8 +1085,7 @@ class HistGroup(Group):
     def __init__(self, name):
         '''Constructor
 
-        Args:
-            name (str): Name for instance.
+        @param name (str): Name for instance.
         '''
         super(HistGroup,self).__init__(name)
         self.type = 'hist'
@@ -1141,11 +1093,12 @@ class HistGroup(Group):
     def Do(self,THmethod,argsTuple=()):
         '''Batch act on histograms using ROOT TH1/2/3 methods.
 
-        Args:
-            THmethod (str): String of the ROOT TH1/2/3 method to use.
-            argsTuple (tuple): Tuple of arguments to pass to THmethod.
+        @param THmethod (str): String of the ROOT TH1/2/3 method to use.
+        @param argsTuple (tuple): Tuple of arguments to pass to THmethod.
+
         Returns:
             HistGroup or None: New HistGroup with THmethod applied if THmethod does not return None; else None.
+
         Example:
             To scale all histograms by 0.5
                 myHistGroup.Do("Scale",(0.5))
@@ -1188,18 +1141,17 @@ class Correction(object):
     def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype='',columnList=None,isClone=False):
         '''Constructor
 
-        Args:
-            name (str): Correction name.
-            script (str): Path to C++ script with function to calculate correction.
-            constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
-            mainFunc (str, optional): Name of the function to use inside script. Defaults to None
+        @param name (str): Correction name.
+        @param script (str): Path to C++ script with function to calculate correction.
+        @param constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
+        @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
                 and the class will try to deduce it.
-            corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty) or 
+        @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty) or 
                 "uncert" (only an uncertainty). Defaults to '' and the class will try to
                 deduce it.
-            columnList ([str], optional): List of column names to search mainFunc arguments against.
-                Defaults to None and the standard NanoAOD columns from #LoadColumnNames() will be used.
-            isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
+        @param columnList ([str], optional): List of column names to search mainFunc arguments against.
+                Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used.
+        @param isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
                 not duplicately recompile the same script if two functions are needed in one C++ script.
         '''
 
@@ -1231,9 +1183,8 @@ class Correction(object):
         If multiple functions are in the same script, one can clone the correction and reassign the mainFunc
         to avoid compiling the same script twice.
 
-        Args:
-            name (str): Clone name.
-            newMainFunc (str, optional): Name of the function to use inside script. Defaults to None and the original is used.
+        @param name (str): Clone name.
+        @param newMainFunc (str, optional): Name of the function to use inside script. Defaults to None and the original is used.
         Returns:
             Correction: Clone of instance with same script but different function (newMainFunc).
         '''
@@ -1244,8 +1195,7 @@ class Correction(object):
         '''Does a basic check that script file exists and modifies path if necessary
         so relative paths to TIMBER/Framework/ can be used.
 
-        Args:
-            script (str): Name of script (must exist on system PATH).
+        @param script (str): Name of script (must exist on system PATH).
 
         Raises:
             NameError: If file does not exist.
@@ -1270,8 +1220,7 @@ class Correction(object):
         must have suffic '_weight' or '_SF' for weight type (correction plus uncertainties)
         or '_uncert' for 'uncert' type (only uncertainties).
 
-        Args:
-            inType (str): Type of Correction. Use '' to deduce from input script name.
+        @param inType (str): Type of Correction. Use '' to deduce from input script name.
 
         Raises:
             NameError: If inType is '' and the type cannot be deduced from the input
@@ -1296,8 +1245,7 @@ class Correction(object):
     def __getFuncInfo(self,funcname):
         '''Parses script with clang to get the function information including name, namespace, and argument names.
 
-        Args:
-            funcname (str): C++ class method name to search for in script.
+        @param funcname (str): C++ class method name to search for in script.
 
         Returns:
             OrderedDict: Dictionary organized as `myreturn[methodname][argname] = argtype`.
@@ -1343,8 +1291,7 @@ class Correction(object):
     def __instantiate(self,args):
         '''Instantiates the class in the provided script with the provided arguments.
 
-        Args:
-            args ([str]): Ordered list of arguments to provide to C++ class to instantiate
+        @param args ([str]): Ordered list of arguments to provide to C++ class to instantiate
                 the object in memory.
         '''
         classname = self.__mainFunc.split('::')[-2]
@@ -1361,22 +1308,16 @@ class Correction(object):
     def MakeCall(self,inArgs = []):
         '''Makes the call (stored in class instance) to the method with the branch/column names deduced or added from input.
 
-        Args:
-            inArgs (list, optional): [description]. Defaults to [].
+        @param inArgs (list, optional): List of arguments (branch/column names) to provide to per-event evaluation method.
+                Defaults to [] in which case the arguements are deduced from what is written in the C++ script.
 
         Raises:
             NameError: If argument written in C++ script cannot be found in available columns.
             ValueError: If provided number of arguments does not match the number in the method.
-        '''
-        """
-
-        Args:
-            inArgs ([str], optional): List of arguments (branch/column names) to provide to per-event evaluation method.
-                Defaults to [] in which case the arguements are deduced from what is written in the C++ script.
 
         Returns
             str: Call to function from C++ script.
-        """
+        '''
         args_to_use = []
 
         if len(inArgs) == 0:
@@ -1403,8 +1344,7 @@ class Correction(object):
     def GetCall(self,inArgs = []):
         '''Gets the call to the method to be evaluated per-event.
 
-        Args:
-            inArgs (list, optional): Args to use for eval if #MakeCall() has not already been called. Defaults to [].
+        @param inArgs (list, optional): Args to use for eval if #MakeCall() has not already been called. Defaults to [].
                 If #MakeCall() has not already been called and inArgs == [], then the arguments to the method will
                 be deduced from the C++ method definition argument names.
 
@@ -1440,6 +1380,7 @@ class Correction(object):
 
     def GetMainFunc(self):
         '''Gets full main function name.
+
         Returns:
             str: Name of function assigned from C++ script.
         '''
@@ -1447,6 +1388,7 @@ class Correction(object):
 
     def GetType(self):
         '''Gets Correction type.
+
         Returns:
             str: Correction type.
         '''
@@ -1454,6 +1396,7 @@ class Correction(object):
 
     def GetFuncNames(self):
         '''Gets list of function names in C++ script.
+
         Returns:
             [str]: List of possible function names found in C++ script.
         '''
@@ -1463,7 +1406,7 @@ def LoadColumnNames(source=''):
     '''Loads column names from a text file.
 
     Args:
-        source (str, optional): File location if default TIMBER/data/NanoAODv6_cols.txt
+        @param source (str, optional): File location if default TIMBER/data/NanoAODv6_cols.txt
             is not to be used. Defaults to ''.
 
     Returns:

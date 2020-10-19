@@ -15,14 +15,13 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
        Total background and signals are scaled to 1 if scale == True. Inputs organized 
        as dicts so that keys can match across dicts (ex. bkgs and bkgNames).
 
-    Args:
-        outfilename (string): Path where plot will be saved.
-        prettyvarname (string): What will be assigned to as the axis title.
-        bkgs ({string:TH1}, optional): Dictionary of backgrounds to plot. Defaults to {}.
-        signals ({string:TH1}, optional): Dictionary of signals to plot. Defaults to {}.
-        names ({string:string}, optional): Formatted version of names for backgrounds and signals to appear in legend. Keys must match those in bkgs and signal. Defaults to {}. 
-        colors ({string:int}, optional): TColor code for backgrounds and signals to appear in plot. Keys must match those in bkgs and signal. Defaults to {}.
-        scale (bool, optional): If True, scales total background to unity and signals (separately) to unity. Defaults to True.
+    @param outfilename (string): Path where plot will be saved.
+    @param prettyvarname (string): What will be assigned to as the axis title.
+    @param bkgs ({string:TH1}, optional): Dictionary of backgrounds to plot. Defaults to {}.
+    @param signals ({string:TH1}, optional): Dictionary of signals to plot. Defaults to {}.
+    @param names ({string:string}, optional): Formatted version of names for backgrounds and signals to appear in legend. Keys must match those in bkgs and signal. Defaults to {}. 
+    @param colors ({string:int}, optional): TColor code for backgrounds and signals to appear in plot. Keys must match those in bkgs and signal. Defaults to {}.
+    @param scale (bool, optional): If True, scales total background to unity and signals (separately) to unity. Defaults to True.
     '''
     # Initialize
     c = ROOT.TCanvas('c','c',800,700)
@@ -121,21 +120,20 @@ def MoneyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=Fa
     Providing multiple data histograms will plot the separate pads on a single canvas. Up to 6 pads are supported.
     See argument descriptions for plotting options.
 
-    Args:
-        name (str): Name of output file with extension (file type must be supported by TCanvas.Print()).
-        histlist ([TH1 or TH2]): List of data histograms.
-        bkglist ([[TH1]], optional): List of list of background histograms. Index of first list level matches
+    @param name (str): Name of output file with extension (file type must be supported by TCanvas.Print()).
+    @param histlist ([TH1 or TH2]): List of data histograms.
+    @param bkglist ([[TH1]], optional): List of list of background histograms. Index of first list level matches
             against index of histlist. Internal list is the group of backgrounds that will be stacked together
             to create the total background estimate. For example you could have: `histlist = [data1, data2]` and 
             `bkglist = [[bkg1_1,bkg2_1],[bkg1_2,bkg2_2]]`. Defaults to [].
-        signals ([TH1], optional): List of signal histograms where index corresponds to the index of histlist. Defaults to [].
-        colors ([int], optional): List of integers corresponding to TColor codes where the index corresponds to the index of histlist. Defaults to [].
-        titles ([str], optional): List of titles for each histogram where the index corresponds to the index of histlist. Defaults to [] which means the input titles of histlist will be used.
-        logy (bool, optional): Option to plot log y-axis. Defaults to False.
-        xtitle (str, optional): X-axis title for all histograms on the canvas. Defaults to '' which means the input titles of histlist will be used.
-        ytitle (str, optional): Y-axis title for all histograms on the canvas. Defaults to '' which means the input titles of histlist will be used.
-        dataOff (bool, optional): If True, turns off data from being drawn in all pads. Defaults to False.
-        datastyle (str, optional): Style in which to draw data. Defaults to 'pe'.
+    @param signals ([TH1], optional): List of signal histograms where index corresponds to the index of histlist. Defaults to [].
+    @param colors ([int], optional): List of integers corresponding to TColor codes where the index corresponds to the index of histlist. Defaults to [].
+    @param titles ([str], optional): List of titles for each histogram where the index corresponds to the index of histlist. Defaults to [] which means the input titles of histlist will be used.
+    @param logy (bool, optional): Option to plot log y-axis. Defaults to False.
+    @param xtitle (str, optional): X-axis title for all histograms on the canvas. Defaults to '' which means the input titles of histlist will be used.
+    @param ytitle (str, optional): Y-axis title for all histograms on the canvas. Defaults to '' which means the input titles of histlist will be used.
+    @param dataOff (bool, optional): If True, turns off data from being drawn in all pads. Defaults to False.
+    @param datastyle (str, optional): Style in which to draw data. Defaults to 'pe'.
 
     Raises:
         ValueError: If number of requested pads is greater than 6.
@@ -384,9 +382,8 @@ def MakePullPlot( data,bkg):
     '''Generates a pull plot defined as (data-bkg)/sigma where sigma
     is the error of data and bkg added in quadrature.
 
-    Args:
-        data (TH1): Histogram of data.
-        bkg (TH1): Histogram of total background.
+    @param data (TH1): Histogram of data.
+    @param bkg (TH1): Histogram of total background.
 
     Returns:
         TH1: Histogram of the pull.
@@ -422,8 +419,7 @@ def MakeUpDown(hist):
     '''Creates up and down variations of a histogram
     based on its per-bin errors.
 
-    Args:
-        hist (TH1): Histogram from which to create up/down distributions.
+    @param hist (TH1): Histogram from which to create up/down distributions.
 
     Returns:
         (TH1, TH1): Tuple of (up, down) histograms.
