@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['setactivenode',['SetActiveNode',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a1ba91dc70df09acca1e2c794dc4b4798',1,'TIMBER::Analyzer::analyzer']]],
-  ['sjbtag_5fsf',['SJBtag_SF',['../class_s_j_btag___s_f.html',1,'']]]
+  ['openjson',['OpenJSON',['../group___common.html#ga4b63a003f89b48ce9f994c29a40dcf96',1,'TIMBER::Tools::Common']]]
 ];

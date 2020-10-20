@@ -5,7 +5,7 @@ Home to generic C++ modules.
 # Developer Notes
 
 Adding C++ modules for use in TIMBER is relatively simple but the code makes several
-assumptions about the structure of the module if you'd like to use it as a #Correction.
+assumptions about the structure of the module if you'd like to use it as a @ref TIMBER.Analyzer.Correction.
 
 A correction module should be built as a class so that the initializer can be used to book
 objects like files, histograms, etc that we want to load before looping over the RDataFrame.
