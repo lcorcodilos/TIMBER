@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['pileup_20files',['Pileup files',['../md__t_i_m_b_e_r_data_pileup__r_e_a_d_m_e.html',1,'']]],
-  ['pdfweight_5funcert',['PDFweight_uncert',['../class_p_d_fweight__uncert.html',1,'']]],
-  ['prev6',['preV6',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a123d460f5eb6b71957244a4fe5762f4e',1,'TIMBER::Analyzer::analyzer']]],
-  ['printnodetree',['PrintNodeTree',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ad538b11a2a27fcbd47f1ec8a0aae32ab',1,'TIMBER::Analyzer::analyzer']]]
+  ['name',['name',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ab74e6bf80237ddc4109968cedc58c151',1,'TIMBER.Analyzer.Node.name()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#ab74e6bf80237ddc4109968cedc58c151',1,'TIMBER.Analyzer.Group.name()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#ab74e6bf80237ddc4109968cedc58c151',1,'TIMBER.Analyzer.Correction.name()']]],
+  ['nminus1',['Nminus1',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2a175bc4074d741c076075f0a8dae9e4',1,'TIMBER::Analyzer::analyzer']]],
+  ['node',['Node',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html',1,'TIMBER::Analyzer']]]
 ];

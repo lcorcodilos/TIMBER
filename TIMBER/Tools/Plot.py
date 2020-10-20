@@ -1,9 +1,7 @@
-'''@docstring Plot.py
-
-Functions to easily plot histograms together in various configurations.
-
+'''@addtogroup Plot Plotting Tools
+ Functions to easily plot histograms together in various configurations.
+ @{
 '''
-
 from TIMBER.Tools.CMS import CMS_lumi
 import ROOT, collections
 from collections import OrderedDict
@@ -11,9 +9,9 @@ from TIMBER.Analyzer import HistGroup
 
 def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},colors={},scale=True,stackBkg=False):
     '''Create a plot that compares the shapes of backgrounds versus signal.
-       Backgrounds will be stacked together and signals will be plot separately.
-       Total background and signals are scaled to 1 if scale == True. Inputs organized 
-       as dicts so that keys can match across dicts (ex. bkgs and bkgNames).
+    Backgrounds will be stacked together and signals will be plot separately.
+    Total background and signals are scaled to 1 if scale == True. Inputs organized 
+    as dicts so that keys can match across dicts (ex. bkgs and bkgNames).
 
     @param outfilename (string): Path where plot will be saved.
     @param prettyvarname (string): What will be assigned to as the axis title.
@@ -23,6 +21,7 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     @param colors ({string:int}, optional): TColor code for backgrounds and signals to appear in plot. Keys must match those in bkgs and signal. Defaults to {}.
     @param scale (bool, optional): If True, scales total background to unity and signals (separately) to unity. Defaults to True.
     '''
+
     # Initialize
     c = ROOT.TCanvas('c','c',800,700)
     legend = ROOT.TLegend(0.6,0.72,0.87,0.88)
@@ -436,3 +435,4 @@ def MakeUpDown(hist):
         hist_down.SetBinContent(xbin,nom-errdown)
 
     return hist_up,hist_down
+## @}

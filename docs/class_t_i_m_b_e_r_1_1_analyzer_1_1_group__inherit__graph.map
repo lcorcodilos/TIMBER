@@ -1,5 +1,5 @@
-<map id="TIMBER.Analyzer.Group" name="TIMBER.Analyzer.Group">
-<area shape="rect" id="node3" href="$class_t_i_m_b_e_r_1_1_analyzer_1_1_cut_group.html" title="Stores Cut actions. " alt="" coords="5,155,193,181"/>
-<area shape="rect" id="node4" href="$class_t_i_m_b_e_r_1_1_analyzer_1_1_hist_group.html" title="Stores histograms with dedicated function to use TH1/2/3 methods in a batch. " alt="" coords="217,155,408,181"/>
-<area shape="rect" id="node5" href="$class_t_i_m_b_e_r_1_1_analyzer_1_1_var_group.html" title="Stores Define actions. " alt="" coords="433,155,619,181"/>
+<map id="Group" name="Group">
+<area shape="rect" id="node3" href="$class_t_i_m_b_e_r_1_1_analyzer_1_1_cut_group.html" title="Stores Cut actions. " alt="" coords="5,155,84,181"/>
+<area shape="rect" id="node4" href="$class_t_i_m_b_e_r_1_1_analyzer_1_1_hist_group.html" title="Stores histograms with dedicated function to use TH1/2/3 methods in a batch. " alt="" coords="108,155,189,181"/>
+<area shape="rect" id="node5" href="$class_t_i_m_b_e_r_1_1_analyzer_1_1_var_group.html" title="Stores Define actions. " alt="" coords="214,155,291,181"/>
 </map>

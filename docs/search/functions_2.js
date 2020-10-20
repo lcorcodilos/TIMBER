@@ -1,5 +1,12 @@
 var searchData=
 [
-  ['clone',['Clone',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ae151d1ed4c2d8d3a1910c408d6626091',1,'TIMBER.Analyzer.Node.Clone()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#ad83ce6dc4778936dd9b94588cf7a924d',1,'TIMBER.Analyzer.Group.Clone()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#aede9cde820a9c6b1f16309595149b891',1,'TIMBER.Analyzer.Correction.Clone()']]],
-  ['cut',['Cut',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#acc0361b099e8a4025d119ac7e39dad44',1,'TIMBER.Analyzer.analyzer.Cut()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a743da7404e95474f3c7f7b31cd197a1d',1,'TIMBER.Analyzer.Node.Cut()']]]
+  ['cd',['cd',['../group___common.html#ga6e0f471be6c0aab5d2c8390cd3337aa2',1,'TIMBER::Tools::Common']]],
+  ['clone',['Clone',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ae1e474c8cabb6893a4aaf33d56d78f3d',1,'TIMBER.Analyzer.Node.Clone()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#a48d30a9d7b779fddb113877670636698',1,'TIMBER.Analyzer.Group.Clone()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#a3be2b6d8371dfe648f728b06fa4450d3',1,'TIMBER.Analyzer.Correction.Clone()']]],
+  ['collimate',['ColliMate',['../group___common.html#gaa2fdf2788bfd524b2f3b53f37d11613e',1,'TIMBER::Tools::Common']]],
+  ['compareshapes',['CompareShapes',['../group___plot.html#gad2a622f125f2d6a5e77d1e0f60e054e7',1,'TIMBER::Tools::Plot']]],
+  ['compilecpp',['CompileCpp',['../group___common.html#ga24e95c0ad4d54297700d2323325e809f',1,'TIMBER::Tools::Common']]],
+  ['concatcols',['ConcatCols',['../group___common.html#ga3c0c9d4bb63c4b6b14dac5ee9867d792',1,'TIMBER::Tools::Common']]],
+  ['cut',['Cut',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ad142bd22de0251aa0543cb97686e1a40',1,'TIMBER.Analyzer.analyzer.Cut()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#afc813faa1a449fa9a58c7437ed5e2aec',1,'TIMBER.Analyzer.Node.Cut()']]],
+  ['cutflowhist',['CutflowHist',['../group___common.html#ga9d19a9ceee7d4de34321b40563c1070a',1,'TIMBER::Tools::Common']]],
+  ['cutflowtxt',['CutflowTxt',['../group___common.html#ga73228e3cf96ee395949c7e563f89f312',1,'TIMBER::Tools::Common']]]
 ];

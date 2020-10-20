@@ -46,10 +46,6 @@ class analyzer(object):
                 simulation). Defaults to "Runs" (for NanoAOD) 
         """
 
-        ## @var BaseDataFrame 
-        # ROOT.RDataFrame
-        #
-        # Initial RDataFrame - no modifications.
         ## @var BaseNode
         # Node
         #

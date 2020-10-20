@@ -1,7 +1,6 @@
-'''@docstring Common.py
-
-Home to commonly used tools available for use that can be generic or TIMBER specific
-
+'''@addtogroup Common Common Tools
+Commonly used functions available for use that can be generic or TIMBER specific.
+@{
 '''
 
 import json, ROOT, os, subprocess
@@ -9,9 +8,9 @@ from ROOT import RDataFrame
 from TIMBER.Tools.CMS import CMS_lumi, tdrstyle
 from contextlib import contextmanager
 from collections import OrderedDict
-###################
+#-----------------#
 # TIMBER specific #
-###################
+#-----------------#
 def CutflowHist(name,node,efficiency=False):
     '''Draws a cutflow histogram using the report feature of RDF.
 
@@ -90,9 +89,9 @@ def StitchQCD(QCDdict,normDict=None):
 
     return out
 
-###########
+#---------#
 # Generic #
-###########
+#---------#
 def CompileCpp(blockcode,library=False):
     '''Compiles C++ code via the gInterpreter.
 
@@ -186,6 +185,18 @@ def ConcatCols(self,colnames,val='1',connector='&&'):
         return concat
 
 def GetHistBinningTuple(h):
+    '''Gets the binning information for a histogram and returns it 
+    as a tuple ordered like the arguements to construct a new histogram.
+    Supports TH1, TH2, and TH3.
+
+    @param h (TH1): Input histogram from which to get the binning information.
+
+    Raises:
+        TypeError: If histogram does not derive from TH1.
+
+    Returns:
+        tuple(tuple, int): First element of return is the binning and the second element is the dimensionality.
+    '''
     # At least 1D (since TH2 and TH3 inherit from TH1)
     if isinstance(h,ROOT.TH1):
         # Variable array vs fixed binning
@@ -386,3 +397,4 @@ def cd(newdir):
         yield
     finally:
         os.chdir(prevdir)
+## @}

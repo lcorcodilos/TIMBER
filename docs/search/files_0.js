@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['analyzer_2epy',['Analyzer.py',['../_analyzer_8py.html',1,'']]]
+  ['plot_2epy',['Plot.py',['../_plot_8py.html',1,'']]]
 ];
