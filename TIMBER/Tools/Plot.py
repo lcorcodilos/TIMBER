@@ -9,19 +9,21 @@ from TIMBER.Analyzer import HistGroup
 
 def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},colors={},scale=True,stackBkg=False):
     '''Create a plot that compares the shapes of backgrounds versus signal.
-    Backgrounds will be stacked together and signals will be plot separately.
+    If stackBkg, backgrounds will be stacked together and signals will be plot separately.
     Total background and signals are scaled to 1 if scale == True. Inputs organized 
     as dicts so that keys can match across dicts (ex. bkgs and bkgNames).
 
     @param outfilename (string): Path where plot will be saved.
+    @param year (int): Year to determine luminosity value on plot. Options are 16, 17, 18, 1 (for full Run II),
+        or 2 (for full Run II but represented as separate years, ie. 2016+2017+2018).
     @param prettyvarname (string): What will be assigned to as the axis title.
     @param bkgs ({string:TH1}, optional): Dictionary of backgrounds to plot. Defaults to {}.
     @param signals ({string:TH1}, optional): Dictionary of signals to plot. Defaults to {}.
     @param names ({string:string}, optional): Formatted version of names for backgrounds and signals to appear in legend. Keys must match those in bkgs and signal. Defaults to {}. 
     @param colors ({string:int}, optional): TColor code for backgrounds and signals to appear in plot. Keys must match those in bkgs and signal. Defaults to {}.
     @param scale (bool, optional): If True, scales total background to unity and signals (separately) to unity. Defaults to True.
+    @param stackBkg (bool, optional): If True, backgrounds will be stacked and the total will be normalized to 1 (if scale==True). Defaults to False.
     '''
-
     # Initialize
     c = ROOT.TCanvas('c','c',800,700)
     legend = ROOT.TLegend(0.6,0.72,0.87,0.88)
