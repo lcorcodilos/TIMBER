@@ -73,7 +73,7 @@ class analyzer(object):
         ## @var lhaid
         # int
         #
-        # LHA ID of the PDF weight set in the NanoAOD. -1 if not found or data.
+        # LHA ID of the PDF weight set in the NanoAOD derived from the LHEPdfWeight branch title. -1 if not found or data.
         ## @var ActiveNode
         # Node
         #
