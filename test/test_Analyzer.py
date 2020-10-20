@@ -4,14 +4,15 @@ from TIMBER.Analyzer import analyzer, CutGroup, VarGroup
 from TIMBER.Tools.Common import CompileCpp
 
 class TestAnalyzer():
-    def setup(self):
+    @classmethod
+    def setup_class(cls):
         CompileCpp('TIMBER/Framework/include/common.h') # Compile (via gInterpreter) commonly used c++ code
         CompileCpp('examples/example.cc')
-        self.a = analyzer('examples/GluGluToHToTauTau.root')
-        self.a.Cut("test_cut1", "Jet_pt.size() > 0")
-        self.a.Define('lead_vector', 'analyzer::TLvector(Jet_pt[0],Jet_eta[0],Jet_phi[0],Jet_mass[0])')
-        self.a.Define('sublead_vector','analyzer::TLvector(Jet_pt[1],Jet_eta[1],Jet_phi[1],Jet_mass[1])')
-        self.a.Define('invariantMass','analyzer::invariantMass(lead_vector,sublead_vector)')
+        cls.a = analyzer('examples/GluGluToHToTauTau.root')
+        cls.a.Cut("test_cut1", "Jet_pt.size() > 0")
+        cls.a.Define('lead_vector', 'analyzer::TLvector(Jet_pt[0],Jet_eta[0],Jet_phi[0],Jet_mass[0])')
+        cls.a.Define('sublead_vector','analyzer::TLvector(Jet_pt[1],Jet_eta[1],Jet_phi[1],Jet_mass[1])')
+        cls.a.Define('invariantMass','analyzer::invariantMass(lead_vector,sublead_vector)')
 
     def test_genEventCount_None(self):
         '''Test genEventCount is assigned 0 when branch doesn't exist in test file'''
