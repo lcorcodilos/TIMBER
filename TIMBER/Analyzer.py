@@ -792,8 +792,6 @@ class Node(object):
         '''
         if overwrite: self.children = []
 
-        print ('Current children %s'%self.children)
-
         if isinstance(child,Node):
             if child.name not in [c.name for c in self.children]:
                 self.children.append(child)
