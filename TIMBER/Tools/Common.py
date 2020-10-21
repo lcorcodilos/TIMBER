@@ -3,7 +3,7 @@ Commonly used functions available for use that can be generic or TIMBER specific
 @{
 '''
 
-import json, ROOT, os, subprocess
+import json, ROOT, os, subprocess, TIMBER
 from ROOT import RDataFrame
 from TIMBER.Tools.CMS import CMS_lumi, tdrstyle
 from contextlib import contextmanager
@@ -79,7 +79,7 @@ def StitchQCD(QCDdict,normDict=None):
             for hkey in QCDdict[k].keys():
                 QCDdict[k][hkey].Scale(normDict[k])
     # Stitch
-    out = HistGroup("QCD")
+    out = TIMBER.Analyzer.HistGroup("QCD")
     for ksample in QCDdict.keys(): 
         for khist in QCDdict[ksample].keys():
             if khist not in out.keys():
