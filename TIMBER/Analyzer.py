@@ -1108,7 +1108,7 @@ class HistGroup(Group):
 
         '''
         # Book new group in case THmethod returns something
-        newGroup = Group(self.name+'_%s%s'%(THmethod,argsTuple))
+        newGroup = HistGroup(self.name+'_%s%s'%(THmethod,argsTuple))
         # Initialize check for None return type
         returnNone = False
         # Loop over hists
@@ -1122,6 +1122,19 @@ class HistGroup(Group):
 
         if returnNone: del newGroup
         else: return newGroup
+
+    def Merge(self):
+        '''Merge together the histograms in the group.
+
+        Returns:
+            TH1: Merged histogram.
+        '''
+        for ikey,key in enumerate(self.keys()):
+            if ikey == 0:
+                out = self[key].Clone(self.name)
+            else:
+                out.Add(self[key])
+        return out
 
 ####################
 # Correction class #
