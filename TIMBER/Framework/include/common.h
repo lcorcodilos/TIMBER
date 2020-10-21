@@ -23,6 +23,32 @@ namespace analyzer {
         return result;
     }
 
+    RVec<RVec<float>> DeltaRCollections(RVec<float> eta0, RVec<float> eta1, RVec<float> phi0, RVec<float> phi1) {
+        /** Takes in two collections of eta and phi and calcualtes DeltaR for each permutations.
+         *  Returns vector of vectors - 
+         * { {float_00, float_01, float_02},
+         *   {float_10, float_11, float_12},
+         *   {float_20, float_21, float_22}
+         * } where float_ij represents the DeltaR value for the given permutation.
+         * Example of manipulating output:
+         *      Any()
+         */
+        int size0 = eta0.size();
+        int size1 = eta1.size();
+        RVec<float> dR;
+        RVec<RVec<float>> out;
+
+        for (int i = 0; i < size0; i++) {
+            dR.clear();
+            for (int j = 0; j < size1; j++) {
+                dR.push_back(ROOT::VecOps::DeltaR(eta0[i],eta1[j],phi0[i],phi1[j]));
+            }
+            out.push_back(dR);
+        }
+
+        return out;
+    }
+
     ROOT::Math::PtEtaPhiMVector TLvector(float pt,float eta,float phi,float m) {
         ROOT::Math::PtEtaPhiMVector v(pt,eta,phi,m);
         return v;
