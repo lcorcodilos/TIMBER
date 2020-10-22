@@ -423,6 +423,32 @@ class analyzer(object):
 
         return newNodes
 
+    def SubCollection(self,name,basecoll,condition,skip=[]):
+        '''Creates a collection of a current collection (from a NanoAOD-like format)
+        where the array-type branch is slimmed based on some selection.
+
+        @param name (str): Name of new collection.
+        @param basecoll (str): Name of derivative collection.
+        @param condition (str): C++ condition that determines which items
+
+        Returns:
+            None. New nodes created with the sub collection.
+
+        Example:
+            SubCollection('TopJets','FatJet','FatJet_msoftdrop > 105 && FatJet_msoftdrop < 220')
+        '''
+        collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if basecoll in str(cname) and str(cname) not in skip]
+        self.Define(name+'_idx','%s'%(condition))
+        for b in collBranches:
+            replacementName = b.replace(basecoll,name)
+            if b == 'n'+basecoll:
+                self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name))
+            elif 'RVec' not in self.DataFrame.GetColumnType(b):
+                print ('Found type %s during SubCollection'%self.DataFrame.GetColumnType(b))
+                self.Define(replacementName,b)
+            else:
+                self.Define(replacementName,'%s[%s]'%(b,name+'_idx'))
+
     #---------------------#
     # Corrections/Weights #
     #---------------------#
