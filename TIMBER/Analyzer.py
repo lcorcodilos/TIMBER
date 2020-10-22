@@ -145,6 +145,21 @@ class analyzer(object):
         del RunChain
         self.ActiveNode = self.BaseNode
  
+    def Close(self):
+        print ('Deleting analyzer instance for %s'%self.fileName)
+        self.BaseNode.Close()
+        self.__eventsChain.Reset()
+
+    def __str__(self):
+        out = ''
+        for a in dir(self):
+            if not a.startswith('_') and not callable(getattr(self, a)):
+                if isinstance(getattr(self, a),list) and len(getattr(self, a))>0 and isinstance(getattr(self, a)[0],Node):
+                    out += '{:15s} = {}\n'.format(a,[n.name for n in getattr(self,a)])
+                else:
+                    out += '{:15s} = {}\n'.format(a,getattr(self,a))
+        return out
+
     @property
     def DataFrame(self):
         '''
@@ -280,7 +295,7 @@ class analyzer(object):
         Returns:
             str: File name
         '''
-        return self.__fileName
+        return self.fileName
 
     #------------------------------------------------------------#
     # Node operations - same as Node class methods but have      #
@@ -771,6 +786,28 @@ class Node(object):
         self.action = action
         self.children = children
         
+    def Close(self):
+        # print (self)
+        # print ('Deleting Node %s'%self.name)
+        # print (self.children)
+        for c in self.children:
+            # print ('Attempting to delete child %s'%c)
+            c.Close()
+        self.children = []
+        self.DataFrame = None
+        self.name = None
+        self.action = None
+
+    def __str__(self):
+        out = 'NODE:\n'
+        for a in dir(self):
+            if not a.startswith('__') and not callable(getattr(self, a)):
+                if a == 'children':
+                    out += '\t {:15s} = {}\n'.format(a,[c.name for c in getattr(self,a)])
+                else:
+                    out += '\t {:15s} = {}\n'.format(a,getattr(self,a))
+        return out[:-1]
+
     def Clone(self,name=''):
         '''Clones Node instance without child information and with new name if specified.
 
