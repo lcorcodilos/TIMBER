@@ -450,6 +450,17 @@ class analyzer(object):
                 self.Define(replacementName,'%s[%s]'%(b,name+'_idx'))
 
     def MergeCollections(self,name,collectionNames):
+        '''Merge collections (provided by list of names in `collectionNames`) into
+        one called `name`. Only common variables are taken and stored in the new 
+        collection.
+
+        @param name (str): Name of new collection
+        @param collectionNames ([str]): List of names of collections to merge.
+
+        Example:
+            a = analyzer(<...>)
+            a.MergeCollections("Lepton",["Electron","Muon"])
+        '''
         vars_to_make = self.CommonVars(collectionNames)
         for var in vars_to_make:
             if 'RVec' in self.DataFrame.GetColumnType(collectionNames[0]+'_'+var):
@@ -461,19 +472,6 @@ class analyzer(object):
                 self.Define(name+'_'+var,concat_str)
 
         self.Define('n'+name,'+'.join(['n'+n for n in collectionNames]))
-
-        # for i in range(1,len(collectionNames)):
-        #     collName = collectionNames[i]
-        #     self.Define(name+'_idx','Concatenate(%s,%s)'%(collectionNames[0],))
-        #     for b in collBranches:
-        #         replacementName = b.replace(basecoll,name)
-        #         if b == 'n'+basecoll:
-        #             self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name))
-        #         elif 'RVec' not in self.DataFrame.GetColumnType(b):
-        #             print ('Found type %s during SubCollection'%self.DataFrame.GetColumnType(b))
-        #             self.Define(replacementName,b)
-        #         else:
-        #             self.Define(replacementName,'%s[%s]'%(b,name+'_idx'))
 
     def CommonVars(self,collections):
         '''Find the common variables between collections.
@@ -1005,7 +1003,6 @@ class Node(object):
                 raise TypeError("Group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)                
 
         return node
-
 
     # IMPORTANT: When writing a variable size array through Snapshot, it is required that the column indicating its size is also written out and it appears before the array in the columns list.
     # columns should be an empty string if you'd like to keep everything
