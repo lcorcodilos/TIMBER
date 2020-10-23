@@ -45,3 +45,20 @@ RVec<float> CloseLepVeto (RVec<float> Lepton_pt, RVec<float> Lepton_eta, RVec<fl
     }
     return jet_bool_vect;
 }
+
+int NonZlep(RVec<ROOT::Math::PtEtaPhiMVector> Lepton_vect, RVec<int> Lepton_pdgId, RVec<int> Lepton_charge) {
+    RVec<RVec<int>> combos = Combinations(Lepton_vect,3); // build combinations where first two are the Z
+    int NonZlep_idx = -1;
+    float deltaMZ = 1000.; // start at large value for comparison
+    float dMZ;
+    bool sameFlavOppSign;
+    for (int i = 0; i < combos[0].size(); i++) { // loop over combinations
+        dMZ = abs(91.2-(Lepton_vect[combos[0][i]]+Lepton_vect[combos[1][i]]).M());
+        sameFlavOppSign = (Lepton_pdgId[combos[0][i]] == -1*Lepton_pdgId[combos[1][i]]);
+        if ((dMZ < deltaMZ) && sameFlavOppSign) {
+            deltaMZ = dMZ;
+            NonZlep_idx = combos[2][i];
+        }
+    }
+    return NonZlep_idx;
+}

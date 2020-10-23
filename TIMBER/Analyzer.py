@@ -459,7 +459,8 @@ class analyzer(object):
                         concat_str = 'Concatenate(%s,%s)'%(concat_str,collName+'_'+var)
 
                 self.Define(name+'_'+var,concat_str)
-            
+
+        self.Define('n'+name,'+'.join(['n'+n for n in collectionNames]))
 
         # for i in range(1,len(collectionNames)):
         #     collName = collectionNames[i]

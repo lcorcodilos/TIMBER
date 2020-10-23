@@ -12,9 +12,7 @@ nearLep = 'CloseLepVeto (Lepton_pt, Lepton_eta, Lepton_phi, Jet_eta, Jet_phi)'
 a.Define('goodJet_pt','Jet_pt[!(%s)]'%nearLep)
 a.Define('goodJet_pt30','goodJet_pt[goodJet_pt > 30]')
 a.Define('PtSum','Sum(goodJet_pt30)')
-print a.DataFrame.GetColumnType('PtSum')
 h = a.DataFrame.Histo1D('PtSum')
 h.Draw('hist e')
 #---------------------
 print ('%s secs'%(time.time() - start))
-input('')
