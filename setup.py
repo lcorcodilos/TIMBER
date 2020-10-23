@@ -17,7 +17,7 @@ setuptools.setup(
     # cmdclass={'install': AddToPath},
     install_requires = [
         "pygraphviz",
-        "networkx",
+        "networkx==2.2",
         "clang==6.0.0.2"
     ]
 )
