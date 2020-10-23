@@ -1188,8 +1188,12 @@ class Group(object):
         Returns:
             Group: Addition of the two groups (will be VarGroup, CutGroup, or HistGroup if applicable).
         '''
-        added = copy.deepcopy(self.items)
-        added.update(other.items)
+        added = {}
+        for k in self.items.keys():
+            added[k] = self.items[k]
+        for k in other.items.keys():
+            added[k] = other.items[k]
+
         if self.type == 'var' and other.type == 'var': newGroup = VarGroup(self.name+"+"+other.name)
         elif self.type == 'cut' and other.type == 'cut': newGroup = CutGroup(self.name+"+"+other.name)
         elif self.type == 'hist' and other.type == 'hist': newGroup = HistGroup(self.name+"+"+other.name)
