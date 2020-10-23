@@ -28,6 +28,20 @@ RVec<float> InvMassOppMuMu (RVec<float> Muon_pt, RVec<float> Muon_eta, RVec<floa
     return invMass;
 }
 
-RVec<float> CloseLepVeto () {
-    
+// (Lepton_pt > 10) && (analyzer::DeltaR(Lepton_eta, Jet_eta, Lepton_phi, Jet_phi) < 0.4)
+RVec<float> CloseLepVeto (RVec<float> Lepton_pt, RVec<float> Lepton_eta, RVec<float> Lepton_phi, RVec<float> Jet_eta, RVec<float> Jet_phi) {
+    RVec<bool> jet_bool_vect;
+    bool bool_pt, bool_deltaR, found_lep;
+    for (int ijet = 0; ijet < Jet_eta.size(); ijet++) {
+        found_lep = false;
+        for (int ilep = 0; ilep < Lepton_pt.size(); ilep++) {
+            bool_pt = Lepton_pt[ilep] > 10;
+            bool_deltaR = DeltaR(Lepton_eta[ilep], Jet_eta[ijet], Lepton_phi[ilep], Jet_phi[ijet]) < 0.4;
+            if (bool_pt && bool_deltaR){
+                found_lep = true;
+            }
+        }
+        jet_bool_vect.push_back(found_lep);
+    }
+    return jet_bool_vect;
 }

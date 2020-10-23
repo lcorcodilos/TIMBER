@@ -4,18 +4,17 @@ start = time.time()
 #---------------------
 from TIMBER.Analyzer import analyzer
 from TIMBER.Tools.Common import CompileCpp
-CompileCpp('TIMBER/Framework/include/common.h')
+CompileCpp('benchmark/ex.cc')
 
 a = analyzer('examples/ttbar16_sample.root')
-a.Define('Jet_pt30','Jet_pt[Jet_pt > 30]')
-a.Define('Lepton_eta','Concatenate(Electron_eta,Muon_eta)')
-a.Define('Lepton_phi','Concatenate(Electron_phi,Muon_phi)')
-a.Define('Lepton_pt','Concatenate(Electron_pt,Muon_pt)')
-nearLep = '(Lepton_pt > 10) && (analyzer::DeltaR(Lepton_eta, Jet_eta, Lepton_phi, Jet_phi) < 0.4)'
-a.Define('goodJet_pt','Jet_pt30[!(%s)]'%nearLep)
-a.Define('PtSum','Sum(goodJet_pt)')
+a.MergeCollections("Lepton",["Electron","Muon"])
+nearLep = 'CloseLepVeto (Lepton_pt, Lepton_eta, Lepton_phi, Jet_eta, Jet_phi)'
+a.Define('goodJet_pt','Jet_pt[!(%s)]'%nearLep)
+a.Define('goodJet_pt30','goodJet_pt[goodJet_pt > 30]')
+a.Define('PtSum','Sum(goodJet_pt30)')
 print a.DataFrame.GetColumnType('PtSum')
 h = a.DataFrame.Histo1D('PtSum')
 h.Draw('hist e')
 #---------------------
 print ('%s secs'%(time.time() - start))
+input('')

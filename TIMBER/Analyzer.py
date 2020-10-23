@@ -449,6 +449,49 @@ class analyzer(object):
             else:
                 self.Define(replacementName,'%s[%s]'%(b,name+'_idx'))
 
+    def MergeCollections(self,name,collectionNames):
+        vars_to_make = self.CommonVars(collectionNames)
+        for var in vars_to_make:
+            if 'RVec' in self.DataFrame.GetColumnType(collectionNames[0]+'_'+var):
+                concat_str = collectionNames[0]+'_'+var
+                for collName in collectionNames:
+                    if collName != collectionNames[0]:
+                        concat_str = 'Concatenate(%s,%s)'%(concat_str,collName+'_'+var)
+
+                self.Define(name+'_'+var,concat_str)
+            
+
+        # for i in range(1,len(collectionNames)):
+        #     collName = collectionNames[i]
+        #     self.Define(name+'_idx','Concatenate(%s,%s)'%(collectionNames[0],))
+        #     for b in collBranches:
+        #         replacementName = b.replace(basecoll,name)
+        #         if b == 'n'+basecoll:
+        #             self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name))
+        #         elif 'RVec' not in self.DataFrame.GetColumnType(b):
+        #             print ('Found type %s during SubCollection'%self.DataFrame.GetColumnType(b))
+        #             self.Define(replacementName,b)
+        #         else:
+        #             self.Define(replacementName,'%s[%s]'%(b,name+'_idx'))
+
+    def CommonVars(self,collections):
+        '''Find the common variables between collections.
+
+        @param collections ([str]): List of collections names (not branch names).
+
+        Returns:
+            [str]: List of variables shared among the collections.
+        '''
+        commonVars = []
+        for c in collections:
+            out = []
+            for bname in self.DataFrame.GetColumnNames():
+                if c+'_' in str(bname):
+                    out.append(str(bname).replace(c+'_',''))
+            commonVars.append(out)
+
+        return list(set.intersection(*map(set,commonVars)))
+
     #---------------------#
     # Corrections/Weights #
     #---------------------#
