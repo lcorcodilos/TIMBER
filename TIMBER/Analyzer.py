@@ -833,6 +833,55 @@ class analyzer(object):
         dot.layout('dot')
         dot.draw(outfilename)
 
+    def MakeHistsWithBinning(self,histDict,name='',weight=None):
+        '''Batch creates histograms at the current #ActiveNode based on the input histDict
+        which is formated as `{[<column name>]: <binning tuple>}` where `[<column name>]` is a list
+        of column names that you'd like to plot against each other in [x,y,z] order and `binning_tuple` is
+        the set of arguments that would normally be passed to `TH1`. The dimensionality of the returned histogram
+        is determined based on the size of `[<column name>]`.
+
+        @param histDict ({std:tuple}): formated as `{<column name>: <binning tuple>}` where `binning_tuple` are
+            the arguments that would normally be passed to `TH1`. Size determines dimensionality of histogram.
+        @param name (str, optional): Name for the output HistGroup. Defaults to '' in which case the name of the 
+            #ActiveNode will be used.
+        @param weight (str, optional): Weight (as a string) to apply to all histograms. Defaults to None.
+
+        Returns:
+            dict: Dictionary with same structure as the input (column names for keys) with 
+                new histograms evaluated on the #ActiveNode as the values.
+        '''
+        out = HistGroup(name if name != '' else self.ActiveNode.name)
+        
+        for varnames in histDict.keys():
+            # Modify hist name
+            arg_list = list(histDict[varnames])
+            arg_list[0] = arg_list[0] + '_' + out.name
+            this_tuple = tuple(arg_list)
+            # Convert key to list(str) if needed
+            if isinstance(varnames,str):
+                varnames = [varnames]
+            # Get name for histgroup entry
+            entry_name = '_vs_'.join(varnames)+'_'+out.name
+            # Add weight to args if specified
+            if len(varnames) == 1:
+                if weight == None: 
+                    h = self.DataFrame.Histo1D(this_tuple,varnames[0])
+                else:
+                    h = self.DataFrame.Histo1D(this_tuple,varnames[0],weight)
+            elif len(varnames) == 2:
+                if weight == None: 
+                    h = self.DataFrame.Histo2D(this_tuple,varnames[0],varnames[1])
+                else:
+                    h = self.DataFrame.Histo2D(this_tuple,varnames[0],varnames[1],weight)
+            elif len(varnames) == 3:
+                if weight == None:
+                    h = self.DataFrame.Histo3D(this_tuple,varnames[0],varnames[1],varnames[2])
+                else:
+                    h = self.DataFrame.Histo3D(this_tuple,varnames[0],varnames[1],varnames[2],weight)
+            out.Add(entry_name, h)
+           
+        return out
+
 ##############
 # Node Class #
 ##############
