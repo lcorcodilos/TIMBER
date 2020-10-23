@@ -307,7 +307,7 @@ class analyzer(object):
         Will add the resulting node to tracking and set it as the #ActiveNode.
 
         @param name (str): Name for the cut for internal tracking and later reference.
-        @param cuts (str, CutGroup): A one-line C++ string that evaluates as a boolean or a CutGroup object which contains multiple actions that evaluate as booleans.
+        @param cuts (str, CutGroup): A one-line C++ string that evaluates as a bool or a CutGroup object which contains multiple actions that evaluate as bools.
         @param node (Node, optional): Node on which to apply the cut/filter. Defaults to #ActiveNode.
         @param nodetype (str, optional): Defaults to None in which case the new Node will
             be type "Define".
@@ -407,7 +407,7 @@ class analyzer(object):
         '''Forks a node based upon a discriminator being True or False (#ActiveNode by default).
 
         @param name (str): Name for the discrimination for internal tracking and later reference.
-        @param discriminator (str): A one-line C++ string that evaluates as a boolean to discriminate for the forking of the node.
+        @param discriminator (str): A one-line C++ string that evaluates as a bool to discriminate for the forking of the node.
         @param node (Node, optional): Node to discriminate. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
         @param passAsActiveNode (bool, optional): True if the #ActiveNode should be set to the node that passes the discriminator.
                 False if the #ActiveNode should be set to the node that fails the discriminator. Defaults to None in which case the #ActiveNode does not change.
@@ -834,14 +834,15 @@ class analyzer(object):
         dot.draw(outfilename)
 
     def MakeHistsWithBinning(self,histDict,name='',weight=None):
-        '''Batch creates histograms at the current #ActiveNode based on the input histDict
-        which is formated as `{[<column name>]: <binning tuple>}` where `[<column name>]` is a list
+        '''
+        Batch creates histograms at the current #ActiveNode based on the input `histDict`
+        which is formatted as `{[<column name>]: <binning tuple>}` where `[<column name>]` is a list
         of column names that you'd like to plot against each other in [x,y,z] order and `binning_tuple` is
-        the set of arguments that would normally be passed to `TH1`. The dimensionality of the returned histogram
-        is determined based on the size of `[<column name>]`.
+        the set of arguments that would normally be passed to `TH1`. The dimensions of the returned
+        histograms are determined based on the size of `[<column name>]`.
 
-        @param histDict ({std:tuple}): formated as `{<column name>: <binning tuple>}` where `binning_tuple` are
-            the arguments that would normally be passed to `TH1`. Size determines dimensionality of histogram.
+        @param histDict ({std:tuple}): formatted as `{<column name>: <binning tuple>}` where `binning_tuple` are
+            the arguments that would normally be passed to `TH1`. Size determines dimension of histogram.
         @param name (str, optional): Name for the output HistGroup. Defaults to '' in which case the name of the 
             #ActiveNode will be used.
         @param weight (str, optional): Weight (as a string) to apply to all histograms. Defaults to None.
@@ -1001,7 +1002,7 @@ class Node(object):
                 else:
                     raise TypeError('Child is not an instance of Node class for node %s' %self.name)
         else:
-            raise TypeError('Attempting to add chidren that are not in a list or dict.')
+            raise TypeError('Attempting to add children that are not in a list or dict.')
 
     def Define(self,name,var,nodetype=None):
         '''Produces a new Node with the provided variable/column added.
@@ -1041,7 +1042,7 @@ class Node(object):
         '''Produces a dictionary with two new Nodes made by forking this Node based upon a discriminator being True or False.
 
         @param name (str): Name for the discrimination for internal tracking and later reference.
-        @param discriminator (str): A one-line C++ string that evaluates as a boolean to discriminate on.
+        @param discriminator (str): A one-line C++ string that evaluates as a bool to discriminate on.
 
         Returns:
             dict: Dictionary with keys "pass" and "fail" corresponding to the passing and failing Nodes stored as values.
@@ -1418,7 +1419,7 @@ class Correction(object):
     def __setType(self,inType):
         '''Sets the type of correction.
         Will attempt to deduce from input script name if inType=''. File name
-        must have suffic '_weight' or '_SF' for weight type (correction plus uncertainties)
+        must have suffix '_weight' or '_SF' for weight type (correction plus uncertainties)
         or '_uncert' for 'uncert' type (only uncertainties).
 
         @param inType (str): Type of Correction. Use '' to deduce from input script name.
@@ -1510,7 +1511,7 @@ class Correction(object):
         '''Makes the call (stored in class instance) to the method with the branch/column names deduced or added from input.
 
         @param inArgs (list, optional): List of arguments (branch/column names) to provide to per-event evaluation method.
-                Defaults to [] in which case the arguements are deduced from what is written in the C++ script.
+                Defaults to [] in which case the arguments are deduced from what is written in the C++ script.
 
         Raises:
             NameError: If argument written in C++ script cannot be found in available columns.
@@ -1555,29 +1556,6 @@ class Correction(object):
         if self.__call == None:
             self.MakeCall(self, inArgs)
         return self.__call
-
-    # def SetMainFunc(self,funcname):
-    #     """Set the function to consider in the provided script.
-
-    #     Will check if funcname exists as a function in the script (can also provide a substring of the
-    #     desired function). If it does, sets the function to the matching one.
-
-    #     Returns:
-    #         Self with new function assigned.
-    #     """
-
-    #     # Find funcname in case it's abbreviated (which it might be if the user forgot the namespace)
-    #     full_funcname = ''
-    #     for f in self.__funcNames:
-    #         if funcname in f:
-    #             full_funcname = f
-    #             break
-
-    #     if full_funcname not in self.__funcNames:
-    #         raise ValueError('Function name "%s" is not defined for %s'%(funcname,self.__script))
-
-    #     self.__mainFunc = full_funcname
-    #     return self
 
     def GetMainFunc(self):
         '''Gets full main function name.

@@ -163,11 +163,11 @@ def AsciiEncodeDict(data):
 
 def ConcatCols(self,colnames,val='1',connector='&&'):
         '''Concatenates a list of column names evaluating to a common `val` (usually 1 or 0) 
-        with some `connector` (boolean logic operator).
+        with some `connector` (bool logic operator).
 
         @param colnames ([str]): List of column names.
         @param val (str): Value to test equality of all columns. Defaults to '1'.
-        @param connector (str): C++ boolean logic operator between column equality checks. Defaults to '&&'.
+        @param connector (str): C++ bool logic operator between column equality checks. Defaults to '&&'.
 
         Returns:
             str: Concatenated string of the entire evaluation that in C++ will return a bool.
@@ -186,7 +186,7 @@ def ConcatCols(self,colnames,val='1',connector='&&'):
 
 def GetHistBinningTuple(h):
     '''Gets the binning information for a histogram and returns it 
-    as a tuple ordered like the arguements to construct a new histogram.
+    as a tuple ordered like the arguments to construct a new histogram.
     Supports TH1, TH2, and TH3.
 
     @param h (TH1): Input histogram from which to get the binning information.
@@ -195,7 +195,7 @@ def GetHistBinningTuple(h):
         TypeError: If histogram does not derive from TH1.
 
     Returns:
-        tuple(tuple, int): First element of return is the binning and the second element is the dimensionality.
+        tuple(tuple, int): First element of return is the binning and the second element is the dimension.
     '''
     # At least 1D (since TH2 and TH3 inherit from TH1)
     if isinstance(h,ROOT.TH1):
@@ -272,7 +272,7 @@ def DictStructureCopy(inDict):
     newDict = {}
     for k1,v1 in inDict.items():
         if type(v1) == dict:
-            newDict[k1] = dictStructureCopy(v1)
+            newDict[k1] = DictStructureCopy(v1)
         else:
             newDict[k1] = 0
     return newDict
@@ -288,7 +288,7 @@ def DictCopy(inDict):
     newDict = {}
     for k1,v1 in inDict.items():
         if type(v1) == dict:
-            newDict[k1] = dictCopy(v1)
+            newDict[k1] = DictCopy(v1)
         else:
             newDict[k1] = v1
     return newDict
