@@ -15,7 +15,7 @@ binning_tuples = {
     'nJet': ('nJet','Number of Jets',10,0,10)
 }
 
-a = analyzer('examples/ttbar16_sample.root')
+a = analyzer('examples/GluGluToHToTauTau_full.root')
 raw_hists = a.MakeHistsWithBinning(binning_tuples)
 a.Cut('MET_cut','MET_pt>20')
 METcut_hists = a.MakeHistsWithBinning(binning_tuples)

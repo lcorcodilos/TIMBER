@@ -6,7 +6,7 @@ from TIMBER.Analyzer import analyzer
 from TIMBER.Tools.Common import CompileCpp
 CompileCpp('benchmark/ex.cc')
 
-a = analyzer('examples/ttbar16_sample.root')
+a = analyzer('examples/ttbar16_sample.root') # GluGlu sample is incomplete and missing electrons - this is a private stand in that must be replaced to work
 a.MergeCollections("Lepton",["Electron","Muon"])
 nearLep = 'CloseLepVeto (Lepton_pt, Lepton_eta, Lepton_phi, Jet_eta, Jet_phi)'
 a.Define('goodJet_pt','Jet_pt[!(%s)]'%nearLep)

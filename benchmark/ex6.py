@@ -1,4 +1,5 @@
-'''Plot the Missing ET for events that have an opposite-sign muon pair mass in the range 60-120 GeV (double loop over single collection, math)'''
+'''Plot the Missing ET for events that have an opposite-sign muon
+pair mass in the range 60-120 GeV (double loop over single collection, math)'''
 import time
 start = time.time()
 #---------------------
@@ -14,4 +15,3 @@ h = a.DataFrame.Histo1D('MET_pt')
 h.Draw('hist e')
 #---------------------
 print ('%s secs'%(time.time() - start))
-input('')

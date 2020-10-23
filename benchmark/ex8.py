@@ -11,7 +11,7 @@ from TIMBER.Analyzer import analyzer
 from TIMBER.Tools.Common import CompileCpp
 CompileCpp('benchmark/ex.cc')
 
-a = analyzer('examples/ttbar16_sample.root')
+a = analyzer('examples/ttbar16_sample.root') # GluGlu sample is incomplete and missing electrons - this is a private stand in that must be replaced to work
 a.MergeCollections("Lepton",["Electron","Muon"])
 a.Cut('nLepton2','nLepton>2')
 a.Define('Lepton_vect','analyzer::TLvector(Lepton_pt, Lepton_eta, Lepton_phi, Lepton_mass)')
