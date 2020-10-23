@@ -302,13 +302,15 @@ class analyzer(object):
     # benefit of class keeping track of an Active Node (reset by #
     # each action and used by default).                          #
     #------------------------------------------------------------#
-    def Cut(self,name,cuts,node=None):
+    def Cut(self,name,cuts,node=None,nodetype=None):
         '''Apply a cut/filter to a provided node or the #ActiveNode by default.
         Will add the resulting node to tracking and set it as the #ActiveNode.
 
         @param name (str): Name for the cut for internal tracking and later reference.
         @param cuts (str, CutGroup): A one-line C++ string that evaluates as a boolean or a CutGroup object which contains multiple actions that evaluate as booleans.
         @param node (Node, optional): Node on which to apply the cut/filter. Defaults to #ActiveNode.
+        @param nodetype (str, optional): Defaults to None in which case the new Node will
+            be type "Define".
 
         Raises:
             TypeError: If argument type is not Node.
@@ -322,18 +324,18 @@ class analyzer(object):
         if isinstance(cuts,CutGroup):
             for c in cuts.keys():
                 cut = cuts[c]
-                newNode = newNode.Cut(c,cut)
+                newNode = newNode.Cut(c,cut,nodetype=nodetype)
                 newNode.name = cuts.name+'__'+c
                 self.TrackNode(newNode)
         elif isinstance(cuts,str):
-            newNode = newNode.Cut(name,cuts)
+            newNode = newNode.Cut(name,cuts,nodetype=nodetype)
             self.TrackNode(newNode)
         else:
             raise TypeError("Second argument to Cut method must be a string of a single cut or of type CutGroup (which provides an OrderedDict).")
 
         return self.SetActiveNode(newNode)
 
-    def Define(self,name,variables,node=None):
+    def Define(self,name,variables,node=None,nodetype=None):
         '''Defines a variable/column on top of a provided node or the #ActiveNode by default.
         Will add the resulting node to tracking and set it as the #ActiveNode.
 
@@ -341,6 +343,8 @@ class analyzer(object):
         @param variables (str, VarGroup): A one-line C++ string that evaluates to desired value to store
                 or a VarGroup object which contains multiple actions that evaluate to the desired values. 
         @param node (Node, optional): Node to create the new variable/column on top of. Defaults to #ActiveNode.
+        @param nodetype (str, optional): Defaults to None in which case the new Node will
+            be type "Define".
 
         Raises:
             TypeError: If argument type is not Node.
@@ -354,12 +358,12 @@ class analyzer(object):
         if isinstance(variables,VarGroup):
             for v in variables.keys():
                 var = variables[v]
-                newNode = newNode.Define(v,var)
+                newNode = newNode.Define(v,var,nodetype=nodetype)
                 newNode.name = variables.name+'__'+v
                 self.TrackNode(newNode)
             # newNode.name = variables.name
         elif isinstance(variables,str):
-            newNode = newNode.Define(name,variables)
+            newNode = newNode.Define(name,variables,nodetype=nodetype)
             self.TrackNode(newNode)
         else:
             raise TypeError("Second argument to Define method must be a string of a single var or of type VarGroup (which provides an OrderedDict).")
@@ -442,12 +446,12 @@ class analyzer(object):
         for b in collBranches:
             replacementName = b.replace(basecoll,name)
             if b == 'n'+basecoll:
-                self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name))
+                self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name),nodetype='SubCollDefine')
             elif 'RVec' not in self.DataFrame.GetColumnType(b):
                 print ('Found type %s during SubCollection'%self.DataFrame.GetColumnType(b))
-                self.Define(replacementName,b)
+                self.Define(replacementName,b,nodetype='SubCollDefine')
             else:
-                self.Define(replacementName,'%s[%s]'%(b,name+'_idx'))
+                self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
 
     def MergeCollections(self,name,collectionNames):
         '''Merge collections (provided by list of names in `collectionNames`) into
@@ -469,9 +473,9 @@ class analyzer(object):
                     if collName != collectionNames[0]:
                         concat_str = 'Concatenate(%s,%s)'%(concat_str,collName+'_'+var)
 
-                self.Define(name+'_'+var,concat_str)
+                self.Define(name+'_'+var,concat_str,nodetype='MergeDefine')
 
-        self.Define('n'+name,'+'.join(['n'+n for n in collectionNames]))
+        self.Define('n'+name,'+'.join(['n'+n for n in collectionNames]),nodetype='MergeDefine')
 
     def CommonVars(self,collections):
         '''Find the common variables between collections.
@@ -524,7 +528,7 @@ class analyzer(object):
         self.Corrections[correction.name] = correction
 
         # Make new node
-        newNode = self.Define(correction.name+'__vec',correction.GetCall(),node)
+        newNode = self.Define(correction.name+'__vec',correction.GetCall(),node,nodetype='Correction')
         if correction.GetType() == 'weight':
             variations = ['nom','up','down']
         elif correction.GetType() == 'uncert':
@@ -533,7 +537,7 @@ class analyzer(object):
             raise ValueError('Correction.GetType() returns %s'%correction.GetType())
 
         for i,v in enumerate(variations):
-            newNode = self.Define(correction.name+'__'+v,correction.name+'__vec[%s]'%i,newNode)
+            newNode = self.Define(correction.name+'__'+v,correction.name+'__vec[%s]'%i,newNode,nodetype='Correction')
 
         # self.TrackNode(returnNode)
         return self.SetActiveNode(newNode)
@@ -793,13 +797,16 @@ class analyzer(object):
 
         return nminusones
 
-    def PrintNodeTree(self,outfilename,verbose=False,skipDefines=False):
+    def PrintNodeTree(self,outfilename,verbose=False,toSkip=[]):
         '''Print a PDF image of the node structure of the analysis.
         Requires python graphviz package which should be an installed dependency.
 
         @param outfilename (str): Name of output PDF file.
         @param verbose (bool, optional): Turns on verbose node labels. Defaults to False.
-        @param skipDefines (bool, optional): Skips definitions and only plots cuts. Default to False.
+        @param toSkip ([], optional): Skip list of types of nodes (with sub-string matching
+            so providing "Define" will cut out *all* definitions). Possible options
+            are "Define", "Cut", "Correction", "MergeDefine", and "SubCollDefine".
+            Defaults to empty list.
 
         Returns:
             None
@@ -807,6 +814,7 @@ class analyzer(object):
         import networkx as nx
         from networkx.drawing.nx_agraph import graphviz_layout
         graph = nx.DiGraph(comment='Node processing tree')
+        # Build graph with all nodes
         for node in self.AllNodes:
             this_node_name = node.name
             this_node_label = node.name
@@ -815,22 +823,15 @@ class analyzer(object):
             graph.add_node(this_node_name, label=this_node_label, type=node.type)
             for child in node.children:
                 graph.add_edge(this_node_name,child.name)
-
-        if skipDefines:
+        # Contract egdes where we want nodes dropped
+        for skip in toSkip:
             for node in graph.nodes:
-                if graph.nodes[node]["type"] == 'Define':
-                    print '%s %s'%(node,graph.pred[node])
+                if skip in graph.nodes[node]["type"]:
                     graph = nx.contracted_edge(graph,(graph.pred[node].keys()[0],node),self_loops=False)
-                    # for c in node.children:
-                    #     if c.type == 'Define':
-                    #         graph = nx.contracted_edge((graph,node.name,c.name),self_loops=False)
-
-        labels = nx.get_node_attributes(graph, 'label') 
+        # Write out dot and draw
         dot = nx.nx_agraph.to_agraph(graph)
         dot.layout('dot')
-        print(dot)
-        dot.draw('abcd.png')
-        input('')
+        dot.draw(outfilename)
 
 ##############
 # Node Class #
@@ -953,31 +954,37 @@ class Node(object):
         else:
             raise TypeError('Attempting to add chidren that are not in a list or dict.')
 
-    def Define(self,name,var):
+    def Define(self,name,var,nodetype=None):
         '''Produces a new Node with the provided variable/column added.
 
         @param name (str): Name for the column for internal tracking and later reference.
         @param var (str): A one-line C++ string that evaluates to desired value to store. 
+        @param nodetype (str, optional): Defaults to None in which case the new Node will
+            be type "Define".
 
         Returns:
             Node: New Node object with new column added.
         '''
         print('Defining %s: %s' %(name,var))
-        newNode = Node(name,self.DataFrame.Define(name,var),children=[],action=var,nodetype='Define')
+        newNodeType = 'Define' if nodetype == None else nodetype
+        newNode = Node(name,self.DataFrame.Define(name,var),children=[],action=var,nodetype=newNodeType)
         self.SetChild(newNode)
         return newNode
 
-    def Cut(self,name,cut):
+    def Cut(self,name,cut,nodetype=None):
         '''Produces a new Node with the provided cut/filter applied.
 
         @param name (str): Name for the cut for internal tracking and later reference.
         @param cut (str): A one-line C++ string that evaluates as a boolean.
+        @param nodetype (str, optional): Defaults to None in which case the new Node will
+            be type "Cut".
 
         Returns:
             Node: New Node object with cut applied.
         '''
         print('Filtering %s: %s' %(name,cut))
-        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],action=cut,nodetype='Cut')
+        newNodeType = 'Define' if nodetype == None else nodetype
+        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],action=cut,nodetype=newNodeType)
         self.SetChild(newNode)
         return newNode
 

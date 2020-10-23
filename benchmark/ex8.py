@@ -20,6 +20,5 @@ a.Define('MT','NonZlep_idx == -1 ? -1 : analyzer::transverseMass(MET_pt, Lepton_
 a.Cut('MT_cut','MT>=0')
 h = a.DataFrame.Histo1D('MT')
 h.Draw('hist e')
-a.PrintNodeTree('test_tree',True,True)
 #---------------------
 print ('%s secs'%(time.time() - start))
