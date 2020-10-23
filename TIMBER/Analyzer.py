@@ -9,7 +9,7 @@ from clang import cindex
 from collections import OrderedDict
 
 import ROOT
-import pprint, copy, os, subprocess
+import pprint, copy, os, subprocess, textwrap
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -103,7 +103,7 @@ class analyzer(object):
         BaseDataFrame = ROOT.RDataFrame(self.__eventsChain) 
         self.BaseNode = Node('base',BaseDataFrame) 
         self.BaseNode.children = [] # protect against memory issue when running over multiple sets in one script
-        self.AllNodes = [] 
+        self.AllNodes = [self.BaseNode] 
         self.Corrections = {} 
 
         # Check if dealing with data
@@ -793,28 +793,44 @@ class analyzer(object):
 
         return nminusones
 
-    def PrintNodeTree(self,outfilename,verbose=False):
+    def PrintNodeTree(self,outfilename,verbose=False,skipDefines=False):
         '''Print a PDF image of the node structure of the analysis.
         Requires python graphviz package which should be an installed dependency.
 
         @param outfilename (str): Name of output PDF file.
         @param verbose (bool, optional): Turns on verbose node labels. Defaults to False.
+        @param skipDefines (bool, optional): Skips definitions and only plots cuts. Default to False.
 
         Returns:
             None
         '''
-        from graphviz import Digraph
-        dot = Digraph(comment='Node processing tree')
+        import networkx as nx
+        from networkx.drawing.nx_agraph import graphviz_layout
+        graph = nx.DiGraph(comment='Node processing tree')
         for node in self.AllNodes:
             this_node_name = node.name
             this_node_label = node.name
-            if verbose: this_node_label += '\n%s'%node.action
+            if verbose: this_node_label += '\n%s'%textwrap.fill(node.action,50)
 
-            dot.node(this_node_name, this_node_label)
+            graph.add_node(this_node_name, label=this_node_label, type=node.type)
             for child in node.children:
-                dot.edge(this_node_name,child.name)
-        
-        dot.render(outfilename)
+                graph.add_edge(this_node_name,child.name)
+
+        if skipDefines:
+            for node in graph.nodes:
+                if graph.nodes[node]["type"] == 'Define':
+                    print '%s %s'%(node,graph.pred[node])
+                    graph = nx.contracted_edge(graph,(graph.pred[node].keys()[0],node),self_loops=False)
+                    # for c in node.children:
+                    #     if c.type == 'Define':
+                    #         graph = nx.contracted_edge((graph,node.name,c.name),self_loops=False)
+
+        labels = nx.get_node_attributes(graph, 'label') 
+        dot = nx.nx_agraph.to_agraph(graph)
+        dot.layout('dot')
+        print(dot)
+        dot.draw('abcd.png')
+        input('')
 
 ##############
 # Node Class #
@@ -823,7 +839,7 @@ class Node(object):
     '''Class to represent nodes in the DataFrame processing graph. 
     Can make new nodes via Define, Cut, and Discriminate and setup
     relations between nodes (done automatically via Define, Cut, Discriminate)'''
-    def __init__(self, name, DataFrame, action='', children=[]):
+    def __init__(self, name, DataFrame, action='', nodetype='', children=[]):
         '''Constructor. Holds the RDataFrame and other associated information
         for tracking in the {@link analyzer}.
 
@@ -844,6 +860,9 @@ class Node(object):
         ## @var action
         #
         # Action performed to create this Node.
+        ## @var nodetype
+        #
+        # Either 'Cut' or 'Define' depending what generated the Node.
         ## @var children
         #
         # List of child nodes.
@@ -853,6 +872,7 @@ class Node(object):
         self.name = name
         self.action = action
         self.children = children
+        self.type = nodetype
         
     def Close(self):
         # print (self)
@@ -943,7 +963,7 @@ class Node(object):
             Node: New Node object with new column added.
         '''
         print('Defining %s: %s' %(name,var))
-        newNode = Node(name,self.DataFrame.Define(name,var),children=[],action=var)
+        newNode = Node(name,self.DataFrame.Define(name,var),children=[],action=var,nodetype='Define')
         self.SetChild(newNode)
         return newNode
 
@@ -957,7 +977,7 @@ class Node(object):
             Node: New Node object with cut applied.
         '''
         print('Filtering %s: %s' %(name,cut))
-        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],action=cut)
+        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],action=cut,nodetype='Cut')
         self.SetChild(newNode)
         return newNode
 
@@ -971,8 +991,8 @@ class Node(object):
             dict: Dictionary with keys "pass" and "fail" corresponding to the passing and failing Nodes stored as values.
         '''
         passfail = {
-            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),children=[],action=discriminator),
-            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),children=[],action="!("+discriminator+")")
+            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),children=[],action=discriminator,nodetype='Cut'),
+            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),children=[],action="!("+discriminator+")",nodetype='Cut')
         }
         self.SetChildren(passfail)
         return passfail
