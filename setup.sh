@@ -7,7 +7,7 @@ fi
 
 if ! command -v dot &> /dev/null
 then
-  echo "dot (graphviz) could not be found. Please install it first... (on Ubuntu `sudo apt-get install graphviz`)"
+  echo "dot (graphviz) could not be found. Please install it first... (on Ubuntu `sudo apt-get install graphviz libgraphviz-dev`)"
   exit
 fi
 
