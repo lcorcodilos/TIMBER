@@ -5,6 +5,12 @@ then
   return
 fi
 
+if ! command -v dot &> /dev/null
+then
+  echo "dot (graphviz) could not be found. Please install it first... (on Ubuntu `sudo apt-get install graphviz`)"
+  exit
+fi
+
 python setup.py install
 activate_path=$VIRTUAL_ENV/bin/activate
 TIMBERPATH="$PWD/"
