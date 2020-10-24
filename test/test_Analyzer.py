@@ -24,7 +24,7 @@ class TestAnalyzer():
 
     def test_GetTrackedNodeNames(self):
         '''Test GetTrackNodeNames method after adding a node'''
-        assert self.a.GetTrackedNodeNames() == ['test_cut1','lead_vector','sublead_vector','invariantMass']
+        assert self.a.GetTrackedNodeNames() == ['base','test_cut1','lead_vector','sublead_vector','invariantMass']
 
     def test_makehist(self):
         '''Makes a simple histogram of the defined variable'''
