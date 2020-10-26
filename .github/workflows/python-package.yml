@@ -30,6 +30,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Setup environment
       run: |
+        sudo apt-get install graphviz libgraphviz-dev
+        sudo ln -s /usr/lib/x86_64-linux-gnu/libclang-6.0.so.1 /usr/lib/x86_64-linux-gnu/libclang.so
         python -m pip install --upgrade pip
         pip install virtualenv
         python -m virtualenv timber-env

@@ -1,0 +1,8 @@
+{
+    "test1": 1,
+    "test2": {
+        "float": 1.0,
+        "str": "string",
+        "list": []
+    }
+}

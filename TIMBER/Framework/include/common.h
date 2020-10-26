@@ -28,6 +28,19 @@ namespace analyzer {
         return v;
     }
 
+    RVec<ROOT::Math::PtEtaPhiMVector> TLvector(RVec<float> pt,RVec<float> eta,RVec<float> phi,RVec<float> m) {
+        RVec<ROOT::Math::PtEtaPhiMVector> vs;
+        for (int i = 0; i < pt.size(); i++) {
+            ROOT::Math::PtEtaPhiMVector v(pt[i],eta[i],phi[i],m[i]);
+            vs.push_back(v);
+        }
+        return vs;
+    }
+
+    float transverseMass(float MET_pt, float obj_pt, float MET_phi, float obj_phi) {
+        return sqrt(2.0*MET_pt*obj_pt-(1-cos(deltaPhi(MET_phi,obj_phi))));
+    }
+
     double invariantMass(ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2) {
         return (v1+v2).M();
     }
