@@ -51,7 +51,7 @@ class TestAnalyzer():
         pass
 
     def test_CommonVars(self):
-        assert self.a.CommonVars(["Muon","Tau"]) == ['phi', 'pt', 'charge', 'eta', 'mass', 'genPartIdx', 'jetIdx']
+        assert sorted(self.a.CommonVars(["Muon","Tau"])) == sorted(['phi', 'pt', 'charge', 'eta', 'mass', 'genPartIdx', 'jetIdx'])
         pass
 
     def test_MergeCollections(self):

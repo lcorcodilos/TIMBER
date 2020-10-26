@@ -14,8 +14,8 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 # For parsing c++ modules
-libs = subprocess.Popen('$ROOTSYS/bin/root-config --libs',shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
-rootpath = subprocess.Popen('echo $ROOTSYS',shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
+libs = subprocess.Popen('$ROOTSYS/bin/root-config --libs',shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0].strip()
+rootpath = subprocess.Popen('echo $ROOTSYS',shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0].strip()
 cpp_args =  '-x c++ -c --std=c++11 -I %s/include %s -lstdc++'%(rootpath,libs)
 cpp_args = cpp_args.split(' ')
 
@@ -489,7 +489,8 @@ class analyzer(object):
         commonVars = []
         for c in collections:
             out = []
-            for bname in self.DataFrame.GetColumnNames():
+            colNames = sorted([str(b) for b in self.DataFrame.GetColumnNames()])
+            for bname in colNames:
                 if c+'_' in str(bname):
                     out.append(str(bname).replace(c+'_',''))
             commonVars.append(out)
@@ -1231,7 +1232,7 @@ class Group(object):
         Returns:
             list: Names/keys from Group.
         '''
-        return self.items.keys()
+        return list(self.items.keys())
 
     def values(self):
         '''Gets list of values from Group.
@@ -1239,7 +1240,7 @@ class Group(object):
         Returns:
             list: Values from Group.
         '''
-        return self.items.values()
+        return list(self.items.values())
     
     def __setitem__(self, key, value):
         '''Set key-value pair as you would with dictionary.
@@ -1388,7 +1389,7 @@ class Correction(object):
         self.__script = self.__getScript(script)
         self.__setType(corrtype)
         self.__funcInfo = self.__getFuncInfo(mainFunc)
-        self.__mainFunc = self.__funcInfo.keys()[0]
+        self.__mainFunc = list(self.__funcInfo.keys())[0]
         self.__columnNames = LoadColumnNames() if columnList == None else columnList
         self.__constructor = constructor 
         self.__objectName = self.name
@@ -1606,7 +1607,7 @@ class Correction(object):
         Returns:
             [str]: List of possible function names found in C++ script.
         '''
-        return self.__funcInfo.keys()
+        return list(self.__funcInfo.keys())
 
 def LoadColumnNames(source=''):
     '''Loads column names from a text file.
