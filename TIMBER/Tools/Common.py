@@ -161,28 +161,28 @@ def AsciiEncodeDict(data):
     ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x 
     return dict(map(ascii_encode, pair) for pair in data.items())
 
-def ConcatCols(self,colnames,val='1',connector='&&'):
-        '''Concatenates a list of column names evaluating to a common `val` (usually 1 or 0) 
-        with some `connector` (bool logic operator).
+def ConcatCols(colnames,val='1',connector='&&'):
+    '''Concatenates a list of column names evaluating to a common `val` (usually 1 or 0) 
+    with some `connector` (bool logic operator).
 
-        @param colnames ([str]): List of column names.
-        @param val (str): Value to test equality of all columns. Defaults to '1'.
-        @param connector (str): C++ bool logic operator between column equality checks. Defaults to '&&'.
+    @param colnames ([str]): List of column names.
+    @param val (str): Value to test equality of all columns. Defaults to '1'.
+    @param connector (str): C++ bool logic operator between column equality checks. Defaults to '&&'.
 
-        Returns:
-            str: Concatenated string of the entire evaluation that in C++ will return a bool.
-        '''
-        concat = ''
-        for i,c in enumerate(colnames):
-            if concat == '': 
-                concat = '((%s==%s)'%(c,val)
-            else: 
-                concat += ' %s (%s==%s)'%(connector,c,val)
+    Returns:
+        str: Concatenated string of the entire evaluation that in C++ will return a bool.
+    '''
+    concat = ''
+    for c in colnames:
+        if concat == '': 
+            concat = '((%s==%s)'%(c,val)
+        else: 
+            concat += ' %s (%s==%s)'%(connector,c,val)
 
-        if concat != '': 
-            concat += ')' 
-            
-        return concat
+    if concat != '': 
+        concat += ')' 
+        
+    return concat
 
 def GetHistBinningTuple(h):
     '''Gets the binning information for a histogram and returns it 
