@@ -158,16 +158,18 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Create a plot that compares the shapes of backgrounds versus signal. </p>
-<p>Backgrounds will be stacked together and signals will be plot separately. Total background and signals are scaled to 1 if scale == True. Inputs organized as dicts so that keys can match across dicts (ex. bkgs and bkgNames).</p>
+<p>If stackBkg, backgrounds will be stacked together and signals will be plot separately. Total background and signals are scaled to 1 if scale == True. Inputs organized as dicts so that keys can match across dicts (ex. bkgs and bkgNames).</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">outfilename</td><td>(string): Path where plot will be saved. </td></tr>
+    <tr><td class="paramname">year</td><td>(int): Year to determine luminosity value on plot. Options are 16, 17, 18, 1 (for full Run II), or 2 (for full Run II but represented as separate years, ie. 2016+2017+2018). </td></tr>
     <tr><td class="paramname">prettyvarname</td><td>(string): What will be assigned to as the axis title. </td></tr>
     <tr><td class="paramname">bkgs</td><td>({string:TH1}, optional): Dictionary of backgrounds to plot. Defaults to {}. </td></tr>
     <tr><td class="paramname">signals</td><td>({string:TH1}, optional): Dictionary of signals to plot. Defaults to {}. </td></tr>
     <tr><td class="paramname">names</td><td>({string:string}, optional): Formatted version of names for backgrounds and signals to appear in legend. Keys must match those in bkgs and signal. Defaults to {}. </td></tr>
     <tr><td class="paramname">colors</td><td>({string:int}, optional): TColor code for backgrounds and signals to appear in plot. Keys must match those in bkgs and signal. Defaults to {}. </td></tr>
     <tr><td class="paramname">scale</td><td>(bool, optional): If True, scales total background to unity and signals (separately) to unity. Defaults to True. </td></tr>
+    <tr><td class="paramname">stackBkg</td><td>(bool, optional): If True, backgrounds will be stacked and the total will be normalized to 1 (if scale==True). Defaults to False. </td></tr>
   </table>
   </dd>
 </dl>

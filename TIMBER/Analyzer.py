@@ -46,6 +46,9 @@ class analyzer(object):
                 simulation). Defaults to "Runs" (for NanoAOD) 
         """
 
+        ## @var fileName
+        #
+        # Path of the input file.
         ## @var BaseNode
         # Node
         #
@@ -146,11 +149,21 @@ class analyzer(object):
         self.ActiveNode = self.BaseNode
  
     def Close(self):
-        print ('Deleting analyzer instance for %s'%self.fileName)
+        '''Safely deletes analyzer instance.
+        
+        Returns:
+            None
+        '''
         self.BaseNode.Close()
         self.__eventsChain.Reset()
 
     def __str__(self):
+        '''Call with `print(<analyzer>)` to print a nicely formatted description
+        of the analyzer object for debugging.
+        
+        Returns:
+            str
+        '''
         out = ''
         for a in dir(self):
             if not a.startswith('_') and not callable(getattr(self, a)):
@@ -838,8 +851,7 @@ class analyzer(object):
         dot.draw(outfilename)
 
     def MakeHistsWithBinning(self,histDict,name='',weight=None):
-        '''
-        Batch creates histograms at the current #ActiveNode based on the input `histDict`
+        '''Batch creates histograms at the current #ActiveNode based on the input `histDict`
         which is formatted as `{[<column name>]: <binning tuple>}` where `[<column name>]` is a list
         of column names that you'd like to plot against each other in [x,y,z] order and `binning_tuple` is
         the set of arguments that would normally be passed to `TH1`. The dimensions of the returned
@@ -904,6 +916,7 @@ class Node(object):
         @param name (str): Name for the node. Duplicate named nodes cannot be tracked simultaneously in the analyzer.
         @param DataFrame (RDataFrame): Dataframe to track.
         @param children ([Node], optional): Child nodes if they exist. Defaults to [].
+        @param nodetype (str, optional): The type of the Node. Useful for organizing and grouping Nodes. Defaults to ''.
         @param action (str, optional): Action performed (the C++ line). Default is '' but should only be used for a base RDataFrame.
         '''
         ## @var DataFrame
@@ -921,6 +934,10 @@ class Node(object):
         ## @var children
         #
         # List of child nodes.
+        ## @var type
+        #
+        # The "type" of Node. Can be modified but by default will be either
+        # "Define", "Cut", "MergeDefine", "SubCollDefine", or "Correction".
 
         super(Node, self).__init__()
         self.DataFrame = DataFrame
@@ -930,11 +947,12 @@ class Node(object):
         self.type = nodetype
         
     def Close(self):
-        # print (self)
-        # print ('Deleting Node %s'%self.name)
-        # print (self.children)
+        '''Safely deletes Node instance and all descendants.
+        
+        Returns:
+            None
+        '''
         for c in self.children:
-            # print ('Attempting to delete child %s'%c)
             c.Close()
         self.children = []
         self.DataFrame = None
@@ -942,6 +960,12 @@ class Node(object):
         self.action = None
 
     def __str__(self):
+        '''Call with `print(<Node>)` to print a nicely formatted description
+        of the Node object for debugging.
+        
+        Returns:
+            str
+        '''
         out = 'NODE:\n'
         for a in dir(self):
             if not a.startswith('__') and not callable(getattr(self, a)):

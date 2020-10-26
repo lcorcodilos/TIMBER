@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['prev6',['preV6',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ae4125cd5a36c17e021b2a6a1af9c4fec',1,'TIMBER::Analyzer::analyzer']]]
+  ['name',['name',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ab74e6bf80237ddc4109968cedc58c151',1,'TIMBER.Analyzer.Node.name()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#ab74e6bf80237ddc4109968cedc58c151',1,'TIMBER.Analyzer.Group.name()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#ab74e6bf80237ddc4109968cedc58c151',1,'TIMBER.Analyzer.Correction.name()']]]
 ];

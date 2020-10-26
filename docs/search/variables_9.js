@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['type',['type',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#a7aead736a07eaf25623ad7bfa1f0ee2d',1,'TIMBER.Analyzer.Group.type()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_cut_group.html#a7aead736a07eaf25623ad7bfa1f0ee2d',1,'TIMBER.Analyzer.CutGroup.type()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_var_group.html#a7aead736a07eaf25623ad7bfa1f0ee2d',1,'TIMBER.Analyzer.VarGroup.type()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_hist_group.html#a7aead736a07eaf25623ad7bfa1f0ee2d',1,'TIMBER.Analyzer.HistGroup.type()']]]
+  ['prev6',['preV6',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ae4125cd5a36c17e021b2a6a1af9c4fec',1,'TIMBER::Analyzer::analyzer']]]
 ];
