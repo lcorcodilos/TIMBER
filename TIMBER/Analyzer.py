@@ -434,6 +434,7 @@ class analyzer(object):
         @param name (str): Name of new collection.
         @param basecoll (str): Name of derivative collection.
         @param condition (str): C++ condition that determines which items
+        @param skip ([str]): List of variable names in the collection to skip.
 
         Returns:
             None. New nodes created with the sub collection.
@@ -658,7 +659,7 @@ class analyzer(object):
 
         out = HistGroup('Templates')
 
-        weight_cols = [cname for cname in node.DataFrame.GetColumnNames() if 'weight__' in cname]
+        weight_cols = [str(cname) for cname in node.DataFrame.GetColumnNames() if 'weight__' in str(cname)]
         baseName = templateHist.GetName()
         baseTitle = templateHist.GetTitle()
         binningTuple,dimension = GetHistBinningTuple(templateHist)
@@ -757,19 +758,21 @@ class analyzer(object):
     # Return dictionary of N-1 nodes keyed by the  #
     # cut that gets dropped                        #
     #----------------------------------------------#
-    def Nminus1(self,node,cutgroup):
+    def Nminus1(self,cutgroup,node=None):
         '''Create an N-1 tree structure of nodes building off of `node`
         with the N cuts from `cutgroup`.
 
         The structure is optimized so that as many actions are shared as possible
         so that the N different nodes can be made. Use #PrintNodeTree() to visualize. 
 
-        @param node (Node): Node to build on.
         @param cutgroup (CutGroup): Group of N cuts to apply.
+        @param node (Node, optional): Node to build on. Defaults to #ActiveNode.
 
         Returns:
             dict: N nodes in dictionary with keys indicating the cut that was not applied.
         '''
+        if node == None: node = self.ActiveNode
+
         # Initialize
         print ('Performing N-1 scan for CutGroup %s'%cutgroup.name)
 
@@ -780,7 +783,7 @@ class analyzer(object):
         # Loop over all cuts (`cut` is the name not the string to filter on)
         for cut in cutgroup.keys():
             # Get the N-1 group of this cut (where N is determined by thiscutgroup)
-            minusgroup = thiscutgroup.Drop(cut)
+            minusgroup = thiscutgroup.Drop(cut,makeCopy=True)
             thiscutgroup = minusgroup
             minusgroup.name = 'Minus(%s)'%cut
             # Store the node with N-1 applied
@@ -1143,26 +1146,46 @@ class Group(object):
         self.items = OrderedDict()
         self.type = None
 
-    def Add(self,name,item,copy=False):
-        '''Add item to Group with a name. Modifies in-place.
+    def Add(self,name,item,makeCopy=False):
+        '''Add item to Group with a name. Modifies in-place if copy == False.
 
         @param name (str): Name/key for added item.
         @param item (obj): Item to add.
+        @param makeCopy (bool, optional): Creates a copy of the group with the item added.
 
         Returns:
             None
         '''
-        self.items[name] = item 
+        if makeCopy:
+            added = copy.deepcopy(self.items)
+            added[name] = item
+            if self.type == None: newGroup = Group(self.name+'+'+name)
+            elif self.type == 'var': newGroup = VarGroup(self.name+'+'+name)
+            elif self.type == 'cut': newGroup = CutGroup(self.name+'+'+name)
+            newGroup.items = added
+            return newGroup
+        else:
+            self.items[name] = item 
         
-    def Drop(self,name,copy=False):
-        '''Drop item from Group with provided name/key. Modifies in-place.
+    def Drop(self,name,makeCopy=False):
+        '''Drop item from Group with provided name/key. Modifies in-place if copy == False.
 
         @param name (str): Name/key for dropped item.
+        @param makeCopy (bool, optional): Creates a copy of the group with the item dropped.
 
         Returns:
             None
         '''
-        del self.items[name]
+        if makeCopy:
+            dropped = copy.deepcopy(self.items)
+            del dropped[name]
+            if self.type == None: newGroup = Group(self.name+'-'+name)
+            elif self.type == 'var': newGroup = VarGroup(self.name+'-'+name)
+            elif self.type == 'cut': newGroup = CutGroup(self.name+'-'+name)
+            newGroup.items = dropped
+            return newGroup
+        else:
+            del self.items[name]
 
     def Clone(self,name):
         '''Clone the current group with a new name.
@@ -1376,8 +1399,8 @@ class Correction(object):
             if self.__mainFunc not in self.__funcInfo.keys():
                 raise ValueError('Correction() instance provided with mainFunc argument does not exist in %s'%self.__script)
             CompileCpp(self.__script,library=True)
-        else:
-            self.__instantiate(constructor)      
+
+        self.__instantiate(constructor)
 
     def Clone(self,name,newMainFunc=None):
         '''Makes a clone of current instance.
@@ -1502,9 +1525,13 @@ class Correction(object):
         line = classname + ' ' + self.name+'('
         for a in args:
             line += a+', '
-        line = line[:-2] + ');'
 
-        print ('Instantiating...')
+        if len(args) > 0:
+            line = line[:-2] + ');'
+        else:
+            line = line[:-1] + ';'
+
+        print ('Instantiating...'+line)
         ROOT.gInterpreter.Declare(line)
 
     def MakeCall(self,inArgs = []):
