@@ -138,7 +138,7 @@ def CompileCpp(blockcode,library=False):
             print ('Compiling library...')
             ROOT.gROOT.ProcessLine(".L "+blockcode+"+")
 
-def OpenJSON(filename):
+def OpenJSON(filename,pyversion='3'):
     '''Opens JSON file as a dictionary (accounting for unicode encoding)
 
     @param filename (str): JSON file name to open.
@@ -146,10 +146,13 @@ def OpenJSON(filename):
     Returns:
         dict: Python dictionary with JSON content.
     '''
-    return json.load(open(f,'r'), object_hook=AsciiEncodeDict) 
+    if pyversion == '2':
+        return json.load(open(filename,'r'), object_hook=AsciiEncodeDict2) 
+    else:
+        return json.load(open(filename,'r'))#, object_hook=AsciiEncodeDict3)
 
-def AsciiEncodeDict(data):
-    '''Encodes dict to ascii from unicode
+def AsciiEncodeDict2(data):
+    '''Encodes dict to ascii from unicode for python 2.7
 
     Credit Andrew Clark on [StackOverflow](https://stackoverflow.com/questions/9590382/forcing-python-json-module-to-work-with-ascii/28339920).
 
@@ -159,6 +162,19 @@ def AsciiEncodeDict(data):
         dict: New dictionary with unicode converted to ascii.
     '''
     ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x 
+    return dict(map(ascii_encode, pair) for pair in data.items())
+
+def AsciiEncodeDict3(data):
+    '''Encodes dict to ascii from unicode for python 3
+
+    Credit Andrew Clark on [StackOverflow](https://stackoverflow.com/questions/9590382/forcing-python-json-module-to-work-with-ascii/28339920).
+
+    @param data (dict): Input dictionary.
+
+    Returns:
+        dict: New dictionary with unicode converted to ascii.
+    '''
+    ascii_encode = lambda x: x.encode('ascii') if isinstance(x, str) else x 
     return dict(map(ascii_encode, pair) for pair in data.items())
 
 def ConcatCols(colnames,val='1',connector='&&'):
