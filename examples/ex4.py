@@ -88,4 +88,4 @@ nminus1Hists.Do('Write')
 out.Close()
 
 # NOTE: Can plot full node to tree to ensure selections were made accurately (requires graphviz python package and Graphviz installation)
-a.PrintNodeTree('ex4_tree.dot')
+a.PrintNodeTree('ex4_tree')
