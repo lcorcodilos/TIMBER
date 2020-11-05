@@ -829,7 +829,7 @@ class analyzer(object):
             None
         '''
         import networkx as nx
-        from networkx.drawing.nx_agraph import graphviz_layout
+        # from networkx.drawing.nx_agraph import graphviz_layout
         graph = nx.DiGraph(comment='Node processing tree')
         # Build graph with all nodes
         for node in self.AllNodes:
@@ -846,9 +846,12 @@ class analyzer(object):
                 if skip in graph.nodes[node]["type"]:
                     graph = nx.contracted_edge(graph,(graph.pred[node].keys()[0],node),self_loops=False)
         # Write out dot and draw
-        dot = nx.nx_agraph.to_agraph(graph)
-        dot.layout('dot')
-        dot.draw(outfilename)
+        dot = nx.nx_pydot.to_pydot(graph)
+        # dot.layout('dot')
+        dot.write_png(outfilename)
+        # dot = nx.nx_agraph.to_agraph(graph)
+        # dot.layout('dot')
+        # dot.draw(outfilename)
 
     def MakeHistsWithBinning(self,histDict,name='',weight=None):
         '''Batch creates histograms at the current #ActiveNode based on the input `histDict`
