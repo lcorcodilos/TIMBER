@@ -58,7 +58,7 @@ at the end.
 ```
 cmsenv
 python3 -m virtualenv pyroot3
-echo "\nsource /cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.22.00/bin/thisroot.sh" >> pyroot3/bin/activate
+echo -e "\nsource /cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.22.00/bin/thisroot.sh" >> pyroot3/bin/activate
 source pyroot3/bin/activate
 ```
 With this option, you'll need to remember to activate the virtualenv every time after you cmsenv but in general,
