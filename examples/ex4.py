@@ -9,7 +9,7 @@ import ROOT,sys
 sys.path.append('../../')
 
 # Enable using 4 threads
-ROOT.ROOT.EnableImplicitMT(4)
+ROOT.ROOT.EnableImplicitMT(1)
 
 file_name = 'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16NanoAODv6/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v2/20000/740B9BA3-8A64-B743-9439-2930CE247191.root'
 # file_name = 'TIMBER/examples/ttbar16_sample.root'
@@ -88,4 +88,4 @@ nminus1Hists.Do('Write')
 out.Close()
 
 # NOTE: Can plot full node to tree to ensure selections were made accurately (requires graphviz python package and Graphviz installation)
-a.PrintNodeTree('ex4_tree.png')
+a.PrintNodeTree('ex4_tree.dot')
