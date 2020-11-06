@@ -847,14 +847,17 @@ class analyzer(object):
         # Write out dot and draw
         dot = nx.nx_pydot.to_pydot(graph)
         extension = outfilename.split('.')[-1]
+        filename = outfilename.split('.')[:-1]
         if extension not in [outfilename,'dot']:
             try:
                 getattr(dot,'write_'+extension)(outfilename)
             except:
                 print ('PrintNodeTree() warning!! File extension %s not supported by graphviz on this system. Will write out .dot instead.'%(extension))
-                dot.write(outfilename)
-        else:
-            dot.write(outfilename.split('.')[:-1])
+                dot.write(filename+'.dot')
+        elif extension == 'dot':
+            dot.write(outfilename)
+        elif extension == outfilename: # meaning, no '.' in outfilename
+            dot.write(filename+'.dot')
 
     def MakeHistsWithBinning(self,histDict,name='',weight=None):
         '''Batch creates histograms at the current #ActiveNode based on the input `histDict`
