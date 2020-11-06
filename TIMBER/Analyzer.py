@@ -846,7 +846,15 @@ class analyzer(object):
                     graph = nx.contracted_edge(graph,(graph.pred[node].keys()[0],node),self_loops=False)
         # Write out dot and draw
         dot = nx.nx_pydot.to_pydot(graph)
-        dot.write(outfilename)
+        extension = outfilename.split('.')[-1]
+        if extension not in [outfilename,'dot']:
+            try:
+                getattr(dot,'write_'+extension)(outfilename)
+            except:
+                print ('PrintNodeTree() warning!! File extension %s not supported by graphviz on this system. Will write out .dot instead.'%(extension))
+                dot.write(outfilename)
+        else:
+            dot.write(outfilename.split('.')[:-1])
 
     def MakeHistsWithBinning(self,histDict,name='',weight=None):
         '''Batch creates histograms at the current #ActiveNode based on the input `histDict`
