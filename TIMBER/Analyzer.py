@@ -937,7 +937,7 @@ class Node(object):
         ## @var action
         #
         # Action performed to create this Node.
-        ## @var nodetype
+        ## @var type
         #
         # Either 'Cut' or 'Define' depending what generated the Node.
         ## @var children
