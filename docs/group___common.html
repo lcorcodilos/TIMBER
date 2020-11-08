@@ -85,12 +85,15 @@ Functions</h2></td></tr>
 <tr class="memitem:ga24e95c0ad4d54297700d2323325e809f"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga24e95c0ad4d54297700d2323325e809f">CompileCpp</a> (blockcode, library=False)</td></tr>
 <tr class="memdesc:ga24e95c0ad4d54297700d2323325e809f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compiles C++ code via the gInterpreter.  <a href="group___common.html#ga24e95c0ad4d54297700d2323325e809f">More...</a><br /></td></tr>
 <tr class="separator:ga24e95c0ad4d54297700d2323325e809f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4b63a003f89b48ce9f994c29a40dcf96"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga4b63a003f89b48ce9f994c29a40dcf96">OpenJSON</a> (filename)</td></tr>
-<tr class="memdesc:ga4b63a003f89b48ce9f994c29a40dcf96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens JSON file as a dictionary (accounting for unicode encoding)  <a href="group___common.html#ga4b63a003f89b48ce9f994c29a40dcf96">More...</a><br /></td></tr>
-<tr class="separator:ga4b63a003f89b48ce9f994c29a40dcf96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga08af29d3395591fa501a98fcc3bb5ea0"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga08af29d3395591fa501a98fcc3bb5ea0">AsciiEncodeDict</a> (data)</td></tr>
-<tr class="memdesc:ga08af29d3395591fa501a98fcc3bb5ea0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encodes dict to ascii from unicode.  <a href="group___common.html#ga08af29d3395591fa501a98fcc3bb5ea0">More...</a><br /></td></tr>
-<tr class="separator:ga08af29d3395591fa501a98fcc3bb5ea0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga761e713e2017581d59a7d666aef4d3fe"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga761e713e2017581d59a7d666aef4d3fe">OpenJSON</a> (filename, pyversion='3')</td></tr>
+<tr class="memdesc:ga761e713e2017581d59a7d666aef4d3fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens JSON file as a dictionary (accounting for unicode encoding)  <a href="group___common.html#ga761e713e2017581d59a7d666aef4d3fe">More...</a><br /></td></tr>
+<tr class="separator:ga761e713e2017581d59a7d666aef4d3fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4fec743538975e89f19796ca123d44f5"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga4fec743538975e89f19796ca123d44f5">AsciiEncodeDict2</a> (data)</td></tr>
+<tr class="memdesc:ga4fec743538975e89f19796ca123d44f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encodes dict to ascii from unicode for python 2.7.  <a href="group___common.html#ga4fec743538975e89f19796ca123d44f5">More...</a><br /></td></tr>
+<tr class="separator:ga4fec743538975e89f19796ca123d44f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3c72549076080c881538d9aff7fd42a5"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga3c72549076080c881538d9aff7fd42a5">AsciiEncodeDict3</a> (data)</td></tr>
+<tr class="memdesc:ga3c72549076080c881538d9aff7fd42a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encodes dict to ascii from unicode for python 3.  <a href="group___common.html#ga3c72549076080c881538d9aff7fd42a5">More...</a><br /></td></tr>
+<tr class="separator:ga3c72549076080c881538d9aff7fd42a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf0721d1f79a9542d2a07df88852114a8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaf0721d1f79a9542d2a07df88852114a8">ConcatCols</a> (colnames, val='1', connector='&amp;&amp;')</td></tr>
 <tr class="memdesc:gaf0721d1f79a9542d2a07df88852114a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Concatenates a list of column names evaluating to a common <code>val</code> (usually 1 or 0) with some <code>connector</code> (bool logic operator).  <a href="group___common.html#gaf0721d1f79a9542d2a07df88852114a8">More...</a><br /></td></tr>
 <tr class="separator:gaf0721d1f79a9542d2a07df88852114a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -122,14 +125,14 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Commonly used functions available for use that can be generic or TIMBER specific. </p>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga08af29d3395591fa501a98fcc3bb5ea0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga08af29d3395591fa501a98fcc3bb5ea0">&#9670;&nbsp;</a></span>AsciiEncodeDict()</h2>
+<a id="ga4fec743538975e89f19796ca123d44f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4fec743538975e89f19796ca123d44f5">&#9670;&nbsp;</a></span>AsciiEncodeDict2()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">def TIMBER.Tools.Common.AsciiEncodeDict </td>
+          <td class="memname">def TIMBER.Tools.Common.AsciiEncodeDict2 </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
@@ -138,7 +141,37 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Encodes dict to ascii from unicode. </p>
+<p>Encodes dict to ascii from unicode for python 2.7. </p>
+<p>Credit Andrew Clark on <a href="https://stackoverflow.com/questions/9590382/forcing-python-json-module-to-work-with-ascii/28339920">StackOverflow</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>(dict): Input dictionary.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd>
+<dd>
+dict New dictionary with unicode converted to ascii. </dd></dl>
+
+</div>
+</div>
+<a id="ga3c72549076080c881538d9aff7fd42a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3c72549076080c881538d9aff7fd42a5">&#9670;&nbsp;</a></span>AsciiEncodeDict3()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def TIMBER.Tools.Common.AsciiEncodeDict3 </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Encodes dict to ascii from unicode for python 3. </p>
 <p>Credit Andrew Clark on <a href="https://stackoverflow.com/questions/9590382/forcing-python-json-module-to-work-with-ascii/28339920">StackOverflow</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -609,8 +642,8 @@ str Matched sub-string. </dd></dl>
 
 </div>
 </div>
-<a id="ga4b63a003f89b48ce9f994c29a40dcf96"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4b63a003f89b48ce9f994c29a40dcf96">&#9670;&nbsp;</a></span>OpenJSON()</h2>
+<a id="ga761e713e2017581d59a7d666aef4d3fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga761e713e2017581d59a7d666aef4d3fe">&#9670;&nbsp;</a></span>OpenJSON()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -619,8 +652,18 @@ str Matched sub-string. </dd></dl>
           <td class="memname">def TIMBER.Tools.Common.OpenJSON </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>pyversion</em> = <code>'3'</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">

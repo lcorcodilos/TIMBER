@@ -9,7 +9,7 @@ import ROOT,sys
 sys.path.append('../../')
 
 # Enable using 4 threads
-ROOT.ROOT.EnableImplicitMT(4)
+ROOT.ROOT.EnableImplicitMT(1)
 
 file_name = 'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16NanoAODv6/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v2/20000/740B9BA3-8A64-B743-9439-2930CE247191.root'
 # file_name = 'TIMBER/examples/ttbar16_sample.root'
@@ -62,7 +62,7 @@ nodeToPlot = a.Apply([myCuts,myVars])
 # Do N-1 selections and draw histograms #
 #########################################
 # Organize N-1 of tagging variables when assuming top is always leading
-nminus1Nodes = a.Nminus1(nodeToPlot,topCuts) # NOTE: Returns the nodes with N-1 selections
+nminus1Nodes = a.Nminus1(topCuts,nodeToPlot) # NOTE: Returns the nodes with N-1 selections
 nminus1Hists = HistGroup('nminus1Hists') # NOTE: HistGroup used to batch operate on histograms
 
 # Add hists to group and write out at the end
@@ -75,8 +75,6 @@ for nkey in nminus1Nodes.keys():
 #################################################
 # Now apply the top cuts and return to workflow #
 #################################################
-a.Apply(topCuts)
-
 # Access the most recent node's data frame and make a histogram
 myHist2 = a.GetActiveNode().DataFrame.Histo1D(('m_inv','Invariant mass of two top jets',35,500,4000),'invariantMass')
 
