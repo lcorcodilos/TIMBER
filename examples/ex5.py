@@ -74,4 +74,4 @@ a.MakeWeightCols()
 templateGroup = a.MakeTemplateHistos(ROOT.TH1F('mtt','m_{tt}',30,500,3500), 'invariantMass')
 
 a.DrawTemplates(templateGroup,'test_templates/')
-a.PrintNodeTree('ex5_tree',verbose=True)
+a.PrintNodeTree('ex5_tree.png',verbose=True)
