@@ -4,15 +4,52 @@
 #include "TH2.h"
 #include "TH3.h"
 
+/**
+ * @class HistLoader
+ * @brief Generic histogram loader with methods to return bin values.
+ */
 class HistLoader {
     private:
         TFile *file;
         TH1 *hist;
         int dim;
-        void checkDim(int x, int y, int z);
+
+        /**
+         * @brief Sanity check that the dimensionality of the
+         * arguements and the histogram make sense
+         * 
+         * @tparam Expecting either ints or floats.
+         * @param x 
+         * @param y 
+         * @param z 
+         */
+        template <T>
+        void checkDim(T x, T y, T z);
     public:
+        /**
+         * @brief Construct a new HistLoader object
+         * 
+         * @param filename File to access.
+         * @param histname Histogram name in the file.
+         */
         HistLoader(std::string filename, std::string histname);
+        /**
+         * @brief Evaluate by bin numbers.
+         * 
+         * @param binx 
+         * @param biny 
+         * @param binz 
+         * @return std::vector<float> {nominal value, up error+nominal, down error+nominal}
+         */
         std::vector<float> eval_bybin(int binx, int biny = 0, int binz = 0);
+        /**
+         * @brief Evaluate by axis value.
+         * 
+         * @param xval 
+         * @param yval 
+         * @param zval 
+         * @return std::vector<float> {nominal value, up error+nominal, down error+nominal}
+         */
         std::vector<float> eval(float xval, float yval = 0., float zval = 0.);
             
 };
