@@ -2,6 +2,7 @@ var searchData=
 [
   ['dataframe',['DataFrame',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a1ba09da1969b6677c42489b42495ba0f',1,'TIMBER::Analyzer::analyzer']]],
   ['define',['Define',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2b2e0a06dac0a384b1435823ada82792',1,'TIMBER.Analyzer.analyzer.Define()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a10d358548c587a45ae627eeb6948aef8',1,'TIMBER.Analyzer.Node.Define()']]],
+  ['deltaphi',['DeltaPhi',['../namespace_hardware.html#a15409f858a93d688cb58878f6a5eb9d8',1,'Hardware']]],
   ['dictcopy',['DictCopy',['../group___common.html#ga1aaec96a73bafbbbc9890df3fdf1ac8e',1,'TIMBER::Tools::Common']]],
   ['dictstructurecopy',['DictStructureCopy',['../group___common.html#gaf716e063fa7f868daa3fb300a135e160',1,'TIMBER::Tools::Common']]],
   ['dicttolatextable',['DictToLatexTable',['../group___common.html#ga03accc09d6689d1b8387555e06048661',1,'TIMBER::Tools::Common']]],

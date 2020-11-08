@@ -68,16 +68,105 @@ $(function() {
 <div class="title">SJBtag_SF Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Subjet b tagging scale factor lookup.  
+ <a href="class_s_j_btag___s_f.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af37f9907058b34422480cc7ba81a75e0"><td class="memItemLeft" align="right" valign="top"><a id="af37f9907058b34422480cc7ba81a75e0"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SJBtag_SF</b> (int year, std::string tagger, std::string op_string)</td></tr>
+<tr class="memitem:af37f9907058b34422480cc7ba81a75e0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_j_btag___s_f.html#af37f9907058b34422480cc7ba81a75e0">SJBtag_SF</a> (int year, std::string tagger, std::string op_string)</td></tr>
+<tr class="memdesc:af37f9907058b34422480cc7ba81a75e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new subjet b tag scale factor lookup object.  <a href="#af37f9907058b34422480cc7ba81a75e0">More...</a><br /></td></tr>
 <tr class="separator:af37f9907058b34422480cc7ba81a75e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb80522cdaab7fcd3153e449860862ea"><td class="memItemLeft" align="right" valign="top"><a id="acb80522cdaab7fcd3153e449860862ea"></a>
-RVec&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>eval</b> (float pt, float eta)</td></tr>
+<tr class="memitem:acb80522cdaab7fcd3153e449860862ea"><td class="memItemLeft" align="right" valign="top">RVec&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_j_btag___s_f.html#acb80522cdaab7fcd3153e449860862ea">eval</a> (float pt, float eta)</td></tr>
+<tr class="memdesc:acb80522cdaab7fcd3153e449860862ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Per-event evaluation function.  <a href="#acb80522cdaab7fcd3153e449860862ea">More...</a><br /></td></tr>
 <tr class="separator:acb80522cdaab7fcd3153e449860862ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Subjet b tagging scale factor lookup. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="af37f9907058b34422480cc7ba81a75e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af37f9907058b34422480cc7ba81a75e0">&#9670;&nbsp;</a></span>SJBtag_SF()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_s_j_btag___s_f.html">SJBtag_SF</a> </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>year</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>tagger</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>op_string</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Construct a new subjet b tag scale factor lookup object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">year</td><td>16, 17, or 18. </td></tr>
+    <tr><td class="paramname">tagger</td><td>Ex. DeepCSV. See TIMBER/data/OfficialSFs/ for others. </td></tr>
+    <tr><td class="paramname">op_string</td><td>"loose", "medium", "tight" </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="acb80522cdaab7fcd3153e449860862ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb80522cdaab7fcd3153e449860862ea">&#9670;&nbsp;</a></span>eval()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RVec&lt; float &gt; eval </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>pt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>eta</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Per-event evaluation function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pt</td><td><img class="formulaInl" alt="$p_{T}$" src="form_2.png"/> of subjet </td></tr>
+    <tr><td class="paramname">eta</td><td><img class="formulaInl" alt="$\eta$" src="form_1.png"/> of subjet </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>RVec&lt;float&gt; Nominal, up, down scale factor values. </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>TIMBER/Framework/src/SJBtag_SF.cc</li>
 </ul>
