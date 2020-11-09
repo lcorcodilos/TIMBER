@@ -34,9 +34,9 @@ myCuts.Add('eta_cut','FatJet_eta[0] < 2.4 && FatJet_eta[1] < 2.4')
 ###################
 myVars = VarGroup('myVars')
 myVars.Add('pt_sum','FatJet_pt[0] + FatJet_pt[1]')
-myVars.Add('lead_vector','analyzer::TLvector(FatJet_pt[0],FatJet_eta[0],FatJet_phi[0],FatJet_msoftdrop[0])')
-myVars.Add('sublead_vector','analyzer::TLvector(FatJet_pt[1],FatJet_eta[1],FatJet_phi[1],FatJet_msoftdrop[1])')
-myVars.Add('invariantMass','analyzer::invariantMass(lead_vector,sublead_vector)') # Note that there are better ways to calculate this and this is an example
+myVars.Add('lead_vector','hardware::TLvector(FatJet_pt[0],FatJet_eta[0],FatJet_phi[0],FatJet_msoftdrop[0])')
+myVars.Add('sublead_vector','hardware::TLvector(FatJet_pt[1],FatJet_eta[1],FatJet_phi[1],FatJet_msoftdrop[1])')
+myVars.Add('invariantMass','hardware::invariantMass({lead_vector,sublead_vector})') # Note that there are better ways to calculate this and this is an example
 
 a.Apply([myCuts,myVars])
 

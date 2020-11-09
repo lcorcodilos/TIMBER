@@ -5,7 +5,7 @@ using namespace ROOT::VecOps;
  * @namespace Hardware
  * @brief Namespace for common physics functions.
  */
-namespace Hardware {  
+namespace hardware {  
     /**
      * @brief Calculate the difference in \f$\phi\f$.
      * 
@@ -61,7 +61,7 @@ namespace Hardware {
      * @return float 
      */
     float transverseMass(float MET_pt, float obj_pt, float MET_phi, float obj_phi) {
-        return sqrt(2.0*MET_pt*obj_pt-(1-cos(deltaPhi(MET_phi,obj_phi))));
+        return sqrt(2.0*MET_pt*obj_pt-(1-cos(DeltaPhi(MET_phi,obj_phi))));
     }
 
     /**
@@ -75,7 +75,7 @@ namespace Hardware {
      */
     double invariantMass(RVec<ROOT::Math::PtEtaPhiMVector> vects) {
         ROOT::Math::PtEtaPhiMVector sum;
-        sum.SetPtEtaPhiM(0,0,0,0);
+        sum.SetCoordinates(0,0,0,0);
         for (int i = 0; i < vects.size(); i++) {
             sum = sum + vects[i];
         }

@@ -35,9 +35,9 @@ myCuts.Add('tau2', 'FatJet_tau2[0] > 0 && FatJet_tau2[1] > 0')
 ###################
 myVars = VarGroup('myVars')
 myVars.Add('pt_sum',            'FatJet_pt[0] + FatJet_pt[1]')
-myVars.Add('lead_vector',       'analyzer::TLvector(FatJet_pt[0],FatJet_eta[0],FatJet_phi[0],FatJet_msoftdrop[0])')
-myVars.Add('sublead_vector',    'analyzer::TLvector(FatJet_pt[1],FatJet_eta[1],FatJet_phi[1],FatJet_msoftdrop[1])')
-myVars.Add('invariantMass',     'analyzer::invariantMass(lead_vector,sublead_vector)') 
+myVars.Add('lead_vector',       'hardware::TLvector(FatJet_pt[0],FatJet_eta[0],FatJet_phi[0],FatJet_msoftdrop[0])')
+myVars.Add('sublead_vector',    'hardware::TLvector(FatJet_pt[1],FatJet_eta[1],FatJet_phi[1],FatJet_msoftdrop[1])')
+myVars.Add('invariantMass',     'hardware::invariantMass({lead_vector,sublead_vector})') 
 myVars.Add('tau32',        'tau32Maker(FatJet_tau3,FatJet_tau2)')
 myVars.Add('subjet_btag',  'sjbtagMaker(FatJet_subJetIdx1,FatJet_subJetIdx2,SubJet_btagDeepB)')
 myVars.Add('lead_mass', 'FatJet_msoftdrop[0]') # need to book these to plot mass
@@ -62,7 +62,7 @@ lead_sjbt_corr = Correction('lead_sjbtag_corr',
                        'TIMBER/Framework/src/SJBtag_SF.cc',
                        ['16','"DeepCSV"','"loose"'])
 # Clone it and make the sublead version (cpObj to use same object instance of SJBtag_SF class)
-sublead_sjbt_corr = lead_sjbt_corr.Clone('sublead_sjbtag_corr',cpObj=True)
+sublead_sjbt_corr = lead_sjbt_corr.Clone('sublead_sjbtag_corr')
 # Add both
 a.AddCorrection(lead_sjbt_corr, evalArgs=['FatJet_pt[0]','FatJet_eta[0]'])
 a.AddCorrection(sublead_sjbt_corr, evalArgs=['FatJet_pt[1]','FatJet_eta[1]'])

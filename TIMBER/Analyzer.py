@@ -1411,7 +1411,7 @@ class Correction(object):
         @param columnList ([str], optional): List of column names to search mainFunc arguments against.
                 Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used.
         @param isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
-                not duplicately recompile the same script if two functions are needed in one C++ script.
+                not duplicate compile the same script if two functions are needed in one C++ script.
         '''
 
         ## @var name
@@ -1489,7 +1489,7 @@ class Correction(object):
         if inType in ['weight','uncert']:
             out_type = inType
         elif inType not in ['weight','uncert'] and inType != None:
-            print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...')
+            print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...'%inType)
 
         if out_type == None:
             if '_weight.cc' in self.__script.lower() or '_sf.cc' in self.__script.lower():
