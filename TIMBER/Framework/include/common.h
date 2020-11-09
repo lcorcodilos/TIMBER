@@ -2,7 +2,7 @@
 
 using namespace ROOT::VecOps;
 /**
- * @namespace Hardware
+ * @namespace hardware
  * @brief Namespace for common physics functions.
  */
 namespace hardware {  

@@ -1,4 +1,4 @@
-# Ledger to keep track of official scale factor files
+# Ledger of official scale factor files
 
 | Correction | Group | Date added | File | JHUanalyzer module(s) | Sources |
 |------------|-------|------------|------|-----------------------|---------|

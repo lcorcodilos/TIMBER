@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['type',['type',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a7aead736a07eaf25623ad7bfa1f0ee2d',1,'TIMBER.Analyzer.Node.type()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#a7aead736a07eaf25623ad7bfa1f0ee2d',1,'TIMBER.Analyzer.Group.type()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_cut_group.html#a7aead736a07eaf25623ad7bfa1f0ee2d',1,'TIMBER.Analyzer.CutGroup.type()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_var_group.html#a7aead736a07eaf25623ad7bfa1f0ee2d',1,'TIMBER.Analyzer.VarGroup.type()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_hist_group.html#a7aead736a07eaf25623ad7bfa1f0ee2d',1,'TIMBER.Analyzer.HistGroup.type()']]]
+  ['status',['status',['../class_particle.html#a0cb30d84f44ed74c600711d9405b85a5',1,'Particle']]],
+  ['statusflags',['statusFlags',['../class_particle.html#a217c4e30f87d5903ed0367f2d253f298',1,'Particle']]]
 ];
