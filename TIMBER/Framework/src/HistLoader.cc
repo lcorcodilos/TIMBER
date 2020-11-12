@@ -11,21 +11,23 @@
 class HistLoader {
     private:
         TFile *file;
-        TH1 *hist;
         int dim;
 
         /**
          * @brief Sanity check that the dimensionality of the
          * arguements and the histogram make sense
          * 
-         * @tparam Expecting either ints or floats.
          * @param x 
          * @param y 
          * @param z 
          */
-        template <T>
-        void checkDim(T x, T y, T z);
+        void checkDim(int x, int y, int z);
     public:
+        TH1 *hist; //!< Histogram object
+        /**
+         * @brief Empty constructor
+         */
+        HistLoader(){};
         /**
          * @brief Construct a new HistLoader object
          * 

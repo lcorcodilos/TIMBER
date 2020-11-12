@@ -1,3 +1,4 @@
+#include <cmath>
 #include <ROOT/RVec.hxx>
 
 using namespace ROOT::VecOps;
@@ -18,6 +19,12 @@ namespace hardware {
         while (result > TMath::Pi()) result -= 2*TMath::Pi();
         while (result <= -TMath::Pi()) result += 2*TMath::Pi();
         return result;
+    }
+
+    float DeltaR(ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2) {
+        float deta = v1.Eta()-v2.Eta();
+        float dphi = DeltaPhi(v1.Phi(),v2.Phi());
+        return sqrt(deta*deta+dphi*dphi);
     }
     /**
      * @brief Create a ROOT::Math::PtEtaPhiMVector.
