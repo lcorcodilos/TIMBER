@@ -1,5 +1,13 @@
+#ifndef COMMON_H
+#define COMMON_H
+#endif
+
 #include <cmath>
 #include <ROOT/RVec.hxx>
+#include <TMath.h>
+#include <Math/GenVector/LorentzVector.h>
+#include <Math/GenVector/PtEtaPhiM4D.h>
+#include <Math/Vector4Dfwd.h>
 
 using namespace ROOT::VecOps;
 /**
@@ -50,7 +58,7 @@ namespace hardware {
      */
     RVec<ROOT::Math::PtEtaPhiMVector> TLvector(RVec<float> pt,RVec<float> eta,RVec<float> phi,RVec<float> m) {
         RVec<ROOT::Math::PtEtaPhiMVector> vs;
-        for (int i = 0; i < pt.size(); i++) {
+        for (size_t i = 0; i < pt.size(); i++) {
             ROOT::Math::PtEtaPhiMVector v(pt[i],eta[i],phi[i],m[i]);
             vs.push_back(v);
         }
@@ -83,7 +91,7 @@ namespace hardware {
     double invariantMass(RVec<ROOT::Math::PtEtaPhiMVector> vects) {
         ROOT::Math::PtEtaPhiMVector sum;
         sum.SetCoordinates(0,0,0,0);
-        for (int i = 0; i < vects.size(); i++) {
+        for (size_t i = 0; i < vects.size(); i++) {
             sum = sum + vects[i];
         }
         return sum.M();
