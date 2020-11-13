@@ -548,6 +548,8 @@ class analyzer(object):
             variations = ['nom','up','down']
         elif correction.GetType() == 'uncert':
             variations = ['up','down']
+        elif correction.GetType() == 'corr':
+            variations = ['nom']
         else:
             raise ValueError('Correction.GetType() returns %s'%correction.GetType())
 
@@ -635,7 +637,7 @@ class analyzer(object):
         weights = {'nominal':''}
         for corrname in correctionsToApply:
             corr = self.Corrections[corrname] 
-            if corr.GetType() == 'weight':
+            if corr.GetType() in ['weight','corr']:
                 weights['nominal']+=' '+corrname+'__nom *'
         weights['nominal'] = weights['nominal'][:-2]
 
@@ -648,6 +650,8 @@ class analyzer(object):
             elif corr.GetType() == 'uncert':
                 weights[corrname+'_up'] = weights['nominal']+' * '+corrname+'__up'
                 weights[corrname+'_down'] = weights['nominal']+' * '+corrname+'__down'
+            elif corr.GetType() == 'corr':
+                continue
             else:
                 raise TypeError('Correction "%s" not identified as either "weight" or "uncert"'%(corrname))
 
@@ -689,18 +693,27 @@ class analyzer(object):
 
             if dimension == 1: 
                 thishist = node.DataFrame.Histo1D(template_attr,variables[0],cname)
-                thishist.GetXaxis().SetTitle(variables[0])
             elif dimension == 2: 
                 thishist = node.DataFrame.Histo2D(template_attr,variables[0],variables[1],cname)
-                thishist.GetXaxis().SetTitle(variables[0])
-                thishist.GetYaxis().SetTitle(variables[1])
             elif dimension == 3: 
                 thishist = node.DataFrame.Histo3D(template_attr,variables[0],variables[1],variables[2],cname)
-                thishist.GetXaxis().SetTitle(variables[0])
-                thishist.GetYaxis().SetTitle(variables[1])
-                thishist.GetZaxis().SetTitle(variables[2])
 
             out.Add(histname,thishist)
+
+        # Wait to GetValue and SetTitle so that the histogram filling happens simultaneously
+        for k in out.keys():
+            if dimension == 1: 
+                out[k] = out[k].GetValue()
+                out[k].GetXaxis().SetTitle(variables[0])
+            elif dimension == 2: 
+                out[k] = out[k].GetValue()
+                out[k].GetXaxis().SetTitle(variables[0])
+                out[k].GetYaxis().SetTitle(variables[1])
+            elif dimension == 3: 
+                out[k] = out[k].GetValue()
+                out[k].GetXaxis().SetTitle(variables[0])
+                out[k].GetYaxis().SetTitle(variables[1])
+                out[k].GetZaxis().SetTitle(variables[2])
 
         return out
 
@@ -756,9 +769,9 @@ class analyzer(object):
             down.SetLineColor(ROOT.kBlue)
 
             leg = ROOT.TLegend(0.7,0.7,0.9,0.9)
-            leg.AddEntry(nominal.GetName(),'Nominal','lf')
-            leg.AddEntry(up.GetName(),'Up','l')
-            leg.AddEntry(down.GetName(),'Down','l')
+            leg.AddEntry(nominal,'Nominal','lf')
+            leg.AddEntry(up,'Up','l')
+            leg.AddEntry(down,'Down','l')
 
             up.Draw('same hist')
             down.Draw('same hist')
@@ -1405,7 +1418,8 @@ class Correction(object):
         @param constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
         @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
                 and the class will try to deduce it.
-        @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty) or 
+        @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty), "corr"
+                (only a correction) or 
                 "uncert" (only an uncertainty). Defaults to '' and the class will try to
                 deduce it.
         @param columnList ([str], optional): List of column names to search mainFunc arguments against.
@@ -1436,7 +1450,7 @@ class Correction(object):
 
         self.__instantiate(constructor)
 
-    def Clone(self,name,newMainFunc=None):
+    def Clone(self,name,newMainFunc=None,newType=None):
         '''Makes a clone of current instance.
 
         If multiple functions are in the same script, one can clone the correction and reassign the mainFunc
@@ -1448,7 +1462,9 @@ class Correction(object):
             Correction: Clone of instance with same script but different function (newMainFunc).
         '''
         if newMainFunc == None: newMainFunc = self.__mainFunc.split('::')[-1]
-        return Correction(name,self.__script,self.__constructor,newMainFunc,corrtype=self.__type,isClone=True,columnList=self.__columnNames)
+        return Correction(name,self.__script,self.__constructor,newMainFunc,
+                          corrtype=self.__type if newType == None else newType,
+                          isClone=True,columnList=self.__columnNames)
 
     def __getScript(self,script):
         '''Does a basic check that script file exists and modifies path if necessary
@@ -1486,9 +1502,9 @@ class Correction(object):
                 script name.
         '''
         out_type = None
-        if inType in ['weight','uncert']:
+        if inType in ['weight','uncert','corr']:
             out_type = inType
-        elif inType not in ['weight','uncert'] and inType != None:
+        elif inType not in ['weight','uncert','corr'] and inType != None:
             print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...'%inType)
 
         if out_type == None:
