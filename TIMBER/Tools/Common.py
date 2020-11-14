@@ -3,7 +3,7 @@ Commonly used functions available for use that can be generic or TIMBER specific
 @{
 '''
 
-import json, ROOT, os, subprocess, TIMBER
+import json, ROOT, os, subprocess, TIMBER, sys
 from ROOT import RDataFrame
 from TIMBER.Tools.CMS import CMS_lumi, tdrstyle
 from contextlib import contextmanager
@@ -138,7 +138,7 @@ def CompileCpp(blockcode,library=False):
             print ('Compiling library...')
             ROOT.gROOT.ProcessLine(".L "+blockcode+"+")
 
-def OpenJSON(filename,pyversion='3'):
+def OpenJSON(filename):
     '''Opens JSON file as a dictionary (accounting for unicode encoding)
 
     @param filename (str): JSON file name to open.
@@ -146,13 +146,13 @@ def OpenJSON(filename,pyversion='3'):
     Returns:
         dict: Python dictionary with JSON content.
     '''
-    if pyversion == '2':
-        return json.load(open(filename,'r'), object_hook=AsciiEncodeDict2) 
+    if sys.version_info.major == 3:
+        return json.load(open(filename,'r')) 
     else:
-        return json.load(open(filename,'r'))#, object_hook=AsciiEncodeDict3)
+        return json.load(open(filename,'r'), object_hook=AsciiEncodeDict)
 
-def AsciiEncodeDict2(data):
-    '''Encodes dict to ascii from unicode for python 2.7
+def AsciiEncodeDict(data):
+    '''Encodes dict to ascii from unicode for python 2.7. Not needed for python 3.
 
     Credit Andrew Clark on [StackOverflow](https://stackoverflow.com/questions/9590382/forcing-python-json-module-to-work-with-ascii/28339920).
 
@@ -162,19 +162,6 @@ def AsciiEncodeDict2(data):
         dict: New dictionary with unicode converted to ascii.
     '''
     ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x 
-    return dict(map(ascii_encode, pair) for pair in data.items())
-
-def AsciiEncodeDict3(data):
-    '''Encodes dict to ascii from unicode for python 3
-
-    Credit Andrew Clark on [StackOverflow](https://stackoverflow.com/questions/9590382/forcing-python-json-module-to-work-with-ascii/28339920).
-
-    @param data (dict): Input dictionary.
-
-    Returns:
-        dict: New dictionary with unicode converted to ascii.
-    '''
-    ascii_encode = lambda x: x.encode('ascii') if isinstance(x, str) else x 
     return dict(map(ascii_encode, pair) for pair in data.items())
 
 def ConcatCols(colnames,val='1',connector='&&'):

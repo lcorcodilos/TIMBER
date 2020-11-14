@@ -12,6 +12,12 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -68,16 +74,88 @@ $(function() {
 <div class="title">PDFweight_uncert Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>PDF weight uncertainty lookup class.  
+ <a href="class_p_d_fweight__uncert.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a61c588914c394d32246f963c715cffb7"><td class="memItemLeft" align="right" valign="top"><a id="a61c588914c394d32246f963c715cffb7"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>PDFweight_uncert</b> (int lhaID, bool ignoreEmptyBranch=false)</td></tr>
+<tr class="memitem:a61c588914c394d32246f963c715cffb7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_p_d_fweight__uncert.html#a61c588914c394d32246f963c715cffb7">PDFweight_uncert</a> (int lhaID, bool ignoreEmptyBranch=false)</td></tr>
+<tr class="memdesc:a61c588914c394d32246f963c715cffb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new PDF weight uncertainty lookup object.  <a href="#a61c588914c394d32246f963c715cffb7">More...</a><br /></td></tr>
 <tr class="separator:a61c588914c394d32246f963c715cffb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a839b38e76ccc3cd48adda607341c7ffc"><td class="memItemLeft" align="right" valign="top"><a id="a839b38e76ccc3cd48adda607341c7ffc"></a>
-std::vector&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>eval</b> (RVec&lt; float &gt; LHEPdfWeight)</td></tr>
+<tr class="memitem:a839b38e76ccc3cd48adda607341c7ffc"><td class="memItemLeft" align="right" valign="top">std::vector&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_p_d_fweight__uncert.html#a839b38e76ccc3cd48adda607341c7ffc">eval</a> (RVec&lt; float &gt; LHEPdfWeight)</td></tr>
+<tr class="memdesc:a839b38e76ccc3cd48adda607341c7ffc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Per-event evaluation function.  <a href="#a839b38e76ccc3cd48adda607341c7ffc">More...</a><br /></td></tr>
 <tr class="separator:a839b38e76ccc3cd48adda607341c7ffc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>PDF weight uncertainty lookup class. </p>
+<p>Accounts for hessians vs replicas by using LHA ID. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a61c588914c394d32246f963c715cffb7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61c588914c394d32246f963c715cffb7">&#9670;&nbsp;</a></span>PDFweight_uncert()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_p_d_fweight__uncert.html">PDFweight_uncert</a> </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>lhaID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>ignoreEmptyBranch</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Construct a new PDF weight uncertainty lookup object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lhaID</td><td>LHA ID for the PDF set used to determine whether set is Hessian eigenvectors or MC replicas. </td></tr>
+    <tr><td class="paramname">ignoreEmptyBranch</td><td>Ignores error that LHEPdfWeight branch is empty. Defaults to false. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a839b38e76ccc3cd48adda607341c7ffc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a839b38e76ccc3cd48adda607341c7ffc">&#9670;&nbsp;</a></span>eval()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; float &gt; eval </td>
+          <td>(</td>
+          <td class="paramtype">RVec&lt; float &gt;&#160;</td>
+          <td class="paramname"><em>LHEPdfWeight</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Per-event evaluation function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">LHEPdfWeight</td><td>The LHEPdfWeight branch/column. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>std::vector&lt;float&gt; {up, down} uncertainties in PDF weight. </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>TIMBER/Framework/src/PDFweight_uncert.cc</li>
 </ul>

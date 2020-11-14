@@ -3,7 +3,7 @@
   <!-- Navigation index tabs for HTML output -->
   <navindex>
     <tab type="mainpage" visible="yes" title=""/>
-    <tab type="pages" visible="yes" title="Developer Notes" intro=""/>
+    <tab type="pages" visible="yes" title="Guides" intro=""/>
     <tab type="modules" visible="yes" title="Tools" intro=""/>
     <tab type="namespaces" visible="yes" title="">
       <tab type="namespacelist" visible="yes" title="" intro=""/>

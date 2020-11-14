@@ -1,8 +1,6 @@
-# Framework
+# Framework development
 
-Home to generic C++ modules. 
-
-# Developer Notes
+## Notes to developers
 
 Adding C++ modules for use in TIMBER is relatively simple but the code makes several
 assumptions about the structure of the module if you'd like to use it as a @ref TIMBER.Analyzer.Correction.

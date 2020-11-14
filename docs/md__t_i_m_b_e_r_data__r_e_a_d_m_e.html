@@ -5,13 +5,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>TIMBER: Data</title>
+<title>TIMBER: Ledger of data files and their sources</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -62,10 +68,31 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">Data </div>  </div>
+<div class="title">Ledger of data files and their sources </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>Storage folder for all common ROOT files to load in for corrections, scale factors, etc. </p>
+<div class="textblock"><h2>Luminosity "golden" JSONs</h2>
+<table class="doxtable">
+<tr>
+<th>Year </th><th>Date added </th><th>Source  </th></tr>
+<tr>
+<td>2017 </td><td>Nov 12, 2020 </td><td><a href="https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#CurRec">Twiki</a> </td></tr>
+<tr>
+<td>2018 </td><td>Nov 12, 2020 </td><td><a href="https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#CurRec">Twiki</a> </td></tr>
+</table>
+<h2>Scale Factors</h2>
+<table class="doxtable">
+<tr>
+<th>Correction </th><th>Group </th><th>Date added </th><th>File </th><th>JHUanalyzer module(s) </th><th>Sources  </th></tr>
+<tr>
+<td>DeepCSV (2016 Legacy) </td><td>BTV </td><td>Jan 9, 2020 </td><td>DeepCSV_2016LegacySF_V1.csv </td><td>None </td><td><a href="https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation2016Legacy">Twiki</a> </td></tr>
+<tr>
+<td>DeepCSV (2017) </td><td>BTV </td><td>Jan 9, 2020 </td><td>DeepCSV_94XSF_V4_B_F.csv </td><td>None </td><td><a href="https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X">Twiki</a> </td></tr>
+<tr>
+<td>DeepCSV (2018) </td><td>BTV </td><td>Jan 9, 2020 </td><td>DeepCSV_102XSF_V1.csv </td><td>None </td><td><a href="https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X">Twiki</a> </td></tr>
+<tr>
+<td>Top tagging </td><td>JME </td><td>Sept 22, 2020 </td><td>201*TopTaggingScaleFactors*.root </td><td>None </td><td><a href="https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetTopTagging">Twiki</a> <a href="https://github.com/cms-jet/TopTaggingScaleFactors">GitHub</a> </td></tr>
+</table>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

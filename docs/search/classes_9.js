@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tmpentry',['TmpEntry',['../struct_b_tag_calibration_reader_1_1_b_tag_calibration_reader_impl_1_1_tmp_entry.html',1,'BTagCalibrationReader::BTagCalibrationReaderImpl']]]
+  ['vargroup',['VarGroup',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_var_group.html',1,'TIMBER::Analyzer']]]
 ];
