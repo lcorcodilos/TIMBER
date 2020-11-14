@@ -12,6 +12,12 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -92,9 +98,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0b3102dac1f626d41d3ab6a99c48b519"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#a0b3102dac1f626d41d3ab6a99c48b519">__init__</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#ab74e6bf80237ddc4109968cedc58c151">name</a>, script, constructor=[], mainFunc='eval', corrtype='', columnList=None, isClone=False)</td></tr>
 <tr class="memdesc:a0b3102dac1f626d41d3ab6a99c48b519"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a0b3102dac1f626d41d3ab6a99c48b519">More...</a><br /></td></tr>
 <tr class="separator:a0b3102dac1f626d41d3ab6a99c48b519"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3be2b6d8371dfe648f728b06fa4450d3"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#a3be2b6d8371dfe648f728b06fa4450d3">Clone</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#ab74e6bf80237ddc4109968cedc58c151">name</a>, newMainFunc=None)</td></tr>
-<tr class="memdesc:a3be2b6d8371dfe648f728b06fa4450d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a clone of current instance.  <a href="#a3be2b6d8371dfe648f728b06fa4450d3">More...</a><br /></td></tr>
-<tr class="separator:a3be2b6d8371dfe648f728b06fa4450d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6e0df224a7987f76c4c0744151167fb"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#ad6e0df224a7987f76c4c0744151167fb">Clone</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#ab74e6bf80237ddc4109968cedc58c151">name</a>, newMainFunc=None, newType=None)</td></tr>
+<tr class="memdesc:ad6e0df224a7987f76c4c0744151167fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a clone of current instance.  <a href="#ad6e0df224a7987f76c4c0744151167fb">More...</a><br /></td></tr>
+<tr class="separator:ad6e0df224a7987f76c4c0744151167fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3b819295400bd83f7131b6f0cb45aaa"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#af3b819295400bd83f7131b6f0cb45aaa">MakeCall</a> (self, inArgs=[])</td></tr>
 <tr class="memdesc:af3b819295400bd83f7131b6f0cb45aaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes the call (stored in class instance) to the method with the branch/column names deduced or added from input.  <a href="#af3b819295400bd83f7131b6f0cb45aaa">More...</a><br /></td></tr>
 <tr class="separator:af3b819295400bd83f7131b6f0cb45aaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -194,7 +200,7 @@ Public Attributes</h2></td></tr>
     <tr><td class="paramname">script</td><td>(str): Path to C++ script with function to calculate correction. </td></tr>
     <tr><td class="paramname">constructor</td><td>([str], optional): List of arguments to script class constructor. Defaults to []. </td></tr>
     <tr><td class="paramname">mainFunc</td><td>(str, optional): Name of the function to use inside script. Defaults to None and the class will try to deduce it. </td></tr>
-    <tr><td class="paramname">corrtype</td><td>(str, optional): Either "weight" (nominal weight to apply with an uncertainty) or "uncert" (only an uncertainty). Defaults to '' and the class will try to deduce it. </td></tr>
+    <tr><td class="paramname">corrtype</td><td>(str, optional): Either "weight" (nominal weight to apply with an uncertainty), "corr" (only a correction) or "uncert" (only an uncertainty). Defaults to '' and the class will try to deduce it. </td></tr>
     <tr><td class="paramname">columnList</td><td>([str], optional): List of column names to search mainFunc arguments against. Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used. </td></tr>
     <tr><td class="paramname">isClone</td><td>(bool, optional): For internal use when cloning. Defaults to False. If True, will not duplicate compile the same script if two functions are needed in one C++ script. </td></tr>
   </table>
@@ -204,8 +210,8 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3be2b6d8371dfe648f728b06fa4450d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3be2b6d8371dfe648f728b06fa4450d3">&#9670;&nbsp;</a></span>Clone()</h2>
+<a id="ad6e0df224a7987f76c4c0744151167fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6e0df224a7987f76c4c0744151167fb">&#9670;&nbsp;</a></span>Clone()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -226,7 +232,13 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>newMainFunc</em> = <code>None</code>&#160;</td>
+          <td class="paramname"><em>newMainFunc</em> = <code>None</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>newType</em> = <code>None</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -242,6 +254,7 @@ Public Attributes</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">name</td><td>(str): Clone name. </td></tr>
     <tr><td class="paramname">newMainFunc</td><td>(str, optional): Name of the function to use inside script. Defaults to None and the original is used. </td></tr>
+    <tr><td class="paramname">newType</td><td>(str, optional): New type for the cloned correction. Defaults to None and the original is used. </td></tr>
   </table>
   </dd>
 </dl>

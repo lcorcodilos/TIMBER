@@ -1458,6 +1458,7 @@ class Correction(object):
 
         @param name (str): Clone name.
         @param newMainFunc (str, optional): Name of the function to use inside script. Defaults to None and the original is used.
+        @param newType (str, optional): New type for the cloned correction. Defaults to None and the original is used.
         Returns:
             Correction: Clone of instance with same script but different function (newMainFunc).
         '''

@@ -12,6 +12,12 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -171,9 +177,9 @@ Public Attributes</h2></td></tr>
 <p>Construct a new Gen <a class="el" href="class_particle.html">Particle</a> object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">in_pt</td><td>Input <img class="formulaInl" alt="$p_T$" src="form_0.png"/> </td></tr>
-    <tr><td class="paramname">in_eta</td><td>Input <img class="formulaInl" alt="$eta$" src="form_4.png"/> </td></tr>
-    <tr><td class="paramname">in_phi</td><td>Input <img class="formulaInl" alt="$phi$" src="form_5.png"/> </td></tr>
+    <tr><td class="paramname">in_pt</td><td>Input \(p_T\) </td></tr>
+    <tr><td class="paramname">in_eta</td><td>Input \(eta\) </td></tr>
+    <tr><td class="paramname">in_phi</td><td>Input \(phi\) </td></tr>
     <tr><td class="paramname">in_m</td><td>Input mass </td></tr>
     <tr><td class="paramname">in_pdgId</td><td>Input PDG ID </td></tr>
     <tr><td class="paramname">in_status</td><td>Input status </td></tr>
@@ -184,10 +190,10 @@ Public Attributes</h2></td></tr>
 </dl>
 <p>Constructor which takes in all info from the GenPart collection in NanoAOD Just assigns the inputs to internal variables. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">in_pt</td><td><img class="formulaInl" alt="$ p_{T} $" src="form_7.png"/> </td></tr>
-    <tr><td class="paramname">in_eta</td><td><img class="formulaInl" alt="$ \eta $" src="form_8.png"/> </td></tr>
-    <tr><td class="paramname">in_phi</td><td><img class="formulaInl" alt="$ \phi $" src="form_9.png"/> </td></tr>
-    <tr><td class="paramname">in_m</td><td><img class="formulaInl" alt="$ m $" src="form_10.png"/> </td></tr>
+    <tr><td class="paramname">in_pt</td><td>\( p_{T} \) </td></tr>
+    <tr><td class="paramname">in_eta</td><td>\( \eta \) </td></tr>
+    <tr><td class="paramname">in_phi</td><td>\( \phi \) </td></tr>
+    <tr><td class="paramname">in_m</td><td>\( m \) </td></tr>
     <tr><td class="paramname">in_pdgId</td><td>PDG ID </td></tr>
     <tr><td class="paramname">in_status</td><td>Pythia status </td></tr>
     <tr><td class="paramname">in_statusFlags</td><td>Status flags </td></tr>

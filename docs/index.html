@@ -12,6 +12,12 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -69,7 +75,8 @@ $(function() {
 <p>TIMBER (Tree Interface for Making Binned Events with RDataFrame) is an easy-to-use and fast python analysis framework used to quickly process CMS data sets. Default arguments assume the use of the NanoAOD format but any ROOT TTree can be processed.</p>
 <h2>Quick install</h2>
 <p>Python 3 is recommended since Python 2.7 reached end-of-life on January 1st, 2020. Remember to make sure your ROOT version has been built with Python 3 compatibility. For information on how to do this, see <a class="el" href="md_doxysetup__python3.html">this explanation</a>. Working in a virtual environment is also recommended. Below are the commands for using virtualenv but you're obviously free to use your favorite tool for the job (you can install virtualenv for Python 3 with <code>pip install virtualenv</code> (<code>pip3</code> for Python 3)).</p>
-<div class="fragment"><div class="line">python -m virtualenv timber-env</div><div class="line">source timber-env/bin/activate</div><div class="line">git clone https://github.com/lcorcodilos/TIMBER.git</div><div class="line">cd TIMBER</div><div class="line">source setup.sh</div></div><!-- fragment --><h2>The RDataFrame Backbone</h2>
+<div class="fragment"><div class="line">python -m virtualenv timber-env</div><div class="line">source timber-env/bin/activate</div><div class="line">git clone https://github.com/lcorcodilos/TIMBER.git</div><div class="line">cd TIMBER</div><div class="line">source setup.sh</div></div><!-- fragment --><p>Some C++ modules also have the <a href="https://www.boost.org/">boost library</a> as a dependency. The internet has plenty instructions on how to install boost. The standard <code>apt-get</code> (Ubuntu) and <code>brew</code> (macOS) package managers support install as well.</p>
+<h2>The RDataFrame Backbone</h2>
 <p>TIMBER's speed comes from the use of <a href="https://root.cern/doc/master/classROOT_1_1RDataFrame.html">ROOT's RDataFrame</a>. RDataFrame offers "multi-threading and other low-level optimisations" which make analysis level processing faster and more efficient than traditional python <code>for</code> loops. However, RDataFrame derives its speed from its C++ back-end and while an RDataFrame object can be instantiated and manipulated in python, any actions on it are written in C++ (even if you're using python).</p>
 <h2>No more <code>for</code> loops</h2>
 <p>Using RDataFrame means a fundamental re-thinking of how we treat a block of data or simulation. Instead of looping over the events or entries of a TTree (or other data format), the TTree is converted into a table called the "data frame". A user then books a number of "lazy" actions on the data frame such as filtering out events or calculating new values. These actions aren't performed though until the data frame needs to be evaluated (ex. you ask to plot a histogram from it).</p>
@@ -77,7 +84,7 @@ $(function() {
 <h2>Anatomy of a data frame</h2>
 <p>Each row of the table is a separate event and each column is a different variable in the event (a branch in TTree terms). Columns can be single values or vectors (specifically <a href="https://root.cern.ch/doc/v614/classROOT_1_1VecOps_1_1RVec.html">ROOT::VecOps:RVec</a>).</p>
 <p>Since each row is an event, vectors are necessary for the case of multiple of the same physics object in an event - for example, multiple electrons.</p>
-<p><b>NOTE</b> NanoAOD orders these vectors in <img class="formulaInl" alt="$p_T$" src="form_0.png"/> of the objects. So if you'd like the <img class="formulaInl" alt="$\eta$" src="form_1.png"/> of the leading electron, it is stored as <code>Electron_eta[0]</code></p>
+<p><b>NOTE</b> NanoAOD orders these vectors in \(p_T\) of the objects. So if you'd like the \(\eta\) of the leading electron, it is stored as <code>Electron_eta[0]</code></p>
 <p>This can make accessing values tricky! For example, if there's one electron in an event and the analyzer asks for <code>Electron_eta[1]</code>, the computer will return a seg fault. These are the types of problems that TIMBER attempts to solve (even if it's just by users sharing their experiences).</p>
 <h2>Happy Analyzers</h2>
 <p>TIMBER is meant to keep both the processing fast via RDataFrame and the analyzer fast via python scripting.</p>

@@ -1,14 +1,16 @@
 var searchData=
 [
-  ['dataframe',['DataFrame',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a1ba09da1969b6677c42489b42495ba0f',1,'TIMBER::Analyzer::analyzer']]],
-  ['define',['Define',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2b2e0a06dac0a384b1435823ada82792',1,'TIMBER.Analyzer.analyzer.Define()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a10d358548c587a45ae627eeb6948aef8',1,'TIMBER.Analyzer.Node.Define()']]],
-  ['deltaphi',['DeltaPhi',['../namespacehardware.html#aed751de3ad381dd4b6b17c2b506dea5f',1,'hardware']]],
-  ['deltar',['DeltaR',['../class_particle.html#a217625337b1642ead85a1fb1c0c80660',1,'Particle']]],
-  ['dictcopy',['DictCopy',['../group___common.html#ga1aaec96a73bafbbbc9890df3fdf1ac8e',1,'TIMBER::Tools::Common']]],
-  ['dictstructurecopy',['DictStructureCopy',['../group___common.html#gaf716e063fa7f868daa3fb300a135e160',1,'TIMBER::Tools::Common']]],
-  ['dicttolatextable',['DictToLatexTable',['../group___common.html#ga03accc09d6689d1b8387555e06048661',1,'TIMBER::Tools::Common']]],
-  ['discriminate',['Discriminate',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#af0bcc4a592cc99dcc3e41947c2d6e0c5',1,'TIMBER.Analyzer.analyzer.Discriminate()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#af0228790d32682b44a9ff3bf3199b207',1,'TIMBER.Analyzer.Node.Discriminate()']]],
-  ['do',['Do',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_hist_group.html#a09de9b0930ef8d13f47ab9ea1c0f2f4a',1,'TIMBER::Analyzer::HistGroup']]],
-  ['drawtemplates',['DrawTemplates',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a5061b8f5d8934a98f26990aafa9e26db',1,'TIMBER::Analyzer::analyzer']]],
-  ['drop',['Drop',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#a38a4aa979cc41db8a729a240b6afe291',1,'TIMBER::Analyzer::Group']]]
+  ['cd',['cd',['../group___common.html#ga6e0f471be6c0aab5d2c8390cd3337aa2',1,'TIMBER::Tools::Common']]],
+  ['clone',['Clone',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ae1e474c8cabb6893a4aaf33d56d78f3d',1,'TIMBER.Analyzer.Node.Clone()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#a48d30a9d7b779fddb113877670636698',1,'TIMBER.Analyzer.Group.Clone()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#ad6e0df224a7987f76c4c0744151167fb',1,'TIMBER.Analyzer.Correction.Clone()']]],
+  ['close',['Close',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a303f02c4b5af83bafee2f1064bab45fa',1,'TIMBER.Analyzer.analyzer.Close()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a303f02c4b5af83bafee2f1064bab45fa',1,'TIMBER.Analyzer.Node.Close()']]],
+  ['collimate',['ColliMate',['../group___common.html#gaa2fdf2788bfd524b2f3b53f37d11613e',1,'TIMBER::Tools::Common']]],
+  ['commonvars',['CommonVars',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2893215aeed2a64dc72b15589eeab9f2',1,'TIMBER::Analyzer::analyzer']]],
+  ['compareshapes',['CompareShapes',['../group___plot.html#gad2a622f125f2d6a5e77d1e0f60e054e7',1,'TIMBER::Tools::Plot']]],
+  ['comparetovector',['CompareToVector',['../class_gen_particle_objs.html#a97a10edf215b0459fcdba2a7d8e173cc',1,'GenParticleObjs']]],
+  ['compilecpp',['CompileCpp',['../group___common.html#ga24e95c0ad4d54297700d2323325e809f',1,'TIMBER::Tools::Common']]],
+  ['concatcols',['ConcatCols',['../group___common.html#gaf0721d1f79a9542d2a07df88852114a8',1,'TIMBER::Tools::Common']]],
+  ['corr',['corr',['../class_top_pt__weight.html#a56b49e7cb8ff3991a8a301a7be3b57e9',1,'TopPt_weight']]],
+  ['cut',['Cut',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a9d823d75c32e4043b72ced813790363f',1,'TIMBER.Analyzer.analyzer.Cut()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a437987a119982a9deced80476a49457b',1,'TIMBER.Analyzer.Node.Cut()']]],
+  ['cutflowhist',['CutflowHist',['../group___common.html#ga9d19a9ceee7d4de34321b40563c1070a',1,'TIMBER::Tools::Common']]],
+  ['cutflowtxt',['CutflowTxt',['../group___common.html#ga73228e3cf96ee395949c7e563f89f312',1,'TIMBER::Tools::Common']]]
 ];

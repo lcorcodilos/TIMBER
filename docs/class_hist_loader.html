@@ -12,6 +12,12 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -63,6 +69,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="class_hist_loader-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">HistLoader Class Reference</div>  </div>
@@ -74,6 +81,10 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a8d60ce85447cf03110716f1b9f48534a"><td class="memItemLeft" align="right" valign="top"><a id="a8d60ce85447cf03110716f1b9f48534a"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hist_loader.html#a8d60ce85447cf03110716f1b9f48534a">HistLoader</a> ()</td></tr>
+<tr class="memdesc:a8d60ce85447cf03110716f1b9f48534a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empty constructor. <br /></td></tr>
+<tr class="separator:a8d60ce85447cf03110716f1b9f48534a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7726dc5e084112dba87c29f30a484f0f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hist_loader.html#a7726dc5e084112dba87c29f30a484f0f">HistLoader</a> (std::string filename, std::string histname)</td></tr>
 <tr class="memdesc:a7726dc5e084112dba87c29f30a484f0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="class_hist_loader.html" title="Generic histogram loader with methods to return bin values. ">HistLoader</a> object.  <a href="#a7726dc5e084112dba87c29f30a484f0f">More...</a><br /></td></tr>
 <tr class="separator:a7726dc5e084112dba87c29f30a484f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -83,6 +94,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1291ab5321660c22152252a74ffc9a3d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hist_loader.html#a1291ab5321660c22152252a74ffc9a3d">eval</a> (float xval, float yval=0., float zval=0.)</td></tr>
 <tr class="memdesc:a1291ab5321660c22152252a74ffc9a3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluate by axis value.  <a href="#a1291ab5321660c22152252a74ffc9a3d">More...</a><br /></td></tr>
 <tr class="separator:a1291ab5321660c22152252a74ffc9a3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a79ac1bb4474013109a9c80e1c1789248"><td class="memItemLeft" align="right" valign="top"><a id="a79ac1bb4474013109a9c80e1c1789248"></a>
+TH1 *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hist_loader.html#a79ac1bb4474013109a9c80e1c1789248">hist</a></td></tr>
+<tr class="memdesc:a79ac1bb4474013109a9c80e1c1789248"><td class="mdescLeft">&#160;</td><td class="mdescRight">Histogram object. <br /></td></tr>
+<tr class="separator:a79ac1bb4474013109a9c80e1c1789248"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Generic histogram loader with methods to return bin values. </p>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['invariantmass',['invariantMass',['../namespacehardware.html#a35a91a442950509fafc36c5d5d4c58ed',1,'hardware']]]
+  ['histloader',['HistLoader',['../class_hist_loader.html#a8d60ce85447cf03110716f1b9f48534a',1,'HistLoader::HistLoader()'],['../class_hist_loader.html#a7726dc5e084112dba87c29f30a484f0f',1,'HistLoader::HistLoader(std::string filename, std::string histname)']]]
 ];

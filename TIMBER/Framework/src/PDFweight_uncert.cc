@@ -38,7 +38,7 @@ class PDFweight_uncert {
         std::vector<float> eval(RVec<float> LHEPdfWeight);
 };
 
-PDFweight_uncert::PDFweight_uncert(int lhaID, bool ignoreEmptyBranch = False){
+PDFweight_uncert::PDFweight_uncert(int lhaID, bool ignoreEmptyBranch){
     ignoreEmpty = ignoreEmptyBranch;
     lhaid = lhaID;
     // auto determine whether these are replicas or hessian eigenvectors
