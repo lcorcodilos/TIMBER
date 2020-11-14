@@ -12,7 +12,14 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -69,7 +76,8 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="_gen_matching_8h_source.html">GenMatching.h</a>&gt;</code></p>
+<p>Object that stores and manipulates the information for gen particles. Stores all gen particles in the event and member functions can be used to access the gen particles by index.  
+ <a href="class_gen_particle_objs.html#details">More...</a></p>
 <div class="dynheader">
 Collaboration diagram for GenParticleObjs:</div>
 <div class="dyncontent">
@@ -81,34 +89,37 @@ Collaboration diagram for GenParticleObjs:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa4c242fc5758fc0675942bbe18dae301"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#aa4c242fc5758fc0675942bbe18dae301">GenParticleObjs</a> (RVec&lt; float &gt; in_pt, RVec&lt; float &gt; in_eta, RVec&lt; float &gt; in_phi, RVec&lt; float &gt; in_m, RVec&lt; int &gt; in_pdgId, RVec&lt; int &gt; in_status, RVec&lt; int &gt; in_statusFlags, RVec&lt; int &gt; in_genPartIdxMother)</td></tr>
-<tr class="separator:aa4c242fc5758fc0675942bbe18dae301"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21b778dd68fcf7dec3b93f7595feabe8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#a21b778dd68fcf7dec3b93f7595feabe8">GenParticleObjs</a> (<a class="el" href="struct_collection.html">Collection</a> genParts)</td></tr>
-<tr class="separator:a21b778dd68fcf7dec3b93f7595feabe8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabc7cb021ebad49efdcbf04f31f611a8"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#aabc7cb021ebad49efdcbf04f31f611a8">CompareToVector</a> (LVector vect)</td></tr>
-<tr class="separator:aabc7cb021ebad49efdcbf04f31f611a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa41c331f3f0042c3790b9dee03fc4f27"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_particle.html">Particle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#aa41c331f3f0042c3790b9dee03fc4f27">SetIndex</a> (int idx)</td></tr>
-<tr class="separator:aa41c331f3f0042c3790b9dee03fc4f27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2321c5e576865800567561a637ca0401"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#a2321c5e576865800567561a637ca0401">GetStatusFlag</a> (std::string flagName)</td></tr>
-<tr class="separator:a2321c5e576865800567561a637ca0401"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a36271980ffa82d725d97cfd1be1a1a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#a5a36271980ffa82d725d97cfd1be1a1a">GenParticleObjs</a> (RVec&lt; float &gt; in_pt, RVec&lt; float &gt; in_eta, RVec&lt; float &gt; in_phi, RVec&lt; float &gt; in_m, RVec&lt; int &gt; in_pdgId, RVec&lt; int &gt; in_status, RVec&lt; int &gt; in_statusFlags, RVec&lt; int &gt; in_genPartIdxMother)</td></tr>
+<tr class="memdesc:a5a36271980ffa82d725d97cfd1be1a1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Gen <a class="el" href="class_particle.html">Particle</a> object.  <a href="#a5a36271980ffa82d725d97cfd1be1a1a">More...</a><br /></td></tr>
+<tr class="separator:a5a36271980ffa82d725d97cfd1be1a1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae26a40274b535d7e7f0a7abe3a73f01a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#ae26a40274b535d7e7f0a7abe3a73f01a">GenParticleObjs</a> (<a class="el" href="struct_collection.html">Collection</a> genParts)</td></tr>
+<tr class="memdesc:ae26a40274b535d7e7f0a7abe3a73f01a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Gen <a class="el" href="class_particle.html">Particle</a> object.  <a href="#ae26a40274b535d7e7f0a7abe3a73f01a">More...</a><br /></td></tr>
+<tr class="separator:ae26a40274b535d7e7f0a7abe3a73f01a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97a10edf215b0459fcdba2a7d8e173cc"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#a97a10edf215b0459fcdba2a7d8e173cc">CompareToVector</a> (LVector vect)</td></tr>
+<tr class="memdesc:a97a10edf215b0459fcdba2a7d8e173cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares GenPart object to a provided vector.  <a href="#a97a10edf215b0459fcdba2a7d8e173cc">More...</a><br /></td></tr>
+<tr class="separator:a97a10edf215b0459fcdba2a7d8e173cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28cffdddc2a7e6f88c82bd1915311103"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_particle.html">Particle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#a28cffdddc2a7e6f88c82bd1915311103">SetIndex</a> (int idx)</td></tr>
+<tr class="memdesc:a28cffdddc2a7e6f88c82bd1915311103"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the index of the lookup particle.  <a href="#a28cffdddc2a7e6f88c82bd1915311103">More...</a><br /></td></tr>
+<tr class="separator:a28cffdddc2a7e6f88c82bd1915311103"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3c5d3a3186bb6e46381b5abf4a9d065"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#aa3c5d3a3186bb6e46381b5abf4a9d065">GetStatusFlag</a> (std::string flagName)</td></tr>
+<tr class="separator:aa3c5d3a3186bb6e46381b5abf4a9d065"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ab8ab1eab6e3ecc0f170e0c2af91697ae"><td class="memItemLeft" align="right" valign="top"><a id="ab8ab1eab6e3ecc0f170e0c2af91697ae"></a>
-<a class="el" href="class_particle.html">Particle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>particle</b></td></tr>
-<tr class="separator:ab8ab1eab6e3ecc0f170e0c2af91697ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fdd1544a8ce44bbd4eef935f71b8cb6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_particle.html">Particle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#a3fdd1544a8ce44bbd4eef935f71b8cb6">particle</a></td></tr>
+<tr class="separator:a3fdd1544a8ce44bbd4eef935f71b8cb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Object that stores and manipulates the information for gen particles. Stores all gen particles in the event and member functions can be used to access the gen particles by index. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aa4c242fc5758fc0675942bbe18dae301"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa4c242fc5758fc0675942bbe18dae301">&#9670;&nbsp;</a></span>GenParticleObjs() <span class="overload">[1/2]</span></h2>
+<a id="a5a36271980ffa82d725d97cfd1be1a1a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a36271980ffa82d725d97cfd1be1a1a">&#9670;&nbsp;</a></span>GenParticleObjs() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">GenParticleObjs::GenParticleObjs </td>
+          <td class="memname"><a class="el" href="class_gen_particle_objs.html">GenParticleObjs</a> </td>
           <td>(</td>
           <td class="paramtype">RVec&lt; float &gt;&#160;</td>
           <td class="paramname"><em>in_pt</em>, </td>
@@ -162,12 +173,27 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Construct a new Gen <a class="el" href="class_particle.html">Particle</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in_pt</td><td>Input \(p_T\) </td></tr>
+    <tr><td class="paramname">in_eta</td><td>Input \(eta\) </td></tr>
+    <tr><td class="paramname">in_phi</td><td>Input \(phi\) </td></tr>
+    <tr><td class="paramname">in_m</td><td>Input mass </td></tr>
+    <tr><td class="paramname">in_pdgId</td><td>Input PDG ID </td></tr>
+    <tr><td class="paramname">in_status</td><td>Input status </td></tr>
+    <tr><td class="paramname">in_statusFlags</td><td>Input status flags </td></tr>
+    <tr><td class="paramname">in_genPartIdxMother</td><td>Input mother index</td></tr>
+  </table>
+  </dd>
+</dl>
 <p>Constructor which takes in all info from the GenPart collection in NanoAOD Just assigns the inputs to internal variables. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">in_pt</td><td>$ p_{T} $ </td></tr>
-    <tr><td class="paramname">in_eta</td><td>$  $ </td></tr>
-    <tr><td class="paramname">in_phi</td><td>$  $ </td></tr>
-    <tr><td class="paramname">in_m</td><td>$ m $ </td></tr>
+    <tr><td class="paramname">in_pt</td><td>\( p_{T} \) </td></tr>
+    <tr><td class="paramname">in_eta</td><td>\( \eta \) </td></tr>
+    <tr><td class="paramname">in_phi</td><td>\( \phi \) </td></tr>
+    <tr><td class="paramname">in_m</td><td>\( m \) </td></tr>
     <tr><td class="paramname">in_pdgId</td><td>PDG ID </td></tr>
     <tr><td class="paramname">in_status</td><td>Pythia status </td></tr>
     <tr><td class="paramname">in_statusFlags</td><td>Status flags </td></tr>
@@ -178,14 +204,14 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a21b778dd68fcf7dec3b93f7595feabe8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21b778dd68fcf7dec3b93f7595feabe8">&#9670;&nbsp;</a></span>GenParticleObjs() <span class="overload">[2/2]</span></h2>
+<a id="ae26a40274b535d7e7f0a7abe3a73f01a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae26a40274b535d7e7f0a7abe3a73f01a">&#9670;&nbsp;</a></span>GenParticleObjs() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">GenParticleObjs::GenParticleObjs </td>
+          <td class="memname"><a class="el" href="class_gen_particle_objs.html">GenParticleObjs</a> </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="struct_collection.html">Collection</a>&#160;</td>
           <td class="paramname"><em>genParts</em></td><td>)</td>
@@ -193,7 +219,9 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Constructor which takes in a pre-built collection. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Construct a new Gen <a class="el" href="class_particle.html">Particle</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">genParts</td><td><a class="el" href="struct_collection.html">Collection</a> object filled with GenPart branches from NanoAOD. </td></tr>
   </table>
@@ -203,14 +231,14 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aabc7cb021ebad49efdcbf04f31f611a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aabc7cb021ebad49efdcbf04f31f611a8">&#9670;&nbsp;</a></span>CompareToVector()</h2>
+<a id="a97a10edf215b0459fcdba2a7d8e173cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97a10edf215b0459fcdba2a7d8e173cc">&#9670;&nbsp;</a></span>CompareToVector()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt; std::string, bool &gt; GenParticleObjs::CompareToVector </td>
+          <td class="memname">std::map&lt; std::string, bool &gt; CompareToVector </td>
           <td>(</td>
           <td class="paramtype">LVector&#160;</td>
           <td class="paramname"><em>vect</em></td><td>)</td>
@@ -218,24 +246,26 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Compares set particle to a provided vector </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Compares GenPart object to a provided vector. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">vect</td><td>The vector to compare against the current particle. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Map with keys "sameHemisphere" (phi&lt;pi), "deltaR" (deltaR &lt; 0.8), "deltaM" (|delta m|/m_gen &lt; 0.05) which all return bools. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>std::map&lt; std::string, bool&gt; Map with keys "sameHemisphere" (phi&lt;pi), "deltaR" (deltaR &lt; 0.8), "deltaM" (|delta m|/m_gen &lt; 0.05) which all return bools. </dd></dl>
 
 </div>
 </div>
-<a id="a2321c5e576865800567561a637ca0401"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2321c5e576865800567561a637ca0401">&#9670;&nbsp;</a></span>GetStatusFlag()</h2>
+<a id="aa3c5d3a3186bb6e46381b5abf4a9d065"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa3c5d3a3186bb6e46381b5abf4a9d065">&#9670;&nbsp;</a></span>GetStatusFlag()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int GenParticleObjs::GetStatusFlag </td>
+          <td class="memname">int GetStatusFlag </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
           <td class="paramname"><em>flagName</em></td><td>)</td>
@@ -249,17 +279,18 @@ Public Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status flag. </dd></dl>
 
 </div>
 </div>
-<a id="aa41c331f3f0042c3790b9dee03fc4f27"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa41c331f3f0042c3790b9dee03fc4f27">&#9670;&nbsp;</a></span>SetIndex()</h2>
+<a id="a28cffdddc2a7e6f88c82bd1915311103"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28cffdddc2a7e6f88c82bd1915311103">&#9670;&nbsp;</a></span>SetIndex()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_particle.html">Particle</a> GenParticleObjs::SetIndex </td>
+          <td class="memname"><a class="el" href="class_particle.html">Particle</a> SetIndex </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>idx</em></td><td>)</td>
@@ -267,19 +298,36 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Sets the index of the lookup particle </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Sets the index of the lookup particle. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">idx</td><td>The index in the collection </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_particle.html">Particle</a> </dd></dl>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>experimental/<a class="el" href="_gen_matching_8h_source.html">GenMatching.h</a></li>
-<li>experimental/GenMatching.cc</li>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a3fdd1544a8ce44bbd4eef935f71b8cb6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3fdd1544a8ce44bbd4eef935f71b8cb6">&#9670;&nbsp;</a></span>particle</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_particle.html">Particle</a> particle</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>the current particle object queued for access </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
+<li>TIMBER/Framework/include/<a class="el" href="_gen_matching_8h_source.html">GenMatching.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

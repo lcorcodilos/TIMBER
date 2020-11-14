@@ -9,13 +9,13 @@ from clang import cindex
 from collections import OrderedDict
 
 import ROOT
-import pprint, copy, os, subprocess
+import pprint, copy, os, subprocess, textwrap
 pp = pprint.PrettyPrinter(indent=4)
 
 
 # For parsing c++ modules
-libs = subprocess.Popen('$ROOTSYS/bin/root-config --libs',shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
-rootpath = subprocess.Popen('echo $ROOTSYS',shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
+libs = subprocess.Popen('$ROOTSYS/bin/root-config --libs',shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0].strip()
+rootpath = subprocess.Popen('echo $ROOTSYS',shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0].strip()
 cpp_args =  '-x c++ -c --std=c++11 -I %s/include %s -lstdc++'%(rootpath,libs)
 cpp_args = cpp_args.split(' ')
 
@@ -46,6 +46,9 @@ class analyzer(object):
                 simulation). Defaults to "Runs" (for NanoAOD) 
         """
 
+        ## @var fileName
+        #
+        # Path of the input file.
         ## @var BaseNode
         # Node
         #
@@ -80,17 +83,17 @@ class analyzer(object):
         # Active node. Access via GetActiveNode(). Set via SetActiveNode().
 
         super(analyzer, self).__init__()
-        self.__fileName = fileName 
+        self.fileName = fileName 
         self.__eventsTreeName = eventsTreeName
 
         # Setup TChains for multiple or single file
         self.__eventsChain = ROOT.TChain(self.__eventsTreeName) 
         RunChain = ROOT.TChain(runTreeName) # Has generated event count information - will be deleted after initialization
-        if ".root" in self.__fileName: 
-            self.__eventsChain.Add(self.__fileName)
-            RunChain.Add(self.__fileName)
-        elif ".txt" in self.__fileName: 
-            txt_file = open(self.__fileName,"r")
+        if ".root" in self.fileName: 
+            self.__eventsChain.Add(self.fileName)
+            RunChain.Add(self.fileName)
+        elif ".txt" in self.fileName: 
+            txt_file = open(self.fileName,"r")
             for l in txt_file.readlines():
                 thisfile = l.strip()
                 if 'root://' not in thisfile and '/store/' in thisfile: thisfile='root://cms-xrd-global.cern.ch/'+thisfile
@@ -102,7 +105,8 @@ class analyzer(object):
         # Make base RDataFrame
         BaseDataFrame = ROOT.RDataFrame(self.__eventsChain) 
         self.BaseNode = Node('base',BaseDataFrame) 
-        self.AllNodes = [] 
+        self.BaseNode.children = [] # protect against memory issue when running over multiple sets in one script
+        self.AllNodes = [self.BaseNode] 
         self.Corrections = {} 
 
         # Check if dealing with data
@@ -144,6 +148,31 @@ class analyzer(object):
         del RunChain
         self.ActiveNode = self.BaseNode
  
+    def Close(self):
+        '''Safely deletes analyzer instance.
+        
+        Returns:
+            None
+        '''
+        self.BaseNode.Close()
+        self.__eventsChain.Reset()
+
+    def __str__(self):
+        '''Call with `print(<analyzer>)` to print a nicely formatted description
+        of the analyzer object for debugging.
+        
+        Returns:
+            str
+        '''
+        out = ''
+        for a in dir(self):
+            if not a.startswith('_') and not callable(getattr(self, a)):
+                if isinstance(getattr(self, a),list) and len(getattr(self, a))>0 and isinstance(getattr(self, a)[0],Node):
+                    out += '{:15s} = {}\n'.format(a,[n.name for n in getattr(self,a)])
+                else:
+                    out += '{:15s} = {}\n'.format(a,getattr(self,a))
+        return out
+
     @property
     def DataFrame(self):
         '''
@@ -279,20 +308,22 @@ class analyzer(object):
         Returns:
             str: File name
         '''
-        return self.__fileName
+        return self.fileName
 
     #------------------------------------------------------------#
     # Node operations - same as Node class methods but have      #
     # benefit of class keeping track of an Active Node (reset by #
     # each action and used by default).                          #
     #------------------------------------------------------------#
-    def Cut(self,name,cuts,node=None):
+    def Cut(self,name,cuts,node=None,nodetype=None):
         '''Apply a cut/filter to a provided node or the #ActiveNode by default.
         Will add the resulting node to tracking and set it as the #ActiveNode.
 
         @param name (str): Name for the cut for internal tracking and later reference.
-        @param cuts (str, CutGroup): A one-line C++ string that evaluates as a boolean or a CutGroup object which contains multiple actions that evaluate as booleans.
+        @param cuts (str, CutGroup): A one-line C++ string that evaluates as a bool or a CutGroup object which contains multiple actions that evaluate as bools.
         @param node (Node, optional): Node on which to apply the cut/filter. Defaults to #ActiveNode.
+        @param nodetype (str, optional): Defaults to None in which case the new Node will
+            be type "Define".
 
         Raises:
             TypeError: If argument type is not Node.
@@ -306,18 +337,18 @@ class analyzer(object):
         if isinstance(cuts,CutGroup):
             for c in cuts.keys():
                 cut = cuts[c]
-                newNode = newNode.Cut(c,cut)
+                newNode = newNode.Cut(c,cut,nodetype=nodetype)
                 newNode.name = cuts.name+'__'+c
                 self.TrackNode(newNode)
         elif isinstance(cuts,str):
-            newNode = newNode.Cut(name,cuts)
+            newNode = newNode.Cut(name,cuts,nodetype=nodetype)
             self.TrackNode(newNode)
         else:
             raise TypeError("Second argument to Cut method must be a string of a single cut or of type CutGroup (which provides an OrderedDict).")
 
         return self.SetActiveNode(newNode)
 
-    def Define(self,name,variables,node=None):
+    def Define(self,name,variables,node=None,nodetype=None):
         '''Defines a variable/column on top of a provided node or the #ActiveNode by default.
         Will add the resulting node to tracking and set it as the #ActiveNode.
 
@@ -325,6 +356,8 @@ class analyzer(object):
         @param variables (str, VarGroup): A one-line C++ string that evaluates to desired value to store
                 or a VarGroup object which contains multiple actions that evaluate to the desired values. 
         @param node (Node, optional): Node to create the new variable/column on top of. Defaults to #ActiveNode.
+        @param nodetype (str, optional): Defaults to None in which case the new Node will
+            be type "Define".
 
         Raises:
             TypeError: If argument type is not Node.
@@ -338,12 +371,12 @@ class analyzer(object):
         if isinstance(variables,VarGroup):
             for v in variables.keys():
                 var = variables[v]
-                newNode = newNode.Define(v,var)
+                newNode = newNode.Define(v,var,nodetype=nodetype)
                 newNode.name = variables.name+'__'+v
                 self.TrackNode(newNode)
             # newNode.name = variables.name
         elif isinstance(variables,str):
-            newNode = newNode.Define(name,variables)
+            newNode = newNode.Define(name,variables,nodetype=nodetype)
             self.TrackNode(newNode)
         else:
             raise TypeError("Second argument to Define method must be a string of a single var or of type VarGroup (which provides an OrderedDict).")
@@ -387,7 +420,7 @@ class analyzer(object):
         '''Forks a node based upon a discriminator being True or False (#ActiveNode by default).
 
         @param name (str): Name for the discrimination for internal tracking and later reference.
-        @param discriminator (str): A one-line C++ string that evaluates as a boolean to discriminate for the forking of the node.
+        @param discriminator (str): A one-line C++ string that evaluates as a bool to discriminate for the forking of the node.
         @param node (Node, optional): Node to discriminate. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
         @param passAsActiveNode (bool, optional): True if the #ActiveNode should be set to the node that passes the discriminator.
                 False if the #ActiveNode should be set to the node that fails the discriminator. Defaults to None in which case the #ActiveNode does not change.
@@ -406,6 +439,76 @@ class analyzer(object):
         elif passAsActiveNode == False: self.SetActiveNode(newNodes['fail'])
 
         return newNodes
+
+    def SubCollection(self,name,basecoll,condition,skip=[]):
+        '''Creates a collection of a current collection (from a NanoAOD-like format)
+        where the array-type branch is slimmed based on some selection.
+
+        @param name (str): Name of new collection.
+        @param basecoll (str): Name of derivative collection.
+        @param condition (str): C++ condition that determines which items
+        @param skip ([str]): List of variable names in the collection to skip.
+
+        Returns:
+            None. New nodes created with the sub collection.
+
+        Example:
+            SubCollection('TopJets','FatJet','FatJet_msoftdrop > 105 && FatJet_msoftdrop < 220')
+        '''
+        collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if basecoll in str(cname) and str(cname) not in skip]
+        self.Define(name+'_idx','%s'%(condition))
+        for b in collBranches:
+            replacementName = b.replace(basecoll,name)
+            if b == 'n'+basecoll:
+                self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name),nodetype='SubCollDefine')
+            elif 'RVec' not in self.DataFrame.GetColumnType(b):
+                print ('Found type %s during SubCollection'%self.DataFrame.GetColumnType(b))
+                self.Define(replacementName,b,nodetype='SubCollDefine')
+            else:
+                self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
+
+    def MergeCollections(self,name,collectionNames):
+        '''Merge collections (provided by list of names in `collectionNames`) into
+        one called `name`. Only common variables are taken and stored in the new 
+        collection.
+
+        @param name (str): Name of new collection
+        @param collectionNames ([str]): List of names of collections to merge.
+
+        Example:
+            a = analyzer(<...>)
+            a.MergeCollections("Lepton",["Electron","Muon"])
+        '''
+        vars_to_make = self.CommonVars(collectionNames)
+        for var in vars_to_make:
+            if 'RVec' in self.DataFrame.GetColumnType(collectionNames[0]+'_'+var):
+                concat_str = collectionNames[0]+'_'+var
+                for collName in collectionNames:
+                    if collName != collectionNames[0]:
+                        concat_str = 'Concatenate(%s,%s)'%(concat_str,collName+'_'+var)
+
+                self.Define(name+'_'+var,concat_str,nodetype='MergeDefine')
+
+        self.Define('n'+name,'+'.join(['n'+n for n in collectionNames]),nodetype='MergeDefine')
+
+    def CommonVars(self,collections):
+        '''Find the common variables between collections.
+
+        @param collections ([str]): List of collections names (not branch names).
+
+        Returns:
+            [str]: List of variables shared among the collections.
+        '''
+        commonVars = []
+        for c in collections:
+            out = []
+            colNames = sorted([str(b) for b in self.DataFrame.GetColumnNames()])
+            for bname in colNames:
+                if c+'_' in str(bname):
+                    out.append(str(bname).replace(c+'_',''))
+            commonVars.append(out)
+
+        return list(set.intersection(*map(set,commonVars)))
 
     #---------------------#
     # Corrections/Weights #
@@ -440,16 +543,18 @@ class analyzer(object):
         self.Corrections[correction.name] = correction
 
         # Make new node
-        newNode = self.Define(correction.name+'__vec',correction.GetCall(),node)
+        newNode = self.Define(correction.name+'__vec',correction.GetCall(),node,nodetype='Correction')
         if correction.GetType() == 'weight':
             variations = ['nom','up','down']
         elif correction.GetType() == 'uncert':
             variations = ['up','down']
+        elif correction.GetType() == 'corr':
+            variations = ['nom']
         else:
             raise ValueError('Correction.GetType() returns %s'%correction.GetType())
 
         for i,v in enumerate(variations):
-            newNode = self.Define(correction.name+'__'+v,correction.name+'__vec[%s]'%i,newNode)
+            newNode = self.Define(correction.name+'__'+v,correction.name+'__vec[%s]'%i,newNode,nodetype='Correction')
 
         # self.TrackNode(returnNode)
         return self.SetActiveNode(newNode)
@@ -532,7 +637,7 @@ class analyzer(object):
         weights = {'nominal':''}
         for corrname in correctionsToApply:
             corr = self.Corrections[corrname] 
-            if corr.GetType() == 'weight':
+            if corr.GetType() in ['weight','corr']:
                 weights['nominal']+=' '+corrname+'__nom *'
         weights['nominal'] = weights['nominal'][:-2]
 
@@ -545,6 +650,8 @@ class analyzer(object):
             elif corr.GetType() == 'uncert':
                 weights[corrname+'_up'] = weights['nominal']+' * '+corrname+'__up'
                 weights[corrname+'_down'] = weights['nominal']+' * '+corrname+'__down'
+            elif corr.GetType() == 'corr':
+                continue
             else:
                 raise TypeError('Correction "%s" not identified as either "weight" or "uncert"'%(corrname))
 
@@ -570,7 +677,7 @@ class analyzer(object):
 
         out = HistGroup('Templates')
 
-        weight_cols = [cname for cname in node.DataFrame.GetColumnNames() if 'weight__' in cname]
+        weight_cols = [str(cname) for cname in node.DataFrame.GetColumnNames() if 'weight__' in str(cname)]
         baseName = templateHist.GetName()
         baseTitle = templateHist.GetTitle()
         binningTuple,dimension = GetHistBinningTuple(templateHist)
@@ -586,18 +693,27 @@ class analyzer(object):
 
             if dimension == 1: 
                 thishist = node.DataFrame.Histo1D(template_attr,variables[0],cname)
-                thishist.GetXaxis().SetTitle(variables[0])
             elif dimension == 2: 
                 thishist = node.DataFrame.Histo2D(template_attr,variables[0],variables[1],cname)
-                thishist.GetXaxis().SetTitle(variables[0])
-                thishist.GetYaxis().SetTitle(variables[1])
             elif dimension == 3: 
                 thishist = node.DataFrame.Histo3D(template_attr,variables[0],variables[1],variables[2],cname)
-                thishist.GetXaxis().SetTitle(variables[0])
-                thishist.GetYaxis().SetTitle(variables[1])
-                thishist.GetZaxis().SetTitle(variables[2])
 
             out.Add(histname,thishist)
+
+        # Wait to GetValue and SetTitle so that the histogram filling happens simultaneously
+        for k in out.keys():
+            if dimension == 1: 
+                out[k] = out[k].GetValue()
+                out[k].GetXaxis().SetTitle(variables[0])
+            elif dimension == 2: 
+                out[k] = out[k].GetValue()
+                out[k].GetXaxis().SetTitle(variables[0])
+                out[k].GetYaxis().SetTitle(variables[1])
+            elif dimension == 3: 
+                out[k] = out[k].GetValue()
+                out[k].GetXaxis().SetTitle(variables[0])
+                out[k].GetYaxis().SetTitle(variables[1])
+                out[k].GetZaxis().SetTitle(variables[2])
 
         return out
 
@@ -653,9 +769,9 @@ class analyzer(object):
             down.SetLineColor(ROOT.kBlue)
 
             leg = ROOT.TLegend(0.7,0.7,0.9,0.9)
-            leg.AddEntry(nominal.GetName(),'Nominal','lf')
-            leg.AddEntry(up.GetName(),'Up','l')
-            leg.AddEntry(down.GetName(),'Down','l')
+            leg.AddEntry(nominal,'Nominal','lf')
+            leg.AddEntry(up,'Up','l')
+            leg.AddEntry(down,'Down','l')
 
             up.Draw('same hist')
             down.Draw('same hist')
@@ -669,19 +785,21 @@ class analyzer(object):
     # Return dictionary of N-1 nodes keyed by the  #
     # cut that gets dropped                        #
     #----------------------------------------------#
-    def Nminus1(self,node,cutgroup):
+    def Nminus1(self,cutgroup,node=None):
         '''Create an N-1 tree structure of nodes building off of `node`
         with the N cuts from `cutgroup`.
 
         The structure is optimized so that as many actions are shared as possible
         so that the N different nodes can be made. Use #PrintNodeTree() to visualize. 
 
-        @param node (Node): Node to build on.
         @param cutgroup (CutGroup): Group of N cuts to apply.
+        @param node (Node, optional): Node to build on. Defaults to #ActiveNode.
 
         Returns:
             dict: N nodes in dictionary with keys indicating the cut that was not applied.
         '''
+        if node == None: node = self.ActiveNode
+
         # Initialize
         print ('Performing N-1 scan for CutGroup %s'%cutgroup.name)
 
@@ -692,7 +810,7 @@ class analyzer(object):
         # Loop over all cuts (`cut` is the name not the string to filter on)
         for cut in cutgroup.keys():
             # Get the N-1 group of this cut (where N is determined by thiscutgroup)
-            minusgroup = thiscutgroup.Drop(cut)
+            minusgroup = thiscutgroup.Drop(cut,makeCopy=True)
             thiscutgroup = minusgroup
             minusgroup.name = 'Minus(%s)'%cut
             # Store the node with N-1 applied
@@ -709,28 +827,99 @@ class analyzer(object):
 
         return nminusones
 
-    def PrintNodeTree(self,outfilename,verbose=False):
+    def PrintNodeTree(self,outfilename,verbose=False,toSkip=[]):
         '''Print a PDF image of the node structure of the analysis.
         Requires python graphviz package which should be an installed dependency.
 
         @param outfilename (str): Name of output PDF file.
         @param verbose (bool, optional): Turns on verbose node labels. Defaults to False.
+        @param toSkip ([], optional): Skip list of types of nodes (with sub-string matching
+            so providing "Define" will cut out *all* definitions). Possible options
+            are "Define", "Cut", "Correction", "MergeDefine", and "SubCollDefine".
+            Defaults to empty list.
 
         Returns:
             None
         '''
-        from graphviz import Digraph
-        dot = Digraph(comment='Node processing tree')
+        import networkx as nx
+        graph = nx.DiGraph(comment='Node processing tree')
+        # Build graph with all nodes
         for node in self.AllNodes:
             this_node_name = node.name
             this_node_label = node.name
-            if verbose: this_node_label += '\n%s'%node.action
+            if verbose: this_node_label += '\n%s'%textwrap.fill(node.action,50)
 
-            dot.node(this_node_name, this_node_label)
+            graph.add_node(this_node_name, label=this_node_label, type=node.type)
             for child in node.children:
-                dot.edge(this_node_name,child.name)
+                graph.add_edge(this_node_name,child.name)
+        # Contract egdes where we want nodes dropped
+        for skip in toSkip:
+            for node in graph.nodes:
+                if skip in graph.nodes[node]["type"]:
+                    graph = nx.contracted_edge(graph,(graph.pred[node].keys()[0],node),self_loops=False)
+        # Write out dot and draw
+        dot = nx.nx_pydot.to_pydot(graph)
+        extension = outfilename.split('.')[-1]
+        filename = outfilename.split('.')[:-1]
+        if extension not in [outfilename,'dot']:
+            try:
+                getattr(dot,'write_'+extension)(outfilename)
+            except:
+                print ('PrintNodeTree() warning!! File extension %s not supported by graphviz on this system. Will write out .dot instead.'%(extension))
+                dot.write(filename+'.dot')
+        elif extension == 'dot':
+            dot.write(outfilename)
+        elif extension == outfilename: # meaning, no '.' in outfilename
+            dot.write(filename+'.dot')
+
+    def MakeHistsWithBinning(self,histDict,name='',weight=None):
+        '''Batch creates histograms at the current #ActiveNode based on the input `histDict`
+        which is formatted as `{[<column name>]: <binning tuple>}` where `[<column name>]` is a list
+        of column names that you'd like to plot against each other in [x,y,z] order and `binning_tuple` is
+        the set of arguments that would normally be passed to `TH1`. The dimensions of the returned
+        histograms are determined based on the size of `[<column name>]`.
+
+        @param histDict ({std:tuple}): formatted as `{<column name>: <binning tuple>}` where `binning_tuple` are
+            the arguments that would normally be passed to `TH1`. Size determines dimension of histogram.
+        @param name (str, optional): Name for the output HistGroup. Defaults to '' in which case the name of the 
+            #ActiveNode will be used.
+        @param weight (str, optional): Weight (as a string) to apply to all histograms. Defaults to None.
+
+        Returns:
+            dict: Dictionary with same structure as the input (column names for keys) with 
+                new histograms evaluated on the #ActiveNode as the values.
+        '''
+        out = HistGroup(name if name != '' else self.ActiveNode.name)
         
-        dot.render(outfilename)
+        for varnames in histDict.keys():
+            # Modify hist name
+            arg_list = list(histDict[varnames])
+            arg_list[0] = arg_list[0] + '_' + out.name
+            this_tuple = tuple(arg_list)
+            # Convert key to list(str) if needed
+            if isinstance(varnames,str):
+                varnames = [varnames]
+            # Get name for histgroup entry
+            entry_name = '_vs_'.join(varnames)+'_'+out.name
+            # Add weight to args if specified
+            if len(varnames) == 1:
+                if weight == None: 
+                    h = self.DataFrame.Histo1D(this_tuple,varnames[0])
+                else:
+                    h = self.DataFrame.Histo1D(this_tuple,varnames[0],weight)
+            elif len(varnames) == 2:
+                if weight == None: 
+                    h = self.DataFrame.Histo2D(this_tuple,varnames[0],varnames[1])
+                else:
+                    h = self.DataFrame.Histo2D(this_tuple,varnames[0],varnames[1],weight)
+            elif len(varnames) == 3:
+                if weight == None:
+                    h = self.DataFrame.Histo3D(this_tuple,varnames[0],varnames[1],varnames[2])
+                else:
+                    h = self.DataFrame.Histo3D(this_tuple,varnames[0],varnames[1],varnames[2],weight)
+            out.Add(entry_name, h)
+           
+        return out
 
 ##############
 # Node Class #
@@ -739,7 +928,7 @@ class Node(object):
     '''Class to represent nodes in the DataFrame processing graph. 
     Can make new nodes via Define, Cut, and Discriminate and setup
     relations between nodes (done automatically via Define, Cut, Discriminate)'''
-    def __init__(self, name, DataFrame, action='', children=[]):
+    def __init__(self, name, DataFrame, action='', nodetype='', children=[]):
         '''Constructor. Holds the RDataFrame and other associated information
         for tracking in the {@link analyzer}.
 
@@ -749,6 +938,7 @@ class Node(object):
         @param name (str): Name for the node. Duplicate named nodes cannot be tracked simultaneously in the analyzer.
         @param DataFrame (RDataFrame): Dataframe to track.
         @param children ([Node], optional): Child nodes if they exist. Defaults to [].
+        @param nodetype (str, optional): The type of the Node. Useful for organizing and grouping Nodes. Defaults to ''.
         @param action (str, optional): Action performed (the C++ line). Default is '' but should only be used for a base RDataFrame.
         '''
         ## @var DataFrame
@@ -760,16 +950,53 @@ class Node(object):
         ## @var action
         #
         # Action performed to create this Node.
+        ## @var type
+        #
+        # Either 'Cut' or 'Define' depending what generated the Node.
         ## @var children
         #
         # List of child nodes.
+        ## @var type
+        #
+        # The "type" of Node. Can be modified but by default will be either
+        # "Define", "Cut", "MergeDefine", "SubCollDefine", or "Correction".
 
         super(Node, self).__init__()
         self.DataFrame = DataFrame
         self.name = name
         self.action = action
         self.children = children
+        self.type = nodetype
         
+    def Close(self):
+        '''Safely deletes Node instance and all descendants.
+        
+        Returns:
+            None
+        '''
+        for c in self.children:
+            c.Close()
+        self.children = []
+        self.DataFrame = None
+        self.name = None
+        self.action = None
+
+    def __str__(self):
+        '''Call with `print(<Node>)` to print a nicely formatted description
+        of the Node object for debugging.
+        
+        Returns:
+            str
+        '''
+        out = 'NODE:\n'
+        for a in dir(self):
+            if not a.startswith('__') and not callable(getattr(self, a)):
+                if a == 'children':
+                    out += '\t {:15s} = {}\n'.format(a,[c.name for c in getattr(self,a)])
+                else:
+                    out += '\t {:15s} = {}\n'.format(a,getattr(self,a))
+        return out[:-1]
+
     def Clone(self,name=''):
         '''Clones Node instance without child information and with new name if specified.
 
@@ -791,8 +1018,6 @@ class Node(object):
             TypeError: If argument type is not Node.
         '''
         if overwrite: self.children = []
-
-        print ('Current children %s'%self.children)
 
         if isinstance(child,Node):
             if child.name not in [c.name for c in self.children]:
@@ -827,33 +1052,39 @@ class Node(object):
                 else:
                     raise TypeError('Child is not an instance of Node class for node %s' %self.name)
         else:
-            raise TypeError('Attempting to add chidren that are not in a list or dict.')
+            raise TypeError('Attempting to add children that are not in a list or dict.')
 
-    def Define(self,name,var):
+    def Define(self,name,var,nodetype=None):
         '''Produces a new Node with the provided variable/column added.
 
         @param name (str): Name for the column for internal tracking and later reference.
         @param var (str): A one-line C++ string that evaluates to desired value to store. 
+        @param nodetype (str, optional): Defaults to None in which case the new Node will
+            be type "Define".
 
         Returns:
             Node: New Node object with new column added.
         '''
         print('Defining %s: %s' %(name,var))
-        newNode = Node(name,self.DataFrame.Define(name,var),children=[],action=var)
+        newNodeType = 'Define' if nodetype == None else nodetype
+        newNode = Node(name,self.DataFrame.Define(name,var),children=[],action=var,nodetype=newNodeType)
         self.SetChild(newNode)
         return newNode
 
-    def Cut(self,name,cut):
+    def Cut(self,name,cut,nodetype=None):
         '''Produces a new Node with the provided cut/filter applied.
 
         @param name (str): Name for the cut for internal tracking and later reference.
         @param cut (str): A one-line C++ string that evaluates as a boolean.
+        @param nodetype (str, optional): Defaults to None in which case the new Node will
+            be type "Cut".
 
         Returns:
             Node: New Node object with cut applied.
         '''
         print('Filtering %s: %s' %(name,cut))
-        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],action=cut)
+        newNodeType = 'Define' if nodetype == None else nodetype
+        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],action=cut,nodetype=newNodeType)
         self.SetChild(newNode)
         return newNode
 
@@ -861,14 +1092,14 @@ class Node(object):
         '''Produces a dictionary with two new Nodes made by forking this Node based upon a discriminator being True or False.
 
         @param name (str): Name for the discrimination for internal tracking and later reference.
-        @param discriminator (str): A one-line C++ string that evaluates as a boolean to discriminate on.
+        @param discriminator (str): A one-line C++ string that evaluates as a bool to discriminate on.
 
         Returns:
             dict: Dictionary with keys "pass" and "fail" corresponding to the passing and failing Nodes stored as values.
         '''
         passfail = {
-            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),children=[],action=discriminator),
-            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),children=[],action="!("+discriminator+")")
+            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),children=[],action=discriminator,nodetype='Cut'),
+            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),children=[],action="!("+discriminator+")",nodetype='Cut')
         }
         self.SetChildren(passfail)
         return passfail
@@ -899,7 +1130,6 @@ class Node(object):
                 raise TypeError("Group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)                
 
         return node
-
 
     # IMPORTANT: When writing a variable size array through Snapshot, it is required that the column indicating its size is also written out and it appears before the array in the columns list.
     # columns should be an empty string if you'd like to keep everything
@@ -963,26 +1193,46 @@ class Group(object):
         self.items = OrderedDict()
         self.type = None
 
-    def Add(self,name,item,copy=False):
-        '''Add item to Group with a name. Modifies in-place.
+    def Add(self,name,item,makeCopy=False):
+        '''Add item to Group with a name. Modifies in-place if copy == False.
 
         @param name (str): Name/key for added item.
         @param item (obj): Item to add.
+        @param makeCopy (bool, optional): Creates a copy of the group with the item added.
 
         Returns:
             None
         '''
-        self.items[name] = item 
+        if makeCopy:
+            added = copy.deepcopy(self.items)
+            added[name] = item
+            if self.type == None: newGroup = Group(self.name+'+'+name)
+            elif self.type == 'var': newGroup = VarGroup(self.name+'+'+name)
+            elif self.type == 'cut': newGroup = CutGroup(self.name+'+'+name)
+            newGroup.items = added
+            return newGroup
+        else:
+            self.items[name] = item 
         
-    def Drop(self,name,copy=False):
-        '''Drop item from Group with provided name/key. Modifies in-place.
+    def Drop(self,name,makeCopy=False):
+        '''Drop item from Group with provided name/key. Modifies in-place if copy == False.
 
         @param name (str): Name/key for dropped item.
+        @param makeCopy (bool, optional): Creates a copy of the group with the item dropped.
 
         Returns:
             None
         '''
-        del self.items[name]
+        if makeCopy:
+            dropped = copy.deepcopy(self.items)
+            del dropped[name]
+            if self.type == None: newGroup = Group(self.name+'-'+name)
+            elif self.type == 'var': newGroup = VarGroup(self.name+'-'+name)
+            elif self.type == 'cut': newGroup = CutGroup(self.name+'-'+name)
+            newGroup.items = dropped
+            return newGroup
+        else:
+            del self.items[name]
 
     def Clone(self,name):
         '''Clone the current group with a new name.
@@ -1009,8 +1259,12 @@ class Group(object):
         Returns:
             Group: Addition of the two groups (will be VarGroup, CutGroup, or HistGroup if applicable).
         '''
-        added = copy.deepcopy(self.items)
-        added.update(other.items)
+        added = {}
+        for k in self.items.keys():
+            added[k] = self.items[k]
+        for k in other.items.keys():
+            added[k] = other.items[k]
+
         if self.type == 'var' and other.type == 'var': newGroup = VarGroup(self.name+"+"+other.name)
         elif self.type == 'cut' and other.type == 'cut': newGroup = CutGroup(self.name+"+"+other.name)
         elif self.type == 'hist' and other.type == 'hist': newGroup = HistGroup(self.name+"+"+other.name)
@@ -1024,7 +1278,7 @@ class Group(object):
         Returns:
             list: Names/keys from Group.
         '''
-        return self.items.keys()
+        return list(self.items.keys())
 
     def values(self):
         '''Gets list of values from Group.
@@ -1032,7 +1286,7 @@ class Group(object):
         Returns:
             list: Values from Group.
         '''
-        return self.items.values()
+        return list(self.items.values())
     
     def __setitem__(self, key, value):
         '''Set key-value pair as you would with dictionary.
@@ -1110,7 +1364,7 @@ class HistGroup(Group):
 
         '''
         # Book new group in case THmethod returns something
-        newGroup = Group(self.name+'_%s%s'%(THmethod,argsTuple))
+        newGroup = HistGroup(self.name+'_%s%s'%(THmethod,argsTuple))
         # Initialize check for None return type
         returnNone = False
         # Loop over hists
@@ -1124,6 +1378,19 @@ class HistGroup(Group):
 
         if returnNone: del newGroup
         else: return newGroup
+
+    def Merge(self):
+        '''Merge together the histograms in the group.
+
+        Returns:
+            TH1: Merged histogram.
+        '''
+        for ikey,key in enumerate(self.keys()):
+            if ikey == 0:
+                out = self[key].Clone(self.name)
+            else:
+                out.Add(self[key])
+        return out
 
 ####################
 # Correction class #
@@ -1151,13 +1418,14 @@ class Correction(object):
         @param constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
         @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
                 and the class will try to deduce it.
-        @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty) or 
+        @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty), "corr"
+                (only a correction) or 
                 "uncert" (only an uncertainty). Defaults to '' and the class will try to
                 deduce it.
         @param columnList ([str], optional): List of column names to search mainFunc arguments against.
                 Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used.
         @param isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
-                not duplicately recompile the same script if two functions are needed in one C++ script.
+                not duplicate compile the same script if two functions are needed in one C++ script.
         '''
 
         ## @var name
@@ -1168,7 +1436,7 @@ class Correction(object):
         self.__script = self.__getScript(script)
         self.__setType(corrtype)
         self.__funcInfo = self.__getFuncInfo(mainFunc)
-        self.__mainFunc = self.__funcInfo.keys()[0]
+        self.__mainFunc = list(self.__funcInfo.keys())[0]
         self.__columnNames = LoadColumnNames() if columnList == None else columnList
         self.__constructor = constructor 
         self.__objectName = self.name
@@ -1179,10 +1447,10 @@ class Correction(object):
             if self.__mainFunc not in self.__funcInfo.keys():
                 raise ValueError('Correction() instance provided with mainFunc argument does not exist in %s'%self.__script)
             CompileCpp(self.__script,library=True)
-        else:
-            self.__instantiate(constructor)      
 
-    def Clone(self,name,newMainFunc=None):
+        self.__instantiate(constructor)
+
+    def Clone(self,name,newMainFunc=None,newType=None):
         '''Makes a clone of current instance.
 
         If multiple functions are in the same script, one can clone the correction and reassign the mainFunc
@@ -1190,11 +1458,14 @@ class Correction(object):
 
         @param name (str): Clone name.
         @param newMainFunc (str, optional): Name of the function to use inside script. Defaults to None and the original is used.
+        @param newType (str, optional): New type for the cloned correction. Defaults to None and the original is used.
         Returns:
             Correction: Clone of instance with same script but different function (newMainFunc).
         '''
         if newMainFunc == None: newMainFunc = self.__mainFunc.split('::')[-1]
-        return Correction(name,self.__script,self.__constructor,newMainFunc,corrtype=self.__type,isClone=True,columnList=self.__columnNames)
+        return Correction(name,self.__script,self.__constructor,newMainFunc,
+                          corrtype=self.__type if newType == None else newType,
+                          isClone=True,columnList=self.__columnNames)
 
     def __getScript(self,script):
         '''Does a basic check that script file exists and modifies path if necessary
@@ -1222,7 +1493,7 @@ class Correction(object):
     def __setType(self,inType):
         '''Sets the type of correction.
         Will attempt to deduce from input script name if inType=''. File name
-        must have suffic '_weight' or '_SF' for weight type (correction plus uncertainties)
+        must have suffix '_weight' or '_SF' for weight type (correction plus uncertainties)
         or '_uncert' for 'uncert' type (only uncertainties).
 
         @param inType (str): Type of Correction. Use '' to deduce from input script name.
@@ -1232,10 +1503,10 @@ class Correction(object):
                 script name.
         '''
         out_type = None
-        if inType in ['weight','uncert']:
+        if inType in ['weight','uncert','corr']:
             out_type = inType
-        elif inType not in ['weight','uncert'] and inType != None:
-            print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...')
+        elif inType not in ['weight','uncert','corr'] and inType != None:
+            print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...'%inType)
 
         if out_type == None:
             if '_weight.cc' in self.__script.lower() or '_sf.cc' in self.__script.lower():
@@ -1305,16 +1576,20 @@ class Correction(object):
         line = classname + ' ' + self.name+'('
         for a in args:
             line += a+', '
-        line = line[:-2] + ');'
 
-        print ('Instantiating...')
+        if len(args) > 0:
+            line = line[:-2] + ');'
+        else:
+            line = line[:-1] + ';'
+
+        print ('Instantiating...'+line)
         ROOT.gInterpreter.Declare(line)
 
     def MakeCall(self,inArgs = []):
         '''Makes the call (stored in class instance) to the method with the branch/column names deduced or added from input.
 
         @param inArgs (list, optional): List of arguments (branch/column names) to provide to per-event evaluation method.
-                Defaults to [] in which case the arguements are deduced from what is written in the C++ script.
+                Defaults to [] in which case the arguments are deduced from what is written in the C++ script.
 
         Raises:
             NameError: If argument written in C++ script cannot be found in available columns.
@@ -1360,29 +1635,6 @@ class Correction(object):
             self.MakeCall(self, inArgs)
         return self.__call
 
-    # def SetMainFunc(self,funcname):
-    #     """Set the function to consider in the provided script.
-
-    #     Will check if funcname exists as a function in the script (can also provide a substring of the
-    #     desired function). If it does, sets the function to the matching one.
-
-    #     Returns:
-    #         Self with new function assigned.
-    #     """
-
-    #     # Find funcname in case it's abbreviated (which it might be if the user forgot the namespace)
-    #     full_funcname = ''
-    #     for f in self.__funcNames:
-    #         if funcname in f:
-    #             full_funcname = f
-    #             break
-
-    #     if full_funcname not in self.__funcNames:
-    #         raise ValueError('Function name "%s" is not defined for %s'%(funcname,self.__script))
-
-    #     self.__mainFunc = full_funcname
-    #     return self
-
     def GetMainFunc(self):
         '''Gets full main function name.
 
@@ -1405,7 +1657,7 @@ class Correction(object):
         Returns:
             [str]: List of possible function names found in C++ script.
         '''
-        return self.__funcInfo.keys()
+        return list(self.__funcInfo.keys())
 
 def LoadColumnNames(source=''):
     '''Loads column names from a text file.

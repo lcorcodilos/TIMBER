@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['lhaid',['lhaid',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#aeb0781b4175a60575386701b2ac1cc4d',1,'TIMBER::Analyzer::analyzer']]]
+  ['hist',['hist',['../class_hist_loader.html#a79ac1bb4474013109a9c80e1c1789248',1,'HistLoader']]]
 ];

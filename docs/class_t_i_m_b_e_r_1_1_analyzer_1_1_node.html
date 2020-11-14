@@ -12,6 +12,12 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -89,9 +95,15 @@ Collaboration diagram for Node:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae4825c43f754fecce69b8aa1dbcc3680"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ae4825c43f754fecce69b8aa1dbcc3680">__init__</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ab74e6bf80237ddc4109968cedc58c151">name</a>, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ae8dafbef0bedc58da1657f86a31508e6">DataFrame</a>, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a2f4ab7bf743142dae2e459aa18f9f1d4">action</a>='', <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a0ad3c9f0298ae46424fb2461b3e2d506">children</a>=[])</td></tr>
-<tr class="memdesc:ae4825c43f754fecce69b8aa1dbcc3680"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#ae4825c43f754fecce69b8aa1dbcc3680">More...</a><br /></td></tr>
-<tr class="separator:ae4825c43f754fecce69b8aa1dbcc3680"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ff723bc556264af934b8d22ddf15051"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a9ff723bc556264af934b8d22ddf15051">__init__</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ab74e6bf80237ddc4109968cedc58c151">name</a>, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ae8dafbef0bedc58da1657f86a31508e6">DataFrame</a>, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a2f4ab7bf743142dae2e459aa18f9f1d4">action</a>='', nodetype='', <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a0ad3c9f0298ae46424fb2461b3e2d506">children</a>=[])</td></tr>
+<tr class="memdesc:a9ff723bc556264af934b8d22ddf15051"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a9ff723bc556264af934b8d22ddf15051">More...</a><br /></td></tr>
+<tr class="separator:a9ff723bc556264af934b8d22ddf15051"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a303f02c4b5af83bafee2f1064bab45fa"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a303f02c4b5af83bafee2f1064bab45fa">Close</a> (self)</td></tr>
+<tr class="memdesc:a303f02c4b5af83bafee2f1064bab45fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Safely deletes <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> instance and all descendants.  <a href="#a303f02c4b5af83bafee2f1064bab45fa">More...</a><br /></td></tr>
+<tr class="separator:a303f02c4b5af83bafee2f1064bab45fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23e8041ce1015febe4fdace3225714f9"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a23e8041ce1015febe4fdace3225714f9">__str__</a> (self)</td></tr>
+<tr class="memdesc:a23e8041ce1015febe4fdace3225714f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call with <code>print(&lt;<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>&gt;)</code> to print a nicely formatted description of the <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> object for debugging.  <a href="#a23e8041ce1015febe4fdace3225714f9">More...</a><br /></td></tr>
+<tr class="separator:a23e8041ce1015febe4fdace3225714f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1e474c8cabb6893a4aaf33d56d78f3d"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ae1e474c8cabb6893a4aaf33d56d78f3d">Clone</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ab74e6bf80237ddc4109968cedc58c151">name</a>='')</td></tr>
 <tr class="memdesc:ae1e474c8cabb6893a4aaf33d56d78f3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clones <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> instance without child information and with new name if specified.  <a href="#ae1e474c8cabb6893a4aaf33d56d78f3d">More...</a><br /></td></tr>
 <tr class="separator:ae1e474c8cabb6893a4aaf33d56d78f3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -101,12 +113,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:add3a1faeeb9529ee59760ea265fdbade"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#add3a1faeeb9529ee59760ea265fdbade">SetChildren</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a0ad3c9f0298ae46424fb2461b3e2d506">children</a>, overwrite=False)</td></tr>
 <tr class="memdesc:add3a1faeeb9529ee59760ea265fdbade"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set multiple children for the node.  <a href="#add3a1faeeb9529ee59760ea265fdbade">More...</a><br /></td></tr>
 <tr class="separator:add3a1faeeb9529ee59760ea265fdbade"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a820ac424c439c545243d3d3f4f6db294"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a820ac424c439c545243d3d3f4f6db294">Define</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ab74e6bf80237ddc4109968cedc58c151">name</a>, var)</td></tr>
-<tr class="memdesc:a820ac424c439c545243d3d3f4f6db294"><td class="mdescLeft">&#160;</td><td class="mdescRight">Produces a new <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> with the provided variable/column added.  <a href="#a820ac424c439c545243d3d3f4f6db294">More...</a><br /></td></tr>
-<tr class="separator:a820ac424c439c545243d3d3f4f6db294"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc813faa1a449fa9a58c7437ed5e2aec"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#afc813faa1a449fa9a58c7437ed5e2aec">Cut</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ab74e6bf80237ddc4109968cedc58c151">name</a>, cut)</td></tr>
-<tr class="memdesc:afc813faa1a449fa9a58c7437ed5e2aec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Produces a new <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> with the provided cut/filter applied.  <a href="#afc813faa1a449fa9a58c7437ed5e2aec">More...</a><br /></td></tr>
-<tr class="separator:afc813faa1a449fa9a58c7437ed5e2aec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10d358548c587a45ae627eeb6948aef8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a10d358548c587a45ae627eeb6948aef8">Define</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ab74e6bf80237ddc4109968cedc58c151">name</a>, var, nodetype=None)</td></tr>
+<tr class="memdesc:a10d358548c587a45ae627eeb6948aef8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Produces a new <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> with the provided variable/column added.  <a href="#a10d358548c587a45ae627eeb6948aef8">More...</a><br /></td></tr>
+<tr class="separator:a10d358548c587a45ae627eeb6948aef8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a437987a119982a9deced80476a49457b"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a437987a119982a9deced80476a49457b">Cut</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ab74e6bf80237ddc4109968cedc58c151">name</a>, cut, nodetype=None)</td></tr>
+<tr class="memdesc:a437987a119982a9deced80476a49457b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Produces a new <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> with the provided cut/filter applied.  <a href="#a437987a119982a9deced80476a49457b">More...</a><br /></td></tr>
+<tr class="separator:a437987a119982a9deced80476a49457b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0228790d32682b44a9ff3bf3199b207"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#af0228790d32682b44a9ff3bf3199b207">Discriminate</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ab74e6bf80237ddc4109968cedc58c151">name</a>, discriminator)</td></tr>
 <tr class="memdesc:af0228790d32682b44a9ff3bf3199b207"><td class="mdescLeft">&#160;</td><td class="mdescRight">Produces a dictionary with two new Nodes made by forking this <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> based upon a discriminator being True or False.  <a href="#af0228790d32682b44a9ff3bf3199b207">More...</a><br /></td></tr>
 <tr class="separator:af0228790d32682b44a9ff3bf3199b207"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -131,16 +143,20 @@ Public Attributes</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a2f4ab7bf743142dae2e459aa18f9f1d4">action</a></td></tr>
 <tr class="memdesc:a2f4ab7bf743142dae2e459aa18f9f1d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Action performed to create this <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>. <br /></td></tr>
 <tr class="separator:a2f4ab7bf743142dae2e459aa18f9f1d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ad3c9f0298ae46424fb2461b3e2d506"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a0ad3c9f0298ae46424fb2461b3e2d506">children</a></td></tr>
-<tr class="memdesc:a0ad3c9f0298ae46424fb2461b3e2d506"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of child nodes.  <a href="#a0ad3c9f0298ae46424fb2461b3e2d506">More...</a><br /></td></tr>
+<tr class="memitem:a0ad3c9f0298ae46424fb2461b3e2d506"><td class="memItemLeft" align="right" valign="top"><a id="a0ad3c9f0298ae46424fb2461b3e2d506"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a0ad3c9f0298ae46424fb2461b3e2d506">children</a></td></tr>
+<tr class="memdesc:a0ad3c9f0298ae46424fb2461b3e2d506"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of child nodes. <br /></td></tr>
 <tr class="separator:a0ad3c9f0298ae46424fb2461b3e2d506"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7aead736a07eaf25623ad7bfa1f0ee2d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a7aead736a07eaf25623ad7bfa1f0ee2d">type</a></td></tr>
+<tr class="memdesc:a7aead736a07eaf25623ad7bfa1f0ee2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Either 'Cut' or 'Define' depending what generated the <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>.  <a href="#a7aead736a07eaf25623ad7bfa1f0ee2d">More...</a><br /></td></tr>
+<tr class="separator:a7aead736a07eaf25623ad7bfa1f0ee2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class to represent nodes in the DataFrame processing graph. </p>
 <p>Can make new nodes via Define, Cut, and Discriminate and setup relations between nodes (done automatically via Define, Cut, Discriminate) </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ae4825c43f754fecce69b8aa1dbcc3680"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae4825c43f754fecce69b8aa1dbcc3680">&#9670;&nbsp;</a></span>__init__()</h2>
+<a id="a9ff723bc556264af934b8d22ddf15051"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ff723bc556264af934b8d22ddf15051">&#9670;&nbsp;</a></span>__init__()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -173,6 +189,12 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>nodetype</em> = <code>''</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
           <td class="paramname"><em>children</em> = <code>[]</code>&#160;</td>
         </tr>
         <tr>
@@ -191,6 +213,7 @@ Public Attributes</h2></td></tr>
     <tr><td class="paramname">name</td><td>(str): Name for the node. Duplicate named nodes cannot be tracked simultaneously in the analyzer. </td></tr>
     <tr><td class="paramname">DataFrame</td><td>(RDataFrame): Dataframe to track. </td></tr>
     <tr><td class="paramname">children</td><td>([<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>], optional): Child nodes if they exist. Defaults to []. </td></tr>
+    <tr><td class="paramname">nodetype</td><td>(str, optional): The type of the <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>. Useful for organizing and grouping Nodes. Defaults to ''. </td></tr>
     <tr><td class="paramname">action</td><td>(str, optional): Action performed (the C++ line). Default is '' but should only be used for a base RDataFrame. </td></tr>
   </table>
   </dd>
@@ -199,6 +222,29 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a23e8041ce1015febe4fdace3225714f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23e8041ce1015febe4fdace3225714f9">&#9670;&nbsp;</a></span>__str__()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def __str__ </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Call with <code>print(&lt;<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>&gt;)</code> to print a nicely formatted description of the <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> object for debugging. </p>
+<dl class="section return"><dt>Returns</dt><dd></dd>
+<dd>
+str </dd></dl>
+
+</div>
+</div>
 <a id="af9f0f605c4d451aac2ea024e56f296fc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af9f0f605c4d451aac2ea024e56f296fc">&#9670;&nbsp;</a></span>Apply()</h2>
 
@@ -283,8 +329,31 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="afc813faa1a449fa9a58c7437ed5e2aec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc813faa1a449fa9a58c7437ed5e2aec">&#9670;&nbsp;</a></span>Cut()</h2>
+<a id="a303f02c4b5af83bafee2f1064bab45fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a303f02c4b5af83bafee2f1064bab45fa">&#9670;&nbsp;</a></span>Close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def Close </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Safely deletes <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> instance and all descendants. </p>
+<dl class="section return"><dt>Returns</dt><dd></dd>
+<dd>
+None </dd></dl>
+
+</div>
+</div>
+<a id="a437987a119982a9deced80476a49457b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a437987a119982a9deced80476a49457b">&#9670;&nbsp;</a></span>Cut()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -305,7 +374,13 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>cut</em>&#160;</td>
+          <td class="paramname"><em>cut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>nodetype</em> = <code>None</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -319,7 +394,8 @@ Public Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>(str): Name for the cut for internal tracking and later reference. </td></tr>
-    <tr><td class="paramname">cut</td><td>(str): A one-line C++ string that evaluates as a boolean.</td></tr>
+    <tr><td class="paramname">cut</td><td>(str): A one-line C++ string that evaluates as a boolean. </td></tr>
+    <tr><td class="paramname">nodetype</td><td>(str, optional): Defaults to None in which case the new <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> will be type "Cut".</td></tr>
   </table>
   </dd>
 </dl>
@@ -329,8 +405,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a820ac424c439c545243d3d3f4f6db294"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a820ac424c439c545243d3d3f4f6db294">&#9670;&nbsp;</a></span>Define()</h2>
+<a id="a10d358548c587a45ae627eeb6948aef8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10d358548c587a45ae627eeb6948aef8">&#9670;&nbsp;</a></span>Define()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -351,7 +427,13 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>var</em>&#160;</td>
+          <td class="paramname"><em>var</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>nodetype</em> = <code>None</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -365,7 +447,8 @@ Public Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>(str): Name for the column for internal tracking and later reference. </td></tr>
-    <tr><td class="paramname">var</td><td>(str): A one-line C++ string that evaluates to desired value to store.</td></tr>
+    <tr><td class="paramname">var</td><td>(str): A one-line C++ string that evaluates to desired value to store. </td></tr>
+    <tr><td class="paramname">nodetype</td><td>(str, optional): Defaults to None in which case the new <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> will be type "Define".</td></tr>
   </table>
   </dd>
 </dl>
@@ -411,7 +494,7 @@ Public Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>(str): Name for the discrimination for internal tracking and later reference. </td></tr>
-    <tr><td class="paramname">discriminator</td><td>(str): A one-line C++ string that evaluates as a boolean to discriminate on.</td></tr>
+    <tr><td class="paramname">discriminator</td><td>(str): A one-line C++ string that evaluates as a bool to discriminate on.</td></tr>
   </table>
   </dd>
 </dl>
@@ -588,19 +671,21 @@ None </dd></dl>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a0ad3c9f0298ae46424fb2461b3e2d506"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ad3c9f0298ae46424fb2461b3e2d506">&#9670;&nbsp;</a></span>children</h2>
+<a id="a7aead736a07eaf25623ad7bfa1f0ee2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7aead736a07eaf25623ad7bfa1f0ee2d">&#9670;&nbsp;</a></span>type</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">children</td>
+          <td class="memname">type</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>List of child nodes. </p>
+<p>Either 'Cut' or 'Define' depending what generated the <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>. </p>
+<p>The "type" of <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>.</p>
+<p>Can be modified but by default will be either "Define", "Cut", "MergeDefine", "SubCollDefine", or "Correction". </p>
 
 </div>
 </div>

@@ -20,6 +20,10 @@ cd TIMBER
 source setup.sh
 ```
 
+Some C++ modules also have the [boost library](https://www.boost.org/) as a dependency.
+The internet has plenty instructions on how to install boost. The standard `apt-get`
+(Ubuntu) and `brew` (macOS) package managers support install as well.
+
 ## The RDataFrame Backbone
 TIMBER's speed comes from the use of 
 [ROOT's RDataFrame](https://root.cern/doc/master/classROOT_1_1RDataFrame.html). 

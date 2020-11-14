@@ -27,9 +27,9 @@ a.Cut('pt_cut','FatJet_pt[0] > 400 && FatJet_pt[1] > 400')
 
 # Define the sum of the pt
 a.Define('pt_sum','FatJet_pt[0] + FatJet_pt[1]')
-a.Define('lead_vector','analyzer::TLvector(FatJet_pt[0],FatJet_eta[0],FatJet_phi[0],FatJet_msoftdrop[0])')
-a.Define('sublead_vector','analyzer::TLvector(FatJet_pt[1],FatJet_eta[1],FatJet_phi[1],FatJet_msoftdrop[1])')
-a.Define('invariantMass','analyzer::invariantMass(lead_vector,sublead_vector)') # Note that there are better ways to calculate this and this is an example
+a.Define('lead_vector','hardware::TLvector(FatJet_pt[0],FatJet_eta[0],FatJet_phi[0],FatJet_msoftdrop[0])')
+a.Define('sublead_vector','hardware::TLvector(FatJet_pt[1],FatJet_eta[1],FatJet_phi[1],FatJet_msoftdrop[1])')
+a.Define('invariantMass','hardware::invariantMass({lead_vector,sublead_vector})') # Note that there are better ways to calculate this and this is an example
 
 # Access the most recent node's data frame and make a histogram
 myHist1 = a.GetActiveNode().DataFrame.Histo1D(('pt_sum','Sum of p_T of two leading jets',20,800,2000),'pt_sum')

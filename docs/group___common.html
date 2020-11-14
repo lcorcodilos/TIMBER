@@ -12,6 +12,12 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -89,13 +95,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga4b63a003f89b48ce9f994c29a40dcf96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens JSON file as a dictionary (accounting for unicode encoding)  <a href="group___common.html#ga4b63a003f89b48ce9f994c29a40dcf96">More...</a><br /></td></tr>
 <tr class="separator:ga4b63a003f89b48ce9f994c29a40dcf96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga08af29d3395591fa501a98fcc3bb5ea0"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga08af29d3395591fa501a98fcc3bb5ea0">AsciiEncodeDict</a> (data)</td></tr>
-<tr class="memdesc:ga08af29d3395591fa501a98fcc3bb5ea0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encodes dict to ascii from unicode.  <a href="group___common.html#ga08af29d3395591fa501a98fcc3bb5ea0">More...</a><br /></td></tr>
+<tr class="memdesc:ga08af29d3395591fa501a98fcc3bb5ea0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encodes dict to ascii from unicode for python 2.7.  <a href="group___common.html#ga08af29d3395591fa501a98fcc3bb5ea0">More...</a><br /></td></tr>
 <tr class="separator:ga08af29d3395591fa501a98fcc3bb5ea0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3c0c9d4bb63c4b6b14dac5ee9867d792"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga3c0c9d4bb63c4b6b14dac5ee9867d792">ConcatCols</a> (self, colnames, val='1', connector='&amp;&amp;')</td></tr>
-<tr class="memdesc:ga3c0c9d4bb63c4b6b14dac5ee9867d792"><td class="mdescLeft">&#160;</td><td class="mdescRight">Concatenates a list of column names evaluating to a common <code>val</code> (usually 1 or 0) with some <code>connector</code> (boolean logic operator).  <a href="group___common.html#ga3c0c9d4bb63c4b6b14dac5ee9867d792">More...</a><br /></td></tr>
-<tr class="separator:ga3c0c9d4bb63c4b6b14dac5ee9867d792"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf0721d1f79a9542d2a07df88852114a8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaf0721d1f79a9542d2a07df88852114a8">ConcatCols</a> (colnames, val='1', connector='&amp;&amp;')</td></tr>
+<tr class="memdesc:gaf0721d1f79a9542d2a07df88852114a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Concatenates a list of column names evaluating to a common <code>val</code> (usually 1 or 0) with some <code>connector</code> (bool logic operator).  <a href="group___common.html#gaf0721d1f79a9542d2a07df88852114a8">More...</a><br /></td></tr>
+<tr class="separator:gaf0721d1f79a9542d2a07df88852114a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf88df070cc47d0cf19d7b9e8a3f6368c"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaf88df070cc47d0cf19d7b9e8a3f6368c">GetHistBinningTuple</a> (h)</td></tr>
-<tr class="memdesc:gaf88df070cc47d0cf19d7b9e8a3f6368c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the binning information for a histogram and returns it as a tuple ordered like the arguements to construct a new histogram.  <a href="group___common.html#gaf88df070cc47d0cf19d7b9e8a3f6368c">More...</a><br /></td></tr>
+<tr class="memdesc:gaf88df070cc47d0cf19d7b9e8a3f6368c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the binning information for a histogram and returns it as a tuple ordered like the arguments to construct a new histogram.  <a href="group___common.html#gaf88df070cc47d0cf19d7b9e8a3f6368c">More...</a><br /></td></tr>
 <tr class="separator:gaf88df070cc47d0cf19d7b9e8a3f6368c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa2fdf2788bfd524b2f3b53f37d11613e"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaa2fdf2788bfd524b2f3b53f37d11613e">ColliMate</a> (myString, width=18)</td></tr>
 <tr class="memdesc:gaa2fdf2788bfd524b2f3b53f37d11613e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collimates strings to have consistent spacing between first character of word i with the first character of word i+1 and i-1.  <a href="group___common.html#gaa2fdf2788bfd524b2f3b53f37d11613e">More...</a><br /></td></tr>
@@ -138,7 +144,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Encodes dict to ascii from unicode. </p>
+<p>Encodes dict to ascii from unicode for python 2.7. </p>
+<p>Not needed for python 3.</p>
 <p>Credit Andrew Clark on <a href="https://stackoverflow.com/questions/9590382/forcing-python-json-module-to-work-with-ascii/28339920">StackOverflow</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -258,8 +265,8 @@ str String with new spacing between words. </dd></dl>
 
 </div>
 </div>
-<a id="ga3c0c9d4bb63c4b6b14dac5ee9867d792"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3c0c9d4bb63c4b6b14dac5ee9867d792">&#9670;&nbsp;</a></span>ConcatCols()</h2>
+<a id="gaf0721d1f79a9542d2a07df88852114a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf0721d1f79a9542d2a07df88852114a8">&#9670;&nbsp;</a></span>ConcatCols()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -267,12 +274,6 @@ str String with new spacing between words. </dd></dl>
         <tr>
           <td class="memname">def TIMBER.Tools.Common.ConcatCols </td>
           <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>self</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>colnames</em>, </td>
         </tr>
@@ -296,12 +297,12 @@ str String with new spacing between words. </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Concatenates a list of column names evaluating to a common <code>val</code> (usually 1 or 0) with some <code>connector</code> (boolean logic operator). </p>
+<p>Concatenates a list of column names evaluating to a common <code>val</code> (usually 1 or 0) with some <code>connector</code> (bool logic operator). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">colnames</td><td>([str]): List of column names. </td></tr>
     <tr><td class="paramname">val</td><td>(str): Value to test equality of all columns. Defaults to '1'. </td></tr>
-    <tr><td class="paramname">connector</td><td>(str): C++ boolean logic operator between column equality checks. Defaults to '&amp;&amp;'.</td></tr>
+    <tr><td class="paramname">connector</td><td>(str): C++ bool logic operator between column equality checks. Defaults to '&amp;&amp;'.</td></tr>
   </table>
   </dd>
 </dl>
@@ -597,7 +598,7 @@ str Matched sub-string. </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Gets the binning information for a histogram and returns it as a tuple ordered like the arguements to construct a new histogram. </p>
+<p>Gets the binning information for a histogram and returns it as a tuple ordered like the arguments to construct a new histogram. </p>
 <p>Supports TH1, TH2, and TH3.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -611,7 +612,7 @@ str Matched sub-string. </dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>tuple(tuple, int): First element of return is the binning and the second element is the dimensionality. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>tuple(tuple, int): First element of return is the binning and the second element is the dimension. </dd></dl>
 
 </div>
 </div>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['jetrecalibrator',['JetRecalibrator',['../class_jet_recalibrator.html',1,'']]]
+  ['lumifilter',['LumiFilter',['../class_lumi_filter.html',1,'']]]
 ];

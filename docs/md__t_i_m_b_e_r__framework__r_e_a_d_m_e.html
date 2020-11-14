@@ -5,13 +5,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>TIMBER: Framework</title>
+<title>TIMBER: Framework development</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -62,11 +68,10 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">Framework </div>  </div>
+<div class="title">Framework development </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>Home to generic C++ modules.</p>
-<h1>Developer Notes</h1>
+<div class="textblock"><h2>Notes to developers</h2>
 <p>Adding C++ modules for use in TIMBER is relatively simple but the code makes several assumptions about the structure of the module if you'd like to use it as a <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html">TIMBER.Analyzer.Correction</a>.</p>
 <p>A correction module should be built as a class so that the initializer can be used to book objects like files, histograms, etc that we want to load before looping over the RDataFrame. A class method should be written to perform the evaluation during the event loop. This function should be named <code>eval</code> by default. However, there is support for other function names for building multiple methods within the class.</p>
 <p>The output of <code>eval</code> should be a vector organized as <code>[nominal,up,down]</code> if the function calculates a correction and uncertainty or <code>[up,down]</code> if only calculating an uncertainty. The name of the file is used to determine which type of output to expect for template building. An output of the first type should have a file name that end in <code>_SF.cc</code> or <code>_weight.cc</code> and outputs of of the second type should have a file name that ends in <code>_uncert.cc</code>.</p>
