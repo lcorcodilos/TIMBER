@@ -1,6 +1,6 @@
 #include <cmath>
 #include <algorithm>
-#include "../src/HistLoader.cc"
+#include "HistLoader.cc"
 using namespace ROOT::VecOps;
 
 /** @class
