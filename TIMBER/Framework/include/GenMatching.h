@@ -180,7 +180,7 @@ void GenParticleTree::AddParticle(Particle* particle) {
     // Next identify staged node has no parent (heads)
     // If no parent, no other infor we can get from this particle
     std::vector<int> indexes = StoredIndexes();
-    if (InList(staged_node->parentIndex, indexes)) {
+    if (Pythonic::InList(staged_node->parentIndex, indexes)) {
         heads.push_back(staged_node);
         nodes.push_back(staged_node);
     } else {
@@ -213,12 +213,12 @@ Particle* GenParticleTree::GetParent(Particle* particle) {
 
 bool GenParticleTree::MatchParticleToString(Particle* particle, std::string string){
     std::vector<int> pdgIds {}; 
-    if (InString(":",string)) {
+    if (Pythonic::InString(":",string)) {
         int startId = std::stoi( string.substr(0,string.find(':')) );
         int stopId  = std::stoi( string.substr(1,string.find(':')) );
-        pdgIds = range(startId, stopId);
-    } else if (InString(",",string)) {
-        auto splits = split(string,',');
+        pdgIds = Pythonic::range(startId, stopId);
+    } else if (Pythonic::InString(",",string)) {
+        auto splits = Pythonic::split(string,',');
         for (int istr = 0; istr < splits.size(); istr++) {
             pdgIds.push_back( std::stoi(splits.at(istr)) );
         }
@@ -230,7 +230,7 @@ bool GenParticleTree::MatchParticleToString(Particle* particle, std::string stri
             out = true;
         } else {out = false;}
     } else {
-        if (InList(std::abs(*particle->pdgId), pdgIds)) {
+        if (Pythonic::InList((int)std::abs(*particle->pdgId), pdgIds)) {
             out = true;
         } else {out = false;}
     }
@@ -248,9 +248,9 @@ std::vector<Particle*> GenParticleTree::RunChain(Particle* node, std::vector<std
     } else if (parent->flag == false) {
         nodechain.push_back(&NoneParticle);
     } else if (MatchParticleToString(parent, chain.at(0))) {
-        Extend(nodechain, RunChain(parent,chain_minus_first));
+        Pythonic::extend(nodechain, RunChain(parent,chain_minus_first));
     } else if (parent->pdgId == node->pdgId) {
-        Extend(nodechain, RunChain(parent, chain));
+        Pythonic::extend(nodechain, RunChain(parent, chain));
     } else {
         nodechain.push_back(&NoneParticle);
     }
@@ -259,7 +259,7 @@ std::vector<Particle*> GenParticleTree::RunChain(Particle* node, std::vector<std
 }
 
 std::vector<std::vector<Particle*>> GenParticleTree::FindChain(std::string chainstring) {
-    std::vector<std::string> reveresed_chain = split(chainstring,'>');
+    std::vector<std::string> reveresed_chain = Pythonic::split(chainstring,'>');
     std::reverse(reveresed_chain.begin(), reveresed_chain.end());
 
     std::vector<std::string> reveresed_chain_minus_first = {reveresed_chain.begin()+1,reveresed_chain.end()};
