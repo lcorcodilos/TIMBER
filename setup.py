@@ -20,6 +20,8 @@ setuptools.setup(
         "pydot",
         "networkx==2.2",
         "clang==6.0.0.2"
+        # "pygithub",
+        # "python-dateutil"
     ]
 )
 
