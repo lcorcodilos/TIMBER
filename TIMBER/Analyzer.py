@@ -1396,7 +1396,7 @@ class HistGroup(Group):
 # Correction class #
 ####################
 class Correction(object):
-    '''Correction class to handle corrections produced by C++ modules.
+    '''Class to handle corrections produced by C++ modules.
 
     Uses clang in python to parse the C++ code and determine function names, 
     namespaces, and argument names and types. 

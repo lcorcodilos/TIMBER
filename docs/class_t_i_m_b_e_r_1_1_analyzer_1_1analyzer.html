@@ -162,7 +162,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a2893215aeed2a64dc72b15589eeab9f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find the common variables between collections.  <a href="#a2893215aeed2a64dc72b15589eeab9f2">More...</a><br /></td></tr>
 <tr class="separator:a2893215aeed2a64dc72b15589eeab9f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32bfe7e08329c1207530da3ed0b38ac5"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a32bfe7e08329c1207530da3ed0b38ac5">AddCorrection</a> (self, correction, evalArgs=[], node=None)</td></tr>
-<tr class="memdesc:a32bfe7e08329c1207530da3ed0b38ac5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. ">Correction</a> to track.  <a href="#a32bfe7e08329c1207530da3ed0b38ac5">More...</a><br /></td></tr>
+<tr class="memdesc:a32bfe7e08329c1207530da3ed0b38ac5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a> to track.  <a href="#a32bfe7e08329c1207530da3ed0b38ac5">More...</a><br /></td></tr>
 <tr class="separator:a32bfe7e08329c1207530da3ed0b38ac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad89f013ac60b6e44f4d0566fafbd8219"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ad89f013ac60b6e44f4d0566fafbd8219">AddCorrections</a> (self, correctionList, node=None)</td></tr>
 <tr class="memdesc:ad89f013ac60b6e44f4d0566fafbd8219"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add multiple Corrections to track.  <a href="#ad89f013ac60b6e44f4d0566fafbd8219">More...</a><br /></td></tr>
@@ -335,11 +335,11 @@ str </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Add a <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. ">Correction</a> to track. </p>
+<p>Add a <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a> to track. </p>
 <p>Sets new active node with all correction variations calculated as new columns.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">correction</td><td>(<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. ">Correction</a>): <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. ">Correction</a> object to add. </td></tr>
+    <tr><td class="paramname">correction</td><td>(<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a>): <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a> object to add. </td></tr>
     <tr><td class="paramname">evalArgs</td><td>([str], optional): List of arguments (NanoAOD branch names) to provide to per-event evaluation method. Default empty and clang will deduce if method definition argument names match columns in RDataFrame. </td></tr>
     <tr><td class="paramname">node</td><td>(<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>, optional): <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> to add correction on top of. Defaults to <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a517b5caa6818e1f61b5b742625e575f4" title="Node. ">ActiveNode</a>.</td></tr>
   </table>
@@ -347,8 +347,8 @@ str </dd></dl>
 </dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">TypeError</td><td>If argument types are not <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> and <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. ">Correction</a>. </td></tr>
-    <tr><td class="paramname">ValueError</td><td>If <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. ">Correction</a> type is not a weight or uncertainty.</td></tr>
+    <tr><td class="paramname">TypeError</td><td>If argument types are not <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> and <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a>. </td></tr>
+    <tr><td class="paramname">ValueError</td><td>If <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a> type is not a weight or uncertainty.</td></tr>
   </table>
   </dd>
 </dl>
@@ -394,7 +394,7 @@ str </dd></dl>
 <p>Sets new <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a517b5caa6818e1f61b5b742625e575f4" title="Node. ">ActiveNode</a> with all correction variations calculated as new columns.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">correctionList</td><td>([<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. ">Correction</a>]): List of <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. ">Correction</a> objects to add. </td></tr>
+    <tr><td class="paramname">correctionList</td><td>([<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a>]): List of <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a> objects to add. </td></tr>
     <tr><td class="paramname">node</td><td>(<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>, optional): [description]. Defaults to None.</td></tr>
   </table>
   </dd>
@@ -915,7 +915,7 @@ None </dd></dl>
 </div><div class="memdoc">
 
 <p>Get names of all corrections being tracked. </p>
-<dl class="section return"><dt>Returns</dt><dd>[str]: List of <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. ">Correction</a> keys/names. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>[str]: List of <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a> keys/names. </dd></dl>
 
 </div>
 </div>
@@ -1187,8 +1187,8 @@ dict Dictionary with same structure as the input (column names for keys) with ne
 </div><div class="memdoc">
 
 <p>Makes columns/variables to store total weights based on the Corrections that have been added. </p>
-<p>This function automates the calculation of the columns that store the nominal weight and the variation of weights based on the corrections in consideration. The nominal weight will be the product of all "weight" type <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. ">Correction</a> objects. The variations on the nominal weight correspond to the variations/uncertainties in each <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. ">Correction</a> object (both "weight" and "uncert" types).</p>
-<p>For example, if there are five different <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Correction class to handle corrections produced by C++ modules. ">Correction</a> objects considered, there will be 11 weights calculated (nominal + 5 up + 5 down).</p>
+<p>This function automates the calculation of the columns that store the nominal weight and the variation of weights based on the corrections in consideration. The nominal weight will be the product of all "weight" type <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a> objects. The variations on the nominal weight correspond to the variations/uncertainties in each <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a> object (both "weight" and "uncert" types).</p>
+<p>For example, if there are five different <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a> objects considered, there will be 11 weights calculated (nominal + 5 up + 5 down).</p>
 <p>A list of correction names can be provided if only a subset of the corrections being tracked are desired. A drop list can also be supplied to remove a subset of corrections.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">

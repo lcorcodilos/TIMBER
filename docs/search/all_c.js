@@ -7,6 +7,5 @@ var searchData=
   ['makeupdown',['MakeUpDown',['../group___plot.html#ga49a8db027ed151ca43425510a1e6c9f7',1,'TIMBER::Tools::Plot']]],
   ['makeweightcols',['MakeWeightCols',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#adea335ba0db85d4bf48562523fffe963',1,'TIMBER::Analyzer::analyzer']]],
   ['merge',['Merge',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_hist_group.html#adf3215b60915b224aaa1dfddd673d575',1,'TIMBER::Analyzer::HistGroup']]],
-  ['mergecollections',['MergeCollections',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2f0e7e0c026da9b2cbc160816a2db28b',1,'TIMBER::Analyzer::analyzer']]],
-  ['moneyplots',['MoneyPlots',['../group___plot.html#gaffbff8259b3da4f122473b0e0100c327',1,'TIMBER::Tools::Plot']]]
+  ['mergecollections',['MergeCollections',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2f0e7e0c026da9b2cbc160816a2db28b',1,'TIMBER::Analyzer::analyzer']]]
 ];

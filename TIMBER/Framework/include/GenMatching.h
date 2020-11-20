@@ -52,7 +52,10 @@ static const std::map <std::string, int> GenParticleStatusFlags {
         {"isLastCopyBeforeFSR", 14}
 };
 
-/** Stores identifying features of a particle in the GenPart collection */
+/** @class Particle
+ * @brief Stores identifying features of a particle
+ * in the GenPart collection.
+ */
 class Particle {
     public:
         bool flag = true; /**< Should always be true unless we need to return a None-like particle */

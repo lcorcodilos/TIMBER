@@ -83,9 +83,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gad2a622f125f2d6a5e77d1e0f60e054e7"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___plot.html#gad2a622f125f2d6a5e77d1e0f60e054e7">CompareShapes</a> (outfilename, year, prettyvarname, bkgs={}, signals={}, names={}, colors={}, scale=True, stackBkg=False)</td></tr>
 <tr class="memdesc:gad2a622f125f2d6a5e77d1e0f60e054e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a plot that compares the shapes of backgrounds versus signal.  <a href="group___plot.html#gad2a622f125f2d6a5e77d1e0f60e054e7">More...</a><br /></td></tr>
 <tr class="separator:gad2a622f125f2d6a5e77d1e0f60e054e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaffbff8259b3da4f122473b0e0100c327"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___plot.html#gaffbff8259b3da4f122473b0e0100c327">MoneyPlots</a> (name, histlist, bkglist=[], signals=[], colors=[], titles=[], logy=False, xtitle='', ytitle='', dataOff=False, datastyle='pe')</td></tr>
-<tr class="memdesc:gaffbff8259b3da4f122473b0e0100c327"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tool to produce plots quickly as .root, .pdf, .png, etc.  <a href="group___plot.html#gaffbff8259b3da4f122473b0e0100c327">More...</a><br /></td></tr>
-<tr class="separator:gaffbff8259b3da4f122473b0e0100c327"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga38bfe24c8ec0570de7787a95ee7972d8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___plot.html#ga38bfe24c8ec0570de7787a95ee7972d8">EasyPlots</a> (name, histlist, bkglist=[], signals=[], colors=[], titles=[], logy=False, xtitle='', ytitle='', dataOff=False, datastyle='pe')</td></tr>
+<tr class="memdesc:ga38bfe24c8ec0570de7787a95ee7972d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tool to produce plots quickly as .root, .pdf, .png, etc.  <a href="group___plot.html#ga38bfe24c8ec0570de7787a95ee7972d8">More...</a><br /></td></tr>
+<tr class="separator:ga38bfe24c8ec0570de7787a95ee7972d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7c16fa7d4ea701ed0825f1b7dd9afb49"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___plot.html#ga7c16fa7d4ea701ed0825f1b7dd9afb49">MakePullPlot</a> (data, bkg)</td></tr>
 <tr class="memdesc:ga7c16fa7d4ea701ed0825f1b7dd9afb49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a pull plot defined as (data-bkg)/sigma where sigma is the error of data and bkg added in quadrature.  <a href="group___plot.html#ga7c16fa7d4ea701ed0825f1b7dd9afb49">More...</a><br /></td></tr>
 <tr class="separator:ga7c16fa7d4ea701ed0825f1b7dd9afb49"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -183,81 +183,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga7c16fa7d4ea701ed0825f1b7dd9afb49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7c16fa7d4ea701ed0825f1b7dd9afb49">&#9670;&nbsp;</a></span>MakePullPlot()</h2>
+<a id="ga38bfe24c8ec0570de7787a95ee7972d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga38bfe24c8ec0570de7787a95ee7972d8">&#9670;&nbsp;</a></span>EasyPlots()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">def TIMBER.Tools.Plot.MakePullPlot </td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>bkg</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Generates a pull plot defined as (data-bkg)/sigma where sigma is the error of data and bkg added in quadrature. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">data</td><td>(TH1): Histogram of data. </td></tr>
-    <tr><td class="paramname">bkg</td><td>(TH1): Histogram of total background.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd></dd>
-<dd>
-TH1 Histogram of the pull. </dd></dl>
-
-</div>
-</div>
-<a id="ga49a8db027ed151ca43425510a1e6c9f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga49a8db027ed151ca43425510a1e6c9f7">&#9670;&nbsp;</a></span>MakeUpDown()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">def TIMBER.Tools.Plot.MakeUpDown </td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>hist</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Creates up and down variations of a histogram based on its per-bin errors. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">hist</td><td>(TH1): Histogram from which to create up/down distributions.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>(TH1, TH1): Tuple of (up, down) histograms. </dd></dl>
-
-</div>
-</div>
-<a id="gaffbff8259b3da4f122473b0e0100c327"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaffbff8259b3da4f122473b0e0100c327">&#9670;&nbsp;</a></span>MoneyPlots()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">def TIMBER.Tools.Plot.MoneyPlots </td>
+          <td class="memname">def TIMBER.Tools.Plot.EasyPlots </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>name</em>, </td>
@@ -354,6 +287,73 @@ TH1 Histogram of the pull. </dd></dl>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="ga7c16fa7d4ea701ed0825f1b7dd9afb49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7c16fa7d4ea701ed0825f1b7dd9afb49">&#9670;&nbsp;</a></span>MakePullPlot()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def TIMBER.Tools.Plot.MakePullPlot </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>bkg</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generates a pull plot defined as (data-bkg)/sigma where sigma is the error of data and bkg added in quadrature. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>(TH1): Histogram of data. </td></tr>
+    <tr><td class="paramname">bkg</td><td>(TH1): Histogram of total background.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd>
+<dd>
+TH1 Histogram of the pull. </dd></dl>
+
+</div>
+</div>
+<a id="ga49a8db027ed151ca43425510a1e6c9f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga49a8db027ed151ca43425510a1e6c9f7">&#9670;&nbsp;</a></span>MakeUpDown()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def TIMBER.Tools.Plot.MakeUpDown </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>hist</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates up and down variations of a histogram based on its per-bin errors. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hist</td><td>(TH1): Histogram from which to create up/down distributions.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>(TH1, TH1): Tuple of (up, down) histograms. </dd></dl>
 
 </div>
 </div>
