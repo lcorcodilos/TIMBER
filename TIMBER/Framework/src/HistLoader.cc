@@ -83,27 +83,26 @@ void HistLoader::checkDim(int x, int y, int z){
 
 std::vector<float> HistLoader::eval_bybin(int binx, int biny = 0, int binz = 0){
     HistLoader::checkDim(binx,biny,binz);
-    std::vector<float> out = {};
     float binval;
     float binup;
     float bindown;
     if (dim == 1){
-        out.push_back(hist->GetBinContent(binx));
-        out.push_back(hist->GetBinContent(binx) + hist->GetBinErrorUp(binx));
-        out.push_back(hist->GetBinContent(binx) - hist->GetBinErrorLow(binx));
+        binval = hist->GetBinContent(binx);
+        binup = hist->GetBinContent(binx) + hist->GetBinErrorUp(binx);
+        bindown = hist->GetBinContent(binx) - hist->GetBinErrorLow(binx);
     } else if (dim == 2) {
-        out.push_back(hist->GetBinContent(binx,biny));
-        out.push_back(hist->GetBinContent(binx,biny) + hist->GetBinErrorUp(hist->GetBin(binx,biny)));
-        out.push_back(hist->GetBinContent(binx,biny) - hist->GetBinErrorLow(hist->GetBin(binx,biny)));
+        binval = hist->GetBinContent(binx,biny);
+        binup = hist->GetBinContent(binx,biny) + hist->GetBinErrorUp(hist->GetBin(binx,biny));
+        bindown = hist->GetBinContent(binx,biny) - hist->GetBinErrorLow(hist->GetBin(binx,biny));
     } else if (dim == 3) {
-        out.push_back(hist->GetBinContent(binx,biny,binz));
-        out.push_back(hist->GetBinContent(binx,biny,binz) + hist->GetBinErrorUp(hist->GetBin(binx,biny,binz)));
-        out.push_back(hist->GetBinContent(binx,biny,binz) - hist->GetBinErrorLow(hist->GetBin(binx,biny,binz)));
+        binval = hist->GetBinContent(binx,biny,binz);
+        binup = hist->GetBinContent(binx,biny,binz) + hist->GetBinErrorUp(hist->GetBin(binx,biny,binz));
+        bindown = hist->GetBinContent(binx,biny,binz) - hist->GetBinErrorLow(hist->GetBin(binx,biny,binz));
     } else {
         throw "Dimensionality not supported.";
     }
 
-    return out;
+    return {binval,binup,bindown};
 }
 
 std::vector<float> HistLoader::eval(float xval, float yval = 0., float zval = 0.){

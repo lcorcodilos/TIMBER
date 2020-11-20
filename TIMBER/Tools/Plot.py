@@ -7,11 +7,12 @@ import ROOT, collections
 from collections import OrderedDict
 from TIMBER.Analyzer import HistGroup
 
-def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},colors={},scale=True,stackBkg=False):
+def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},colors={},scale=True,stackBkg=False,doSoverB=False):
     '''Create a plot that compares the shapes of backgrounds versus signal.
     If stackBkg, backgrounds will be stacked together and signals will be plot separately.
     Total background and signals are scaled to 1 if scale == True. Inputs organized 
-    as dicts so that keys can match across dicts (ex. bkgs and bkgNames).
+    as dicts so that keys can match across dicts (ex. bkgs and bkgNames). If
+    doSoverB is True, add a sub pad with signal/sqrt(background) calculation.
 
     @param outfilename (string): Path where plot will be saved.
     @param year (int): Year to determine luminosity value on plot. Options are 16, 17, 18, 1 (for full Run II),
@@ -19,11 +20,19 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     @param prettyvarname (string): What will be assigned to as the axis title.
     @param bkgs ({string:TH1}, optional): Dictionary of backgrounds to plot. Defaults to {}.
     @param signals ({string:TH1}, optional): Dictionary of signals to plot. Defaults to {}.
-    @param names ({string:string}, optional): Formatted version of names for backgrounds and signals to appear in legend. Keys must match those in bkgs and signal. Defaults to {}. 
-    @param colors ({string:int}, optional): TColor code for backgrounds and signals to appear in plot. Keys must match those in bkgs and signal. Defaults to {}.
-    @param scale (bool, optional): If True, scales total background to unity and signals (separately) to unity. Defaults to True.
-    @param stackBkg (bool, optional): If True, backgrounds will be stacked and the total will be normalized to 1 (if scale==True). Defaults to False.
+    @param names ({string:string}, optional): Formatted version of names for backgrounds and signals to
+        appear in legend. Keys must match those in bkgs and signal. Defaults to {}. 
+    @param colors ({string:int}, optional): TColor code for backgrounds and signals to appear in plot.
+        Keys must match those in bkgs and signal. Defaults to {}.
+    @param scale (bool, optional): If True, scales total background to unity and signals (separately)
+        to unity. Defaults to True.
+    @param stackBkg (bool, optional): If True, backgrounds will be stacked and the total will be
+        normalized to 1 (if scale==True). Defaults to False.
+    @param doSoverB (bool, optional): If True, add a sub pad with signal/sqrt(background) calculation. Defaults to False.
     '''
+    if not stackBkg and doSoverB:
+        raise ValueError('Cannot run without backgrounds stacked or s/sqrt(b) will not be valid.')
+
     # Initialize
     c = ROOT.TCanvas('c','c',800,700)
     legend = ROOT.TLegend(0.6,0.72,0.87,0.88)
@@ -88,8 +97,26 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
         for p in procs.values():
             p.SetMaximum(maximum)
     
-
     c.cd()
+    if doSoverB: # build sub pads
+        main = ROOT.TPad('c_main','c_main',0, 0.3, 1, 1)
+        SoverB = ROOT.TPad('c_sub','c_sub',0, 0, 1, 0.3)
+
+        main.SetBottomMargin(0.0)
+        main.SetLeftMargin(0.1)
+        main.SetRightMargin(0.05)
+        main.SetTopMargin(0.1)
+
+        SoverB.SetLeftMargin(0.1)
+        SoverB.SetRightMargin(0.05)
+        SoverB.SetTopMargin(0)
+        SoverB.SetBottomMargin(0.3)
+
+        main.Draw()
+        SoverB.Draw()
+
+        main.cd()
+
     if len(bkgs.keys()) > 0:
         if stackBkg:
             bkgStack.Draw('hist')
@@ -103,6 +130,31 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
         h.Draw('same hist')
     legend.Draw()
 
+    if doSoverB:
+        s_over_b,line_pos = MakeSoverB(bkgStack,signals.values()[0])
+        SoverB.cd()
+        s_over_b.GetYaxis().SetTitle('S/#sqrt{B}')
+        s_over_b.GetXaxis().SetTitle(prettyvarname)
+        s_over_b.SetTitle('')
+        s_over_b.SetLineColorAlpha(ROOT.kBlack,1)
+        s_over_b.SetLineWidth(2)
+        s_over_b.SetFillColorAlpha(ROOT.kWhite,0)
+        s_over_b.GetYaxis().SetLabelSize(0.08)
+        s_over_b.GetYaxis().SetTitleSize(0.08)
+        s_over_b.GetYaxis().SetNdivisions(306)
+        s_over_b.GetXaxis().SetLabelSize(0.09)
+        s_over_b.GetXaxis().SetTitleSize(0.09)
+        s_over_b.GetYaxis().SetTitleOffset(0.4)
+        s_over_b.Draw('hist')
+        if line_pos:
+            line = ROOT.TLine(line_pos,s_over_b.GetMinimum(),line_pos,s_over_b.GetMaximum())
+            line.SetLineColor(ROOT.kRed)
+            line.SetLineStyle(10)
+            line.SetLineWidth(2)
+            line.Draw('same')
+
+    c.cd()
+
     c.SetBottomMargin(0.12)
     c.SetTopMargin(0.08)
     c.SetRightMargin(0.11)
@@ -114,12 +166,145 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
 
     c.Print(outfilename,'png')
 
+def MakeSoverB(stack_of_bkgs,signal):
+    '''Makes the SoverB distribution and returns it.
+    Assumes that signal and stack_of_bkgs have same binning.
+
+    S/sqrt(B) is defined from the cumulative distribution
+    of the histogram. In other words, S = total amount of 
+    signal kept by a cut and B = total amount of backgroud
+    kept by a cut. So the cumulative distribution for each
+    must be calculated and then the ratio of signal to square
+    root of background is taken of those. 
+
+    There is a question then of which direction to integrate
+    for a distribution. For something like tau32, you want to 
+    integrate "forward" from 0 up since a signal-like tau32 cut
+    is defined as keeping less than the cut value. For a 
+    machine learning algorithm score (like DeepCSV), one needs
+    to integrate "backward" since the cut is defined as selecting
+    signal-like events when keeping values greater than the cut.
+
+    The script will automatically find which of these to do and if 
+    the signal peak is not at edge of the space. If it is not at
+    the edge, it will find the 
+    signal peak and build the cumulative distributions backwards
+    to the left of the peak and forwards to the right of the peak.
+
+    Args:
+        pad (TPad): TPad that's already built
+        stack_of_bkgs (THStack): Stack of backgrounds, already normalized
+            together, and as a sum normalized to 1.
+        signal (TH1): One histogram for signal. Can only calculate
+            s/sqrt(b) one signal at a time.
+
+    Returns:
+        None
+    '''
+    # Check where signal peak is relative to distribution
+    total_bkgs = stack_of_bkgs.GetStack().Last()
+    nbins = total_bkgs.GetNbinsX()
+    peak_bin = signal.GetMaximumBin()
+
+    if total_bkgs.GetXaxis().GetXmin() == 0:
+        if peak_bin == nbins:
+            forward = False
+        elif peak_bin == 1:
+            forward = True
+        else:
+            forward = True
+        peak_bin = False
+        print 'Not a mass distribution. Forward = %s'%forward
+    # If peak is non-zero, do background cumulative scan to left of peak
+    # and forward scan to right  
+    else:
+        forward = None
+        print 'Mass-like distribution.'
+        # Clone original distirbution, set new range around peak, get cumulative
+        bkg_int_low  = MakeCumulative(total_bkgs,1,       peak_bin,forward=False)
+        bkg_int_high = MakeCumulative(total_bkgs,peak_bin,nbins+1, forward=True)
+
+        sig_int_low  = MakeCumulative(signal,1,       peak_bin,forward=False)
+        sig_int_high = MakeCumulative(signal,peak_bin,nbins+1, forward=True)
+
+        # Make empty versions of original histograms
+        bkg_int = total_bkgs.Clone()
+        bkg_int.Reset()
+        sig_int = signal.Clone()
+        sig_int.Reset()     
+
+        bkg_int.Add(bkg_int_low)
+        bkg_int.Add(bkg_int_high)
+        sig_int.Add(sig_int_low)
+        sig_int.Add(sig_int_high)
+
+    if forward != None:
+        # if forward == False:
+        #     total_bkgs.GetXaxis().SetRange(0,total_bkgs.GetNbinsX())
+        #     signal.GetXaxis().SetRange(0,signal.GetNbinsX())
+        bkg_int = MakeCumulative(total_bkgs,1, total_bkgs.GetNbinsX()+1,forward)
+        sig_int = MakeCumulative(signal,    1, signal.GetNbinsX()+1,    forward)
+        
+    # Clone and empty one for binning structure
+    s_over_b = bkg_int.Clone()
+    s_over_b.Reset()
+
+    # Build s/sqrt(b) per-bin
+    for ix in range(1,nbins+1):
+        if bkg_int.GetBinContent(ix) != 0:
+            val = sig_int.GetBinContent(ix)/math.sqrt(bkg_int.GetBinContent(ix))
+            s_over_b.SetBinContent(ix,val)
+        else:
+            s_over_b.SetBinContent(ix,0)
+            print ('WARNING: Background is empty for bin %s'%ix)
+        
+    peak_bin_edge = False
+    if peak_bin != False:
+        peak_bin_edge = bkg_int.GetBinLowEdge(peak_bin)
+
+    return s_over_b, peak_bin_edge
+
+def MakeCumulative(hist,low,high,forward=True):
+    '''Custom cumulative distribution function which has more predictable
+    behavior than the TH1 version. 
+
+    @param hist ([type]): Input histogram.
+    @param low ([type]): Lower bin number boundary, inclusive.
+    @param high ([type]): Upper bin number boundary, exclusive.
+    @param forward (bool, optional): Integrates forward if True. Defaults to True.
+
+    Returns:
+        TH1: Cumulative distribution of histogram with same axis as input histogram
+             but with zero bins for those not included in [low,high) range.
+    '''
+    
+    out = hist.Clone(hist.GetName()+'_cumul')
+    out.Reset()
+    prev = 0
+    if forward: to_scan = range(low,high)
+    else: to_scan = range(high-1,low-1,-1)
+    for ix in to_scan:
+        val = prev + hist.GetBinContent(ix)
+        out.SetBinContent(ix,val)
+        prev = val
+    return out
+
 def EasyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=False,xtitle='',ytitle='',dataOff=False,datastyle='pe'):
     '''Tool to produce plots quickly as .root, .pdf, .png, etc.
     If providing TH2s, only plots the data (histlist) with no comparisons.
     If providing TH1s, plots together the data (histlist), total background (individual components as a stack), and signals with pulls in a lower pane.
     Providing multiple data histograms will plot the separate pads on a single canvas. Up to 6 pads are supported.
     See argument descriptions for plotting options.
+
+    histlist is just the generic list but if bkglist is specified (non-empty)
+    then this function will stack the backgrounds and compare against histlist as if 
+    it is data. The important bit is that bkglist is a list of lists. The first index
+    of bkglist corresponds to the index in histlist (the corresponding data). 
+    For example you could have:
+      ```python
+      histlist = [data1, data2]
+      bkglist = [[bkg1_1,bkg2_1],[bkg1_2,bkg2_2]]
+      ```
 
     @param name (str): Name of output file with extension (file type must be supported by TCanvas.Print()).
     @param histlist ([TH1 or TH2]): List of data histograms.
@@ -139,14 +324,6 @@ def EasyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=Fal
     Raises:
         ValueError: If number of requested pads is greater than 6.
     '''
-    # histlist is just the generic list but if bkglist is specified (non-empty)
-    # then this function will stack the backgrounds and compare against histlist as if 
-    # it is data. The important bit is that bkglist is a list of lists. The first index
-    # of bkglist corresponds to the index in histlist (the corresponding data). 
-    # For example you could have:
-    #   histlist = [data1, data2]
-    #   bkglist = [[bkg1_1,bkg2_1],[bkg1_2,bkg2_2]]
-
     extension = name.split('.')[-1]
     tag = name.split('.')[0]
 
