@@ -81,7 +81,7 @@ void HistLoader::checkDim(int x, int y, int z){
     } 
 }
 
-std::vector<float> HistLoader::eval_bybin(int binx, int biny = 0, int binz = 0){
+std::vector<float> HistLoader::eval_bybin(int binx, int biny, int binz){
     HistLoader::checkDim(binx,biny,binz);
     float binval;
     float binup;
@@ -105,7 +105,7 @@ std::vector<float> HistLoader::eval_bybin(int binx, int biny = 0, int binz = 0){
     return {binval,binup,bindown};
 }
 
-std::vector<float> HistLoader::eval(float xval, float yval = 0., float zval = 0.){
+std::vector<float> HistLoader::eval(float xval, float yval, float zval){
     HistLoader::checkDim(xval,yval,zval);
     int binx = 0;
     int biny = 0;
