@@ -5,6 +5,11 @@
 #include <algorithm>
 #include <iostream>
 
+/** @class LumiFilter
+ * @brief Tool to filter luminosity block/run based on golden JSONs.
+ * Golden JSONs are provided in TIMBER but a custom one can be 
+ * provided. 
+ */
 class LumiFilter {
     private:
         boost::property_tree::ptree ptree;

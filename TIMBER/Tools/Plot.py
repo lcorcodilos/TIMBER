@@ -289,7 +289,7 @@ def MakeCumulative(hist,low,high,forward=True):
         prev = val
     return out
 
-def MoneyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=False,xtitle='',ytitle='',dataOff=False,datastyle='pe'):
+def EasyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=False,xtitle='',ytitle='',dataOff=False,datastyle='pe'):
     '''Tool to produce plots quickly as .root, .pdf, .png, etc.
     If providing TH2s, only plots the data (histlist) with no comparisons.
     If providing TH1s, plots together the data (histlist), total background (individual components as a stack), and signals with pulls in a lower pane.

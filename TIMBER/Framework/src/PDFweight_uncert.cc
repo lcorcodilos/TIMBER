@@ -3,7 +3,7 @@
 #include <numeric>
 #include <fstream>
 #include "ROOT/RVec.hxx"
-#include </home/lucas/Projects/RDFanalyzer/TIMBER/TIMBER/Framework/include/Pythonic.h>
+#include <TIMBER/Framework/include/Pythonic.h>
 
 using namespace ROOT::VecOps;
 

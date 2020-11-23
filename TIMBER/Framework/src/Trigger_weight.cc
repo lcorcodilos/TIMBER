@@ -3,10 +3,10 @@
 #include "HistLoader.cc"
 using namespace ROOT::VecOps;
 
-/** @class
- *  @brief Specializes in the construction of trigger
- * efficiency weights. Uncertainties are calculated
- * as one half of the trigger inefficiency (ie. (1-eff)/2).
+/** @class Trigger_weight
+ *  @brief Specializes in the construction of trigger efficiency weights.
+ * Uncertainties are calculated as one half of the trigger inefficiency (ie. (1-eff)/2).
+ * 
  * Uncertainties are capped to never be greater than 1 or less
  * than 0. Additionally, a plateau value can be provided which
  * assumes 100% efficiency (and zero uncertainty) beyond the provided
