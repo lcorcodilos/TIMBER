@@ -96,7 +96,7 @@ class analyzer(object):
             txt_file = open(self.fileName,"r")
             for l in txt_file.readlines():
                 thisfile = l.strip()
-                if 'root://' not in thisfile and '/store/' in thisfile: thisfile='root://cms-xrd-global.cern.ch/'+thisfile
+                if 'root://' not in thisfile and thisfile.startswith('/store/'): thisfile='root://cms-xrd-global.cern.ch/'+thisfile
                 self.__eventsChain.Add(thisfile)
                 RunChain.Add(thisfile)
         else: 
