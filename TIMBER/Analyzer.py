@@ -96,7 +96,7 @@ class analyzer(object):
             txt_file = open(self.fileName,"r")
             for l in txt_file.readlines():
                 thisfile = l.strip()
-                if 'root://' not in thisfile and '/store/' in thisfile: thisfile='root://cms-xrd-global.cern.ch/'+thisfile
+                if 'root://' not in thisfile and thisfile.startswith('/store/'): thisfile='root://cms-xrd-global.cern.ch/'+thisfile
                 self.__eventsChain.Add(thisfile)
                 RunChain.Add(thisfile)
         else: 
@@ -1610,7 +1610,9 @@ class Correction(object):
                     args_to_use.append(a)
 
         else:
-            if len(inArgs) != len(self.__funcInfo[self.__mainFunc].keys()):
+            if len(inArgs) < len(self.__funcInfo[self.__mainFunc].keys()):
+                print ('Provided number of arguments (%s) does not match required (%s). Asssuming there are default arguments not specified...'%(len(inArgs),len(self.__funcInfo[self.__mainFunc].keys())))
+            elif len(inArgs) > len(self.__funcInfo[self.__mainFunc].keys()):
                 raise ValueError('Provided number of arguments (%s) does not match required (%s).'%(len(inArgs),len(self.__funcInfo[self.__mainFunc].keys())))
             args_to_use = inArgs
 
