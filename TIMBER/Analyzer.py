@@ -468,6 +468,35 @@ class analyzer(object):
                 self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
             
         return self.ActiveNode
+
+    def ObjectFromCollection(self,name,basecoll,index,skip=[]):
+        '''Similar to creating a SubCollection except the newly defined columns
+        are single values (not vectors/arrays) for the object at the provided index.
+        
+        @param name (str): Name of new collection.
+        @param basecoll (str): Name of derivative collection.
+        @param index (str): Index of the collection item to extract.
+        @param skip ([str]): List of variable names in the collection to skip.
+
+        Returns:
+            None. New nodes created with the sub collection.
+
+        Example:
+            ObjectFromCollection('LeadJet','FatJet','0')
+        '''
+        collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if basecoll in str(cname) and str(cname) not in skip]
+        for b in collBranches:
+            replacementName = b.replace(basecoll,name)
+            if b == 'n'+basecoll:
+                continue
+            elif 'RVec' not in self.DataFrame.GetColumnType(b):
+                print ('Found type %s during SubCollection'%self.DataFrame.GetColumnType(b))
+                self.Define(replacementName,b,nodetype='SubCollDefine')
+            else:
+                self.Define(replacementName,'%s[%s]'%(b,index),nodetype='SubCollDefine')
+            
+        return self.ActiveNode()
+
     def MergeCollections(self,name,collectionNames):
         '''Merge collections (provided by list of names in `collectionNames`) into
         one called `name`. Only common variables are taken and stored in the new 
