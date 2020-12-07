@@ -446,11 +446,11 @@ class analyzer(object):
 
         @param name (str): Name of new collection.
         @param basecoll (str): Name of derivative collection.
-        @param condition (str): C++ condition that determines which items
+        @param condition (str): C++ condition that determines which items to keep.
         @param skip ([str]): List of variable names in the collection to skip.
 
         Returns:
-            None. New nodes created with the sub collection.
+            Node: New #ActiveNode.
 
         Example:
             SubCollection('TopJets','FatJet','FatJet_msoftdrop > 105 && FatJet_msoftdrop < 220')
@@ -466,7 +466,8 @@ class analyzer(object):
                 self.Define(replacementName,b,nodetype='SubCollDefine')
             else:
                 self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
-
+            
+        return self.ActiveNode
     def MergeCollections(self,name,collectionNames):
         '''Merge collections (provided by list of names in `collectionNames`) into
         one called `name`. Only common variables are taken and stored in the new 
