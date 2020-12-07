@@ -1,6 +1,7 @@
 #include <cmath>
 #include <algorithm>
 #include "HistLoader.cc"
+#include <ROOT/RVec.hxx>
 using namespace ROOT::VecOps;
 
 /** @class Trigger_weight
@@ -45,10 +46,10 @@ class Trigger_weight
          *                Defaults to -1.0 in which case there is no plateau considered.
          * @return RVec<float> {nominal, up, down}
          */
-        RVec<float> eval(float var,float plateau = -1.0);
+        RVec<float> eval(float var,float plateau = 0);
 };
 
-RVec<float> Trigger_weight::eval(float var, float plateau = 0) {
+RVec<float> Trigger_weight::eval(float var, float plateau) {
     RVec<float> out;
 
     float weight = 1.;
