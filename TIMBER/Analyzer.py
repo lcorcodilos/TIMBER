@@ -607,9 +607,14 @@ class analyzer(object):
 
         return self.SetActiveNode(newNode)
 
-    def __checkCorrections(self,correctionNames,dropList):
-        '''Does type checking and drops specified corrections by name.
+    def __checkCorrections(self,node,correctionNames,dropList):
+        '''Starting at the provided node, will scale up the tree,
+        grabbing all corrections added along the way. This ensures
+        corrections from other forks of the analyzer tree are not
+        added to the list of considered corrections. Alos, does type
+        checking and drops specified corrections by name.
 
+        @param node (Node): Node to start when reconstructing processing path upwards.
         @param correctionNames ([str]): List of correction names to include.
         @param dropList ([type]): List of correction names to drop.
 
@@ -620,10 +625,22 @@ class analyzer(object):
             [str]: List of remaining correction names.
         '''
         # Quick type checking
-        if correctionNames == None: correctionsToApply = self.Corrections.keys()
+        if correctionNames == None: correctionsToCheck = self.Corrections.keys()
         elif not isinstance(correctionNames,list):
             raise ValueError('MakeWeightCols() does not support correctionNames argument of type %s. Please provide a list.'%(type(correctionNames)))
-        else: correctionsToApply = correctionNames
+        else: correctionsToCheck = correctionNames
+
+        # Go up the tree from the current node, only grabbing 
+        # those corrections along the path (ie. don't care about
+        # corrections on other forks)
+        correctionsToApply = []
+        nextNode = node.parent
+        while nextNode:
+            if nextNode.name.endswith('__vec'):
+                corrname = nextNode.name.replace('__vec','')
+                if corrname in correctionsToCheck:
+                    correctionsToApply.append(corrname)
+            nextNode = nextNode.parent
 
         # Drop specified weights from consideration
         if not isinstance(dropList,list):
@@ -636,7 +653,7 @@ class analyzer(object):
 
         return correctionsToApply
 
-    def MakeWeightCols(self,node=None,correctionNames=None,dropList=[]):
+    def MakeWeightCols(self,name='',node=None,correctionNames=None,dropList=[]):
         '''Makes columns/variables to store total weights based on the Corrections that have been added.
 
         This function automates the calculation of the columns that store the nominal weight and the 
@@ -650,6 +667,8 @@ class analyzer(object):
         A list of correction names can be provided if only a subset of the corrections being tracked are 
         desired. A drop list can also be supplied to remove a subset of corrections.
 
+        @param name (str): Name for group of weights so as not to duplicate weight columns if running method
+                multiple times. Output columns will have suffix `weight_<name>__`. Defaults to '' with suffix `weight__`.
         @param node (Node): Node to calculate weights on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
         @param correctionNames list(str): List of correction names (strings) to consider. Default is None in which case all corrections
                 being tracked are considered.
@@ -661,7 +680,10 @@ class analyzer(object):
         '''
         if node == None: node = self.ActiveNode
 
-        correctionsToApply = self.__checkCorrections(correctionNames,dropList)
+        if name != '': namemod = '_'+name
+        else: namemod = ''
+
+        correctionsToApply = self.__checkCorrections(node,correctionNames,dropList)
         
         # Build nominal weight first (only "weight", no "uncert")
         weights = {'nominal':''}
@@ -690,7 +712,7 @@ class analyzer(object):
         # Make a node with all weights calculated
         returnNode = node
         for weight in weights.keys():
-            returnNode = self.Define('weight__'+weight,weights[weight],returnNode)
+            returnNode = self.Define('weight%s__'%(namemod)+weight,weights[weight],returnNode)
         
         # self.TrackNode(returnNode)
         return self.SetActiveNode(returnNode)
