@@ -4,7 +4,7 @@ Home of main classes for TIMBER.
 
 """
 
-from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols
+from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags
 from clang import cindex
 from collections import OrderedDict
 
@@ -288,7 +288,7 @@ class analyzer(object):
         trig_string = ConcatCols(available_trigs,'1','||')
         return trig_string
 
-    def GetFlagString(self,flagList):
+    def GetFlagString(self,flagList=GetStandardFlags()):
         '''Checks input list for missing flags and drops those missing (#FilterColumnNames)
         and then concatenates those remaining into an AND string.
 

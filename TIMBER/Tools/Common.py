@@ -386,6 +386,16 @@ def FindCommonString(string_list):
 
     return to_match[:-2]
 
+def GetStandardFlags():
+    flags = ["Flag_goodVertices",
+               "Flag_globalTightHalo2016Filter", 
+               "Flag_eeBadScFilter", 
+               "Flag_HBHENoiseFilter", 
+               "Flag_HBHENoiseIsoFilter", 
+               "Flag_ecalBadCalibFilter", 
+               "Flag_EcalDeadCellTriggerPrimitiveFilter"]
+    return flags
+
 @contextmanager
 def cd(newdir):
     '''Context manager to cd to another folder in the middle of
