@@ -981,7 +981,7 @@ class Node(object):
     '''Class to represent nodes in the DataFrame processing graph. 
     Can make new nodes via Define, Cut, and Discriminate and setup
     relations between nodes (done automatically via Define, Cut, Discriminate)'''
-    def __init__(self, name, DataFrame, action='', nodetype='', children=[]):
+    def __init__(self, name, DataFrame, action='', nodetype='', children=[], parent=None):
         '''Constructor. Holds the RDataFrame and other associated information
         for tracking in the {@link analyzer}.
 
@@ -991,6 +991,7 @@ class Node(object):
         @param name (str): Name for the node. Duplicate named nodes cannot be tracked simultaneously in the analyzer.
         @param DataFrame (RDataFrame): Dataframe to track.
         @param children ([Node], optional): Child nodes if they exist. Defaults to [].
+        @param parent (Node, optional): Parent node if it exists. Defaults to None.
         @param nodetype (str, optional): The type of the Node. Useful for organizing and grouping Nodes. Defaults to ''.
         @param action (str, optional): Action performed (the C++ line). Default is '' but should only be used for a base RDataFrame.
         '''
@@ -1009,6 +1010,9 @@ class Node(object):
         ## @var children
         #
         # List of child nodes.
+        ## @var parent
+        #
+        # Parent node.
         ## @var type
         #
         # The "type" of Node. Can be modified but by default will be either
@@ -1019,6 +1023,7 @@ class Node(object):
         self.name = name
         self.action = action
         self.children = children
+        self.parent = parent
         self.type = nodetype
         
     def Close(self):
@@ -1093,10 +1098,10 @@ class Node(object):
         
         if isinstance(children,dict):
             for c in children.keys():
-                if isinstance(c,Node):
+                if isinstance(children[c],Node):
                     self.SetChild(children[c])
                 else:
-                    raise TypeError('Child is not an instance of Node class for node %s' %self.name)
+                    raise TypeError('Child is not an instance of Node class for node %s' %(self.name))
 
         elif isinstance(children,list):
             for c in children:
@@ -1120,7 +1125,7 @@ class Node(object):
         '''
         print('Defining %s: %s' %(name,var))
         newNodeType = 'Define' if nodetype == None else nodetype
-        newNode = Node(name,self.DataFrame.Define(name,var),children=[],action=var,nodetype=newNodeType)
+        newNode = Node(name,self.DataFrame.Define(name,var),children=[],parent=self,action=var,nodetype=newNodeType)
         self.SetChild(newNode)
         return newNode
 
@@ -1137,7 +1142,7 @@ class Node(object):
         '''
         print('Filtering %s: %s' %(name,cut))
         newNodeType = 'Define' if nodetype == None else nodetype
-        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],action=cut,nodetype=newNodeType)
+        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],parent=self,action=cut,nodetype=newNodeType)
         self.SetChild(newNode)
         return newNode
 
@@ -1151,8 +1156,8 @@ class Node(object):
             dict: Dictionary with keys "pass" and "fail" corresponding to the passing and failing Nodes stored as values.
         '''
         passfail = {
-            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),children=[],action=discriminator,nodetype='Cut'),
-            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),children=[],action="!("+discriminator+")",nodetype='Cut')
+            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),children=[],parent=self,action=discriminator,nodetype='Cut'),
+            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),children=[],parent=self,action="!("+discriminator+")",nodetype='Cut')
         }
         self.SetChildren(passfail)
         return passfail
