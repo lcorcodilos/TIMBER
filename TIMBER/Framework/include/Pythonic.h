@@ -4,6 +4,7 @@
 #include <iterator>
 #include <vector>
 #include <stdexcept>
+#define _STRUCT_TIMESPEC
 #include <sys/stat.h>
 
 namespace Pythonic {
@@ -154,6 +155,6 @@ namespace Pythonic {
      */
     void Execute(std::string cmd) {
         printf("Executing: %s",cmd.c_str());
-        std::system(cmd);
+        std::system(cmd.c_str());
     }
 }
