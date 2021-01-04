@@ -120,7 +120,8 @@ def CompileCpp(blockcode,library=False):
             ROOT.gInterpreter.Declare(blockcode_str)
     else:
         if '.so' not in blockcode:
-            lib_path = blockcode.replace('.','_')+'.so'
+            extension = blockcode.split('.')[-1]
+            lib_path = blockcode.replace('.'+extension,'_'+extension)+'.so'
         else: 
             lib_path = blockcode
         
