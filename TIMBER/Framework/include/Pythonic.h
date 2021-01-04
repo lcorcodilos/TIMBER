@@ -1,10 +1,14 @@
+#ifndef _TIMBER_PYTHONIC
+#define _TIMBER_PYTHONIC
 #include <string>
 #include <sstream>
 #include <algorithm>
 #include <iterator>
 #include <vector>
 #include <stdexcept>
+#ifndef _STRUCT_TIMESPEC
 #define _STRUCT_TIMESPEC
+#endif
 #include <sys/stat.h>
 
 namespace Pythonic {
@@ -158,3 +162,4 @@ namespace Pythonic {
         std::system(cmd.c_str());
     }
 }
+#endif

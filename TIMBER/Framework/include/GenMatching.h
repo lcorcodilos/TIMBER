@@ -157,7 +157,7 @@ class GenParticleTree
 
 std::vector<int> GenParticleTree::StoredIndexes(){
     std::vector<int> current_idxs {};
-    for (int i = 0; i < nodes.size(); i++) {
+    for (size_t i = 0; i < nodes.size(); i++) {
         current_idxs.push_back(nodes.at(i)->index);
     }
     return current_idxs;
@@ -169,14 +169,14 @@ void GenParticleTree::AddParticle(Particle* particle) {
     // First check if current heads don't have new parents and 
     // remove them from heads if they do
     std::vector<int> heads_to_delete {};
-    for (int i = 0; i < heads.size(); i++) {
+    for (size_t i = 0; i < heads.size(); i++) {
         if (heads.at(i)->parentIndex == staged_node->index) {
             heads_to_delete.push_back(i);
         }
     }
     // Need to delete indices in reverse order so as not to shift 
     // indices after a deletion
-    for (int ih = heads_to_delete.size(); ih >= 0; ih--) {
+    for (size_t ih = heads_to_delete.size(); ih >= 0; ih--) {
         heads.erase(heads.begin()+ih);
     }
    
@@ -187,7 +187,7 @@ void GenParticleTree::AddParticle(Particle* particle) {
         heads.push_back(staged_node);
         nodes.push_back(staged_node);
     } else {
-        for (int inode = 0; inode < nodes.size(); inode++) {
+        for (size_t inode = 0; inode < nodes.size(); inode++) {
             if (staged_node->parentIndex == nodes[inode]->index){
                 staged_node->AddParent(inode);
                 nodes.at(inode)->AddChild(nodes.size());
@@ -199,7 +199,7 @@ void GenParticleTree::AddParticle(Particle* particle) {
 
 std::vector<Particle*> GenParticleTree::GetChildren(Particle* particle){
     std::vector<Particle*> children {};
-    for (int i = 0; i < particle->childIndex.size(); i++) {
+    for (size_t i = 0; i < particle->childIndex.size(); i++) {
         children.push_back(nodes[particle->childIndex.at(i)]);
     }
     return children;
@@ -222,7 +222,7 @@ bool GenParticleTree::MatchParticleToString(Particle* particle, std::string stri
         pdgIds = Pythonic::range(startId, stopId);
     } else if (Pythonic::InString(",",string)) {
         auto splits = Pythonic::split(string,',');
-        for (int istr = 0; istr < splits.size(); istr++) {
+        for (size_t istr = 0; istr < splits.size(); istr++) {
             pdgIds.push_back( std::stoi(splits.at(istr)) );
         }
     }
@@ -270,12 +270,12 @@ std::vector<std::vector<Particle*>> GenParticleTree::FindChain(std::string chain
     std::vector<Particle*> chain_result;
     std::vector<std::vector<Particle*>> out;
 
-    for (int inode = 0; inode < nodes.size(); inode++) {
+    for (size_t inode = 0; inode < nodes.size(); inode++) {
         Particle* n = nodes[inode];
         if (MatchParticleToString(n, reveresed_chain.at(0))) {
             chain_result = RunChain(n,reveresed_chain_minus_first);
             bool no_NoneParticle = true;
-            for (int icr = 0; icr < chain_result.size(); icr++) {
+            for (size_t icr = 0; icr < chain_result.size(); icr++) {
                 if (chain_result[icr]->flag == false) {
                     no_NoneParticle = false;
                     break;

@@ -234,7 +234,7 @@ class analyzer(object):
         '''        
         if isinstance(node,Node):
             if node.name in self.GetTrackedNodeNames():
-                raise NameError('Attempting to track a node with the same name as one that is already being tracked (%s). Please provide a unique node.'%(node.name))
+                print ('WARNING: Attempting to track a node with the same name as one that is already being tracked (%s).'%(node.name))
             self.AllNodes.append(node)
         else:
             raise TypeError('TrackNode() does not support arguments of type %s. Please provide a Node.'%(type(node)))

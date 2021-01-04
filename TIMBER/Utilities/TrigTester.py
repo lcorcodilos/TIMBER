@@ -27,11 +27,11 @@ parser.add_option('-t', '--tree', metavar='TTREE', type='string', action='store'
                 dest      =   'tree',
                 help      =   'Name of the tree in the input file with the HLT branches')
 parser.add_option('-c', '--cuts', type='string', action='store',
-                default   =   '',
+                default   =   '1',
                 dest      =   'cuts',
                 help      =   'C++ boolean evaluation of branches to select on (excluding triggers)')
 parser.add_option('--not', type='string', action='store',
-                default   =   '',
+                default   =   '0',
                 dest      =   'Not',
                 help      =   'C++ boolean evaluation of HLTs to veto that would otherwise be in your selection')
 parser.add_option('--ignore', metavar='LIST', type='string', action='store',
@@ -102,7 +102,7 @@ if options.noTrig:
     quit()
 
 # Otherwise, establish what we're looking for
-fullSelection_string = '(%s) && (%s)'%(options.cuts,options.Not)
+fullSelection_string = '(%s) && !(%s)'%(options.cuts,options.Not)
 print('Full selection will be evaluated as '+fullSelection_string)
 if options.vs == '': 
     fullSelection = tree.GetEntries(fullSelection_string)
