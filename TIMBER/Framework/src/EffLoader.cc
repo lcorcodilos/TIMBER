@@ -69,7 +69,7 @@ std::vector<float> EffLoader::eval_byglobal(int globalbin){
 }
 
 std::vector<float> EffLoader::eval_bybin(int binx, int biny, int binz){
-    globalbin = efficiency->GetGlobalBin(binx, biny, binz);
+    globalbin    = efficiency->GetGlobalBin(binx, biny, binz);
     return eval_byglobal(globalbin);
 }
 
