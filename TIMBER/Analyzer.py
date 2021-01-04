@@ -712,7 +712,7 @@ class analyzer(object):
         # Make a node with all weights calculated
         returnNode = node
         for weight in weights.keys():
-            returnNode = self.Define('weight%s__'%(namemod)+weight,weights[weight],returnNode)
+            returnNode = self.Define('weight%s__'%(namemod)+weight,weights[weight],returnNode,nodetype='Weight')
         
         # self.TrackNode(returnNode)
         return self.SetActiveNode(returnNode)
