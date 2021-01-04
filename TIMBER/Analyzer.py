@@ -1643,11 +1643,13 @@ class Correction(object):
         print ('Instantiating...'+line)
         ROOT.gInterpreter.Declare(line)
 
-    def MakeCall(self,inArgs = []):
+    def MakeCall(self,inArgs = {}):
         '''Makes the call (stored in class instance) to the method with the branch/column names deduced or added from input.
 
-        @param inArgs (list, optional): List of arguments (branch/column names) to provide to per-event evaluation method.
-                Defaults to [] in which case the arguments are deduced from what is written in the C++ script.
+        @param inArgs (dict, optional): Dict with keys as C++ method argument names and values as the actual argument to provide
+                (branch/column names) for per-event evaluation. For any argument names where a key is not provided, will attempt
+                to find branch/column that already matches based on name.
+                Defaults to {} in which case ther will be automatic deduction from the argument names written in the C++ script.
 
         Raises:
             NameError: If argument written in C++ script cannot be found in available columns.
@@ -1658,20 +1660,19 @@ class Correction(object):
         '''
         args_to_use = []
 
-        if len(inArgs) == 0:
-            print ('Determining arguments for correction %s automatically'%self.name)
-            for a in self.__funcInfo[self.__mainFunc].keys():
-                if a not in self.__columnNames:
+        # Pretend to use argument names as arguments in call
+        for a in self.__funcInfo[self.__mainFunc].keys():
+            args_to_use.append(a)
+        # If no input, actually use them but cross check with existing columns
+        if len(inArgs.keys()) == 0:
+            print ('Determining all arguments for correction %s automatically'%self.name)
+            for a in args_to_use:
+                if a not in self.DataFrame.GetColumnNames():
                     raise NameError('Not able to find arg %s written in %s in available columns'%(a,self.__script))
-                else:
-                    args_to_use.append(a)
-
+        # If input args, swap out manually specified ones (rest come from auto detection of columns)
         else:
-            if len(inArgs) < len(self.__funcInfo[self.__mainFunc].keys()):
-                print ('Provided number of arguments (%s) does not match required (%s). Asssuming there are default arguments not specified...'%(len(inArgs),len(self.__funcInfo[self.__mainFunc].keys())))
-            elif len(inArgs) > len(self.__funcInfo[self.__mainFunc].keys()):
-                raise ValueError('Provided number of arguments (%s) does not match required (%s).'%(len(inArgs),len(self.__funcInfo[self.__mainFunc].keys())))
-            args_to_use = inArgs
+            for scriptArg in inArgs.keys():
+                args_to_use = [inArgs[scriptArg] if a == scriptArg else a for a in args_to_use]
 
         # var_types = [self.__funcInfo[self.__mainFunc][a] for a in self.__funcInfo[self.__mainFunc].keys()]
         out = '%s('%(self.__objectName+'.'+self.__mainFunc.split('::')[-1])
