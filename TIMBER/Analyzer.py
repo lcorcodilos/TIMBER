@@ -544,7 +544,7 @@ class analyzer(object):
     # Corrections/Weights #
     #---------------------#
     # Want to correct with analyzer class so we can track what corrections have been made for final weights and if we want to save them out in a group when snapshotting
-    def AddCorrection(self,correction,evalArgs=[],node=None):
+    def AddCorrection(self,correction,evalArgs={},node=None):
         '''Add a Correction to track. Sets new active node with all correction
         variations calculated as new columns.
 
@@ -1477,7 +1477,7 @@ class Correction(object):
         @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
                 and the class will try to deduce it.
         @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty), "corr"
-                (only a correction) or 
+                (only a correction), or 
                 "uncert" (only an uncertainty). Defaults to '' and the class will try to
                 deduce it.
         @param columnList ([str], optional): List of column names to search mainFunc arguments against.
@@ -1567,12 +1567,14 @@ class Correction(object):
             print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...'%inType)
 
         if out_type == None:
-            if '_weight.cc' in self.__script.lower() or '_sf.cc' in self.__script.lower():
+            if '_weight.' in self.__script.lower() or '_sf.' in self.__script.lower():
                 out_type = 'weight'
-            elif '_uncert.cc' in self.__script.lower():
+            elif '_uncert.' in self.__script.lower():
                 out_type = 'uncert'
+            elif '_corr.' in self.__script.lower():
+                out_type = 'corr'
             else:
-                raise NameError('Attempting to add correction "%s" but script name (%s) does not end in "_weight.cc", "_SF.cc" or "_uncert.cc" and so the type of correction cannot be determined.'%(self.name,self.__script))
+                raise NameError('Attempting to add correction "%s" but script name (%s) does not end in "_weight.<ext>", "_SF.<ext>" or "_uncert.<ext>" and so the type of correction cannot be determined.'%(self.name,self.__script))
 
         self.__type = out_type
 
@@ -1682,7 +1684,7 @@ class Correction(object):
 
         self.__call = out
 
-    def GetCall(self,inArgs = []):
+    def GetCall(self,inArgs = {}):
         '''Gets the call to the method to be evaluated per-event.
 
         @param inArgs (list, optional): Args to use for eval if #MakeCall() has not already been called. Defaults to [].
