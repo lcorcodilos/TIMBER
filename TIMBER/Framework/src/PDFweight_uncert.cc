@@ -49,7 +49,7 @@ PDFweight_uncert::PDFweight_uncert(int lhaID, bool ignoreEmptyBranch){
     std::vector<std::string> line_parts;
     int idx = 0;
     while (getline(lhaid_file, line)) {
-        line_parts = Pythonic::split(line,' ');
+        line_parts = Pythonic::Split(line,' ');
         if (lhaid == (int)std::stoi(line_parts[0])) {
             std::cout << "Found matching PDF set: " << line_parts[1] << " (" << lhaid << ")" << std::endl;
             if (Pythonic::InString("hessian",line_parts[1])) {

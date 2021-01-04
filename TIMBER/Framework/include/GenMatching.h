@@ -219,9 +219,9 @@ bool GenParticleTree::MatchParticleToString(Particle* particle, std::string stri
     if (Pythonic::InString(":",string)) {
         int startId = std::stoi( string.substr(0,string.find(':')) );
         int stopId  = std::stoi( string.substr(1,string.find(':')) );
-        pdgIds = Pythonic::range(startId, stopId);
+        pdgIds = Pythonic::Range(startId, stopId);
     } else if (Pythonic::InString(",",string)) {
-        auto splits = Pythonic::split(string,',');
+        auto splits = Pythonic::Split(string,',');
         for (size_t istr = 0; istr < splits.size(); istr++) {
             pdgIds.push_back( std::stoi(splits.at(istr)) );
         }
@@ -251,9 +251,9 @@ std::vector<Particle*> GenParticleTree::RunChain(Particle* node, std::vector<std
     } else if (parent->flag == false) {
         nodechain.push_back(&NoneParticle);
     } else if (MatchParticleToString(parent, chain.at(0))) {
-        Pythonic::extend(nodechain, RunChain(parent,chain_minus_first));
+        Pythonic::Extend(nodechain, RunChain(parent,chain_minus_first));
     } else if (parent->pdgId == node->pdgId) {
-        Pythonic::extend(nodechain, RunChain(parent, chain));
+        Pythonic::Extend(nodechain, RunChain(parent, chain));
     } else {
         nodechain.push_back(&NoneParticle);
     }
@@ -262,7 +262,7 @@ std::vector<Particle*> GenParticleTree::RunChain(Particle* node, std::vector<std
 }
 
 std::vector<std::vector<Particle*>> GenParticleTree::FindChain(std::string chainstring) {
-    std::vector<std::string> reveresed_chain = Pythonic::split(chainstring,'>');
+    std::vector<std::string> reveresed_chain = Pythonic::Split(chainstring,'>');
     std::reverse(reveresed_chain.begin(), reveresed_chain.end());
 
     std::vector<std::string> reveresed_chain_minus_first = {reveresed_chain.begin()+1,reveresed_chain.end()};

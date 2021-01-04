@@ -23,7 +23,7 @@ namespace Pythonic {
      * @return std::vector<IntType> Vector of range with provided step.
      */
     template <typename IntType>
-    std::vector<IntType> range(IntType start, IntType stop, IntType step) {
+    std::vector<IntType> Range(IntType start, IntType stop, IntType step) {
         if (step == IntType(0)) {
             throw std::invalid_argument("step for range must be non-zero");
         }
@@ -48,7 +48,7 @@ namespace Pythonic {
      * @return std::vector<IntType> Vector of range with step of 1.
      */
     template <typename IntType>
-    std::vector<IntType> range(IntType start, IntType stop) {
+    std::vector<IntType> Range(IntType start, IntType stop) {
         return range(start, stop, IntType(1));
     }
 
@@ -61,7 +61,7 @@ namespace Pythonic {
      * @return std::vector<IntType> Vector of range with step of 1 and start of 0.
      */
     template <typename IntType>
-    std::vector<IntType> range(IntType stop) {
+    std::vector<IntType> Range(IntType stop) {
         return range(IntType(0), stop, IntType(1));
     }
 
@@ -74,7 +74,7 @@ namespace Pythonic {
      * @param delim Char to split around.
      * @return std::vector<std::string> Vector of pieces split around delimiter.
      */
-    std::vector<std::string> split(const std::string& str, char delim = ' ') {
+    std::vector<std::string> Split(const std::string& str, char delim = ' ') {
         std::vector<std::string> out {};
         std::stringstream ss(str);
         std::string token;
@@ -128,7 +128,7 @@ namespace Pythonic {
      * @param extension 
      */
     template<typename T>
-    void extend(std::vector<T> base, std::vector<T> extension) {
+    void Extend(std::vector<T> base, std::vector<T> extension) {
         for (int i = 0; i < extension.size(); i++) {
             base.push_back(extension.at(i));
         }

@@ -71,7 +71,7 @@ JetSmearer::JetSmearer(std::string jetType,
     // NOTE: Not sure if this is still necessary but will try it
     std::vector<std::string> libraries = {"libCondFormatsJetMETObjects", "libPhysicsToolsNanoAODTools"};
     for (size_t ilib = 0; ilib < libraries.size(); ilib++) {
-       if (Pythonic::InList(libraries[ilib],Pythonic::split(gSystem->GetLibraries()))) {
+       if (Pythonic::InList(libraries[ilib],Pythonic::Split(gSystem->GetLibraries()))) {
             printf("Load Library '%s'", libraries[ilib].c_str());
             gSystem->Load(TString(libraries[ilib]));
        }
