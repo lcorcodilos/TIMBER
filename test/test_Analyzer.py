@@ -42,7 +42,7 @@ class TestAnalyzer():
     def test_Correction(self):
         c = Correction('testWeight','test/test_weight.cc')
         self.a.Define('Jet_pt0','Jet_pt[0]')
-        self.a.AddCorrection(c,['Jet_pt0'])
+        self.a.AddCorrection(c,{'pt':'Jet_pt0'})
         self.a.MakeWeightCols()
         htemplate = ROOT.TH1F('th1','',100,0,1000)
         hgroup = self.a.MakeTemplateHistos(htemplate,'Jet_pt0')
