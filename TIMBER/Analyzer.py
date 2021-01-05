@@ -1666,7 +1666,7 @@ class Correction(object):
         if len(args) > 0:
             line = line[:-2] + ');'
         else:
-            line = line + ');'
+            line = line[:-1] + ';'
 
         print ('Instantiating... '+line)
         ROOT.gInterpreter.Declare(line)
