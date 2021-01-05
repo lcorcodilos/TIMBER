@@ -187,6 +187,10 @@ class analyzer(object):
         '''@see Node#Snapshot'''
         self.ActiveNode.Snapshot(columns,outfilename,treename,lazy,openOption)
 
+    def Range(self,*argv):
+        '''@see Node#Range'''
+        return self.SetActiveNode(self.ActiveNode.Range(*argv))
+
     def SetActiveNode(self,node):
         '''Sets the active node.
 
@@ -1188,6 +1192,17 @@ class Node(object):
                 raise TypeError("Group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)                
 
         return node
+
+    def Range(self, *argv):
+        '''Calls the [RDataFrame Range method](https://root.cern/doc/master/classROOT_1_1RDF_1_1RInterface.html#a1b36b7868831de2375e061bb06cfc225).
+        Follows the same syntax (ie. Range(begin, end, stride) or Range(end)).
+
+        Returns:
+            Node: New node with specified range of entries selected.
+        '''
+        action_name = 'Range(%s)'%(', '.join([str(a) for a in argv]))
+        return Node(self.name+'_range', self.DataFrame.Range(*argv),
+                    action=action_name, nodetype='range', children=[], parent=self)
 
     # IMPORTANT: When writing a variable size array through Snapshot, it is required that the column indicating its size is also written out and it appears before the array in the columns list.
     # columns should be an empty string if you'd like to keep everything
