@@ -571,7 +571,7 @@ class analyzer(object):
         elif not isinstance(correction,Correction): raise TypeError('AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
 
         # Make the call
-        correction.MakeCall(evalArgs)
+        correction.MakeCall(evalArgs,node)
 
         # Add correction to track
         self.Corrections[correction.name] = correction
@@ -1519,8 +1519,8 @@ class Correction(object):
         # self.__funcNames = self.__funcInfo.keys()        
 
         if not isClone:
-            if self.__mainFunc not in self.__funcInfo.keys():
-                raise ValueError('Correction() instance provided with mainFunc argument does not exist in %s'%self.__script)
+            if not self.__mainFunc.endswith(mainFunc):
+                raise ValueError('Correction() instance provided with %s argument does not exist in %s (%s)'%(mainFunc,self.__script, self.__mainFunc))
             CompileCpp(self.__script,library=True)
 
         self.__instantiate(constructor)
@@ -1636,7 +1636,13 @@ class Correction(object):
                             # print methodname
                             funcs[methodname] = OrderedDict()
                             for arg in c.get_arguments():
-                                funcs[methodname][arg.spelling] = arg.type.spelling 
+                                arg_walk_kinds = [c.kind for c in arg.walk_preorder()]
+                                # Check for defualt arg
+                                if cindex.CursorKind.UNEXPOSED_EXPR in [a for a in arg_walk_kinds]:
+                                    default_val = ''.join([tok.spelling for tok in list(translation_unit.get_tokens(extent=list(arg.walk_preorder())[-1].extent))])
+                                    funcs[methodname][arg.spelling] = default_val
+                                else:
+                                    funcs[methodname][arg.spelling] = None
 
         # print funcs
         return funcs
@@ -1652,17 +1658,20 @@ class Correction(object):
 
         line = classname + ' ' + self.name+'('
         for a in args:
-            line += a+', '
+            if a[0].isalpha():
+                line += '"%s", '%(a)
+            else:
+                line += '%s, '%(a)
 
         if len(args) > 0:
             line = line[:-2] + ');'
         else:
-            line = line[:-1] + ';'
+            line = line + ');'
 
-        print ('Instantiating...'+line)
+        print ('Instantiating... '+line)
         ROOT.gInterpreter.Declare(line)
 
-    def MakeCall(self,inArgs = {}):
+    def MakeCall(self,inArgs = {},toCheck=None):
         '''Makes the call (stored in class instance) to the method with the branch/column names deduced or added from input.
 
         @param inArgs (dict, optional): Dict with keys as C++ method argument names and values as the actual argument to provide
@@ -1679,19 +1688,38 @@ class Correction(object):
         '''
         args_to_use = []
 
-        # Pretend to use argument names as arguments in call
+        if isinstance(toCheck, Node) or isinstance(toCheck, analyzer): cols_to_check = toCheck.DataFrame.GetColumnNames()
+        elif isinstance(toCheck, ROOT.RDataFrame): cols_to_check = toCheck.GetColumnNames()
+        elif isinstance(toCheck, list): cols_to_check = toCheck
+        elif toCheck == None: cols_to_check = LoadColumnNames()
+        else: raise TypeError('Input argument `toCheck` is not of type Node, RDataFrame, list, or None.')
+            
+        # Loop over function arguments
         for a in self.__funcInfo[self.__mainFunc].keys():
-            args_to_use.append(a)
-        # If no input, actually use them but cross check with existing columns
-        if len(inArgs.keys()) == 0:
-            print ('Determining all arguments for correction %s automatically'%self.name)
-            for a in args_to_use:
-                if a not in self.DataFrame.GetColumnNames():
-                    raise NameError('Not able to find arg %s written in %s in available columns'%(a,self.__script))
-        # If input args, swap out manually specified ones (rest come from auto detection of columns)
-        else:
-            for scriptArg in inArgs.keys():
-                args_to_use = [inArgs[scriptArg] if a == scriptArg else a for a in args_to_use]
+            default_value = self.__funcInfo[self.__mainFunc][a]
+            skip_existence_check = False
+            # if default argument exists
+            if default_value != None:  
+                # replace with new option
+                if a in inArgs.keys(): 
+                    arg_to_add = inArgs[a]
+                # use default value
+                else: 
+                    arg_to_add = default_value
+                    skip_existence_check = True
+            # if no default arg
+            else: 
+                # use input
+                if a in inArgs.keys():
+                    arg_to_add = inArgs[a]
+                # assume it's a column
+                else:
+                    arg_to_add = a
+
+            # quick check it exists
+            if not skip_existence_check and (arg_to_add not in cols_to_check):
+                raise NameError('Not able to find arg %s written in %s in available columns'%(arg_to_add,self.__script))
+            args_to_use.append(arg_to_add)
 
         # var_types = [self.__funcInfo[self.__mainFunc][a] for a in self.__funcInfo[self.__mainFunc].keys()]
         out = '%s('%(self.__objectName+'.'+self.__mainFunc.split('::')[-1])
@@ -1701,7 +1729,7 @@ class Correction(object):
 
         self.__call = out
 
-    def GetCall(self,inArgs = {}):
+    def GetCall(self,inArgs = {},toCheck = None):
         '''Gets the call to the method to be evaluated per-event.
 
         @param inArgs (list, optional): Args to use for eval if #MakeCall() has not already been called. Defaults to [].
@@ -1712,7 +1740,7 @@ class Correction(object):
             str: The string that calls the method to evaluate per-event. Pass to Analyzer.Define(), Analyzer.Cut(), etc.
         '''
         if self.__call == None:
-            self.MakeCall(self, inArgs)
+            self.MakeCall(inArgs,toCheck)
         return self.__call
 
     def GetMainFunc(self):
