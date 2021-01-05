@@ -23,9 +23,9 @@ def CutflowDict(node):
     filters = node.DataFrame.GetFilterNames()
     rdf_report = node.DataFrame.Report()
     cutflow = OrderedDict()
-    cutflow['Initial'] = node.DataFrame.Count()
+    cutflow['Initial'] = int(node.DataFrame.Count().GetValue())
     for i,filtername in enumerate(filters): 
-        cutflow[filtername] = rdf_report.At(filtername).GetPass()
+        cutflow[str(filtername)] = int(rdf_report.At(filtername).GetPass())
 
     return cutflow
 
@@ -47,7 +47,7 @@ def CutflowHist(name,node,efficiency=False):
 
     for i,filtername in enumerate(cutflow_dict.keys()): 
         h.GetXaxis().SetBinLabel(i+1,filtername)
-        cut = cutflow_dict[filtername].GetValue()
+        cut = cutflow_dict[filtername]
         if efficiency:
             h.SetBinContent(i+1,cut/cutflow_dict['Initial'])
         else:
@@ -69,7 +69,7 @@ def CutflowTxt(name,node,efficiency=False):
     cutflow_dict = CutflowDict(node)
     out = open(name,'w')
     for filtername in cutflow_dict.keys(): 
-        cut = cutflow_dict[filtername].GetValue()
+        cut = cutflow_dict[filtername]
         if efficiency:
             out.write('%s %s'%(filtername,cut/cutflow_dict['Initial']))
         else:

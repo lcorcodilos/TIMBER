@@ -5,8 +5,8 @@ class TestCommon():
     @classmethod
     def setup_class(cls):
         cls.a = analyzer('examples/GluGluToHToTauTau.root')
-        # cls.a.Cut('nJet','nJet>0')
-        # cls.a.Cut('test_cut','Jet_pt[0] > 50')
+        cls.a.Cut("test_cut1", "Jet_pt.size() > 0")
+        # cls.a.Cut('test_cut2','Jet_pt[0] > 50')
 
     def test_CutflowHist(self):
         CutflowHist('test_cutflow',self.a.GetActiveNode())
