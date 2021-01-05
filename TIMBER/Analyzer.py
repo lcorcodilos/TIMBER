@@ -1196,6 +1196,8 @@ class Node(object):
     def Range(self, *argv):
         '''Calls the [RDataFrame Range method](https://root.cern/doc/master/classROOT_1_1RDF_1_1RInterface.html#a1b36b7868831de2375e061bb06cfc225).
         Follows the same syntax (ie. Range(begin, end, stride) or Range(end)).
+        
+        WARNING: Will not work with ROOT.EnableImplicitMT(). Please comment this out before using Range().
 
         Returns:
             Node: New node with specified range of entries selected.
