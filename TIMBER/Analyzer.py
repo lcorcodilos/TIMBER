@@ -1678,8 +1678,11 @@ class Correction(object):
                 (branch/column names) for per-event evaluation. For any argument names where a key is not provided, will attempt
                 to find branch/column that already matches based on name.
                 Defaults to {} in which case ther will be automatic deduction from the argument names written in the C++ script.
+        @param toCheck (Node, ROOT.RDataFrame, list, optional): Object with column information to check argument names exist.
+                Defaults to None in which case a default NanoAODv6 list is loaded.
 
         Raises:
+            TypeError: If toCheck argument is not of accepted type.
             NameError: If argument written in C++ script cannot be found in available columns.
             ValueError: If provided number of arguments does not match the number in the method.
 
@@ -1735,6 +1738,8 @@ class Correction(object):
         @param inArgs (list, optional): Args to use for eval if #MakeCall() has not already been called. Defaults to [].
                 If #MakeCall() has not already been called and inArgs == [], then the arguments to the method will
                 be deduced from the C++ method definition argument names.
+        @param toCheck (Node, ROOT.RDataFrame, list, optional): Object with column information to check argument names exist.
+                Defaults to None in which case a default NanoAODv6 list is loaded.
 
         Returns:
             str: The string that calls the method to evaluate per-event. Pass to Analyzer.Define(), Analyzer.Cut(), etc.
