@@ -11,6 +11,24 @@ from collections import OrderedDict
 #-----------------#
 # TIMBER specific #
 #-----------------#
+def CutflowDict(node):
+    '''Turns the RDataFrame cutflow report into an OrderedDict.
+
+    @param node (Node): Input Node from which to get the cutflow.
+
+    Returns:
+        OrderedDict: Ordered cutflow dictionary with filter names as keys and number of 
+            events as values.
+    '''
+    filters = node.DataFrame.GetFilterNames()
+    rdf_report = node.DataFrame.Report()
+    cutflow = OrderedDict()
+    cutflow['Initial'] = node.DataFrame.Count()
+    for i,filtername in enumerate(filters): 
+        cutflow[filtername] = rdf_report.At(filtername).GetPass()
+
+    return cutflow
+
 def CutflowHist(name,node,efficiency=False):
     '''Draws a cutflow histogram using the report feature of RDF.
 
@@ -23,19 +41,17 @@ def CutflowHist(name,node,efficiency=False):
         TH1: Histogram with each bin showing yield (or efficiency) for
             progressive cuts.
     '''
-    filters = node.DataFrame.GetFilterNames()
-    rdf_report = node.DataFrame.Report()
-    ncuts = len(filters)
+    cutflow_dict = CutflowDict(node)
+    ncuts = len(cutflow_dict.keys())
     h = ROOT.TH1F(name,name,ncuts,0,ncuts)
-    for i,filtername in enumerate(filters): 
-        cut = rdf_report.At(filtername)
+
+    for i,filtername in enumerate(cutflow_dict.keys()): 
         h.GetXaxis().SetBinLabel(i+1,filtername)
+        cut = cutflow_dict[filtername].GetValue()
         if efficiency:
-            if i == 0:
-                base = float(cut.GetPass())
-            h.SetBinContent(i+1,cut.GetPass()/base)
+            h.SetBinContent(i+1,cut/cutflow_dict['Initial'])
         else:
-            h.SetBinContent(i+1,cut.GetPass())
+            h.SetBinContent(i+1,cut)
 
     return h
 
@@ -50,18 +66,14 @@ def CutflowTxt(name,node,efficiency=False):
     Returns:
         None
     '''
-    filters = node.DataFrame.GetFilterNames()
-    rdf_report = node.DataFrame.Report()
-    ncuts = len(filters)
+    cutflow_dict = CutflowDict(node)
     out = open(name,'w')
-    for i,filtername in enumerate(filters): 
-        cut = rdf_report.At(filtername)
+    for filtername in cutflow_dict.keys(): 
+        cut = cutflow_dict[filtername].GetValue()
         if efficiency:
-            if i == 0:
-                base = float(cut.GetPass())
-            out.write('%s %s'%(filtername,cut.GetPass()/base))
+            out.write('%s %s'%(filtername,cut/cutflow_dict['Initial']))
         else:
-            out.write('%s %s'%(filtername,cut.GetPass()))
+            out.write('%s %s'%(filtername,cut))
     out.close()
 
 def StitchQCD(QCDdict,normDict=None):
