@@ -49,7 +49,7 @@ namespace Pythonic {
      */
     template <typename IntType>
     std::vector<IntType> Range(IntType start, IntType stop) {
-        return range(start, stop, IntType(1));
+        return Range(start, stop, IntType(1));
     }
 
     /**
@@ -62,7 +62,7 @@ namespace Pythonic {
      */
     template <typename IntType>
     std::vector<IntType> Range(IntType stop) {
-        return range(IntType(0), stop, IntType(1));
+        return Range(IntType(0), stop, IntType(1));
     }
 
     /**
