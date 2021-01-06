@@ -199,7 +199,6 @@ def MakeSoverB(stack_of_bkgs,signal):
     to the left of the peak and forwards to the right of the peak.
 
     Args:
-        pad (TPad): TPad that's already built
         stack_of_bkgs (THStack): Stack of backgrounds, already normalized
             together, and as a sum normalized to 1.
         signal (TH1): One histogram for signal. Can only calculate

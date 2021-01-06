@@ -400,6 +400,17 @@ def FindCommonString(string_list):
     return to_match[:-2]
 
 def GetStandardFlags():
+    '''List of the following recommended flags as of Jan. 6th, 2021.
+
+    Returns:
+        ["Flag_goodVertices",
+         "Flag_globalTightHalo2016Filter", 
+         "Flag_eeBadScFilter", 
+         "Flag_HBHENoiseFilter", 
+         "Flag_HBHENoiseIsoFilter", 
+         "Flag_ecalBadCalibFilter", 
+         "Flag_EcalDeadCellTriggerPrimitiveFilter"]
+    '''
     flags = ["Flag_goodVertices",
                "Flag_globalTightHalo2016Filter", 
                "Flag_eeBadScFilter", 

@@ -29,7 +29,13 @@ namespace hardware {
         while (result <= -TMath::Pi()) result += 2*TMath::Pi();
         return result;
     }
-
+    /**
+     * @brief Calculate \f$\Delta R\f$ between two vectors.
+     * 
+     * @param v1 
+     * @param v2 
+     * @return float 
+     */
     float DeltaR(ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2) {
         float deta = v1.Eta()-v2.Eta();
         float dphi = DeltaPhi(v1.Phi(),v2.Phi());

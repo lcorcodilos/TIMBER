@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['sjbtag_5fsf',['SJBtag_SF',['../class_s_j_btag___s_f.html',1,'']]]
+  ['lumifilter',['LumiFilter',['../class_lumi_filter.html',1,'']]]
 ];
