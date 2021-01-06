@@ -1485,7 +1485,7 @@ class Correction(object):
     <up, down> for "uncert" type.    
 
     '''
-    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype='',columnList=None,isClone=False):
+    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False):
         '''Constructor
 
         @param name (str): Correction name.
@@ -1682,7 +1682,6 @@ class Correction(object):
                 Defaults to None in which case a default NanoAODv6 list is loaded.
 
         Raises:
-            TypeError: If toCheck argument is not of accepted type.
             NameError: If argument written in C++ script cannot be found in available columns.
             ValueError: If provided number of arguments does not match the number in the method.
 
@@ -1721,7 +1720,8 @@ class Correction(object):
 
             # quick check it exists
             if not skip_existence_check and (arg_to_add not in cols_to_check):
-                raise NameError('Not able to find arg %s written in %s in available columns'%(arg_to_add,self.__script))
+                print ('WARNING: Not able to find arg %s written in %s in available columns. '%(arg_to_add,self.__script))
+                print ('         If `%s` is a value and not a column name, this warning can be ignored.'%(arg_to_add))
             args_to_use.append(arg_to_add)
 
         # var_types = [self.__funcInfo[self.__mainFunc][a] for a in self.__funcInfo[self.__mainFunc].keys()]
