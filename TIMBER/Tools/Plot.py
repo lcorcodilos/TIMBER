@@ -35,7 +35,7 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
 
     # Initialize
     c = ROOT.TCanvas('c','c',800,700)
-    legend = ROOT.TLegend(0.6,0.72,0.87,0.88)
+    legend = ROOT.TLegend(0.6,max(0.72,0.8-0.05*(1-len(bkgs.keys()))),0.87,0.88)
     legend.SetBorderSize(0)
     ROOT.gStyle.SetTextFont(42)
     ROOT.gStyle.SetOptStat(0)
@@ -50,9 +50,6 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
         for bkey in bkgs.keys():
             bkgs[bkey].SetTitle(';%s;%s'%(prettyvarname,'A.U.'))
 
-    if colors == None:
-        colors = {'signal':ROOT.kBlue,'qcd':ROOT.kYellow,'ttbar':ROOT.kRed,'multijet':ROOT.kYellow}
-        
     if scale:
         # Scale bkgs to total integral
         for bkey in bkgs.keys():
@@ -67,8 +64,13 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     procs = OrderedDict() 
     procs.update(bkgs)
     procs.update(signals)
+    icolor = 2
     for pname in procs.keys():
         h = procs[pname]
+        # Colors
+        if pname not in colors.keys():
+            colors[pname] = icolor
+            icolor+=1
         # Legend names
         if pname in names.keys(): leg_name = names[pname]
         else: leg_name = pname
@@ -93,7 +95,12 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
         maximum =  max(bkgStack.GetMaximum(),signals.values()[0].GetMaximum())*1.4
         bkgStack.SetMaximum(maximum)
     else:
-        maximum = max(bkgs.values()[0].GetMaximum(),signals.values()[0].GetMaximum())*1.4
+        if len(bkgs.values()) > 0:    bkgmax = bkgs.values()[0].GetMaximum()
+        else:                         bkgmax = 0
+        if len(signals.values()) > 0: sigmax = signals.values()[0].GetMaximum()
+        else:                         sigmax = 0
+        
+        maximum = max(bkgmax,sigmax)*1.4
         for p in procs.values():
             p.SetMaximum(maximum)
     

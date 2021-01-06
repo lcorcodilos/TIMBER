@@ -4,7 +4,7 @@ Home of main classes for TIMBER.
 
 """
 
-from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols
+from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags
 from clang import cindex
 from collections import OrderedDict
 
@@ -187,6 +187,10 @@ class analyzer(object):
         '''@see Node#Snapshot'''
         self.ActiveNode.Snapshot(columns,outfilename,treename,lazy,openOption)
 
+    def Range(self,*argv):
+        '''@see Node#Range'''
+        return self.SetActiveNode(self.ActiveNode.Range(*argv))
+
     def SetActiveNode(self,node):
         '''Sets the active node.
 
@@ -234,7 +238,7 @@ class analyzer(object):
         '''        
         if isinstance(node,Node):
             if node.name in self.GetTrackedNodeNames():
-                raise NameError('Attempting to track a node with the same name as one that is already being tracked (%s). Please provide a unique node.'%(node.name))
+                print ('WARNING: Attempting to track a node with the same name as one that is already being tracked (%s).'%(node.name))
             self.AllNodes.append(node)
         else:
             raise TypeError('TrackNode() does not support arguments of type %s. Please provide a Node.'%(type(node)))
@@ -288,7 +292,7 @@ class analyzer(object):
         trig_string = ConcatCols(available_trigs,'1','||')
         return trig_string
 
-    def GetFlagString(self,flagList):
+    def GetFlagString(self,flagList=GetStandardFlags()):
         '''Checks input list for missing flags and drops those missing (#FilterColumnNames)
         and then concatenates those remaining into an AND string.
 
@@ -446,11 +450,11 @@ class analyzer(object):
 
         @param name (str): Name of new collection.
         @param basecoll (str): Name of derivative collection.
-        @param condition (str): C++ condition that determines which items
+        @param condition (str): C++ condition that determines which items to keep.
         @param skip ([str]): List of variable names in the collection to skip.
 
         Returns:
-            None. New nodes created with the sub collection.
+            Node: New #ActiveNode.
 
         Example:
             SubCollection('TopJets','FatJet','FatJet_msoftdrop > 105 && FatJet_msoftdrop < 220')
@@ -466,6 +470,36 @@ class analyzer(object):
                 self.Define(replacementName,b,nodetype='SubCollDefine')
             else:
                 self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
+            
+        return self.ActiveNode
+
+    def ObjectFromCollection(self,name,basecoll,index,skip=[]):
+        '''Similar to creating a SubCollection except the newly defined columns
+        are single values (not vectors/arrays) for the object at the provided index.
+        
+        @param name (str): Name of new collection.
+        @param basecoll (str): Name of derivative collection.
+        @param index (str): Index of the collection item to extract.
+        @param skip ([str]): List of variable names in the collection to skip.
+
+        Returns:
+            None. New nodes created with the sub collection.
+
+        Example:
+            ObjectFromCollection('LeadJet','FatJet','0')
+        '''
+        collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if basecoll in str(cname) and str(cname) not in skip]
+        for b in collBranches:
+            replacementName = b.replace(basecoll,name)
+            if b == 'n'+basecoll:
+                continue
+            elif 'RVec' not in self.DataFrame.GetColumnType(b):
+                print ('Found type %s during SubCollection'%self.DataFrame.GetColumnType(b))
+                self.Define(replacementName,b,nodetype='SubCollDefine')
+            else:
+                self.Define(replacementName,'%s[%s]'%(b,index),nodetype='SubCollDefine')
+            
+        return self.ActiveNode()
 
     def MergeCollections(self,name,collectionNames):
         '''Merge collections (provided by list of names in `collectionNames`) into
@@ -514,7 +548,7 @@ class analyzer(object):
     # Corrections/Weights #
     #---------------------#
     # Want to correct with analyzer class so we can track what corrections have been made for final weights and if we want to save them out in a group when snapshotting
-    def AddCorrection(self,correction,evalArgs=[],node=None):
+    def AddCorrection(self,correction,evalArgs={},node=None):
         '''Add a Correction to track. Sets new active node with all correction
         variations calculated as new columns.
 
@@ -537,7 +571,7 @@ class analyzer(object):
         elif not isinstance(correction,Correction): raise TypeError('AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
 
         # Make the call
-        correction.MakeCall(evalArgs)
+        correction.MakeCall(evalArgs,node)
 
         # Add correction to track
         self.Corrections[correction.name] = correction
@@ -577,9 +611,14 @@ class analyzer(object):
 
         return self.SetActiveNode(newNode)
 
-    def __checkCorrections(self,correctionNames,dropList):
-        '''Does type checking and drops specified corrections by name.
+    def __checkCorrections(self,node,correctionNames,dropList):
+        '''Starting at the provided node, will scale up the tree,
+        grabbing all corrections added along the way. This ensures
+        corrections from other forks of the analyzer tree are not
+        added to the list of considered corrections. Alos, does type
+        checking and drops specified corrections by name.
 
+        @param node (Node): Node to start when reconstructing processing path upwards.
         @param correctionNames ([str]): List of correction names to include.
         @param dropList ([type]): List of correction names to drop.
 
@@ -590,10 +629,22 @@ class analyzer(object):
             [str]: List of remaining correction names.
         '''
         # Quick type checking
-        if correctionNames == None: correctionsToApply = self.Corrections.keys()
+        if correctionNames == None: correctionsToCheck = self.Corrections.keys()
         elif not isinstance(correctionNames,list):
             raise ValueError('MakeWeightCols() does not support correctionNames argument of type %s. Please provide a list.'%(type(correctionNames)))
-        else: correctionsToApply = correctionNames
+        else: correctionsToCheck = correctionNames
+
+        # Go up the tree from the current node, only grabbing 
+        # those corrections along the path (ie. don't care about
+        # corrections on other forks)
+        correctionsToApply = []
+        nextNode = node.parent
+        while nextNode:
+            if nextNode.name.endswith('__vec'):
+                corrname = nextNode.name.replace('__vec','')
+                if corrname in correctionsToCheck:
+                    correctionsToApply.append(corrname)
+            nextNode = nextNode.parent
 
         # Drop specified weights from consideration
         if not isinstance(dropList,list):
@@ -606,7 +657,7 @@ class analyzer(object):
 
         return correctionsToApply
 
-    def MakeWeightCols(self,node=None,correctionNames=None,dropList=[]):
+    def MakeWeightCols(self,name='',node=None,correctionNames=None,dropList=[]):
         '''Makes columns/variables to store total weights based on the Corrections that have been added.
 
         This function automates the calculation of the columns that store the nominal weight and the 
@@ -620,6 +671,8 @@ class analyzer(object):
         A list of correction names can be provided if only a subset of the corrections being tracked are 
         desired. A drop list can also be supplied to remove a subset of corrections.
 
+        @param name (str): Name for group of weights so as not to duplicate weight columns if running method
+                multiple times. Output columns will have suffix `weight_<name>__`. Defaults to '' with suffix `weight__`.
         @param node (Node): Node to calculate weights on top of. Must be of type Node (not RDataFrame). Defaults to #ActiveNode.
         @param correctionNames list(str): List of correction names (strings) to consider. Default is None in which case all corrections
                 being tracked are considered.
@@ -631,7 +684,10 @@ class analyzer(object):
         '''
         if node == None: node = self.ActiveNode
 
-        correctionsToApply = self.__checkCorrections(correctionNames,dropList)
+        if name != '': namemod = '_'+name
+        else: namemod = ''
+
+        correctionsToApply = self.__checkCorrections(node,correctionNames,dropList)
         
         # Build nominal weight first (only "weight", no "uncert")
         weights = {'nominal':''}
@@ -660,7 +716,7 @@ class analyzer(object):
         # Make a node with all weights calculated
         returnNode = node
         for weight in weights.keys():
-            returnNode = self.Define('weight__'+weight,weights[weight],returnNode)
+            returnNode = self.Define('weight%s__'%(namemod)+weight,weights[weight],returnNode,nodetype='Weight')
         
         # self.TrackNode(returnNode)
         return self.SetActiveNode(returnNode)
@@ -929,7 +985,7 @@ class Node(object):
     '''Class to represent nodes in the DataFrame processing graph. 
     Can make new nodes via Define, Cut, and Discriminate and setup
     relations between nodes (done automatically via Define, Cut, Discriminate)'''
-    def __init__(self, name, DataFrame, action='', nodetype='', children=[]):
+    def __init__(self, name, DataFrame, action='', nodetype='', children=[], parent=None):
         '''Constructor. Holds the RDataFrame and other associated information
         for tracking in the {@link analyzer}.
 
@@ -939,6 +995,7 @@ class Node(object):
         @param name (str): Name for the node. Duplicate named nodes cannot be tracked simultaneously in the analyzer.
         @param DataFrame (RDataFrame): Dataframe to track.
         @param children ([Node], optional): Child nodes if they exist. Defaults to [].
+        @param parent (Node, optional): Parent node if it exists. Defaults to None.
         @param nodetype (str, optional): The type of the Node. Useful for organizing and grouping Nodes. Defaults to ''.
         @param action (str, optional): Action performed (the C++ line). Default is '' but should only be used for a base RDataFrame.
         '''
@@ -957,6 +1014,9 @@ class Node(object):
         ## @var children
         #
         # List of child nodes.
+        ## @var parent
+        #
+        # Parent node.
         ## @var type
         #
         # The "type" of Node. Can be modified but by default will be either
@@ -967,6 +1027,7 @@ class Node(object):
         self.name = name
         self.action = action
         self.children = children
+        self.parent = parent
         self.type = nodetype
         
     def Close(self):
@@ -1041,10 +1102,10 @@ class Node(object):
         
         if isinstance(children,dict):
             for c in children.keys():
-                if isinstance(c,Node):
+                if isinstance(children[c],Node):
                     self.SetChild(children[c])
                 else:
-                    raise TypeError('Child is not an instance of Node class for node %s' %self.name)
+                    raise TypeError('Child is not an instance of Node class for node %s' %(self.name))
 
         elif isinstance(children,list):
             for c in children:
@@ -1068,7 +1129,7 @@ class Node(object):
         '''
         print('Defining %s: %s' %(name,var))
         newNodeType = 'Define' if nodetype == None else nodetype
-        newNode = Node(name,self.DataFrame.Define(name,var),children=[],action=var,nodetype=newNodeType)
+        newNode = Node(name,self.DataFrame.Define(name,var),children=[],parent=self,action=var,nodetype=newNodeType)
         self.SetChild(newNode)
         return newNode
 
@@ -1085,7 +1146,7 @@ class Node(object):
         '''
         print('Filtering %s: %s' %(name,cut))
         newNodeType = 'Define' if nodetype == None else nodetype
-        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],action=cut,nodetype=newNodeType)
+        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],parent=self,action=cut,nodetype=newNodeType)
         self.SetChild(newNode)
         return newNode
 
@@ -1099,8 +1160,8 @@ class Node(object):
             dict: Dictionary with keys "pass" and "fail" corresponding to the passing and failing Nodes stored as values.
         '''
         passfail = {
-            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),children=[],action=discriminator,nodetype='Cut'),
-            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),children=[],action="!("+discriminator+")",nodetype='Cut')
+            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),children=[],parent=self,action=discriminator,nodetype='Cut'),
+            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),children=[],parent=self,action="!("+discriminator+")",nodetype='Cut')
         }
         self.SetChildren(passfail)
         return passfail
@@ -1131,6 +1192,19 @@ class Node(object):
                 raise TypeError("Group %s does not have a defined type. Please initialize with either CutGroup or VarGroup." %ag.name)                
 
         return node
+
+    def Range(self, *argv):
+        '''Calls the [RDataFrame Range method](https://root.cern/doc/master/classROOT_1_1RDF_1_1RInterface.html#a1b36b7868831de2375e061bb06cfc225).
+        Follows the same syntax (ie. Range(begin, end, stride) or Range(end)).
+        
+        WARNING: Will not work with ROOT.EnableImplicitMT(). Please comment this out before using Range().
+
+        Returns:
+            Node: New node with specified range of entries selected.
+        '''
+        action_name = 'Range(%s)'%(', '.join([str(a) for a in argv]))
+        return Node(self.name+'_range', self.DataFrame.Range(*argv),
+                    action=action_name, nodetype='range', children=[], parent=self)
 
     # IMPORTANT: When writing a variable size array through Snapshot, it is required that the column indicating its size is also written out and it appears before the array in the columns list.
     # columns should be an empty string if you'd like to keep everything
@@ -1411,7 +1485,7 @@ class Correction(object):
     <up, down> for "uncert" type.    
 
     '''
-    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype='',columnList=None,isClone=False):
+    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False):
         '''Constructor
 
         @param name (str): Correction name.
@@ -1420,7 +1494,7 @@ class Correction(object):
         @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
                 and the class will try to deduce it.
         @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty), "corr"
-                (only a correction) or 
+                (only a correction), or 
                 "uncert" (only an uncertainty). Defaults to '' and the class will try to
                 deduce it.
         @param columnList ([str], optional): List of column names to search mainFunc arguments against.
@@ -1445,8 +1519,8 @@ class Correction(object):
         # self.__funcNames = self.__funcInfo.keys()        
 
         if not isClone:
-            if self.__mainFunc not in self.__funcInfo.keys():
-                raise ValueError('Correction() instance provided with mainFunc argument does not exist in %s'%self.__script)
+            if not self.__mainFunc.endswith(mainFunc):
+                raise ValueError('Correction() instance provided with %s argument does not exist in %s (%s)'%(mainFunc,self.__script, self.__mainFunc))
             CompileCpp(self.__script,library=True)
 
         self.__instantiate(constructor)
@@ -1510,12 +1584,14 @@ class Correction(object):
             print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...'%inType)
 
         if out_type == None:
-            if '_weight.cc' in self.__script.lower() or '_sf.cc' in self.__script.lower():
+            if '_weight.' in self.__script.lower() or '_sf.' in self.__script.lower():
                 out_type = 'weight'
-            elif '_uncert.cc' in self.__script.lower():
+            elif '_uncert.' in self.__script.lower():
                 out_type = 'uncert'
+            elif '_corr.' in self.__script.lower():
+                out_type = 'corr'
             else:
-                raise NameError('Attempting to add correction "%s" but script name (%s) does not end in "_weight.cc", "_SF.cc" or "_uncert.cc" and so the type of correction cannot be determined.'%(self.name,self.__script))
+                raise NameError('Attempting to add correction "%s" but script name (%s) does not end in "_weight.<ext>", "_SF.<ext>" or "_uncert.<ext>" and so the type of correction cannot be determined.'%(self.name,self.__script))
 
         self.__type = out_type
 
@@ -1560,7 +1636,13 @@ class Correction(object):
                             # print methodname
                             funcs[methodname] = OrderedDict()
                             for arg in c.get_arguments():
-                                funcs[methodname][arg.spelling] = arg.type.spelling 
+                                arg_walk_kinds = [c.kind for c in arg.walk_preorder()]
+                                # Check for defualt arg
+                                if cindex.CursorKind.UNEXPOSED_EXPR in [a for a in arg_walk_kinds]:
+                                    default_val = ''.join([tok.spelling for tok in list(translation_unit.get_tokens(extent=list(arg.walk_preorder())[-1].extent))])
+                                    funcs[methodname][arg.spelling] = default_val
+                                else:
+                                    funcs[methodname][arg.spelling] = None
 
         # print funcs
         return funcs
@@ -1576,21 +1658,28 @@ class Correction(object):
 
         line = classname + ' ' + self.name+'('
         for a in args:
-            line += a+', '
+            if a[0].isalpha():
+                line += '"%s", '%(a)
+            else:
+                line += '%s, '%(a)
 
         if len(args) > 0:
             line = line[:-2] + ');'
         else:
             line = line[:-1] + ';'
 
-        print ('Instantiating...'+line)
+        print ('Instantiating... '+line)
         ROOT.gInterpreter.Declare(line)
 
-    def MakeCall(self,inArgs = []):
+    def MakeCall(self,inArgs = {},toCheck=None):
         '''Makes the call (stored in class instance) to the method with the branch/column names deduced or added from input.
 
-        @param inArgs (list, optional): List of arguments (branch/column names) to provide to per-event evaluation method.
-                Defaults to [] in which case the arguments are deduced from what is written in the C++ script.
+        @param inArgs (dict, optional): Dict with keys as C++ method argument names and values as the actual argument to provide
+                (branch/column names) for per-event evaluation. For any argument names where a key is not provided, will attempt
+                to find branch/column that already matches based on name.
+                Defaults to {} in which case ther will be automatic deduction from the argument names written in the C++ script.
+        @param toCheck (Node, ROOT.RDataFrame, list, optional): Object with column information to check argument names exist.
+                Defaults to None in which case a default NanoAODv6 list is loaded.
 
         Raises:
             NameError: If argument written in C++ script cannot be found in available columns.
@@ -1601,20 +1690,39 @@ class Correction(object):
         '''
         args_to_use = []
 
-        if len(inArgs) == 0:
-            print ('Determining arguments for correction %s automatically'%self.name)
-            for a in self.__funcInfo[self.__mainFunc].keys():
-                if a not in self.__columnNames:
-                    raise NameError('Not able to find arg %s written in %s in available columns'%(a,self.__script))
+        if isinstance(toCheck, Node) or isinstance(toCheck, analyzer): cols_to_check = toCheck.DataFrame.GetColumnNames()
+        elif isinstance(toCheck, ROOT.RDataFrame): cols_to_check = toCheck.GetColumnNames()
+        elif isinstance(toCheck, list): cols_to_check = toCheck
+        elif toCheck == None: cols_to_check = LoadColumnNames()
+        else: raise TypeError('Input argument `toCheck` is not of type Node, RDataFrame, list, or None.')
+            
+        # Loop over function arguments
+        for a in self.__funcInfo[self.__mainFunc].keys():
+            default_value = self.__funcInfo[self.__mainFunc][a]
+            skip_existence_check = False
+            # if default argument exists
+            if default_value != None:  
+                # replace with new option
+                if a in inArgs.keys(): 
+                    arg_to_add = inArgs[a]
+                # use default value
+                else: 
+                    arg_to_add = default_value
+                    skip_existence_check = True
+            # if no default arg
+            else: 
+                # use input
+                if a in inArgs.keys():
+                    arg_to_add = inArgs[a]
+                # assume it's a column
                 else:
-                    args_to_use.append(a)
+                    arg_to_add = a
 
-        else:
-            if len(inArgs) < len(self.__funcInfo[self.__mainFunc].keys()):
-                print ('Provided number of arguments (%s) does not match required (%s). Asssuming there are default arguments not specified...'%(len(inArgs),len(self.__funcInfo[self.__mainFunc].keys())))
-            elif len(inArgs) > len(self.__funcInfo[self.__mainFunc].keys()):
-                raise ValueError('Provided number of arguments (%s) does not match required (%s).'%(len(inArgs),len(self.__funcInfo[self.__mainFunc].keys())))
-            args_to_use = inArgs
+            # quick check it exists
+            if not skip_existence_check and (arg_to_add not in cols_to_check):
+                print ('WARNING: Not able to find arg %s written in %s in available columns. '%(arg_to_add,self.__script))
+                print ('         If `%s` is a value and not a column name, this warning can be ignored.'%(arg_to_add))
+            args_to_use.append(arg_to_add)
 
         # var_types = [self.__funcInfo[self.__mainFunc][a] for a in self.__funcInfo[self.__mainFunc].keys()]
         out = '%s('%(self.__objectName+'.'+self.__mainFunc.split('::')[-1])
@@ -1624,18 +1732,20 @@ class Correction(object):
 
         self.__call = out
 
-    def GetCall(self,inArgs = []):
+    def GetCall(self,inArgs = {},toCheck = None):
         '''Gets the call to the method to be evaluated per-event.
 
         @param inArgs (list, optional): Args to use for eval if #MakeCall() has not already been called. Defaults to [].
                 If #MakeCall() has not already been called and inArgs == [], then the arguments to the method will
                 be deduced from the C++ method definition argument names.
+        @param toCheck (Node, ROOT.RDataFrame, list, optional): Object with column information to check argument names exist.
+                Defaults to None in which case a default NanoAODv6 list is loaded.
 
         Returns:
             str: The string that calls the method to evaluate per-event. Pass to Analyzer.Define(), Analyzer.Cut(), etc.
         '''
         if self.__call == None:
-            self.MakeCall(self, inArgs)
+            self.MakeCall(inArgs,toCheck)
         return self.__call
 
     def GetMainFunc(self):

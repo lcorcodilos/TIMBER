@@ -33,6 +33,15 @@ class TestAnalyzer():
         h.Draw("lego")
         assert True
 
+    def test_range(self):
+        '''Tests Range functionality'''
+        bookmark = self.a.GetActiveNode()
+        self.a.SetActiveNode(self.a.BaseNode)
+        self.a.Range(0,1000,2)
+        nevents = self.a.DataFrame.Count()
+        self.a.SetActiveNode(bookmark)
+        assert nevents.GetValue() == 500
+
     def test_snapshot(self,tmp_path):
         '''Makes a simple snapshot'''
         out_vars = ['nJet','test_define']
@@ -42,7 +51,7 @@ class TestAnalyzer():
     def test_Correction(self):
         c = Correction('testWeight','test/test_weight.cc')
         self.a.Define('Jet_pt0','Jet_pt[0]')
-        self.a.AddCorrection(c,['Jet_pt0'])
+        self.a.AddCorrection(c,{'pt':'Jet_pt0'})
         self.a.MakeWeightCols()
         htemplate = ROOT.TH1F('th1','',100,0,1000)
         hgroup = self.a.MakeTemplateHistos(htemplate,'Jet_pt0')
