@@ -4,7 +4,7 @@ var searchData=
   ['activenode',['ActiveNode',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a517b5caa6818e1f61b5b742625e575f4',1,'TIMBER::Analyzer::analyzer']]],
   ['add',['Add',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#a9235e4c62b098752a093fbe467921235',1,'TIMBER::Analyzer::Group']]],
   ['addchild',['AddChild',['../class_particle.html#acb900ac432e4c38ad6765c4d6b5a6321',1,'Particle']]],
-  ['addcorrection',['AddCorrection',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a32bfe7e08329c1207530da3ed0b38ac5',1,'TIMBER::Analyzer::analyzer']]],
+  ['addcorrection',['AddCorrection',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#afe470917a833262458cb26da33e124ec',1,'TIMBER::Analyzer::analyzer']]],
   ['addcorrections',['AddCorrections',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ad89f013ac60b6e44f4d0566fafbd8219',1,'TIMBER::Analyzer::analyzer']]],
   ['addparent',['AddParent',['../class_particle.html#a089d18b57a5fc65fa72df180c1d01cad',1,'Particle']]],
   ['addparticle',['AddParticle',['../class_gen_particle_tree.html#abb1f8139f3e928faf36ad322697fd5af',1,'GenParticleTree']]],

@@ -80,6 +80,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:gae6b78b44267b07448079c63bfe9a8413"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gae6b78b44267b07448079c63bfe9a8413">CutflowDict</a> (node)</td></tr>
+<tr class="memdesc:gae6b78b44267b07448079c63bfe9a8413"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turns the RDataFrame cutflow report into an OrderedDict.  <a href="group___common.html#gae6b78b44267b07448079c63bfe9a8413">More...</a><br /></td></tr>
+<tr class="separator:gae6b78b44267b07448079c63bfe9a8413"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9d19a9ceee7d4de34321b40563c1070a"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga9d19a9ceee7d4de34321b40563c1070a">CutflowHist</a> (name, node, efficiency=False)</td></tr>
 <tr class="memdesc:ga9d19a9ceee7d4de34321b40563c1070a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws a cutflow histogram using the report feature of RDF.  <a href="group___common.html#ga9d19a9ceee7d4de34321b40563c1070a">More...</a><br /></td></tr>
 <tr class="separator:ga9d19a9ceee7d4de34321b40563c1070a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -122,6 +125,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gaa4e8229330d67d54397e18048078ddd2"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaa4e8229330d67d54397e18048078ddd2">FindCommonString</a> (string_list)</td></tr>
 <tr class="memdesc:gaa4e8229330d67d54397e18048078ddd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a common string between a list of strings.  <a href="group___common.html#gaa4e8229330d67d54397e18048078ddd2">More...</a><br /></td></tr>
 <tr class="separator:gaa4e8229330d67d54397e18048078ddd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga362ce18096811fbbc2dba955e605ffa0"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga362ce18096811fbbc2dba955e605ffa0">GetStandardFlags</a> ()</td></tr>
+<tr class="memdesc:ga362ce18096811fbbc2dba955e605ffa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of the following recommended flags as of Jan.  <a href="group___common.html#ga362ce18096811fbbc2dba955e605ffa0">More...</a><br /></td></tr>
+<tr class="separator:ga362ce18096811fbbc2dba955e605ffa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6e0f471be6c0aab5d2c8390cd3337aa2"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga6e0f471be6c0aab5d2c8390cd3337aa2">cd</a> (newdir)</td></tr>
 <tr class="memdesc:ga6e0f471be6c0aab5d2c8390cd3337aa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Context manager to cd to another folder in the middle of a python script.  <a href="group___common.html#ga6e0f471be6c0aab5d2c8390cd3337aa2">More...</a><br /></td></tr>
 <tr class="separator:ga6e0f471be6c0aab5d2c8390cd3337aa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -310,6 +316,35 @@ str String with new spacing between words. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd></dd>
 <dd>
 str Concatenated string of the entire evaluation that in C++ will return a bool. </dd></dl>
+
+</div>
+</div>
+<a id="gae6b78b44267b07448079c63bfe9a8413"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae6b78b44267b07448079c63bfe9a8413">&#9670;&nbsp;</a></span>CutflowDict()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def TIMBER.Tools.Common.CutflowDict </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>node</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Turns the RDataFrame cutflow report into an OrderedDict. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">node</td><td>(Node): Input Node from which to get the cutflow.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd>
+<dd>
+OrderedDict Ordered cutflow dictionary with filter names as keys and number of events as values. </dd></dl>
 
 </div>
 </div>
@@ -614,6 +649,27 @@ str Matched sub-string. </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>tuple(tuple, int): First element of return is the binning and the second element is the dimension. </dd></dl>
+
+</div>
+</div>
+<a id="ga362ce18096811fbbc2dba955e605ffa0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga362ce18096811fbbc2dba955e605ffa0">&#9670;&nbsp;</a></span>GetStandardFlags()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def TIMBER.Tools.Common.GetStandardFlags </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>List of the following recommended flags as of Jan. </p>
+<p>6th, 2021.</p>
+<dl class="section return"><dt>Returns</dt><dd><div class="fragment"><div class="line">[<span class="stringliteral">&quot;Flag_goodVertices&quot;</span>,</div><div class="line"> <span class="stringliteral">&quot;Flag_globalTightHalo2016Filter&quot;</span>,</div><div class="line"> <span class="stringliteral">&quot;Flag_eeBadScFilter&quot;</span>,</div><div class="line"> <span class="stringliteral">&quot;Flag_HBHENoiseFilter&quot;</span>,</div><div class="line"> <span class="stringliteral">&quot;Flag_HBHENoiseIsoFilter&quot;</span>,</div><div class="line"> <span class="stringliteral">&quot;Flag_ecalBadCalibFilter&quot;</span>,</div><div class="line"> <span class="stringliteral">&quot;Flag_EcalDeadCellTriggerPrimitiveFilter&quot;</span>]</div></div><!-- fragment --></dd></dl>
 
 </div>
 </div>

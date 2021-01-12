@@ -4,7 +4,6 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
-#include "TIMBER/Framework/include/Pythonic.h"
 
 /** @class LumiFilter
  * @brief Tool to filter luminosity block/run based on golden JSONs.

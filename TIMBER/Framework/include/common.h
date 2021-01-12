@@ -3,6 +3,7 @@
 #endif
 
 #include <cmath>
+#include <cstdlib>
 #include <ROOT/RVec.hxx>
 #include <TMath.h>
 #include <Math/GenVector/LorentzVector.h>
@@ -28,7 +29,13 @@ namespace hardware {
         while (result <= -TMath::Pi()) result += 2*TMath::Pi();
         return result;
     }
-
+    /**
+     * @brief Calculate \f$\Delta R\f$ between two vectors.
+     * 
+     * @param v1 
+     * @param v2 
+     * @return float 
+     */
     float DeltaR(ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2) {
         float deta = v1.Eta()-v2.Eta();
         float dphi = DeltaPhi(v1.Phi(),v2.Phi());
@@ -96,4 +103,55 @@ namespace hardware {
         }
         return sum.M();
     }
+
+    // std::pair<int,float> closest(obj, collection, presel=lambda x, y: True):
+    //     ret = None
+    //     drMin = 999
+    //     for x in collection:
+    //         if not presel(obj, x):
+    //             continue
+    //         dr = deltaR(obj, x)
+    //         if dr < drMin:
+    //             ret = x
+    //             drMin = dr
+    //     return (ret, drMin)
+
+
+    // def matchObjectCollection(objs,
+    //                         collection,
+    //                         dRmax=0.4,
+    //                         presel=lambda x, y: True):
+    //     pairs = {}
+    //     if len(objs) == 0:
+    //         return pairs
+    //     if len(collection) == 0:
+    //         return dict(list(zip(objs, [None] * len(objs))))
+    //     for obj in objs:
+    //         (bm, dR) = closest(obj,
+    //                         [mobj for mobj in collection if presel(obj, mobj)])
+    //         if dR < dRmax:
+    //             pairs[obj] = bm
+    //         else:
+    //             pairs[obj] = None
+    //     return pairs
+
+
+    // def matchObjectCollectionMultiple(
+    //         objs,
+    //         collection,
+    //         dRmax=0.4,
+    //         presel=lambda x, y: True
+    // ):
+    //     pairs = {}
+    //     if len(objs) == 0:
+    //         return pairs
+    //     if len(collection) == 0:
+    //         return dict(list(zip(objs, [None] * len(objs))))
+    //     for obj in objs:
+    //         matched = []
+    //         for c in collection:
+    //             if presel(obj, c) and deltaR(obj, c) < dRmax:
+    //                 matched.append(c)
+    //         pairs[obj] = matched
+    //     return pairs
 }

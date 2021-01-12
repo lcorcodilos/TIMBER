@@ -21,9 +21,9 @@ class TestModules():
     #     c = Correction('TopPt','TIMBER/Framework/src/TopPt_weight.cc',mainFunc='corr',corrtype='corr')
     #     c_alpha = c.Clone('TopPt_alpha','alpha',newType='uncert')
     #     c_beta = c.Clone('TopPt_beta','beta',newType='uncert')
-    #     self.a.AddCorrection(c,['GenPart_pdgId','GenPart_statusFlags','GenPart_vects','Jet_vects[0]','Jet_vects[1]'])
-    #     self.a.AddCorrection(c_alpha,['GenPart_pdgId','GenPart_statusFlags','GenPart_vects','Jet_vects[0]','Jet_vects[1]','0.5'])
-    #     self.a.AddCorrection(c_beta,['GenPart_pdgId','GenPart_statusFlags','GenPart_vects','Jet_vects[0]','Jet_vects[1]','0.5'])
+    #     self.a.AddCorrection(c,{'jet0':'Jet_vects[0]','jet1':'Jet_vects[1]'})
+    #     self.a.AddCorrection(c_alpha,{'jet0':'Jet_vects[0]','jet1':'Jet_vects[1]','scale':'0.5'})
+    #     self.a.AddCorrection(c_beta,{'jet0':'Jet_vects[0]','jet1':'Jet_vects[1]','scale':'0.5'})
     #     self.a.MakeWeightCols()
 
     #     htemplate = ROOT.TH1F('th1','',100,0,1000)
