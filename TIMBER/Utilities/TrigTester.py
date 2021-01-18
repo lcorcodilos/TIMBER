@@ -6,7 +6,7 @@
 #     selection. Will print the following for each trigger:                                         #
 #         pass(cuts & tested HLT & !(standard HLTs))/pass(cuts & (standard HLTs))                   #
 #     The numerical values will be printed and plotted in a histogram for each HLT considered.      #
-#     It's recommended to run the JHUanalyzer to slim and skim before using this tool as it will    #
+#     It's recommended to run  TIMBER to slim and skim before using this tool as it will            #
 #     simplify the evaluation (for speed and your sanity)                                           #
 #####################################################################################################
 
@@ -53,7 +53,7 @@ parser.add_option('--vs', type='string', action='store',
 parser.add_option('--noTrig', action='store_true',
                 default   =   False,
                 dest      =   'noTrig',
-                help      =   'Branch name to compare HLTs against. Plots together the distribution of the provided variable for events that pass the top 9 most efficient triggers (vetoing those events that pass the triggers in the `not` option).')
+                help      =   'Check if there is no positive trigger for the event (should never happen).')
 parser.add_option('-o', '--output', metavar='FILE', type='string', action='store',
                 default   =   '',
                 dest      =   'output',
