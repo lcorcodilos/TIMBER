@@ -141,7 +141,7 @@ class analyzer(object):
                             continue
                         else:
                             break
-                    self.lhaid = str(int(self.lhaid)-1)
+                    self.lhaid = str(int(self.lhaid)-1) if self.lhaid[-1] == 1 else self.lhaid
                     print ('LHA ID: '+self.lhaid)
 
         # Cleanup
