@@ -1206,11 +1206,14 @@ class Node(object):
         return Node(self.name+'_range', self.DataFrame.Range(*argv),
                     action=action_name, nodetype='range', children=[], parent=self)
 
-    # IMPORTANT: When writing a variable size array through Snapshot, it is required that the column indicating its size is also written out and it appears before the array in the columns list.
-    # columns should be an empty string if you'd like to keep everything
     def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='RECREATE'): # columns can be a list or a regular expression or 'all'
         '''Takes a snapshot of the RDataFrame corresponding to this Node.
         Compression algorithm set to 1 (ZLIB) and compression level are set to 1.
+
+        IMPORTANT: When writing a variable size array through Snapshot, it is required
+        that the column indicating its size is also written out and it appears before
+        the array in the columns list. The `columns` arguement should be `"all"` if you'd like
+        to keep everything.
 
         @param columns ([str] or str): List of columns to keep (str) with regex matching.
                 Provide single string 'all' to include all columns.
