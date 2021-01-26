@@ -11,10 +11,12 @@ from collections import OrderedDict
 #-----------------#
 # TIMBER specific #
 #-----------------#
-def CutflowDict(node):
+def CutflowDict(node,initial=None):
     '''Turns the RDataFrame cutflow report into an OrderedDict.
 
     @param node (Node): Input Node from which to get the cutflow.
+    @param initial (int): Initial number events. Defaults to None
+        in which case the number in the top-most parent Node is used.
 
     Returns:
         OrderedDict: Ordered cutflow dictionary with filter names as keys and number of 
@@ -23,13 +25,16 @@ def CutflowDict(node):
     filters = node.DataFrame.GetFilterNames()
     rdf_report = node.DataFrame.Report()
     cutflow = OrderedDict()
-    cutflow['Initial'] = int(node.DataFrame.Count().GetValue())
-    for i,filtername in enumerate(filters): 
+    if initial == None: 
+        cutflow['Initial'] = int(node.GetBaseNode().DataFrame.Count().GetValue())
+    else:
+        cutflow['Initial'] = initial
+    for filtername in filters: 
         cutflow[str(filtername)] = int(rdf_report.At(filtername).GetPass())
 
     return cutflow
 
-def CutflowHist(name,node,efficiency=False):
+def CutflowHist(name,node,initial=None,efficiency=False):
     '''Draws a cutflow histogram using the report feature of RDF.
 
     @param name (str): Name of output histogram
@@ -41,7 +46,7 @@ def CutflowHist(name,node,efficiency=False):
         TH1: Histogram with each bin showing yield (or efficiency) for
             progressive cuts.
     '''
-    cutflow_dict = CutflowDict(node)
+    cutflow_dict = CutflowDict(node,initial)
     ncuts = len(cutflow_dict.keys())
     h = ROOT.TH1F(name,name,ncuts,0,ncuts)
 
