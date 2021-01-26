@@ -914,7 +914,7 @@ class analyzer(object):
         for skip in toSkip:
             for node in graph.nodes:
                 if skip in graph.nodes[node]["type"]:
-                    graph = nx.contracted_edge(graph,(graph.pred[node].keys()[0],node),self_loops=False)
+                    graph = nx.contracted_edge(graph,(list(graph.pred[node].keys())[0],node),self_loops=False)
         # Write out dot and draw
         dot = nx.nx_pydot.to_pydot(graph)
         extension = outfilename.split('.')[-1]
