@@ -553,8 +553,9 @@ class analyzer(object):
         variations calculated as new columns.
 
         @param correction (Correction): Correction object to add.
-        @param evalArgs ([str], optional): List of arguments (NanoAOD branch names) to provide to per-event evaluation method.
-                              Default empty and clang will deduce if method definition argument names match columns in RDataFrame.
+        @param evalArgs (dict, optional): Dict with keys as C++ method argument names and values as the actual argument to provide
+                (branch/column names) for per-event evaluation. For any argument names where a key is not provided, will attempt
+                to find branch/column that already matches based on name.
         @param node (Node, optional): Node to add correction on top of. Defaults to #ActiveNode.
 
         Raises:
