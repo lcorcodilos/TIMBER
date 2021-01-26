@@ -1244,6 +1244,17 @@ class Node(object):
             column_vec = column_vec[:-1]
             self.DataFrame.Snapshot(treename,outfilename,column_vec,opts)
       
+    def GetBaseNode(self):
+        '''Returns the top-most parent Node by climbing node tree until a Node with no parent is reached.
+
+        Returns:
+            Node: Top-most parent Node.
+        '''
+        thisnode = self
+        while thisnode.parent != None:
+            thisnode = thisnode.parent
+        return thisnode
+      
 ##############################
 # Group class and subclasses #
 ##############################
