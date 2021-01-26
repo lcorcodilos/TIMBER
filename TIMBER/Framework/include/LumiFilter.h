@@ -1,3 +1,5 @@
+#ifndef _TIMBER_LUMIFILTER
+#define _TIMBER_LUMIFILTER
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <vector>
@@ -76,3 +78,4 @@ bool LumiFilter::eval(unsigned int run, unsigned int lumi) {
     }
     return out;
 }
+#endif 

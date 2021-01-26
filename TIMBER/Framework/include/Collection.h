@@ -1,3 +1,5 @@
+#ifndef _TIMBER_COLLECTION
+#define _TIMBER_COLLECTION
 #include <map>
 #include <string>
 #include <ROOT/RVec.hxx>
@@ -17,3 +19,4 @@ struct Collection {
     map<string,RVec<int>*> RVecInt; /**< RVec<int> map*/
 };
 
+#endif

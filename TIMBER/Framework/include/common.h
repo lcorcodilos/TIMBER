@@ -1,6 +1,5 @@
-#ifndef COMMON_H
-#define COMMON_H
-#endif
+#ifndef _TIMBER_COMMON
+#define _TIMBER_COMMON
 
 #include <cmath>
 #include <cstdlib>
@@ -155,3 +154,4 @@ namespace hardware {
     //         pairs[obj] = matched
     //     return pairs
 }
+#endif

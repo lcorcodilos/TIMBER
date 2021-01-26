@@ -1,3 +1,5 @@
+#ifndef _TIMBER_GENMATCHING
+#define _TIMBER_GENMATCHING
 #include <map>
 #include <algorithm>
 #include <numeric>
@@ -417,3 +419,5 @@ Particle GenParticleObjs::SetIndex(int idx) {
 int GenParticleObjs::GetStatusFlag(std::string flagName){
     return particle.statusFlags[flagName];
 };
+
+#endif
