@@ -363,11 +363,11 @@ def EasyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=Fal
 
     tdrstyle.setTDRStyle()
 
-    myCan = TCanvas(tag,tag,width,height)
+    myCan = ROOT.TCanvas(tag,tag,width,height)
     myCan.Divide(padx,pady)
 
     # Just some colors that I think work well together and a bunch of empty lists for storage if needed
-    default_colors = [kRed,kMagenta,kGreen,kCyan,kBlue]
+    default_colors = [ROOT.kRed,ROOT.kMagenta,ROOT.kGreen,ROOT.kCyan,ROOT.kBlue]
     if len(colors) == 0:   
         colors = default_colors
     stacks = []
@@ -389,8 +389,8 @@ def EasyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=Fal
         # If this is a TH2, just draw the lego
         if hist.ClassName().find('TH2') != -1:
             if logy == True:
-                gPad.SetLogy()
-            gPad.SetLeftMargin(0.2)
+                ROOT.gPad.SetLogy()
+            ROOT.gPad.SetLeftMargin(0.2)
             hist.GetXaxis().SetTitle(xtitle)
             hist.GetYaxis().SetTitle(ytitle)
             hist.GetXaxis().SetTitleOffset(1.5)
@@ -408,9 +408,9 @@ def EasyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=Fal
             alpha = 1
             if dataOff:
                 alpha = 0
-            hist.SetLineColorAlpha(kBlack,alpha)
+            hist.SetLineColorAlpha(ROOT.kBlack,alpha)
             if 'pe' in datastyle.lower():
-                hist.SetMarkerColorAlpha(kBlack,alpha)
+                hist.SetMarkerColorAlpha(ROOT.kBlack,alpha)
                 hist.SetMarkerStyle(8)
             if 'hist' in datastyle.lower():
                 hist.SetFillColorAlpha(0,0)
@@ -427,15 +427,15 @@ def EasyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=Fal
             else:
                 # Create some subpads, a legend, a stack, and a total bkg hist that we'll use for the error bars
                 if not dataOff:
-                    mains.append(TPad(hist.GetName()+'_main',hist.GetName()+'_main',0, 0.3, 1, 1))
-                    subs.append(TPad(hist.GetName()+'_sub',hist.GetName()+'_sub',0, 0, 1, 0.3))
+                    mains.append(ROOT.TPad(hist.GetName()+'_main',hist.GetName()+'_main',0, 0.3, 1, 1))
+                    subs.append(ROOT.TPad(hist.GetName()+'_sub',hist.GetName()+'_sub',0, 0, 1, 0.3))
 
                 else:
-                    mains.append(TPad(hist.GetName()+'_main',hist.GetName()+'_main',0, 0.1, 1, 1))
-                    subs.append(TPad(hist.GetName()+'_sub',hist.GetName()+'_sub',0, 0, 0, 0))
+                    mains.append(ROOT.TPad(hist.GetName()+'_main',hist.GetName()+'_main',0, 0.1, 1, 1))
+                    subs.append(ROOT.TPad(hist.GetName()+'_sub',hist.GetName()+'_sub',0, 0, 0, 0))
 
-                legends.append(TLegend(0.65,0.6,0.95,0.93))
-                stacks.append(THStack(hist.GetName()+'_stack',hist.GetName()+'_stack'))
+                legends.append(ROOT.TLegend(0.65,0.6,0.95,0.93))
+                stacks.append(ROOT.THStack(hist.GetName()+'_stack',hist.GetName()+'_stack'))
                 tot_hist = hist.Clone(hist.GetName()+'_tot')
                 tot_hist.Reset()
                 tot_hist.SetTitle(hist.GetName()+'_tot')
@@ -460,12 +460,12 @@ def EasyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=Fal
                 for bkg_index,bkg in enumerate(bkglist[hist_index]):     # Won't loop if bkglist is empty
                     # bkg.Sumw2()
                     tot_hists[hist_index].Add(bkg)
-                    bkg.SetLineColor(kBlack)
+                    bkg.SetLineColor(ROOT.kBlack)
                     if logy:
                         bkg.SetMinimum(1e-3)
 
                     if bkg.GetName().find('qcd') != -1:
-                        bkg.SetFillColor(kYellow)
+                        bkg.SetFillColor(ROOT.kYellow)
 
                     else:
                         if colors[bkg_index] != None:
@@ -529,13 +529,13 @@ def EasyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=Fal
                     legends[hist_index].AddEntry(hist,'data',datastyle)
                     hist.Draw(datastyle+' same')
 
-                gPad.RedrawAxis()
+                ROOT.gPad.RedrawAxis()
 
                 # Draw the pull
                 subs[hist_index].cd()
                 # Build the pull
                 pulls.append(MakePullPlot(hist,tot_hists[hist_index]))
-                pulls[hist_index].SetFillColor(kBlue)
+                pulls[hist_index].SetFillColor(ROOT.kBlue)
                 pulls[hist_index].SetTitle(";"+hist.GetXaxis().GetTitle()+";(Data-Bkg)/#sigma")
                 pulls[hist_index].SetStats(0)
 
