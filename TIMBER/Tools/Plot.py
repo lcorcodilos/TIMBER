@@ -361,7 +361,7 @@ def EasyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=Fal
     else:
         raise ValueError('histlist of size ' + str(len(histlist)) + ' not currently supported')
 
-    #tdrstyle.setTDRStyle()
+    tdrstyle.setTDRStyle()
 
     myCan = ROOT.TCanvas(tag,tag,width,height)
     myCan.Divide(padx,pady)
