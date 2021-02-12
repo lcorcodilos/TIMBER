@@ -2,8 +2,8 @@
  Functions to easily plot histograms together in various configurations.
  @{
 '''
-from TIMBER.Tools.CMS import CMS_lumi
-import ROOT, collections
+from TIMBER.Tools.CMS import CMS_lumi, tdrstyle
+import ROOT, collections, math
 from collections import OrderedDict
 from TIMBER.Analyzer import HistGroup
 
@@ -220,12 +220,12 @@ def MakeSoverB(stack_of_bkgs,signal):
         else:
             forward = True
         peak_bin = False
-        print 'Not a mass distribution. Forward = %s'%forward
+        print ('Not a mass distribution. Forward = %s'%forward)
     # If peak is non-zero, do background cumulative scan to left of peak
     # and forward scan to right  
     else:
         forward = None
-        print 'Mass-like distribution.'
+        print ('Mass-like distribution.')
         # Clone original distirbution, set new range around peak, get cumulative
         bkg_int_low  = MakeCumulative(total_bkgs,1,       peak_bin,forward=False)
         bkg_int_high = MakeCumulative(total_bkgs,peak_bin,nbins+1, forward=True)
