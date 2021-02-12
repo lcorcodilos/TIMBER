@@ -918,7 +918,7 @@ class analyzer(object):
         # Write out dot and draw
         dot = nx.nx_pydot.to_pydot(graph)
         extension = outfilename.split('.')[-1]
-        filename = outfilename.split('.')[:-1]
+        filename = ''.join(outfilename.split('.')[:-1])
         if extension not in [outfilename,'dot']:
             try:
                 getattr(dot,'write_'+extension)(outfilename)
@@ -1485,33 +1485,18 @@ class HistGroup(Group):
 ####################
 # Correction class #
 ####################
-class Correction(object):
-    '''Class to handle corrections produced by C++ modules.
-
-    Uses clang in python to parse the C++ code and determine function names, 
-    namespaces, and argument names and types. 
-
-    Writing the C++ modules has two requirements:
-
-    (1) the desired branch/column names must be used as the argument variable names
-    to allow the framework to automatically determine what branch/column to use in GetCall(),
-
-    (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
-    <up, down> for "uncert" type.    
-
+class ModuleWorker(object):
+    '''Class to handle C++ class modules generically.
     '''
-    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False):
+
+    def __init__(self,name,script,constructor=[],mainFunc='eval',columnList=None,isClone=False):
         '''Constructor
 
-        @param name (str): Correction name.
+        @param name (str): Unique name to identify the instantiated worker object.
         @param script (str): Path to C++ script with function to calculate correction.
         @param constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
         @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
                 and the class will try to deduce it.
-        @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty), "corr"
-                (only a correction), or 
-                "uncert" (only an uncertainty). Defaults to '' and the class will try to
-                deduce it.
         @param columnList ([str], optional): List of column names to search mainFunc arguments against.
                 Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used.
         @param isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
@@ -1521,26 +1506,24 @@ class Correction(object):
         ## @var name
         # str
         # Correction name
-
         self.name = name
-        self.__script = self.__getScript(script)
-        self.__setType(corrtype)
-        self.__funcInfo = self.__getFuncInfo(mainFunc)
-        self.__mainFunc = list(self.__funcInfo.keys())[0]
-        self.__columnNames = LoadColumnNames() if columnList == None else columnList
-        self.__constructor = constructor 
-        self.__objectName = self.name
-        self.__call = None
+        self._script = self._getScript(script)
+        self._funcInfo = self._getFuncInfo(mainFunc)
+        self._mainFunc = list(self._funcInfo.keys())[0]
+        self._columnNames = LoadColumnNames() if columnList == None else columnList
+        self._constructor = constructor 
+        self._objectName = self.name
+        self._call = None
         # self.__funcNames = self.__funcInfo.keys()        
 
         if not isClone:
-            if not self.__mainFunc.endswith(mainFunc):
-                raise ValueError('Correction() instance provided with %s argument does not exist in %s (%s)'%(mainFunc,self.__script, self.__mainFunc))
-            CompileCpp(self.__script,library=True)
+            if not self._mainFunc.endswith(mainFunc):
+                raise ValueError('ModuleWorker() instance provided with %s argument does not exist in %s (%s)'%(mainFunc,self._script, self._mainFunc))
+            CompileCpp(self._script,library=True)
 
-        self.__instantiate(constructor)
+        self._instantiate(constructor)
 
-    def Clone(self,name,newMainFunc=None,newType=None):
+    def Clone(self,name,newMainFunc=None):
         '''Makes a clone of current instance.
 
         If multiple functions are in the same script, one can clone the correction and reassign the mainFunc
@@ -1550,14 +1533,13 @@ class Correction(object):
         @param newMainFunc (str, optional): Name of the function to use inside script. Defaults to None and the original is used.
         @param newType (str, optional): New type for the cloned correction. Defaults to None and the original is used.
         Returns:
-            Correction: Clone of instance with same script but different function (newMainFunc).
+            ModuleWorker: Clone of instance with same script but different function (newMainFunc).
         '''
-        if newMainFunc == None: newMainFunc = self.__mainFunc.split('::')[-1]
-        return Correction(name,self.__script,self.__constructor,newMainFunc,
-                          corrtype=self.__type if newType == None else newType,
-                          isClone=True,columnList=self.__columnNames)
+        if newMainFunc == None: newMainFunc = self._mainFunc.split('::')[-1]
+        return ModuleWorker(name,self._script,self._constructor,newMainFunc,
+                          isClone=True,columnList=self._columnNames)
 
-    def __getScript(self,script):
+    def _getScript(self,script):
         '''Does a basic check that script file exists and modifies path if necessary
         so relative paths to TIMBER/Framework/ can be used.
 
@@ -1580,37 +1562,7 @@ class Correction(object):
             raise NameError('File %s does not exist'%outname)
         return outname
 
-    def __setType(self,inType):
-        '''Sets the type of correction.
-        Will attempt to deduce from input script name if inType=''. File name
-        must have suffix '_weight' or '_SF' for weight type (correction plus uncertainties)
-        or '_uncert' for 'uncert' type (only uncertainties).
-
-        @param inType (str): Type of Correction. Use '' to deduce from input script name.
-
-        Raises:
-            NameError: If inType is '' and the type cannot be deduced from the input
-                script name.
-        '''
-        out_type = None
-        if inType in ['weight','uncert','corr']:
-            out_type = inType
-        elif inType not in ['weight','uncert','corr'] and inType != None:
-            print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...'%inType)
-
-        if out_type == None:
-            if '_weight.' in self.__script.lower() or '_sf.' in self.__script.lower():
-                out_type = 'weight'
-            elif '_uncert.' in self.__script.lower():
-                out_type = 'uncert'
-            elif '_corr.' in self.__script.lower():
-                out_type = 'corr'
-            else:
-                raise NameError('Attempting to add correction "%s" but script name (%s) does not end in "_weight.<ext>", "_SF.<ext>" or "_uncert.<ext>" and so the type of correction cannot be determined.'%(self.name,self.__script))
-
-        self.__type = out_type
-
-    def __getFuncInfo(self,funcname):
+    def _getFuncInfo(self,funcname):
         '''Parses script with clang to get the function information including name, namespace, and argument names.
 
         @param funcname (str): C++ class method name to search for in script.
@@ -1619,14 +1571,14 @@ class Correction(object):
             OrderedDict: Dictionary organized as `myreturn[methodname][argname] = argtype`.
         '''
         cpp_idx = cindex.Index.create()
-        translation_unit = cpp_idx.parse(self.__script, args=cpp_args)
+        translation_unit = cpp_idx.parse(self._script, args=cpp_args)
         filename = translation_unit.cursor.spelling
         funcs = OrderedDict()
         namespace = ''
         classname = None
         methodname = None
 
-        print ('Parsing %s with clang...'%self.__script)
+        print ('Parsing %s with clang...'%self._script)
         # Walk cursor over script
         for c in translation_unit.cursor.walk_preorder():
             # Pass over file errors
@@ -1662,13 +1614,13 @@ class Correction(object):
         # print funcs
         return funcs
 
-    def __instantiate(self,args):
+    def _instantiate(self,args):
         '''Instantiates the class in the provided script with the provided arguments.
 
         @param args ([str]): Ordered list of arguments to provide to C++ class to instantiate
                 the object in memory.
         '''
-        classname = self.__mainFunc.split('::')[-2]
+        classname = self._mainFunc.split('::')[-2]
         # constructor_name = classname+'::'+classname
 
         line = classname + ' ' + self.name+'('
@@ -1712,8 +1664,8 @@ class Correction(object):
         else: raise TypeError('Input argument `toCheck` is not of type Node, RDataFrame, list, or None.')
             
         # Loop over function arguments
-        for a in self.__funcInfo[self.__mainFunc].keys():
-            default_value = self.__funcInfo[self.__mainFunc][a]
+        for a in self._funcInfo[self._mainFunc].keys():
+            default_value = self._funcInfo[self._mainFunc][a]
             skip_existence_check = False
             # if default argument exists
             if default_value != None:  
@@ -1735,17 +1687,17 @@ class Correction(object):
 
             # quick check it exists
             if not skip_existence_check and (arg_to_add not in cols_to_check):
-                print ('WARNING: Not able to find arg %s written in %s in available columns. '%(arg_to_add,self.__script))
+                print ('WARNING: Not able to find arg %s written in %s in available columns. '%(arg_to_add,self._script))
                 print ('         If `%s` is a value and not a column name, this warning can be ignored.'%(arg_to_add))
             args_to_use.append(arg_to_add)
 
-        # var_types = [self.__funcInfo[self.__mainFunc][a] for a in self.__funcInfo[self.__mainFunc].keys()]
-        out = '%s('%(self.__objectName+'.'+self.__mainFunc.split('::')[-1])
+        # var_types = [self._funcInfo[self._mainFunc][a] for a in self._funcInfo[self._mainFunc].keys()]
+        out = '%s('%(self._objectName+'.'+self._mainFunc.split('::')[-1])
         for i,a in enumerate(args_to_use):
             out += '%s, '%(a)
         out = out[:-2]+')'
 
-        self.__call = out
+        self._call = out
 
     def GetCall(self,inArgs = {},toCheck = None):
         '''Gets the call to the method to be evaluated per-event.
@@ -1759,9 +1711,9 @@ class Correction(object):
         Returns:
             str: The string that calls the method to evaluate per-event. Pass to Analyzer.Define(), Analyzer.Cut(), etc.
         '''
-        if self.__call == None:
+        if self._call == None:
             self.MakeCall(inArgs,toCheck)
-        return self.__call
+        return self._call
 
     def GetMainFunc(self):
         '''Gets full main function name.
@@ -1769,15 +1721,7 @@ class Correction(object):
         Returns:
             str: Name of function assigned from C++ script.
         '''
-        return self.__mainFunc
-
-    def GetType(self):
-        '''Gets Correction type.
-
-        Returns:
-            str: Correction type.
-        '''
-        return self.__type
+        return self._mainFunc
 
     def GetFuncNames(self):
         '''Gets list of function names in C++ script.
@@ -1785,7 +1729,99 @@ class Correction(object):
         Returns:
             [str]: List of possible function names found in C++ script.
         '''
-        return list(self.__funcInfo.keys())
+        return list(self._funcInfo.keys())
+
+class Correction(ModuleWorker):
+    '''Class to handle corrections produced by C++ modules.
+
+    Uses clang in python to parse the C++ code and determine function names, 
+    namespaces, and argument names and types. 
+
+    Writing the C++ modules has two requirements:
+
+    (1) the desired branch/column names must be specified or be used as the argument variable names
+    to allow the framework to automatically determine what branch/column to use in GetCall(),
+
+    (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
+    <up, down> for "uncert" type.    
+
+    '''
+    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False):
+        '''Constructor
+
+        @param name (str): Correction name.
+        @param script (str): Path to C++ script with function to calculate correction.
+        @param constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
+        @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
+                and the class will try to deduce it.
+        @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty), "corr"
+                (only a correction), or 
+                "uncert" (only an uncertainty). Defaults to '' and the class will try to
+                deduce it.
+        @param columnList ([str], optional): List of column names to search mainFunc arguments against.
+                Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used.
+        @param isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
+                not duplicate compile the same script if two functions are needed in one C++ script.
+        '''
+
+        super().__init__(name,script,constructor,mainFunc,columnList,isClone)
+        self._setType(corrtype)
+
+    def Clone(self,name,newMainFunc=None,newType=None):
+        '''Makes a clone of current instance.
+
+        If multiple functions are in the same script, one can clone the correction and reassign the mainFunc
+        to avoid compiling the same script twice.
+
+        @param name (str): Clone name.
+        @param newMainFunc (str, optional): Name of the function to use inside script. Defaults to None and the original is used.
+        @param newType (str, optional): New type for the cloned correction. Defaults to None and the original is used.
+        Returns:
+            Correction: Clone of instance with same script but different function (newMainFunc).
+        '''
+        if newMainFunc == None: newMainFunc = self._mainFunc.split('::')[-1]
+        return Correction(name,self._script,self._constructor,newMainFunc,
+                          corrtype=self._type if newType == None else newType,
+                          isClone=True,columnList=self._columnNames)
+
+    def _setType(self,inType):
+        '''Sets the type of correction.
+        Will attempt to deduce from input script name if inType=''. File name
+        must have suffix '_weight' or '_SF' for weight type (correction plus uncertainties)
+        or '_uncert' for 'uncert' type (only uncertainties).
+
+        @param inType (str): Type of Correction. Use '' to deduce from input script name.
+
+        Raises:
+            NameError: If inType is '' and the type cannot be deduced from the input
+                script name.
+        '''
+        out_type = None
+        if inType in ['weight','uncert','corr']:
+            out_type = inType
+        elif inType not in ['weight','uncert','corr'] and inType != None:
+            print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...'%inType)
+
+        if out_type == None:
+            if '_weight.' in self._script.lower() or '_sf.' in self._script.lower():
+                out_type = 'weight'
+            elif '_uncert.' in self._script.lower():
+                out_type = 'uncert'
+            elif '_corr.' in self._script.lower():
+                out_type = 'corr'
+            else:
+                raise NameError('Attempting to add correction "%s" but script name (%s) does not end in "_weight.<ext>", "_SF.<ext>" or "_uncert.<ext>" and so the type of correction cannot be determined.'%(self.name,self._script))
+
+        self._type = out_type
+
+    def GetType(self):
+        '''Gets Correction type.
+
+        Returns:
+            str: Correction type.
+        '''
+        return self._type
+
 
 def LoadColumnNames(source=''):
     '''Loads column names from a text file.
