@@ -88,17 +88,17 @@ class analyzer(object):
 
         # Setup TChains for multiple or single file
         self.__eventsChain = ROOT.TChain(self.__eventsTreeName) 
-        RunChain = ROOT.TChain(runTreeName) # Has generated event count information - will be deleted after initialization
+        self.RunChain = ROOT.TChain(runTreeName) # Has generated event count information - will be deleted after initialization
         if ".root" in self.fileName: 
             self.__eventsChain.Add(self.fileName)
-            RunChain.Add(self.fileName)
+            self.RunChain.Add(self.fileName)
         elif ".txt" in self.fileName: 
             txt_file = open(self.fileName,"r")
             for l in txt_file.readlines():
                 thisfile = l.strip()
                 if 'root://' not in thisfile and thisfile.startswith('/store/'): thisfile='root://cms-xrd-global.cern.ch/'+thisfile
                 self.__eventsChain.Add(thisfile)
-                RunChain.Add(thisfile)
+                self.RunChain.Add(thisfile)
         else: 
             raise Exception("File name extension not supported. Please provide a single .root file or a .txt file with a line-separated list of .root files to chain together.")
 
@@ -110,10 +110,10 @@ class analyzer(object):
         self.Corrections = {} 
 
         # Check if dealing with data
-        if hasattr(RunChain,'genEventCount'): 
+        if hasattr(self.RunChain,'genEventCount'): 
             self.isData = False 
             self.preV6 = True 
-        elif hasattr(RunChain,'genEventCount_'): 
+        elif hasattr(self.RunChain,'genEventCount_'): 
             self.isData = False
             self.preV6 = False
         else: self.isData = True
@@ -121,10 +121,10 @@ class analyzer(object):
         # Count number of generated events if not data
         self.genEventCount = 0 
         if not self.isData: 
-            for i in range(RunChain.GetEntries()): 
-                RunChain.GetEntry(i)
-                if self.preV6: self.genEventCount+= RunChain.genEventCount
-                else: self.genEventCount+= RunChain.genEventCount_
+            for i in range(self.RunChain.GetEntries()): 
+                self.RunChain.GetEntry(i)
+                if self.preV6: self.genEventCount+= self.RunChain.genEventCount
+                else: self.genEventCount+= self.RunChain.genEventCount_
 
         # Get LHAID from LHEPdfWeights branch
         self.lhaid = "-1"
@@ -145,7 +145,7 @@ class analyzer(object):
                     print ('LHA ID: '+self.lhaid)
 
         # Cleanup
-        del RunChain
+        # del RunChain
         self.ActiveNode = self.BaseNode
  
     def Close(self):
