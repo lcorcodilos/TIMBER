@@ -473,6 +473,25 @@ class analyzer(object):
             
         return self.ActiveNode
 
+    def ReorderCollection(self, name, basecoll, newOrderCol, skip=[]):
+        '''Reorders a collection (from a NanoAOD-like format) where the 
+        new order is another column of vectors with the new indices specified.
+
+        @param name (str): Name of new collection.
+        @param basecoll (str): Name of derivative collection.
+        @param newOrderCol (str): Order for the new collection (stored as column in RDataFrame).
+        @param skip ([str]): List of variable names in the collection to skip.
+
+        Returns:
+            Node: New #ActiveNode.
+
+        Example:
+            a = analyzer(...)
+            a.Define('NewFatJetIdxs','ReorderJets(...)')
+            a.ReorderCollection('ReorderedFatJets','FatJet','NewFatJetIdxs')
+        '''
+        return self.SubCollection(name, basecoll, newOrderCol, skip)
+
     def ObjectFromCollection(self,name,basecoll,index,skip=[]):
         '''Similar to creating a SubCollection except the newly defined columns
         are single values (not vectors/arrays) for the object at the provided index.
@@ -544,6 +563,21 @@ class analyzer(object):
 
         return list(set.intersection(*map(set,commonVars)))
 
+    def _addModule(self, module, evalArgs, nodetype, node=None):
+        if node == None: node = self.ActiveNode
+
+        # Quick type checking
+        if not isinstance(node,Node): raise TypeError('AddCorrection() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
+
+        # Make the call
+        module.MakeCall(evalArgs,node)
+
+        # Make new node
+        newNode = self.Define(module.name+'__vec',module.GetCall(),node,nodetype=nodetype)
+
+        # self.TrackNode(returnNode)
+        return self.SetActiveNode(newNode)
+
     #---------------------#
     # Corrections/Weights #
     #---------------------#
@@ -565,20 +599,15 @@ class analyzer(object):
         Returns:
             Node: New #ActiveNode.
         '''
-        if node == None: node = self.ActiveNode
-
         # Quick type checking
-        if not isinstance(node,Node): raise TypeError('AddCorrection() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
-        elif not isinstance(correction,Correction): raise TypeError('AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
+        if not isinstance(correction,Correction): raise TypeError('AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
+        elif isinstance(correction, Calibration): raise TypeError('Attempting to add a Calibration and not a Correction. Corrections weight events while Calibrations weight variables.')
 
-        # Make the call
-        correction.MakeCall(evalArgs,node)
-
+        newNode = self._addModule(correction, evalArgs, 'Correction', node)
         # Add correction to track
         self.Corrections[correction.name] = correction
 
         # Make new node
-        newNode = self.Define(correction.name+'__vec',correction.GetCall(),node,nodetype='Correction')
         if correction.GetType() == 'weight':
             variations = ['nom','up','down']
         elif correction.GetType() == 'uncert':
@@ -775,9 +804,6 @@ class analyzer(object):
 
         return out
 
-    #----------------------------------------------------------------#
-    # Draw templates together to see up/down effects against nominal #
-    #----------------------------------------------------------------#
     def DrawTemplates(self,hGroup,saveLocation,projection='X',projectionArgs=(),fileType='pdf'):
         '''Draw the template uncertainty histograms created by #MakeTemplateHistos(). 
 
@@ -836,6 +862,58 @@ class analyzer(object):
             leg.Draw()
 
             canvas.Print('%s%s_%s.%s'%(saveLocation,baseName,corr,fileType),fileType)
+
+    #---------------------#
+    # Handle calibrations #
+    #---------------------#
+    def CalibrateVar(self,var,calib,evalArgs={},newColName=None,node=None):
+        '''Calibrate a variable `var` with the Calibration `calib`. Sets new active node with 
+        new column named as either `<var>_<calib>` or `<newColName>`.
+
+        @param (str): Name of column/variable to calibrate/weight.
+        @param correction (Correction): Correction object to weight with.
+        @param evalArgs (dict, optional): Dict with keys as C++ method argument names and values as the actual argument to provide
+                (branch/column names) for per-event evaluation. For any argument names where a key is not provided, will attempt
+                to find branch/column that already matches based on name.
+        @param newColName (str, optional): Specific name for output column.
+        @param node (Node, optional): Node to add correction on top of. Defaults to #ActiveNode.
+
+        Raises:
+            TypeError: If argument types are not Node and Correction.
+            ValueError: If Correction type is not a weight or uncertainty.
+
+        Returns:
+            Node: New #ActiveNode.
+        '''
+        newNode = self._addModule(correction, evalArgs, 'Calibration', node)
+
+        # Quick type checking
+        if not isinstance(node,Node): raise TypeError('AddCorrection() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
+        elif not isinstance(correction,Correction): raise TypeError('AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
+        elif isinstance(correction, Calibration): raise TypeError('Attempting to add a Calibration and not a Correction. Corrections weight events while Calibrations weight variables.')
+
+        # Make the call
+        correction.MakeCall(evalArgs,node)
+
+        # Add correction to track
+        self.Corrections[correction.name] = correction
+
+        # Make new node
+        newNode = self.Define(correction.name+'__vec',correction.GetCall(),node,nodetype='Correction')
+        if correction.GetType() == 'weight':
+            variations = ['nom','up','down']
+        elif correction.GetType() == 'uncert':
+            variations = ['up','down']
+        elif correction.GetType() == 'corr':
+            variations = ['nom']
+        else:
+            raise ValueError('Correction.GetType() returns %s'%correction.GetType())
+
+        for i,v in enumerate(variations):
+            newNode = self.Define(correction.name+'__'+v,correction.name+'__vec[%s]'%i,newNode,nodetype='Correction')
+
+        # self.TrackNode(returnNode)
+        return self.SetActiveNode(newNode)
 
     #----------------------------------------------#
     # Build N-1 "tree" and outputs the final nodes #
@@ -1482,9 +1560,9 @@ class HistGroup(Group):
                 out.Add(self[key])
         return out
 
-####################
-# Correction class #
-####################
+###########################
+# Module handling classes #
+###########################
 class ModuleWorker(object):
     '''Class to handle C++ class modules generically.
     '''
@@ -1822,7 +1900,27 @@ class Correction(ModuleWorker):
         '''
         return self._type
 
+class Calibration(Correction):
+    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False):
+        '''Constructor
 
+        @param name (str): Correction name.
+        @param script (str): Path to C++ script with function to calculate correction.
+        @param constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
+        @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
+                and the class will try to deduce it.
+        @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty), "corr"
+                (only a correction), or 
+                "uncert" (only an uncertainty). Defaults to '' and the class will try to
+                deduce it.
+        @param columnList ([str], optional): List of column names to search mainFunc arguments against.
+                Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used.
+        @param isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
+                not duplicate compile the same script if two functions are needed in one C++ script.
+        '''
+
+        super().__init__(name,script,constructor,mainFunc,columnList,isClone)
+        
 def LoadColumnNames(source=''):
     '''Loads column names from a text file.
 
