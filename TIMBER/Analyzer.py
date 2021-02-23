@@ -4,6 +4,7 @@ Home of main classes for TIMBER.
 
 """
 
+from TIMBER.Utilities.CollectionGen import BuildCollectionDict, StructDef, StructObj
 from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags
 from clang import cindex
 from collections import OrderedDict
@@ -30,7 +31,7 @@ class analyzer(object):
 
     When using class functions to perform actions, an active node will always be tracked so that the next action uses 
     the active node and assigns the output node as the new #ActiveNode"""
-    def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs"):
+    def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs", createCollections=True):
         """Constructor.
         
         Sets up the tracking of actions on an RDataFrame as nodes. Also
@@ -85,6 +86,7 @@ class analyzer(object):
         super(analyzer, self).__init__()
         self.fileName = fileName 
         self.__eventsTreeName = eventsTreeName
+        self.silent = False
 
         # Setup TChains for multiple or single file
         self.__eventsChain = ROOT.TChain(self.__eventsTreeName) 
@@ -144,9 +146,10 @@ class analyzer(object):
                     self.lhaid = str(int(self.lhaid)-1) if self.lhaid[-1] == 1 else self.lhaid
                     print ('LHA ID: '+self.lhaid)
 
-        # Cleanup
-        # del RunChain
         self.ActiveNode = self.BaseNode
+        # Auto create collections
+        if createCollections:
+            self.CreateAllCollections(silent=True)
  
     def Close(self):
         '''Safely deletes analyzer instance.
@@ -341,11 +344,11 @@ class analyzer(object):
         if isinstance(cuts,CutGroup):
             for c in cuts.keys():
                 cut = cuts[c]
-                newNode = newNode.Cut(c,cut,nodetype=nodetype)
+                newNode = newNode.Cut(c,cut,nodetype=nodetype,silent=self.silent)
                 newNode.name = cuts.name+'__'+c
                 self.TrackNode(newNode)
         elif isinstance(cuts,str):
-            newNode = newNode.Cut(name,cuts,nodetype=nodetype)
+            newNode = newNode.Cut(name,cuts,nodetype=nodetype,silent=self.silent)
             self.TrackNode(newNode)
         else:
             raise TypeError("Second argument to Cut method must be a string of a single cut or of type CutGroup (which provides an OrderedDict).")
@@ -375,12 +378,12 @@ class analyzer(object):
         if isinstance(variables,VarGroup):
             for v in variables.keys():
                 var = variables[v]
-                newNode = newNode.Define(v,var,nodetype=nodetype)
+                newNode = newNode.Define(v,var,nodetype=nodetype,silent=self.silent)
                 newNode.name = variables.name+'__'+v
                 self.TrackNode(newNode)
             # newNode.name = variables.name
         elif isinstance(variables,str):
-            newNode = newNode.Define(name,variables,nodetype=nodetype)
+            newNode = newNode.Define(name,variables,nodetype=nodetype,silent=self.silent)
             self.TrackNode(newNode)
         else:
             raise TypeError("Second argument to Define method must be a string of a single var or of type VarGroup (which provides an OrderedDict).")
@@ -543,6 +546,15 @@ class analyzer(object):
                 self.Define(name+'_'+var,concat_str,nodetype='MergeDefine')
 
         self.Define('n'+name,'+'.join(['n'+n for n in collectionNames]),nodetype='MergeDefine')
+
+    def CreateAllCollections(self,silent=True):
+        init_silent = self.silent
+        self.silent = silent
+        collDict = BuildCollectionDict(self.BaseNode.DataFrame)
+        for c in collDict.keys():
+            CompileCpp(StructDef(c,collDict[c]))
+            self.Define(c, StructObj(c, collDict[c]))
+        self.silent = init_silent
 
     def CommonVars(self,collections):
         '''Find the common variables between collections.
@@ -1195,7 +1207,7 @@ class Node(object):
         else:
             raise TypeError('Attempting to add children that are not in a list or dict.')
 
-    def Define(self,name,var,nodetype=None):
+    def Define(self,name,var,nodetype=None,silent=False):
         '''Produces a new Node with the provided variable/column added.
 
         @param name (str): Name for the column for internal tracking and later reference.
@@ -1206,13 +1218,13 @@ class Node(object):
         Returns:
             Node: New Node object with new column added.
         '''
-        print('Defining %s: %s' %(name,var))
+        if not silent: print('Defining %s: %s' %(name,var))
         newNodeType = 'Define' if nodetype == None else nodetype
         newNode = Node(name,self.DataFrame.Define(name,var),children=[],parent=self,action=var,nodetype=newNodeType)
         self.SetChild(newNode)
         return newNode
 
-    def Cut(self,name,cut,nodetype=None):
+    def Cut(self,name,cut,nodetype=None,silent=False):
         '''Produces a new Node with the provided cut/filter applied.
 
         @param name (str): Name for the cut for internal tracking and later reference.
@@ -1223,7 +1235,7 @@ class Node(object):
         Returns:
             Node: New Node object with cut applied.
         '''
-        print('Filtering %s: %s' %(name,cut))
+        if not silent: print('Filtering %s: %s' %(name,cut))
         newNodeType = 'Define' if nodetype == None else nodetype
         newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],parent=self,action=cut,nodetype=newNodeType)
         self.SetChild(newNode)
