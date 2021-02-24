@@ -15,26 +15,36 @@ def BuildCollectionDict(rdf, includeType = True):
         collname = b.split('_')[0]
         varname = '_'.join(b.split('_')[1:])
         
-        if varname == '': continue
+        if varname == '' or 'n'+collname not in branch_names: continue
 
         if collname not in collections.keys():
             collections[collname] = []
-        collections[collname].append(str(rdf.GetColumnType(b))+' '+varname)
+        collType = str(rdf.GetColumnType(b)).replace('ROOT::VecOps::RVec<','')[:-1]
+        if not includeType: collType = ''
+        collections[collname].append(collType+' '+varname)
 
     return collections
 
 def StructDef(collectionName, varList):
-    out_str = 'struct %sColl {\n'%collectionName
+    out_str = 'struct %sStruct {\n'%collectionName
     for v in varList:
         out_str += '\t%s; \n'%v
 
     out_str += '};'
+    print (out_str)
     return out_str
 
 def StructObj(collectionName, varList):
-    out_str = '{0}Coll {0};\n'.format(collectionName)
+    out_str = '''
+ROOT::VecOps::RVec<{0}Struct> {0}s(n{0});
+for (size_t i = 0; i < n{0}; i++) {{
+{1}
+}}
+return {0}s;
+'''
+    attr_assignment_str = ''
     for v in varList:
         varname = v.split(' ')[-1]
-        out_str += '{0}.{1} = {0}_{1};\n'.format(collectionName, varname)
-    out_str += 'return %s;'%collectionName
+        attr_assignment_str += '\t{0}s[i].{1} = {0}_{1}[i];\n'.format(collectionName, varname)
+    out_str = out_str.format(collectionName,attr_assignment_str)
     return out_str

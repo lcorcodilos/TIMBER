@@ -10,7 +10,7 @@ from clang import cindex
 from collections import OrderedDict
 
 import ROOT
-import pprint, copy, os, subprocess, textwrap
+import pprint, copy, os, subprocess, textwrap, re
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -31,7 +31,7 @@ class analyzer(object):
 
     When using class functions to perform actions, an active node will always be tracked so that the next action uses 
     the active node and assigns the output node as the new #ActiveNode"""
-    def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs", createCollections=True):
+    def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs", createAllCollections=False):
         """Constructor.
         
         Sets up the tracking of actions on an RDataFrame as nodes. Also
@@ -43,8 +43,10 @@ class analyzer(object):
         @param fileName (str): A ROOT file path or the path to a txt file which contains several ROOT file paths separated by 
                 new line characters.
         @param eventsTreeName (str, optional): Name of TTree in fileName where events are stored. Defaults to "Events" (for NanoAOD)
-        @param runTreeName (str, optional): NAme of TTree in fileName where run information is stored (for generated event info in 
+        @param runTreeName (str, optional): Name of TTree in fileName where run information is stored (for generated event info in 
                 simulation). Defaults to "Runs" (for NanoAOD) 
+        @param createAllCollections (str, optional): Create all of the collection structs immediately. This consumes memory no matter what
+                and the collections will increase processing times compared to accessing column values directly. Defaults to False. 
         """
 
         ## @var fileName
@@ -148,7 +150,8 @@ class analyzer(object):
 
         self.ActiveNode = self.BaseNode
         # Auto create collections
-        if createCollections:
+        self.__builtCollections = []
+        if createAllCollections:
             self.CreateAllCollections(silent=True)
  
     def Close(self):
@@ -344,10 +347,12 @@ class analyzer(object):
         if isinstance(cuts,CutGroup):
             for c in cuts.keys():
                 cut = cuts[c]
+                newNode = self.__collectionDefCheck(cut, newNode)
                 newNode = newNode.Cut(c,cut,nodetype=nodetype,silent=self.silent)
                 newNode.name = cuts.name+'__'+c
                 self.TrackNode(newNode)
         elif isinstance(cuts,str):
+            newNode = self.__collectionDefCheck(cuts, newNode)
             newNode = newNode.Cut(name,cuts,nodetype=nodetype,silent=self.silent)
             self.TrackNode(newNode)
         else:
@@ -378,18 +383,30 @@ class analyzer(object):
         if isinstance(variables,VarGroup):
             for v in variables.keys():
                 var = variables[v]
+                newNode = self.__collectionDefCheck(var, newNode)
                 newNode = newNode.Define(v,var,nodetype=nodetype,silent=self.silent)
                 newNode.name = variables.name+'__'+v
                 self.TrackNode(newNode)
             # newNode.name = variables.name
         elif isinstance(variables,str):
+            newNode = self.__collectionDefCheck(variables, newNode)
             newNode = newNode.Define(name,variables,nodetype=nodetype,silent=self.silent)
             self.TrackNode(newNode)
         else:
             raise TypeError("Second argument to Define method must be a string of a single var or of type VarGroup (which provides an OrderedDict).")
 
-        # self.TrackNode(newNode)
         return self.SetActiveNode(newNode)
+
+    def __collectionDefCheck(self, action_str, node):
+        collDict = BuildCollectionDict(self.DataFrame)
+        newNode = node
+        for c in collDict:
+            if re.search(r"\b" + re.escape(c+'s') + r"\b", action_str) and (c+'s' not in self.__builtCollections):
+                print ('MAKING %ss for %s'%(c,action_str))
+                newNode = self.CreateCollection(c,collDict[c],silent=False,node=newNode)
+                self.__builtCollections.append(c+'s')
+
+        return newNode
 
     # Applies a bunch of action groups (cut or var) in one-shot in the order they are given
     def Apply(self,actionGroupList,node=None,trackEach=True):
@@ -547,14 +564,22 @@ class analyzer(object):
 
         self.Define('n'+name,'+'.join(['n'+n for n in collectionNames]),nodetype='MergeDefine')
 
-    def CreateAllCollections(self,silent=True):
+    def CreateCollection(self,collection,attributes,silent=True,node=None):
         init_silent = self.silent
         self.silent = silent
+        if collection+'s' not in self.__builtCollections:
+            self.__builtCollections.append(collection+'s')
+            CompileCpp(StructDef(collection,attributes))
+            newNode = self.Define(collection+'s', StructObj(collection,attributes),node)
+        else:
+            raise RuntimeError('Collections `%s` already built.'%(collection+'s'))
+        self.silent = init_silent
+        return self.SetActiveNode(newNode)
+
+    def CreateAllCollections(self,silent=True):
         collDict = BuildCollectionDict(self.BaseNode.DataFrame)
         for c in collDict.keys():
-            CompileCpp(StructDef(c,collDict[c]))
-            self.Define(c, StructObj(c, collDict[c]))
-        self.silent = init_silent
+            self.CreateCollection(c,collDict[c],silent)
 
     def CommonVars(self,collections):
         '''Find the common variables between collections.
