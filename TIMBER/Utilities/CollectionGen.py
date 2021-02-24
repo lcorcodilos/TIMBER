@@ -19,7 +19,8 @@ def BuildCollectionDict(rdf, includeType = True):
 
         if collname not in collections.keys():
             collections[collname] = []
-        collType = str(rdf.GetColumnType(b)).replace('ROOT::VecOps::RVec<','')[:-1]
+        collType = str(rdf.GetColumnType(b)).replace('ROOT::VecOps::RVec<','')
+        if collType.endswith('>'): collType = collType[:-1]
         if not includeType: collType = ''
         collections[collname].append(collType+' '+varname)
 
