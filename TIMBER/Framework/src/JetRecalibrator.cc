@@ -1,14 +1,14 @@
 #include "../include/JetRecalibrator.h"
 
-JetRecalibrator::JetRecalibrator(): _globalTag(''), _jetFlavour(''),_doResidualJECs(true),_upToLevel(3){};
+JetRecalibrator::JetRecalibrator(): _globalTag(""), _jetFlavour(""),_doResidualJECs(true),_uncertType(""),_upToLevel(3){};
 
 JetRecalibrator::JetRecalibrator(str globalTag, str jetFlavour, bool doResidualJECs,
-                                 str jecPath, int upToLevel)://,
+                                 str jecPath, str uncertType, int upToLevel)://,
                                 //  bool calculateSeparateCorrections,
                                 //  bool calculateType1METCorrection,
                                 //  std::map<str, float> type1METParams):
     _globalTag{globalTag}, _jetFlavour{jetFlavour}, _doResidualJECs{doResidualJECs},
-    _jecPath{jecPath}, _upToLevel{upToLevel}
+    _jecPath{jecPath}, _uncertType{uncertType} _upToLevel{upToLevel}
 //     _calculateSeparateCorrections{calculateSeparateCorrections},
 //     _calculateType1METCorrection{calculateType1METCorrection}, _type1METParams{type1METParams}
 {
@@ -35,7 +35,7 @@ JetRecalibrator::JetRecalibrator(str globalTag, str jetFlavour, bool doResidualJ
     // Construct FactorizedJetCorrector JetCorrectionUncertinaty objects
     FactorizedJetCorrector _JetCorrector (vPar);
     str filename = paths.GetPath("Uncert");
-    JetCorrectionUncertainty _JetUncertainty = paths.GetUncertainty();
+    JetCorrectionUncertainty _JetUncertainty = paths.GetUncertainty(uncertType);
 
     /* The following was converted from NanoAOD-tools but is not used (even in NanoAOD-tools)
         // if (boost::filesystem::exists(filename)) {

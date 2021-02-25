@@ -33,18 +33,25 @@ class JMEpaths {
         }
         str GetPath(str level) {
             str tarfile, jmefile, filestr, p;
-            
             tarfile = _jmeArchivePath + _globalTag + ".tgz";
             jmefile = _globalTag+this->GetLevel(level)+_jetFlavour+".txt";
             filestr = ReadTarFile(tarfile, jmefile);
             p = tempdir.Write(jmefile, filestr);
-            
             return p;
         }
-        JetCorrectorParameters GetParameters(str level) {
-            return JetCorrectorParameters(this->GetPath(level));
+
+        str GetTxtFileStr(str level) {
+            str tarfile, jmefile, filestr, p;
+            tarfile = _jmeArchivePath + _globalTag + ".tgz";
+            jmefile = _globalTag+this->GetLevel(level)+_jetFlavour+".txt";
+            filestr = ReadTarFile(tarfile, jmefile);
+            return filestr;
+        }
+
+        JetCorrectorParameters GetParameters(str level, str uncertType = "") {
+            return JetCorrectorParameters(this->GetPath(level), "");
         };
-        JetCorrectionUncertainty GetUncertainty() {
-            return JetCorrectionUncertainty(this->GetPath("Uncert"));
+        JetCorrectionUncertainty GetUncertainty(str uncertType) {
+            return JetCorrectionUncertainty(this->GetParameters("Uncert",uncertType));
         }
 };

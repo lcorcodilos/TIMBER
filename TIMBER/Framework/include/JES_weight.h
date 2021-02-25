@@ -6,20 +6,20 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "JetRecalibrator.h"
 #include "common.h"
+#include "Pythonic.h"
 
-//Class to handle JES uncertainty shift
-//Constructor initializes the reader
-//GetUncVal calculates the uncertainty depending on the eta and pt
 class JES_weight {
     private:
-        const std::string _globalTag, _jetFlavour;
+        const std::string _globalTag, _jetFlavour, _uncertType;
         const bool _redoJECs;
-        
 
     public:
         JetRecalibrator _jetRecalib;
-        JES_weight(str globalTag, str jetFlavour, bool redoJECs=false);
+        JES_weight(str globalTag, str jetFlavour, str uncertType = "", bool redoJECs=false);
         ~JES_weight(){};
+
+        bool check_type_exists();
+        std::vector<std::string> get_sources();
 
         template <class T>
         std::vector<float> eval(T jet, float rho){
