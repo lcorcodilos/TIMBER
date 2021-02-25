@@ -1,5 +1,7 @@
 #include "../include/JetRecalibrator.h"
 
+JetRecalibrator::JetRecalibrator(): _globalTag(''), _jetFlavour(''),_doResidualJECs(true),_upToLevel(3){};
+
 JetRecalibrator::JetRecalibrator(str globalTag, str jetFlavour, bool doResidualJECs,
                                  str jecPath, int upToLevel)://,
                                 //  bool calculateSeparateCorrections,
@@ -11,32 +13,29 @@ JetRecalibrator::JetRecalibrator(str globalTag, str jetFlavour, bool doResidualJ
 //     _calculateType1METCorrection{calculateType1METCorrection}, _type1METParams{type1METParams}
 {
     // Make base corrections
-    _L1JetPar = JetCorrectorParameters(
-        _jecPath+"/"+globalTag+"_L1FastJet_"+jetFlavour+".txt", "");
+    paths = JMEpaths(_globalTag, _jetFlavour);
+
+    _L1JetPar = paths.GetParameters("1");
     vJCP vPar {_L1JetPar};
 
     if (_upToLevel >= 2) {
-        _L2JetPar = JetCorrectorParameters(
-            _jecPath+"/"+globalTag+"_L2Relative_"+jetFlavour+".txt", "");
+        _L2JetPar = paths.GetParameters("2");;
         vPar.push_back(_L2JetPar);
     }
 
     if (_upToLevel >= 3) {
-        _L3JetPar = JetCorrectorParameters(
-            _jecPath+"/"+globalTag+"_L3Absolute_"+jetFlavour+".txt", "");
+        _L3JetPar = paths.GetParameters("3");;
         vPar.push_back(_L3JetPar);
     }
     // Add residuals if needed
     if (doResidualJECs) {
-        _ResJetPar = JetCorrectorParameters(
-            _jecPath+"/"+globalTag+"_L2L3Residual_"+jetFlavour+".txt");
+        _ResJetPar = paths.GetParameters("Res");;
         vPar.push_back(_ResJetPar);
     }
     // Construct FactorizedJetCorrector JetCorrectionUncertinaty objects
     FactorizedJetCorrector _JetCorrector (vPar);
-    str filename = _jecPath+"/"+globalTag+"_Uncertainty_"+jetFlavour+".txt";
-    JetCorrectionUncertainty _JetUncertainty (
-            _jecPath+"/"+globalTag+"_Uncertainty_"+jetFlavour+".txt");
+    str filename = paths.GetPath("Uncert");
+    JetCorrectionUncertainty _JetUncertainty = paths.GetUncertainty();
 
     /* The following was converted from NanoAOD-tools but is not used (even in NanoAOD-tools)
         // if (boost::filesystem::exists(filename)) {
@@ -76,46 +75,4 @@ JetRecalibrator::JetRecalibrator(str globalTag, str jetFlavour, bool doResidualJ
         }
     }
     */
-}
-
-JetRecalibrator::~JetRecalibrator()
-{
-}
-
-template <typename T>
-void JetRecalibrator::SetCorrection(T jet, float rho) {
-    _JetCorrector.setJetPhi(jet.phi);
-    _JetCorrector.setJetEta(jet.eta);
-    _JetCorrector.setJetPt(jet.pt * (1. - jet.rawFactor));
-    _JetCorrector.setJetA(jet.area);
-    _JetCorrector.setRho(rho);
-    _correction = _JetCorrector.getCorrection();
-};
-
-template <typename T>
-void JetRecalibrator::SetUncert(T jet, float rho, float delta) {
-    if (delta != 0) {
-        _JetUncertainty.setJetPhi(jet.phi);
-        _JetUncertainty.setJetEta(jet.eta);
-        _JetUncertainty.setJetPt(_correction * jet.pt * (1.0 - jet.rawFactor));
-        _uncertainty = _JetUncertainty.getUncertainty(true);
-
-        // variation[1] = _correction * std::max(0, 1+delta*uncertainty);
-        // variation[2] = _correction * std::max(0, 1-delta*uncertainty);
-    } else {
-        _uncertainty = 0;
-    }
-
-};
-
-template <typename T>
-rvec_f JetRecalibrator::Correct(T jet, float rho, float delta) {
-    rvec_f out = {jet.pt, jet.mass};
-    float raw = 1.0 - jet.rawFactor;
-    float correction = this->GetCorrection(jet, rho, delta);
-    if (correction > 0) {
-        out = {jet.pt*raw*correction, jet.mass*raw*correction};
-    }
-
-    return out;
 }
