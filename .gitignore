@@ -10,3 +10,4 @@ dist
 experimental/
 .vscode/
 examples/*.root
+bin/

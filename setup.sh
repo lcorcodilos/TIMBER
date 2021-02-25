@@ -26,3 +26,13 @@ else
   cat activate_ext.sh.cpy >> $activate_path
   rm activate_ext.sh.cpy
 fi
+
+if [ ! -d "bin/libarchive" ] 
+then
+  git clone https://github.com/libarchive/libarchive.git
+  cd libarchive
+  cmake . -DCMAKE_INSTALL_PREFIX=../bin/libarchive
+  make
+  make install
+  rm -rf libarchive
+fi
