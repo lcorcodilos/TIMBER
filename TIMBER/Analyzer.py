@@ -604,7 +604,7 @@ class analyzer(object):
         if node == None: node = self.ActiveNode
 
         # Quick type checking
-        if not isinstance(node,Node): raise TypeError('AddCorrection() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
+        if not isinstance(node,Node): raise TypeError('_addModule() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
 
         # Make the call
         module.MakeCall(evalArgs,node)
@@ -922,34 +922,15 @@ class analyzer(object):
         Returns:
             Node: New #ActiveNode.
         '''
-        newNode = self._addModule(correction, evalArgs, 'Calibration', node)
-
         # Quick type checking
-        if not isinstance(node,Node): raise TypeError('AddCorrection() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
-        elif not isinstance(correction,Correction): raise TypeError('AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
-        elif isinstance(correction, Calibration): raise TypeError('Attempting to add a Calibration and not a Correction. Corrections weight events while Calibrations weight variables.')
+        if not isinstance(node,Node): raise TypeError('CalibrateVar() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
+        elif not isinstance(calib,Calibration): raise TypeError('CalibrateVar() does not support argument type %s for calibration. Please provide a Calibration.'%(type(calib)))
 
-        # Make the call
-        correction.MakeCall(evalArgs,node)
+        newNode = self._addModule(calib, evalArgs, 'Calibration', node)
 
-        # Add correction to track
-        self.Corrections[correction.name] = correction
+        for i,v in enumerate(['nom','up','down']):
+            newNode = self.Define(var+'_'+calib.name+'__'+v,var+'*'+calib.name+'__vec[%s]'%i,newNode,nodetype='Calibration')
 
-        # Make new node
-        newNode = self.Define(correction.name+'__vec',correction.GetCall(),node,nodetype='Correction')
-        if correction.GetType() == 'weight':
-            variations = ['nom','up','down']
-        elif correction.GetType() == 'uncert':
-            variations = ['up','down']
-        elif correction.GetType() == 'corr':
-            variations = ['nom']
-        else:
-            raise ValueError('Correction.GetType() returns %s'%correction.GetType())
-
-        for i,v in enumerate(variations):
-            newNode = self.Define(correction.name+'__'+v,correction.name+'__vec[%s]'%i,newNode,nodetype='Correction')
-
-        # self.TrackNode(returnNode)
         return self.SetActiveNode(newNode)
 
     #----------------------------------------------#
