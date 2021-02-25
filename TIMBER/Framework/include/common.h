@@ -1,6 +1,14 @@
 #ifndef _TIMBER_COMMON
 #define _TIMBER_COMMON
 
+#include "TIMBER/bin/libarchive/include/archive.h"
+#include "TIMBER/bin/libarchive/include/archive_entry.h"
+#include <fstream>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <boost/filesystem.hpp>
+
 #include <cmath>
 #include <cstdlib>
 #include <ROOT/RVec.hxx>
@@ -154,4 +162,58 @@ namespace hardware {
     //         pairs[obj] = matched
     //     return pairs
 }
+
+std::string ReadTarFile(std::string tarname, std::string internalFile) {
+    struct archive *_arch;
+    struct archive_entry *_entry;
+    const void *buff;
+    int64_t offset;
+    size_t size;
+    std::stringstream outstream;
+    std::string out;
+    int code;
+    // Open archive
+    _arch = archive_read_new();
+    archive_read_support_filter_all(_arch);
+    archive_read_support_format_all(_arch);
+    code = archive_read_open_filename(_arch, tarname.c_str(), 10240); // Note 1
+    if (code != ARCHIVE_OK)
+        throw "Not able to open archive `"+tarname+"`.";
+    // Search for file in archive and return
+    while (archive_read_next_header(_arch, &_entry) == ARCHIVE_OK) {
+        if (std::string(archive_entry_pathname(_entry)) == internalFile) {
+            archive_read_data_block(_arch, &buff, &size, &offset);
+            outstream.write((char*)buff, size);
+            out = outstream.str();
+            break;
+        }
+    }
+
+    archive_read_free(_arch);
+    return out;
+}
+
+class TempDir {
+    private:
+        boost::filesystem::path path;
+
+    public:
+        TempDir(){
+            path = boost::filesystem::temp_directory_path();
+            boost::filesystem::create_directories(path);
+        };
+        ~TempDir(){
+            boost::filesystem::remove(path);
+        };
+
+        std::string Write(std::string filename, std::string in) {
+            std::ofstream out(filename);
+            out << in;
+            out.close();
+            std::string finalpath (path.string()+filename); 
+            return finalpath;
+        };
+
+};
+
 #endif
