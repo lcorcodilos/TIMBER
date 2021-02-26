@@ -49,6 +49,21 @@ namespace hardware {
         return sqrt(deta*deta+dphi*dphi);
     }
     /**
+     * @brief Calculate \f$\Delta R\f$ between two objects.
+     * 
+     * @param in1 
+     * @param in2 
+     * @return float 
+     */
+    template<class T1, class T2>
+    float DeltaR(T1 in1, T2 in2) {
+        ROOT::Math::PtEtaPhiMVector v1(in1.pt, in1.eta, in1.phi, in1.mass);
+        ROOT::Math::PtEtaPhiMVector v2(in2.pt, in2.eta, in2.phi, in2.mass);
+        float deta = v1.Eta()-v2.Eta();
+        float dphi = DeltaPhi(v1.Phi(),v2.Phi());
+        return sqrt(deta*deta+dphi*dphi);
+    }
+    /**
      * @brief Create a ROOT::Math::PtEtaPhiMVector.
      * 
      * @param pt 
