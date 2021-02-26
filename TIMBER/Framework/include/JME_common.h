@@ -6,7 +6,7 @@
 using str = std::string;
 
 class JMEpaths {
-    private:
+    protected:
         const std::string _timberPath = std::string(std::getenv("TIMBERPATH"));
         const str _jmeArchivePath = _timberPath + "TIMBER/data/JME/";
         TempDir tempdir;
@@ -31,6 +31,8 @@ class JESpaths : JMEpaths {
         const str _globalTag, _jetFlavour;
 
     public:
+        JESpaths(){};
+
         JESpaths(str globalTag, str jetFlavour) :
                 _globalTag(globalTag), _jetFlavour(jetFlavour){};
 
@@ -56,20 +58,23 @@ class JESpaths : JMEpaths {
             return this->_GetTxtFileStr(tarfile, jmefile);
         }
 
-        JetCorrectorParameters GetParametersJES(str level, str uncertType = "") {
+        JetCorrectorParameters GetParameters(str level, str uncertType = "") {
             return JetCorrectorParameters(this->GetPath(level), "");
         };
-        JetCorrectionUncertainty GetUncertaintyJES(str uncertType) {
+        JetCorrectionUncertainty GetUncertainty(str uncertType) {
             return JetCorrectionUncertainty(this->GetParameters("Uncert",uncertType));
         }
-}
+};
 
 class JERpaths : JMEpaths {
     private:
-        str _jerTag;
+        str _jerTag, _jetFlavour;
 
     public: 
-        JERpaths(str jetFlavour, str jertag) : _jetFlavour(jetFlavour), _jerTag(jerTag){};
+        JERpaths(){};
+
+        JERpaths(str jetFlavour, str jerTag) :
+            _jetFlavour(jetFlavour), _jerTag(jerTag){};
 
         str GetPath(str resOrSF) {
             str tarfile = _jmeArchivePath + _jerTag + "_MC.tgz";
@@ -84,11 +89,11 @@ class JERpaths : JMEpaths {
         };
 
         JME::JetResolution GetResPath() {
-            JetResolution(GetPath("_PtResolution_"));
+            return JME::JetResolution(GetPath("_PtResolution_"));
         }
 
         JME::JetResolutionScaleFactor GetSFpath() {
-            JetResolutionScaleFactor(GetPath("_SF_"));
+            return JME::JetResolutionScaleFactor(GetPath("_SF_"));
         }
 
-}
+};
