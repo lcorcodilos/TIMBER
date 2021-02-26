@@ -13,7 +13,7 @@ JetRecalibrator::JetRecalibrator(str globalTag, str jetFlavour, bool doResidualJ
 //     _calculateType1METCorrection{calculateType1METCorrection}, _type1METParams{type1METParams}
 {
     // Make base corrections
-    paths = JMEpaths(_globalTag, _jetFlavour);
+    paths = JESpaths(_globalTag, _jetFlavour);
 
     _L1JetPar = paths.GetParameters("1");
     vJCP vPar {_L1JetPar};
@@ -36,7 +36,8 @@ JetRecalibrator::JetRecalibrator(str globalTag, str jetFlavour, bool doResidualJ
     FactorizedJetCorrector _JetCorrector (vPar);
     str filename = paths.GetPath("Uncert");
     JetCorrectionUncertainty _JetUncertainty = paths.GetUncertainty(uncertType);
-
+    
+    delete paths;
     /* The following was converted from NanoAOD-tools but is not used (even in NanoAOD-tools)
         // if (boost::filesystem::exists(filename)) {
     //     JetCorrectionUncertainty _JetUncertainty (

@@ -39,7 +39,7 @@ class JetRecalibrator {
                         //     {'skipMuons', 1} // True
                         //  }
                         );
-        ~JetRecalibrator();
+        ~JetRecalibrator(){};
 
         // rho branch should be "fixedGridRhoFastjetAll"
         template <class T>

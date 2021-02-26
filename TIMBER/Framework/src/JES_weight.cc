@@ -24,7 +24,7 @@ bool JES_weight::check_type_exists() {
 }
 
 std::vector<std::string> JES_weight::get_sources() {
-    JMEpaths paths(_globalTag, _jetFlavour);
+    JESpaths paths(_globalTag, _jetFlavour);
     std::istringstream f(paths.GetTxtFileStr("Uncert"));
     std::string line;
     std::vector<std::string> sources;
