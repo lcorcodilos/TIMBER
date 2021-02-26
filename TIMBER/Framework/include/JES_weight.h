@@ -24,14 +24,15 @@ class JES_weight {
         template <class T>
         std::vector<float> eval(T jet, float rho){
             std::vector<float> out {1.0, 1.0, 1.0};
-
+            
             if (_redoJECs) {
+                float raw = 1.0 - jet.rawFactor;
                 _jetRecalib.SetCorrection(jet, rho);
                 _jetRecalib.SetUncertainty(jet, rho);
 
-                out[0] = _jetRecalib.GetCorrection();
-                out[1] = _jetRecalib.GetCorrection()+_jetRecalib.GetUncertainty();
-                out[2] = _jetRecalib.GetCorrection()-_jetRecalib.GetUncertainty();
+                out[0] = raw * (_jetRecalib.GetCorrection());
+                out[1] = raw * (_jetRecalib.GetCorrection()+_jetRecalib.GetUncertainty());
+                out[2] = raw * (_jetRecalib.GetCorrection()-_jetRecalib.GetUncertainty());
             } else {
                 _jetRecalib.SetUncertainty(jet, rho);
                 out[1] = 1+_jetRecalib.GetUncertainty();
