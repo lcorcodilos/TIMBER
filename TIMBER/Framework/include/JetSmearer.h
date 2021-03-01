@@ -102,7 +102,7 @@ class JetSmearer {
          * @param fixedGridRhoFastjetAll 
          * @return RVec<float> {nom,up,down}
          */
-        std::vector<float> GetSmearValsPt(LorentzV jet, std::vector<LorentzV> genJet);
+        std::vector<float> GetSmearValsPt(LorentzV jet, std::vector<LorentzV> genJets);
         /**
          * @brief Smear jet m to account for measured difference in JMR between 
          * data and simulation. The function computes the nominal smeared jet m
