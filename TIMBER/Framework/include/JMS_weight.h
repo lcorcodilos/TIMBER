@@ -2,6 +2,9 @@
 #include <cstdlib>
 #include <map>
 #include <vector>
+#include <ROOT/RVec.hxx>
+
+using namespace ROOT::VecOps;
 
 // CURRENTLY ONLY SUPPORTS TAU21
 class JMS_weight {
@@ -15,5 +18,5 @@ class JMS_weight {
     public:
         JMS_weight(int year);
         ~JMS_weight(){};
-        std::vector<float> eval();
+        RVec< RVec<float>> eval(size_t nJets);
 };
