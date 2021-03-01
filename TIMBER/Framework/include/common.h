@@ -87,9 +87,35 @@ namespace hardware {
      */
     RVec<ROOT::Math::PtEtaPhiMVector> TLvector(RVec<float> pt,RVec<float> eta,RVec<float> phi,RVec<float> m) {
         RVec<ROOT::Math::PtEtaPhiMVector> vs;
+        vs.reserve(pt.size());
         for (size_t i = 0; i < pt.size(); i++) {
-            ROOT::Math::PtEtaPhiMVector v(pt[i],eta[i],phi[i],m[i]);
-            vs.push_back(v);
+            vs.emplace_back(pt[i],eta[i],phi[i],m[i]);
+        }
+        return vs;
+    }
+    /**
+     * @brief Create a ROOT::Math::PtEtaPhiMVectors.
+     * 
+     * @param obj
+     * @return ROOT::Math::PtEtaPhiMVector
+     */
+    template<class T>
+    ROOT::Math::PtEtaPhiMVector TLvector(T obj) {
+        ROOT::Math::PtEtaPhiMVector v (obj.pt, obj.eta, obj.phi, obj.mass);
+        return v;
+    }
+    /**
+     * @brief Create a vector of ROOT::Math::PtEtaPhiMVectors.
+     * 
+     * @param objs 
+     * @return RVec<ROOT::Math::PtEtaPhiMVector> 
+     */
+    template<class T>
+    RVec<ROOT::Math::PtEtaPhiMVector> TLvector(RVec<T> objs) {
+        RVec<ROOT::Math::PtEtaPhiMVector> vs;
+        vs.reserve(objs.size());
+        for (size_t i = 0; i < objs.size(); i++) {
+            vs.emplace_back(objs[i].pt, objs[i].eta, objs[i].phi, objs[i].mass);
         }
         return vs;
     }
@@ -178,6 +204,14 @@ namespace hardware {
     //     return pairs
 }
 
+/**
+ * @brief Streams a tgz file (tarname) and searches for internalFile
+ * within the tgz. Returns a string of the internalFile contents.
+ * 
+ * @param tarname 
+ * @param internalFile 
+ * @return std::string 
+ */
 std::string ReadTarFile(std::string tarname, std::string internalFile) {
     struct archive *_arch;
     struct archive_entry *_entry;
@@ -208,19 +242,37 @@ std::string ReadTarFile(std::string tarname, std::string internalFile) {
     return out;
 }
 
+/**
+ * @brief Creates a temporary directory that is destroyed on delete.
+ */
 class TempDir {
     private:
         boost::filesystem::path path;
 
     public:
+        /**
+         * @brief Construct a new Temp Dir object
+         * 
+         */
         TempDir(){
             path = boost::filesystem::temp_directory_path();
             boost::filesystem::create_directories(path);
         };
+        /**
+         * @brief Destroy the Temp Dir object
+         * 
+         */
         ~TempDir(){
             boost::filesystem::remove(path);
         };
-
+        /**
+         * @brief Write a string (in) to a file (filename) within the 
+         * temporary directory.
+         * 
+         * @param filename 
+         * @param in 
+         * @return std::string 
+         */
         std::string Write(std::string filename, std::string in) {
             std::ofstream out(filename);
             out << in;
