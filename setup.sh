@@ -34,5 +34,6 @@ then
   cmake . -DCMAKE_INSTALL_PREFIX=../bin/libarchive
   make
   make install
+  cd ..
   rm -rf libarchive
 fi
