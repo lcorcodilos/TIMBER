@@ -40,7 +40,15 @@ JetSmearer::JetSmearer(std::vector<float> jmrVals) :
                         _jetType(""), _jmrVals(jmrVals),
                         _puppisd_res_central(GetPuppiSDResolutionCentral()),
                         _puppisd_res_forward(GetPuppiSDResolutionForward())
-                         {};
+                         {
+    if (Pythonic::InString("AK4",jetType)) {
+        _genJetMatcher = std::make_shared<GenJetMatcher>(0.2);
+    } else if (Pythonic::InString("AK8",jetType)) {
+        _genJetMatcher = std::make_shared<GenJetMatcher>(0.4);
+    } else {
+        throw "Jet type is not AK4 or AK8.";
+    }
+};
 
 RVec<float> JetSmearer::GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJets) {
     RVec<float> out(3);
