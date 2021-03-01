@@ -4,7 +4,7 @@ Home of main classes for TIMBER.
 
 """
 
-from TIMBER.Utilities.CollectionGen import BuildCollectionDict, StructDef, StructObj
+from TIMBER.Utilities.CollectionGen import BuildCollectionDict, GetKeyValForBranch, StructDef, StructObj
 from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags
 from clang import cindex
 from collections import OrderedDict
@@ -150,9 +150,10 @@ class analyzer(object):
 
         self.ActiveNode = self.BaseNode
         # Auto create collections
+        self.__collectionDict = BuildCollectionDict(self.DataFrame)
         self.__builtCollections = []
         if createAllCollections:
-            self.CreateAllCollections(silent=True)
+            self.__createAllCollections(silent=True)
  
     def Close(self):
         '''Safely deletes analyzer instance.
@@ -398,15 +399,13 @@ class analyzer(object):
         return self.SetActiveNode(newNode)
 
     def __collectionDefCheck(self, action_str, node):
-        collDict = BuildCollectionDict(self.DataFrame)
         newNode = node
-        for c in collDict:
-            if re.search(r"\b" + re.escape(c+'s') + r"\b", action_str) and (c+'s' not in self.__builtCollections):
+        for c in self.__collectionDict.keys():
+            if (c+'s' not in self.__builtCollections) and re.search(r"\b" + re.escape(c+'s') + r"\b", action_str):
                 print ('MAKING %ss for %s'%(c,action_str))
-                newNode = self.CreateCollection(c,collDict[c],silent=False,node=newNode)
+                newNode = self.__createCollection(c,self.__collectionDict[c],silent=True,node=newNode)
                 self.__builtCollections.append(c+'s')
-
-        return newNode
+        return self.SetActiveNode(newNode)
 
     # Applies a bunch of action groups (cut or var) in one-shot in the order they are given
     def Apply(self,actionGroupList,node=None,trackEach=True):
@@ -491,6 +490,12 @@ class analyzer(object):
             else:
                 self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
             
+        branches_to_track = []
+        for v in collBranches:
+            v_with_type = GetKeyValForBranch(self.DataFrame, v)[1]
+            if v_with_type != '': branches_to_track.append(v_with_type)
+        self.__trackNewCollection(name,branches_to_track)
+
         return self.ActiveNode
 
     def ReorderCollection(self, name, basecoll, newOrderCol, skip=[]):
@@ -564,7 +569,14 @@ class analyzer(object):
 
         self.Define('n'+name,'+'.join(['n'+n for n in collectionNames]),nodetype='MergeDefine')
 
-    def CreateCollection(self,collection,attributes,silent=True,node=None):
+        self.__trackNewCollection(name,[GetKeyValForBranch(collectionNames[0]+'_'+v)[1] for v in vars_to_make])
+
+    def __trackNewCollection(self,name,branches):
+        self.__collectionDict[name] = []
+        for b in branches:
+            self.__collectionDict[name].append(b)
+
+    def __createCollection(self,collection,attributes,silent=True,node=None):
         init_silent = self.silent
         self.silent = silent
         if collection+'s' not in self.__builtCollections:
@@ -576,10 +588,10 @@ class analyzer(object):
         self.silent = init_silent
         return self.SetActiveNode(newNode)
 
-    def CreateAllCollections(self,silent=True):
+    def __createAllCollections(self,silent=True):
         collDict = BuildCollectionDict(self.BaseNode.DataFrame)
         for c in collDict.keys():
-            self.CreateCollection(c,collDict[c],silent)
+            self.__createCollection(c,collDict[c],silent)
 
     def CommonVars(self,collections):
         '''Find the common variables between collections.
