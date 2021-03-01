@@ -4,9 +4,12 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
+#include <ROOT/RVec.hxx>
 #include "JetRecalibrator.h"
 #include "common.h"
 #include "Pythonic.h"
+
+using namespace ROOT::VecOps;
 
 class JES_weight {
     private:
@@ -22,23 +25,27 @@ class JES_weight {
         std::vector<std::string> get_sources();
 
         template <class T>
-        std::vector<float> eval(T jet, float rho){
-            std::vector<float> out {1.0, 1.0, 1.0};
+        RVec< RVec<float> > eval(RVec<T> jets, float rho){
+            RVec< RVec<float> > out (jets.size());
             
-            if (_redoJECs) {
-                float raw = 1.0 - jet.rawFactor;
-                _jetRecalib.SetCorrection(jet, rho);
-                _jetRecalib.SetUncertainty(jet, rho);
+            for (size_t ijet = 0; ijet < jets.size(); ijet++) {
+                RVec<float> ijet_out {1.0, 1.0, 1.0};
+            
+                if (_redoJECs) {
+                    float raw = 1.0 - jet.rawFactor;
+                    _jetRecalib.SetCorrection(jet, rho);
+                    _jetRecalib.SetUncertainty(jet, rho);
 
-                out[0] = raw * (_jetRecalib.GetCorrection());
-                out[1] = raw * (_jetRecalib.GetCorrection()+_jetRecalib.GetUncertainty());
-                out[2] = raw * (_jetRecalib.GetCorrection()-_jetRecalib.GetUncertainty());
-            } else {
-                _jetRecalib.SetUncertainty(jet, rho);
-                out[1] = 1+_jetRecalib.GetUncertainty();
-                out[2] = 1+_jetRecalib.GetUncertainty();
+                    ijet_out[0] = raw * (_jetRecalib.GetCorrection());
+                    ijet_out[1] = raw * (_jetRecalib.GetCorrection()+_jetRecalib.GetUncertainty());
+                    ijet_out[2] = raw * (_jetRecalib.GetCorrection()-_jetRecalib.GetUncertainty());
+                } else {
+                    _jetRecalib.SetUncertainty(jet, rho);
+                    ijet_out[1] = 1+_jetRecalib.GetUncertainty();
+                    ijet_out[2] = 1+_jetRecalib.GetUncertainty();
+                }
+                out[ijet] = ijet_out;
             }
-
             return out;
         };
 };
