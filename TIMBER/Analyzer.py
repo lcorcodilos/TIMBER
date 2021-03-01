@@ -123,7 +123,7 @@ class analyzer(object):
         else: self.isData = True
  
         # Count number of generated events if not data
-        self.genEventCount = 0 
+        self.genEventCount = 0.0
         if not self.isData: 
             for i in range(self.RunChain.GetEntries()): 
                 self.RunChain.GetEntry(i)
