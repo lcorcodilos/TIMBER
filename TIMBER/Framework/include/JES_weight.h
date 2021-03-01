@@ -13,12 +13,12 @@ using namespace ROOT::VecOps;
 
 class JES_weight {
     private:
-        const std::string _globalTag, _jetFlavour, _uncertType;
+        const std::string _jesTag, _jetType, _uncertType;
         const bool _redoJECs;
 
     public:
         JetRecalibrator _jetRecalib;
-        JES_weight(str globalTag, str jetFlavour, str uncertType = "", bool redoJECs=false);
+        JES_weight(str jesTag, str jetType, str uncertType = "", bool redoJECs=false);
         ~JES_weight(){};
 
         bool check_type_exists();
@@ -32,15 +32,15 @@ class JES_weight {
                 RVec<float> ijet_out {1.0, 1.0, 1.0};
             
                 if (_redoJECs) {
-                    float raw = 1.0 - jet.rawFactor;
-                    _jetRecalib.SetCorrection(jet, rho);
-                    _jetRecalib.SetUncertainty(jet, rho);
+                    float raw = 1.0 - jets[ijet].rawFactor;
+                    _jetRecalib.SetCorrection(jets[ijet], rho);
+                    _jetRecalib.SetUncertainty(jets[ijet], rho);
 
                     ijet_out[0] = raw * (_jetRecalib.GetCorrection());
                     ijet_out[1] = raw * (_jetRecalib.GetCorrection()+_jetRecalib.GetUncertainty());
                     ijet_out[2] = raw * (_jetRecalib.GetCorrection()-_jetRecalib.GetUncertainty());
                 } else {
-                    _jetRecalib.SetUncertainty(jet, rho);
+                    _jetRecalib.SetUncertainty(jets[ijet], rho);
                     ijet_out[1] = 1+_jetRecalib.GetUncertainty();
                     ijet_out[2] = 1+_jetRecalib.GetUncertainty();
                 }

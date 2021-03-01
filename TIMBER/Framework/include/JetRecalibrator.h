@@ -17,7 +17,7 @@ typedef std::vector<JetCorrectorParameters> vJCP;
 
 class JetRecalibrator {
     private:
-        str _globalTag, _jetFlavour, _uncertType;
+        str _jesTag, _jetFlavour, _uncertType;
         bool _doResidualJECs;//, _calculateSeparateCorrections, _calculateType1METCorrection;
         int _upToLevel;
         // std::map<str, float> _type1METParams;
@@ -30,7 +30,7 @@ class JetRecalibrator {
     public:
         JetRecalibrator(){};
 
-        JetRecalibrator( str globalTag, str jetFlavour, bool doResidualJECs, str uncertType, int upToLevel=3
+        JetRecalibrator( str jesTag, str jetFlavour, bool doResidualJECs, str uncertType, int upToLevel=3
                         //  bool calculateSeparateCorrections=false,
                         //  bool calculateType1METCorrection=false,
                         //  std::map<str, float> type1METParams = {

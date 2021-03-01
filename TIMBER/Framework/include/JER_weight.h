@@ -8,7 +8,7 @@ class JER_weight {
     private:
         JetSmearer _smearer;
     public:
-        JER_weight(std::string jetType, std::string jerTag);
+        JER_weight(std::string jerTag, std::string jetType);
         ~JER_weight(){};
 
         template <class Tjet, class TgenJet>

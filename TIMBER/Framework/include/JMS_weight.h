@@ -11,8 +11,9 @@ class JMS_weight {
             {2017, {0.982, 0.986 , 0.978 } },
             {2018, {0.982, 0.986 , 0.978 } }
         };
+        std::vector<float> _jmsVals;
     public:
-        JMS_weight();
+        JMS_weight(int year);
         ~JMS_weight(){};
-        std::vector<float> eval(int year);
+        std::vector<float> eval();
 };

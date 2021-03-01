@@ -1,19 +1,19 @@
 #include "../include/JetRecalibrator.h"
 
-JetRecalibrator::JetRecalibrator(): _globalTag(""), _jetFlavour(""),_doResidualJECs(true),_uncertType(""),_upToLevel(3){};
+JetRecalibrator::JetRecalibrator(): _jesTag(""), _jetFlavour(""),_doResidualJECs(true),_uncertType(""),_upToLevel(3){};
 
-JetRecalibrator::JetRecalibrator(str globalTag, str jetFlavour, bool doResidualJECs,
+JetRecalibrator::JetRecalibrator(str jesTag, str jetFlavour, bool doResidualJECs,
                                  str jecPath, str uncertType, int upToLevel)://,
                                 //  bool calculateSeparateCorrections,
                                 //  bool calculateType1METCorrection,
                                 //  std::map<str, float> type1METParams):
-    _globalTag{globalTag}, _jetFlavour{jetFlavour}, _doResidualJECs{doResidualJECs},
+    _jesTag{jesTag}, _jetFlavour{jetFlavour}, _doResidualJECs{doResidualJECs},
     _jecPath{jecPath}, _uncertType{uncertType} _upToLevel{upToLevel}
 //     _calculateSeparateCorrections{calculateSeparateCorrections},
 //     _calculateType1METCorrection{calculateType1METCorrection}, _type1METParams{type1METParams}
 {
     // Make base corrections
-    paths = JESpaths(_globalTag, _jetFlavour);
+    paths = JESpaths(_jesTag, _jetFlavour);
 
     _L1JetPar = paths.GetParameters("1");
     vJCP vPar {_L1JetPar};
@@ -41,7 +41,7 @@ JetRecalibrator::JetRecalibrator(str globalTag, str jetFlavour, bool doResidualJ
     /* The following was converted from NanoAOD-tools but is not used (even in NanoAOD-tools)
         // if (boost::filesystem::exists(filename)) {
     //     JetCorrectionUncertainty _JetUncertainty (
-    //         _jecPath+"/"+globalTag+"_Uncertainty_"+jetFlavour+".txt"
+    //         _jecPath+"/"+jesTag+"_Uncertainty_"+jetFlavour+".txt"
     //     );
     // } else {
     //     std::cout << "Missing JEC uncertainty file '"+filename+"', so jet energy uncertainties will not be available!" << std::endl;

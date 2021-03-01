@@ -1,5 +1,7 @@
 #include "../include/JMS_weight.h"
 
-std::vector<float> JMS_weight::eval(int year){
-	return this->_jmsTable[year];
+JMS_weight::JMS_weight(int year) : _jmsVals(_jmsTable[year]) {};
+
+std::vector<float> JMS_weight::eval(){
+	return this->_jmsVals;
 } 
