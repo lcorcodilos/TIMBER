@@ -33,26 +33,7 @@ class GenJetMatcher {
         GenJetMatcher(float dRMax, float dPtMaxFactor = 3) : 
             _dRMax{dRMax}, _dPtMaxFactor(dPtMaxFactor) {};
 
-        const LorentzV* match(LorentzV& jet, std::vector<LorentzV> genJets, float resolution) {
-            // Match if dR < _dRMax and dPt < dPtMaxFactor
-            double min_dR = std::numeric_limits<double>::infinity();
-            const LorentzV* out = nullptr;
-
-            for (const LorentzV & genJet : genJets) {
-                float dR = hardware::DeltaR(genJet, jet);
-                if (dR > min_dR) {
-                    continue;
-                }
-                if (dR < _dRMax) {
-                    double dPt = std::abs(genJet.pt() - jet.pt());
-                    if (dPt <= _dPtMaxFactor * resolution) {
-                        min_dR = dR;
-                        out = &genJet;
-                    }
-                }
-            }
-            return out;
-        }
+        const LorentzV* match(LorentzV& jet, RVec<LorentzV> genJets, float resolution);
 };
 
 class JetSmearer {
@@ -76,11 +57,15 @@ class JetSmearer {
         std::shared_ptr<GenJetMatcher> _genJetMatcher;
         static constexpr const double MIN_JET_ENERGY = 1e-2;
 
+        TF1* _puppisd_res_central;
+        TF1* _puppisd_res_forward;
+
     public:
+        JetSmearer(){};
         // For JER smearing
         JetSmearer( std::string jetType, std::string jerTag);
         // For JMR smearing
-        JetSmearer( std::string jetType, std::vector<float> jmrVals);
+        JetSmearer(std::vector<float> jmrVals);
 
         ~JetSmearer(){};
         /**
@@ -102,7 +87,7 @@ class JetSmearer {
          * @param fixedGridRhoFastjetAll 
          * @return RVec<float> {nom,up,down}
          */
-        std::vector<float> GetSmearValsPt(LorentzV jet, std::vector<LorentzV> genJets);
+        RVec<float> GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJets);
         /**
          * @brief Smear jet m to account for measured difference in JMR between 
          * data and simulation. The function computes the nominal smeared jet m
@@ -122,13 +107,13 @@ class JetSmearer {
          * 
          * @return def 
          */
-        // RVec<float> GetSmearValsM(LorentzV jet, LorentzV genJet);
+        RVec<float> GetSmearValsM(LorentzV jet, RVec<LorentzV> genJets);
 
         TFile* GetPuppiJMRFile() {
             return TFile::Open(TString(std::string(std::getenv("TIMBERPATH")) + "TIMBER/data/JME/puppiSoftdropResol.root"));;
         }
 
-        TF1* GetPuppiSDResolutionCenter() {
+        TF1* GetPuppiSDResolutionCentral() {
             return (TF1*)this->GetPuppiJMRFile()->Get("massResolution_0eta1v3");
         } 
 
