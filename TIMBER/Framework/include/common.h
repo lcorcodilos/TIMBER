@@ -1,5 +1,6 @@
 #ifndef _TIMBER_COMMON
 #define _TIMBER_COMMON
+#define _STRUCT_TIMESPEC 1
 
 #include "TIMBER/bin/libarchive/include/archive.h"
 #include "TIMBER/bin/libarchive/include/archive_entry.h"

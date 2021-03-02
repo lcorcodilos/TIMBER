@@ -10,4 +10,5 @@ dist
 experimental/
 .vscode/
 examples/*.root
-bin/
+TIMBER/bin/
+root*

@@ -150,7 +150,7 @@ class analyzer(object):
 
         self.ActiveNode = self.BaseNode
         # Auto create collections
-        self.__collectionDict = BuildCollectionDict(self.DataFrame)
+        self.__collectionDict = BuildCollectionDict(BaseDataFrame)
         self.__builtCollections = []
         if createAllCollections:
             self.__createAllCollections(silent=True)
