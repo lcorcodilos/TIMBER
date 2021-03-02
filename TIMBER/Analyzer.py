@@ -569,7 +569,7 @@ class analyzer(object):
 
         self.Define('n'+name,'+'.join(['n'+n for n in collectionNames]),nodetype='MergeDefine')
 
-        self.__trackNewCollection(name,[GetKeyValForBranch(collectionNames[0]+'_'+v)[1] for v in vars_to_make])
+        self.__trackNewCollection(name,[GetKeyValForBranch(self.DataFrame,collectionNames[0]+'_'+v)[1] for v in vars_to_make])
 
     def __trackNewCollection(self,name,branches):
         self.__collectionDict[name] = []
@@ -1872,7 +1872,7 @@ class Correction(ModuleWorker):
                 not duplicate compile the same script if two functions are needed in one C++ script.
         '''
 
-        super().__init__(name,script,constructor,mainFunc,columnList,isClone)
+        super(Correction,self).__init__(name,script,constructor,mainFunc,columnList,isClone)
         self._setType(corrtype)
 
     def Clone(self,name,newMainFunc=None,newType=None):
@@ -1949,7 +1949,7 @@ class Calibration(Correction):
                 not duplicate compile the same script if two functions are needed in one C++ script.
         '''
 
-        super().__init__(name,script,constructor,mainFunc,columnList,isClone)
+        super(Calibration,self).__init__(name,script,constructor,mainFunc,columnList,isClone)
         
 def LoadColumnNames(source=''):
     '''Loads column names from a text file.
