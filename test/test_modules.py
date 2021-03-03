@@ -6,7 +6,6 @@ from TIMBER.Tools.Common import CompileCpp
 class TestModules():
     @classmethod
     def setup_class(cls):
-        CompileCpp('TIMBER/Framework/include/common.h')
         cls.a = analyzer('examples/GluGluToHToTauTau.root')
 
     # EXAMPLE FILE DOES NOT HAVE GenPart or FatJet COLLECTIONS

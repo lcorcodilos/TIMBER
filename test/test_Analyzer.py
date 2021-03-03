@@ -6,9 +6,8 @@ from TIMBER.Tools.Common import CompileCpp
 class TestAnalyzer():
     @classmethod
     def setup_class(cls):
-        CompileCpp('TIMBER/Framework/include/common.h') # Compile (via gInterpreter) commonly used c++ code
         CompileCpp('examples/example.cc')
-        # CompileCpp('test/test_weight.cc')
+        CompileCpp('test/test_weight.cc')
         cls.a = analyzer('examples/GluGluToHToTauTau.root')
         cls.a.Cut("test_cut1", "Jet_pt.size() > 0")
         cls.a.Define('lead_vector', 'hardware::TLvector(Jet_pt[0],Jet_eta[0],Jet_phi[0],Jet_mass[0])')

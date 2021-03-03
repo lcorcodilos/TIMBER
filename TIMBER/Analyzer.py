@@ -10,7 +10,7 @@ from clang import cindex
 from collections import OrderedDict
 
 import ROOT
-import pprint, copy, os, subprocess, textwrap, re
+import pprint, copy, os, subprocess, textwrap, re, glob
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -154,6 +154,14 @@ class analyzer(object):
         self.__builtCollections = []
         if createAllCollections:
             self.__createAllCollections(silent=True)
+
+        skipHeaders = []
+        if 'CMSSW_BASE' not in os.environ.keys():
+            skipHeaders = ['JetSmearer.h','JetRecalibrator.h','JES_weight.h','JER_weight.h','JMS_weight.h','JMR_weight.h']
+
+        for f in glob.glob(os.environ["TIMBERPATH"]+'TIMBER/Framework/include/*.h'):
+            if f.split('/')[-1] in skipHeaders: continue
+            CompileCpp('#include "%s";'%f)
  
     def Close(self):
         '''Safely deletes analyzer instance.
