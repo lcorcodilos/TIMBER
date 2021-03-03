@@ -847,14 +847,11 @@ class analyzer(object):
         # Wait to GetValue and SetTitle so that the histogram filling happens simultaneously
         for k in out.keys():
             if dimension == 1: 
-                out[k] = out[k].GetValue()
                 out[k].GetXaxis().SetTitle(variables[0])
             elif dimension == 2: 
-                out[k] = out[k].GetValue()
                 out[k].GetXaxis().SetTitle(variables[0])
                 out[k].GetYaxis().SetTitle(variables[1])
             elif dimension == 3: 
-                out[k] = out[k].GetValue()
                 out[k].GetXaxis().SetTitle(variables[0])
                 out[k].GetYaxis().SetTitle(variables[1])
                 out[k].GetZaxis().SetTitle(variables[2])
@@ -910,9 +907,9 @@ class analyzer(object):
             down.SetLineColor(ROOT.kBlue)
 
             leg = ROOT.TLegend(0.7,0.7,0.9,0.9)
-            leg.AddEntry(nominal,'Nominal','lf')
-            leg.AddEntry(up,'Up','l')
-            leg.AddEntry(down,'Down','l')
+            leg.AddEntry(nominal.GetValue(),'Nominal','lf')
+            leg.AddEntry(up.GetValue(),'Up','l')
+            leg.AddEntry(down.GetValue(),'Down','l')
 
             up.Draw('same hist')
             down.Draw('same hist')
