@@ -18,7 +18,6 @@
 #include <Math/GenVector/LorentzVector.h>
 #include <Math/GenVector/PtEtaPhiM4D.h>
 #include <Math/Vector4Dfwd.h>
-#include "Pythonic.h"
 #include "JME_common.h"
 #include "common.h"
 

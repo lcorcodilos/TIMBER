@@ -9,7 +9,6 @@
 #include <ROOT/RVec.hxx>
 #include "JetRecalibrator.h"
 #include "common.h"
-#include "Pythonic.h"
 
 using namespace ROOT::VecOps;
 
