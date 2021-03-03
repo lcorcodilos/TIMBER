@@ -1,3 +1,5 @@
+#ifndef _TIMBER_JMS_WEIGHT
+#define _TIMBER_JMS_WEIGHT
 #include <string>
 #include <cstdlib>
 #include <map>
@@ -20,3 +22,4 @@ class JMS_weight {
         ~JMS_weight(){};
         RVec< RVec<float>> eval(size_t nJets);
 };
+#endif

@@ -1,8 +1,8 @@
+#ifndef _TIMBER_SJBTAG_SF
+#define _TIMBER_SJBTAG_SF
 // without CMSSW / standalone:
-#include "../ExternalTools/BTagCalibrationStandalone.h"
-#include "../ExternalTools/BTagCalibrationStandalone.cpp"
+#include "../ext/BTagCalibrationStandalone.h"
 #include <ROOT/RVec.hxx>
-
 
 using namespace ROOT::VecOps;
 
@@ -36,3 +36,4 @@ class SJBtag_SF {
         BTagCalibration calib;
         BTagCalibrationReader reader;
 };
+#endif

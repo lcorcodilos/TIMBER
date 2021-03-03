@@ -1,3 +1,5 @@
+#ifndef _TIMBER_HISTLOADER
+#define _TIMBER_HISTLOADER
 #include <string>
 #include "TFile.h"
 #include "TH1.h"
@@ -55,3 +57,4 @@ class HistLoader {
         std::vector<float> eval(float xval, float yval = 0., float zval = 0.);
             
 };
+#endif

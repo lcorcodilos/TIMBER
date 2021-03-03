@@ -9,7 +9,6 @@ PDFweight_uncert::PDFweight_uncert(int lhaID, bool ignoreEmptyBranch){
     lhaid_file.open(std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/pdfsets.index",std::fstream::in);
     std::string line;
     std::vector<std::string> line_parts;
-    int idx = 0;
     while (getline(lhaid_file, line)) {
         line_parts = Pythonic::Split(line,' ');
         if (lhaid == (int)std::stoi(line_parts[0])) {

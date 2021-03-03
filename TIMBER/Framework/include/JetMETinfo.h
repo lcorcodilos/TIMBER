@@ -1,3 +1,5 @@
+#ifndef _TIMBER_JETMETINFO
+#define _TIMBER_JETMETINFO
 #include <map>
 #include <string>
 #include <vector>
@@ -77,3 +79,4 @@ namespace JME {
         {"UL2017", {1.000, 1.000, 1.000}}, // placeholder
     };
 }
+#endif

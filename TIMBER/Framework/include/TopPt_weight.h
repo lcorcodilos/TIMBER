@@ -1,3 +1,5 @@
+#ifndef _TIMBER_TOPPT_WEIGHT
+#define _TIMBER_TOPPT_WEIGHT
 #include "common.h"
 #include <cmath>
 #include <stdbool.h>
@@ -81,3 +83,4 @@ class TopPt_weight {
                 RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vects,
                 ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1, float scale = 0.5);
 };
+#endif

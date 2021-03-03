@@ -20,7 +20,7 @@ class EffLoader {
         /**
          * @brief Empty constructor
          */
-        EffLoader(){};
+        EffLoader();
         /**
          * @brief Construct a new EffLoader object
          * 

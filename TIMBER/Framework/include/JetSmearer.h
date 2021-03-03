@@ -1,3 +1,5 @@
+#ifndef _TIMBER_JETSMEARER
+#define _TIMBER_JETSMEARER
 // Requires CMSSW
 #include <string>
 #include <vector>
@@ -53,7 +55,6 @@ class JetSmearer {
                 Variation::DOWN
         };
         
-        JERpaths _path;
         std::shared_ptr<GenJetMatcher> _genJetMatcher;
         static constexpr const double MIN_JET_ENERGY = 1e-2;
 
@@ -122,3 +123,4 @@ class JetSmearer {
         }
         
 };
+#endif

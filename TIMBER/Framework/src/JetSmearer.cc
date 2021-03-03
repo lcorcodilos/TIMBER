@@ -21,12 +21,12 @@ const LorentzV* GenJetMatcher::match(LorentzV& jet, RVec<LorentzV> genJets, floa
     return out;
 }
 
-JetSmearer::JetSmearer(std::string jetType, std::string jerTag) : 
-                        _jetType(jetType), _jerTag(jerTag) {
+JetSmearer::JetSmearer(std::string jerTag, std::string jetType) : 
+                        _jerTag(jerTag), _jetType(jetType){
     _rnd = std::mt19937(123456);
-    JERpaths _path(_jetType, _jerTag);
-    JME::JetResolution _jer(_path.GetResPath());
-    JME::JetResolutionScaleFactor _jerSF(_path.GetSFpath());
+    JERpaths path(_jerTag, _jetType);
+    JME::JetResolution _jer(path.GetResPath());
+    JME::JetResolutionScaleFactor _jerSF(path.GetSFpath());
     if (Pythonic::InString("AK4",jetType)) {
         _genJetMatcher = std::make_shared<GenJetMatcher>(0.2);
     } else if (Pythonic::InString("AK8",jetType)) {
@@ -37,17 +37,11 @@ JetSmearer::JetSmearer(std::string jetType, std::string jerTag) :
 };
 
 JetSmearer::JetSmearer(std::vector<float> jmrVals) : 
-                        _jetType(""), _jmrVals(jmrVals),
+                        _jetType("AK8"), _jmrVals(jmrVals),
                         _puppisd_res_central(GetPuppiSDResolutionCentral()),
                         _puppisd_res_forward(GetPuppiSDResolutionForward())
                          {
-    if (Pythonic::InString("AK4",jetType)) {
-        _genJetMatcher = std::make_shared<GenJetMatcher>(0.2);
-    } else if (Pythonic::InString("AK8",jetType)) {
-        _genJetMatcher = std::make_shared<GenJetMatcher>(0.4);
-    } else {
-        throw "Jet type is not AK4 or AK8.";
-    }
+    _genJetMatcher = std::make_shared<GenJetMatcher>(0.4);
 };
 
 RVec<float> JetSmearer::GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJets) {
@@ -56,7 +50,6 @@ RVec<float> JetSmearer::GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJets) {
         printf("WARNING: jet pT = %f !!", jet.Pt());
         out = {1.,1.,1.};
     } else {
-        float sf, res;
         // Do resolution first
         _paramsRes.setJetEta(jet.Eta());
         _paramsRes.setJetPt(jet.Pt());

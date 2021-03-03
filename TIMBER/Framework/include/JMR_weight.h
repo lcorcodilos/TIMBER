@@ -1,3 +1,5 @@
+#ifndef _TIMBER_JMR_WEIGHT
+#define _TIMBER_JMR_WEIGHT
 #include <string>
 #include <ROOT/RVec.hxx>
 #include <TF1.h>
@@ -29,3 +31,4 @@ class JMR_weight {
             return out;
         }
 };
+#endif

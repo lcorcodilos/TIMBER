@@ -1,3 +1,5 @@
+#ifndef _TIMBER_JER_WEIGHT
+#define _TIMBER_JER_WEIGHT
 #include <string>
 #include <ROOT/RVec.hxx>
 #include "JetSmearer.h"
@@ -22,7 +24,4 @@ class JER_weight {
             return out;
         }
 };
-
-
-
-
+#endif

@@ -1,3 +1,5 @@
+#ifndef _TIMBER_TRIGGER_WEIGHT
+#define _TIMBER_TRIGGER_WEIGHT
 #include <cmath>
 #include <algorithm>
 #include "HistLoader.h"
@@ -48,3 +50,4 @@ class Trigger_weight
          */
         RVec<float> eval(float var,float plateau = 0);
 };
+#endif

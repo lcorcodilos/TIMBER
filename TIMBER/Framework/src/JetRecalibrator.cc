@@ -3,17 +3,17 @@
 JetRecalibrator::JetRecalibrator(): _jesTag(""), _jetFlavour(""),_doResidualJECs(true),_uncertType(""),_upToLevel(3){};
 
 JetRecalibrator::JetRecalibrator(str jesTag, str jetFlavour, bool doResidualJECs,
-                                 str jecPath, str uncertType, int upToLevel)://,
+                                 str uncertType, int upToLevel)://,
                                 //  bool calculateSeparateCorrections,
                                 //  bool calculateType1METCorrection,
                                 //  std::map<str, float> type1METParams):
     _jesTag{jesTag}, _jetFlavour{jetFlavour}, _doResidualJECs{doResidualJECs},
-    _jecPath{jecPath}, _uncertType{uncertType} _upToLevel{upToLevel}
+    _uncertType{uncertType}, _upToLevel{upToLevel}
 //     _calculateSeparateCorrections{calculateSeparateCorrections},
 //     _calculateType1METCorrection{calculateType1METCorrection}, _type1METParams{type1METParams}
 {
     // Make base corrections
-    paths = JESpaths(_jesTag, _jetFlavour);
+    JESpaths paths(_jesTag, _jetFlavour);
 
     _L1JetPar = paths.GetParameters("1");
     vJCP vPar {_L1JetPar};
@@ -37,7 +37,6 @@ JetRecalibrator::JetRecalibrator(str jesTag, str jetFlavour, bool doResidualJECs
     str filename = paths.GetPath("Uncert");
     JetCorrectionUncertainty _JetUncertainty = paths.GetUncertainty(uncertType);
     
-    delete paths;
     /* The following was converted from NanoAOD-tools but is not used (even in NanoAOD-tools)
         // if (boost::filesystem::exists(filename)) {
     //     JetCorrectionUncertainty _JetUncertainty (

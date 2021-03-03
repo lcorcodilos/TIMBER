@@ -1,3 +1,5 @@
+#ifndef _TIMBER_PDFWEIGHT_UNCERT
+#define _TIMBER_PDFWEIGHT_UNCERT
 #include <cmath>
 #include <vector>
 #include <numeric>
@@ -37,3 +39,4 @@ class PDFweight_uncert {
          */
         std::vector<float> eval(RVec<float> LHEPdfWeight);
 };
+#endif

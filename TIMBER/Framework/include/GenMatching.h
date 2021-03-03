@@ -7,52 +7,29 @@
 #include <cstdlib>
 #include "Collection.h"
 #include "Pythonic.h"
-#include "Math/Vector4Dfwd.h"
-#include "Math/VectorUtil.h"
+#include <Math/Vector4D.h>
+#include <Math/VectorUtil.h>
 
 using namespace ROOT::VecOps;
 using LVector = ROOT::Math::PtEtaPhiMVector;
 
-/**Unwraps an integer to check for bitwise flags.
- * Checks if the bit of a number is true or false.
- * @param bit Bit to check.
- * @param number Number to check.
- * 
- * @return Bool of whether the bit in the number is 0 or 1 */
-bool BitChecker(const int &bit, int &number){
-    int result = number & (1 << bit);
+namespace GenMatching {
+    /**Unwraps an integer to check for bitwise flags.
+     * Checks if the bit of a number is true or false.
+     * @param bit Bit to check.
+     * @param number Number to check.
+     * 
+     * @return Bool of whether the bit in the number is 0 or 1 */
+    bool BitChecker(const int &bit, int &number);
 
-    if (result > 0) {return true;}
-    else {return false;}
+    /**Map of the PDG ID values to the particle names.
+     * used for plotting decay structure. */
+    extern std::map <int, std::string> PDGIds;
+
+    /**Converts flag name to the corresponding bit in the
+     * value for statusFlags branch. */
+    extern std::map <std::string, int> GenParticleStatusFlags;
 }
-
-/**Map of the PDG ID values to the particle names.
- * used for plotting decay structure. */
-static const std::map <int, std::string> PDGIds {
-    {1,"d"}, {2,"u"}, {3,"s"}, {4,"c"}, {5,"b"}, {6,"t"},
-    {11,"e"}, {12,"nu_e"}, {13,"mu"}, {14,"nu_mu"},{ 15,"tau"},
-    {16,"nu_tau"}, {21,"g"}, {22,"photon"}, {23,"Z"}, {24,"W"}, {25,"h"}
-};
-
-/**Converts flag name to the corresponding bit in the
- * value for statusFlags branch. */
-static const std::map <std::string, int> GenParticleStatusFlags {
-        {"isPrompt", 0},
-        {"isDecayedLeptonHadron", 1},
-        {"isTauDecayProduct", 2},
-        {"isPromptTauDecayProduct", 3},
-        {"isDirectTauDecayProduct", 4},
-        {"isDirectPromptTauDecayProduct", 5},
-        {"isDirectHadronDecayProduct", 6},
-        {"isHardProcess", 7},
-        {"fromHardProcess", 8},
-        {"isHardProcessTauDecayProduct", 9},
-        {"isDirectHardProcessTauDecayProduct", 10},
-        {"fromHardProcessBeforeFSR", 11},
-        {"isFirstCopy", 12},
-        {"isLastCopy", 13},
-        {"isLastCopyBeforeFSR", 14}
-};
 
 /** @class Particle
  * @brief Stores identifying features of a particle
@@ -68,32 +45,26 @@ class Particle {
         int parentIndex; /**< Parent index  */
         std::vector<int> childIndex; /**< Children indices */
         LVector vect; /**< Lorentz vector */
-        Particle(){};
+        Particle();
         /**
          * @brief Add parent index to track.
          * 
          * @param idx Parent index
          */
-        void AddParent(int idx){
-            parentIndex = idx;
-        }
+        void AddParent(int idx);
         /**
          * @brief Add child index to track.
          * 
          * @param idx Child index
          */
-        void AddChild(int idx){
-            childIndex.push_back(idx);
-        }
+        void AddChild(int idx);
         /**
          * @brief Calculate \f$\Delta R\f$ between current particle and input vector.
          * 
          * @param input_vector The vector to compare against the current particle. 
          * @return float \f$\Delta R\f$ value
          */
-        float DeltaR(LVector input_vector){
-            return ROOT::Math::VectorUtil::DeltaR(vect,input_vector);
-        };
+        float DeltaR(LVector input_vector);
 };
 
 
@@ -214,5 +185,4 @@ class GenParticleObjs {
          */
         int GetStatusFlag(std::string flagName);
 };
-
 #endif

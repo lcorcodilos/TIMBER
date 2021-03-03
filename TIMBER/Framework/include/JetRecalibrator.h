@@ -1,3 +1,5 @@
+#ifndef _TIMBER_JETRECALIBRATOR
+#define _TIMBER_JETRECALIBRATOR
 #include <string>
 #include <map>
 #include <vector>
@@ -17,8 +19,8 @@ typedef std::vector<JetCorrectorParameters> vJCP;
 
 class JetRecalibrator {
     private:
-        str _jesTag, _jetFlavour, _uncertType;
         bool _doResidualJECs;//, _calculateSeparateCorrections, _calculateType1METCorrection;
+        str _jesTag, _jetFlavour, _uncertType;
         int _upToLevel;
         // std::map<str, float> _type1METParams;
         FactorizedJetCorrector _JetCorrector;
@@ -28,9 +30,10 @@ class JetRecalibrator {
         JetCorrectionUncertainty _JetUncertainty;
 
     public:
-        JetRecalibrator(){};
+        JetRecalibrator();
 
-        JetRecalibrator( str jesTag, str jetFlavour, bool doResidualJECs, str uncertType, int upToLevel=3
+        JetRecalibrator( str jesTag, str jetFlavour, bool doResidualJECs,
+                        str uncertType, int upToLevel=3
                         //  bool calculateSeparateCorrections=false,
                         //  bool calculateType1METCorrection=false,
                         //  std::map<str, float> type1METParams = {
@@ -81,5 +84,4 @@ class JetRecalibrator {
             return out;
         };
 };
-
-
+#endif

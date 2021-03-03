@@ -1,3 +1,5 @@
+#ifndef _TIMBER_JME_COMMON
+#define _TIMBER_JME_COMMON
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
@@ -28,13 +30,13 @@ class JMEpaths {
 
 class JESpaths : JMEpaths {
     private:
-        const str _globalTag, _jetFlavour;
+        const str _jesTag, _jetType;
 
     public:
         JESpaths(){};
 
-        JESpaths(str globalTag, str jetFlavour) :
-                _globalTag(globalTag), _jetFlavour(jetFlavour){};
+        JESpaths(str jesTag, str jetType) :
+                _jesTag(jesTag), _jetType(jetType){};
 
         str GetLevel(str level){
             str out;
@@ -47,14 +49,14 @@ class JESpaths : JMEpaths {
         }
 
         str GetPath(str level) {
-            str tarfile = _jmeArchivePath + _globalTag + ".tgz";
-            str jmefile = _globalTag+this->GetLevel(level)+_jetFlavour+".txt";
+            str tarfile = _jmeArchivePath + _jesTag + ".tgz";
+            str jmefile = _jesTag+this->GetLevel(level)+_jetType+".txt";
             return this->_GetPath(tarfile, jmefile);
         }
 
         str GetTxtFileStr(str level) {
-            str tarfile = _jmeArchivePath + _globalTag + ".tgz";
-            str jmefile = _globalTag+this->GetLevel(level)+_jetFlavour+".txt";
+            str tarfile = _jmeArchivePath + _jesTag + ".tgz";
+            str jmefile = _jesTag+this->GetLevel(level)+_jetType+".txt";
             return this->_GetTxtFileStr(tarfile, jmefile);
         }
 
@@ -68,23 +70,23 @@ class JESpaths : JMEpaths {
 
 class JERpaths : JMEpaths {
     private:
-        str _jerTag, _jetFlavour;
+        str _jerTag, _jetType;
 
     public: 
         JERpaths(){};
 
-        JERpaths(str jetFlavour, str jerTag) :
-            _jetFlavour(jetFlavour), _jerTag(jerTag){};
+        JERpaths(str jerTag, str jetType) :
+            _jerTag(jerTag), _jetType(jetType){};
 
         str GetPath(str resOrSF) {
             str tarfile = _jmeArchivePath + _jerTag + "_MC.tgz";
-            str jmefile = _jerTag + resOrSF + _jetFlavour + ".txt";
+            str jmefile = _jerTag + resOrSF + _jetType + ".txt";
             return this->_GetPath(tarfile, jmefile);
         };
 
         str GetTxtFileStr(str resOrSF) {
             str tarfile = _jmeArchivePath + _jerTag + "_MC.tgz";
-            str jmefile = _jerTag + resOrSF + _jetFlavour + ".txt";
+            str jmefile = _jerTag + resOrSF + _jetType + ".txt";
             return this->_GetTxtFileStr(tarfile, jmefile);
         };
 
@@ -97,3 +99,4 @@ class JERpaths : JMEpaths {
         }
 
 };
+#endif

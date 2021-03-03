@@ -74,15 +74,7 @@ namespace Pythonic {
      * @param delim Char to split around.
      * @return std::vector<std::string> Vector of pieces split around delimiter.
      */
-    std::vector<std::string> Split(const std::string& str, char delim = ' ') {
-        std::vector<std::string> out {};
-        std::stringstream ss(str);
-        std::string token;
-        while (std::getline(ss, token, delim)) {
-            out.push_back(token);
-        }
-        return out;
-    }
+    std::vector<std::string> Split(const std::string& str, char delim = ' ');
 
     // Personal
     /**
@@ -111,14 +103,7 @@ namespace Pythonic {
      * @return out  True or false based on whether sub is found in main.
      * @return false 
      */
-    bool InString(std::string sub, std::string main) {
-        bool out;
-        auto found = main.find(sub);
-        if (found != std::string::npos){
-            out = true;
-        } else {out = false;}
-        return out;
-    }
+    bool InString(std::string sub, std::string main);
 
     /**
      * @brief Extend vector with another vector (modifies base in-place).
@@ -141,25 +126,12 @@ namespace Pythonic {
      * @param dirname 
      * @return exists 
      */
-    bool IsDir(char* dirname) {
-        struct stat sb;
-        bool exists;
-
-        if (stat(dirname, &sb) == 0 && S_ISDIR(sb.st_mode)) {
-            exists = true;
-        } else {
-            exists = false;
-        }
-        return exists;
-    }
+    bool IsDir(char* dirname);
     /**
      * @brief Prints command and executes via std::system.
      * 
      * @param cmd 
      */
-    void Execute(std::string cmd) {
-        printf("Executing: %s",cmd.c_str());
-        std::system(cmd.c_str());
-    }
+    void Execute(std::string cmd);
 }
 #endif

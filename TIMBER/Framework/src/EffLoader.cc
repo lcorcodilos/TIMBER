@@ -1,5 +1,7 @@
 #include "../include/EffLoader.h"
 
+EffLoader::EffLoader(){}
+
 EffLoader::EffLoader(std::string filename, std::string effname) {
     file = TFile::Open(filename.c_str());
     efficiency = (TEfficiency*)file->Get(effname.c_str());

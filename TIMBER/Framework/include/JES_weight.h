@@ -1,3 +1,5 @@
+#ifndef _TIMBER_JES_WEIGHT
+#define _TIMBER_JES_WEIGHT
 // Requires CMSSW
 #include <string>
 #include <vector>
@@ -49,3 +51,4 @@ class JES_weight {
             return out;
         };
 };
+#endif

@@ -1,5 +1,50 @@
 #include "../include/GenMatching.h"
 
+bool GenMatching::BitChecker(const int &bit, int &number){
+    int result = number & (1 << bit);
+
+    if (result > 0) {return true;}
+    else {return false;}
+}
+
+std::map <int, std::string> GenMatching::PDGIds {
+    {1,"d"}, {2,"u"}, {3,"s"}, {4,"c"}, {5,"b"}, {6,"t"},
+    {11,"e"}, {12,"nu_e"}, {13,"mu"}, {14,"nu_mu"},{ 15,"tau"},
+    {16,"nu_tau"}, {21,"g"}, {22,"photon"}, {23,"Z"}, {24,"W"}, {25,"h"}
+};
+
+std::map <std::string, int> GenMatching::GenParticleStatusFlags {
+        {"isPrompt", 0},
+        {"isDecayedLeptonHadron", 1},
+        {"isTauDecayProduct", 2},
+        {"isPromptTauDecayProduct", 3},
+        {"isDirectTauDecayProduct", 4},
+        {"isDirectPromptTauDecayProduct", 5},
+        {"isDirectHadronDecayProduct", 6},
+        {"isHardProcess", 7},
+        {"fromHardProcess", 8},
+        {"isHardProcessTauDecayProduct", 9},
+        {"isDirectHardProcessTauDecayProduct", 10},
+        {"fromHardProcessBeforeFSR", 11},
+        {"isFirstCopy", 12},
+        {"isLastCopy", 13},
+        {"isLastCopyBeforeFSR", 14}
+};
+
+Particle::Particle(){};
+
+void Particle::AddParent(int idx){
+    parentIndex = idx;
+}
+
+void Particle::AddChild(int idx){
+    childIndex.push_back(idx);
+}
+
+float Particle::DeltaR(LVector input_vector){
+    return ROOT::Math::VectorUtil::DeltaR(vect,input_vector);
+};
+
 std::vector<int> GenParticleTree::StoredIndexes(){
     std::vector<int> current_idxs {};
     for (size_t i = 0; i < nodes.size(); i++) {
@@ -159,8 +204,8 @@ GenParticleObjs::GenParticleObjs(Collection genParts) {
 };
 
 void GenParticleObjs::SetStatusFlags(int particleIndex){
-    for (auto it = GenParticleStatusFlags.begin(); it != GenParticleStatusFlags.end(); ++it) {
-        particle.statusFlags[it->first] = BitChecker(it->second, GenPartCollection.RVecInt["statusFlags"]->at(particleIndex));
+    for (auto it = GenMatching::GenParticleStatusFlags.begin(); it != GenMatching::GenParticleStatusFlags.end(); ++it) {
+        particle.statusFlags[it->first] = GenMatching::BitChecker(it->second, GenPartCollection.RVecInt["statusFlags"]->at(particleIndex));
     }
 }
 
