@@ -157,11 +157,11 @@ class analyzer(object):
 
         skipHeaders = []
         if 'CMSSW_BASE' not in os.environ.keys():
-            skipHeaders = ['JetSmearer.h','JetRecalibrator.h','JES_weight.h','JER_weight.h','JMS_weight.h','JMR_weight.h']
+            skipHeaders = ['JME_common.h','JetSmearer.h','JetRecalibrator.h','JES_weight.h','JER_weight.h','JMS_weight.h','JMR_weight.h']
 
         for f in glob.glob(os.environ["TIMBERPATH"]+'TIMBER/Framework/include/*.h'):
             if f.split('/')[-1] in skipHeaders: continue
-            CompileCpp('#include "%s";'%f)
+            CompileCpp('#include "%s"\n'%f)
  
     def Close(self):
         '''Safely deletes analyzer instance.

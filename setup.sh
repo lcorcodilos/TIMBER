@@ -13,7 +13,7 @@ fi
 
 python setup.py install
 activate_path=$VIRTUAL_ENV/bin/activate
-TIMBERPATH="$PWD/"
+export TIMBERPATH="$PWD/"
 
 if grep -q $TIMBERPATH $activate_path
 then
@@ -38,7 +38,7 @@ then
   rm -rf libarchive
 fi
 
-if [! -d "bin/libtimber"]
+if [ ! -d "bin/libtimber" ]
 then
   make
 fi

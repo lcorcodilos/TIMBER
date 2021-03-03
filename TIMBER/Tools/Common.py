@@ -122,14 +122,14 @@ def CompileCpp(blockcode,library=False):
     @param library (bool, optional): Compiles a library which can be later loaded
             to avoid compilation time. Defaults to False.
     '''
-    if os.environ["TIMBERPATH"] not in ROOT.gSystem.GetIncludePath():
+    if '-I"'+os.environ["TIMBERPATH"]+'"' not in ROOT.gSystem.GetIncludePath():
         ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"])
         ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"]+"bin")
         ROOT.gInterpreter.ProcessLine('#pragma clang diagnostic ignored "-Wunknown-attributes"')
         if 'CMSSW_BASE' in os.environ.keys():
             ROOT.gSystem.Load('libCondFormatsJetMETObjects')
 
-    if not ROOT.gInterpreter.IsLibraryLoaded(os.environ["TIMBERPATH"]+'os.environ["TIMBERPATH"]'):
+    if not ROOT.gInterpreter.IsLibraryLoaded(os.environ["TIMBERPATH"]+'bin/libtimber/libtimber.so'):
         ROOT.gSystem.Load(os.environ["TIMBERPATH"]+'bin/libtimber/libtimber.so')
 
     if not library:

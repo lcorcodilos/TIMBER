@@ -3,7 +3,7 @@ INCLUDE=-I/usr/include/ -I bin/ -I./ `root-config --cflags --ldflags --glibs` -I
 LIBS=-lstdc++ -l boost_wserialization -l boost_filesystem -L bin/libarchive/lib/ -Wl,-rpath=bin/libarchive/lib/ -l archive
 CFLAGS=-g -Wno-attributes -fPIC -c
 CVMFS=/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/cms/cmssw/$(CMSSW_VERSION)
-CMSSW=-I$(CVMFS)/src -I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/boost/1.72.0-bcolbf/include -L/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/boost/1.72.0-bcolbf/lib -L$(CVMFS)/lib/$(SCRAM_ARCH) -l CondFormatsJetMETObjects
+CMSSW=-I$(CVMFS)/src -I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/boost/1.72.0-bcolbf/include -L/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/boost/1.72.0-bcolbf/lib -L$(CVMFS)/lib/$(SCRAM_ARCH)
 
 SOURCE_DIR=TIMBER/Framework/src/
 HEADER_DIR=TIMBER/Framework/include/
@@ -16,6 +16,8 @@ JME_FILES=JetSmearer.cc JetRecalibrator.cc JMR_weight.cc JER_weight.cc JES_weigh
 JME_FILES:=$(JME_FILES:%.cc=$(SOURCE_DIR)%.cc)
 ifndef CMSSW_VERSION
 	CPP_FILES:=$(filter-out $(JME_FILES), $(CPP_FILES))
+else
+	CMSSW:=$(CMSSW) -l CondFormatsJetMETObjects
 endif
 
 O_FILES=$(CPP_FILES:$(SOURCE_DIR)%.cc=$(BIN_DIR)%.o)
