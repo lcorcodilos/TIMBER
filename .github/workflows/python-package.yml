@@ -41,8 +41,8 @@ jobs:
         tar -xzf root_v6-22-00_build.tgz
     - name: Pytest
       run: |
+        source root_v6.22.00.build/bin/thisroot.sh
         source timber-env/bin/activate
         source setup.sh
-        source root_v6.22.00.build/bin/thisroot.sh
         export TIMBERPATH=$TIMBERPATH
         pytest test/
