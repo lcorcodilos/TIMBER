@@ -27,13 +27,18 @@ else
   rm activate_ext.sh.cpy
 fi
 
-if [ ! -d "TIMBER/bin/libarchive" ] 
+if [ ! -d "bin/libarchive" ] 
 then
   git clone https://github.com/libarchive/libarchive.git
   cd libarchive
-  cmake . -DCMAKE_INSTALL_PREFIX=../TIMBER/bin/libarchive
+  cmake . -DCMAKE_INSTALL_PREFIX=../bin/libarchive
   make
   make install
   cd ..
   rm -rf libarchive
+fi
+
+if [! -d "bin/libtimber"]
+then
+  make
 fi
