@@ -1,11 +1,6 @@
 #ifndef _TIMBER_COMMON
 #define _TIMBER_COMMON
-#ifndef _STRUCT_TIMESPEC
-#define _STRUCT_TIMESPEC
-#endif
 
-#include "libarchive/include/archive.h"
-#include "libarchive/include/archive_entry.h"
 #include <fstream>
 #include <string>
 #include <iostream>
@@ -14,7 +9,6 @@
 #include <iterator>
 #include <vector>
 #include <stdexcept>
-#include <sys/stat.h>
 #include <boost/filesystem.hpp>
 
 #include <cmath>
@@ -272,7 +266,8 @@ std::string ReadTarFile(std::string tarname, std::string internalFile);
  */
 class TempDir {
     private:
-        boost::filesystem::path path;
+        boost::filesystem::path _path;
+        std::vector<std::string> _filesSaved;
 
     public:
         /**

@@ -1,4 +1,6 @@
 #include "../include/common.h"
+#include "libarchive/include/archive.h"
+#include "libarchive/include/archive_entry.h"
 
 float hardware::DeltaPhi(float phi1,float phi2) {
     float result = phi1 - phi2;
@@ -106,16 +108,19 @@ std::string ReadTarFile(std::string tarname, std::string internalFile) {
 }
 
 TempDir::TempDir(){
-    path = boost::filesystem::temp_directory_path();
-    boost::filesystem::create_directories(path);
+    _path = boost::filesystem::temp_directory_path();
+    boost::filesystem::create_directories(_path);
 };
 TempDir::~TempDir(){
-    boost::filesystem::remove(path);
+    for (auto f : _filesSaved) {
+        boost::filesystem::remove(f);
+    }
 };
 std::string TempDir::Write(std::string filename, std::string in) {
     std::ofstream out(filename);
     out << in;
     out.close();
-    std::string finalpath (path.string()+filename); 
+    std::string finalpath (_path.string()+filename); 
+    _filesSaved.push_back(finalpath);
     return finalpath;
 };

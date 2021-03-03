@@ -124,6 +124,7 @@ def CompileCpp(blockcode,library=False):
     '''
     if '-I"'+os.environ["TIMBERPATH"]+'"' not in ROOT.gSystem.GetIncludePath():
         ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"])
+        ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"]+'TIMBER/Framework/src')
         ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"]+"bin")
         ROOT.gInterpreter.ProcessLine('#pragma clang diagnostic ignored "-Wunknown-attributes"')
         if 'CMSSW_BASE' in os.environ.keys():
@@ -133,7 +134,7 @@ def CompileCpp(blockcode,library=False):
         ROOT.gSystem.Load(os.environ["TIMBERPATH"]+'bin/libtimber/libtimber.so')
 
     if not library:
-        if '\n' in blockcode or ';' in blockcode: # must be multiline string
+        if '\n' in blockcode or ';' in blockcode: # must be multiline string\
             ROOT.gInterpreter.Declare(blockcode)
         else: # must be file name to compile
             if ('TIMBER/Framework/' in blockcode) and (os.environ['TIMBERPATH'] not in blockcode):
