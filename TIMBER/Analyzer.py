@@ -93,16 +93,16 @@ class analyzer(object):
         # Setup TChains for multiple or single file
         self.__eventsChain = ROOT.TChain(self.__eventsTreeName) 
         self.RunChain = ROOT.TChain(runTreeName) # Has generated event count information - will be deleted after initialization
-        if ".root" in self.fileName: 
-            self.__eventsChain.Add(self.fileName)
-            self.RunChain.Add(self.fileName)
+        if isinstance(self.fileName,list):
+            for f in self.fileName:
+                self.__addFile(f)
+        elif ".root" in self.fileName: 
+            self.__addFile(self.fileName)
         elif ".txt" in self.fileName: 
             txt_file = open(self.fileName,"r")
             for l in txt_file.readlines():
                 thisfile = l.strip()
-                if 'root://' not in thisfile and thisfile.startswith('/store/'): thisfile='root://cms-xrd-global.cern.ch/'+thisfile
-                self.__eventsChain.Add(thisfile)
-                self.RunChain.Add(thisfile)
+                self.__addFile(thisfile)
         else: 
             raise Exception("File name extension not supported. Please provide a single .root file or a .txt file with a line-separated list of .root files to chain together.")
 
@@ -163,6 +163,17 @@ class analyzer(object):
             if f.split('/')[-1] in skipHeaders: continue
             CompileCpp('#include "%s"\n'%f)
  
+    def __addFile(self,f):
+        '''Add file to TChains being tracked.
+
+        Args:
+            f (str): File to add.
+        '''
+        if 'root://' not in f and f.startswith('/store/'):
+            f='root://cms-xrd-global.cern.ch/'+f
+        self.__eventsChain.Add(f)
+        self.RunChain.Add(f)
+
     def Close(self):
         '''Safely deletes analyzer instance.
         
