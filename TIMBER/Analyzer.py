@@ -217,6 +217,9 @@ class analyzer(object):
         '''@see Node#Range'''
         return self.SetActiveNode(self.ActiveNode.Range(*argv))
 
+    def GetCollectionNames(self):
+        return self.__collectionDict.keys()
+
     def SetActiveNode(self,node):
         '''Sets the active node.
 
@@ -931,12 +934,12 @@ class analyzer(object):
     #---------------------#
     # Handle calibrations #
     #---------------------#
-    def CalibrateVar(self,var,calib,evalArgs={},newColName=None,node=None):
+    def CalibrateVar(self,vars,calib,evalArgs={},newColName=None,node=None):
         '''Calibrate a variable `var` with the Calibration `calib`. Sets new active node with 
         new column named as either `<var>_<calib>` or `<newColName>`.
 
-        @param (str): Name of column/variable to calibrate/weight.
-        @param correction (Correction): Correction object to weight with.
+        @param vars ([str]): List of names of columns/variables to calibrate/weight.
+        @param calib (Correction): Correction object to weight with.
         @param evalArgs (dict, optional): Dict with keys as C++ method argument names and values as the actual argument to provide
                 (branch/column names) for per-event evaluation. For any argument names where a key is not provided, will attempt
                 to find branch/column that already matches based on name.
@@ -950,14 +953,20 @@ class analyzer(object):
         Returns:
             Node: New #ActiveNode.
         '''
+        if node == None: node = self.ActiveNode
         # Quick type checking
         if not isinstance(node,Node): raise TypeError('CalibrateVar() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
         elif not isinstance(calib,Calibration): raise TypeError('CalibrateVar() does not support argument type %s for calibration. Please provide a Calibration.'%(type(calib)))
 
         newNode = self._addModule(calib, evalArgs, 'Calibration', node)
 
-        for i,v in enumerate(['nom','up','down']):
-            newNode = self.Define(var+'_'+calib.name+'__'+v,var+'*'+calib.name+'__vec[%s]'%i,newNode,nodetype='Calibration')
+        for var in vars:
+            isRVec = "RVec" in self.DataFrame.GetColumnType(var)
+            for i,v in enumerate(['nom','up','down']):
+                if not isRVec: 
+                    newNode = self.Define(var+'_'+calib.name+'__'+v, var+'*'+calib.name+'__vec[%s]'%i,newNode,nodetype='Calibration')
+                else:
+                    newNode = self.Define(var+'_'+calib.name+'__'+v, 'hardware::HadamardProduct({0},{1},{2})'.format(var,calib.name+'__vec',i),newNode,nodetype='Calibration')
 
         return self.SetActiveNode(newNode)
 
@@ -1337,7 +1346,7 @@ class Node(object):
 
         IMPORTANT: When writing a variable size array through Snapshot, it is required
         that the column indicating its size is also written out and it appears before
-        the array in the columns list. The `columns` arguement should be `"all"` if you'd like
+        the array in the columns list. The `columns` argument should be `"all"` if you'd like
         to keep everything.
 
         @param columns ([str] or str): List of columns to keep (str) with regex matching.
@@ -1364,6 +1373,7 @@ class Node(object):
         else:
             column_vec = ''
             for c in columns:
+                if c == '': continue
                 column_vec += c+'|'
             column_vec = column_vec[:-1]
             self.DataFrame.Snapshot(treename,outfilename,column_vec,opts)
@@ -1617,7 +1627,8 @@ class ModuleWorker(object):
         '''Constructor
 
         @param name (str): Unique name to identify the instantiated worker object.
-        @param script (str): Path to C++ script with function to calculate correction.
+        @param script (str): Path to C++ script with function to calculate correction. For a TIMBER module,
+                use the header file.
         @param constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
         @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
                 and the class will try to deduce it.
@@ -1643,7 +1654,10 @@ class ModuleWorker(object):
         if not isClone:
             if not self._mainFunc.endswith(mainFunc):
                 raise ValueError('ModuleWorker() instance provided with %s argument does not exist in %s (%s)'%(mainFunc,self._script, self._mainFunc))
-            CompileCpp(self._script,library=True)
+            if '.h' in self._script:
+                CompileCpp('#include "%s"\n'%self._script)
+            else:
+                CompileCpp(self._script)
 
         self._instantiate(constructor)
 
@@ -1714,28 +1728,40 @@ class ModuleWorker(object):
                     namespace = c.spelling
                 elif c.kind == cindex.CursorKind.CLASS_DECL or c.kind == cindex.CursorKind.CONSTRUCTOR:
                     classname = c.spelling
-                elif c.kind == cindex.CursorKind.CXX_METHOD:
+                elif c.kind == cindex.CursorKind.CXX_METHOD or c.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
                     methodname = classname+'::'+c.spelling
                     if namespace != '': # this will not support classes outside of the namespace and always assume it's inside
                         methodname = namespace + '::' + methodname
 
-                    # print methodname.split('::')[-1]
-                    # print funcname
+                    # print (methodname.split('::')[-1])
+                    # print (funcname)
                     if methodname.split('::')[-1] == funcname:
-                        # print methodname
+                        # print (methodname)
                         if methodname not in funcs.keys():
-                            # print methodname
+                            # print (methodname)
                             funcs[methodname] = OrderedDict()
-                            for arg in c.get_arguments():
-                                arg_walk_kinds = [c.kind for c in arg.walk_preorder()]
-                                # Check for defualt arg
-                                if cindex.CursorKind.UNEXPOSED_EXPR in [a for a in arg_walk_kinds]:
-                                    default_val = ''.join([tok.spelling for tok in list(translation_unit.get_tokens(extent=list(arg.walk_preorder())[-1].extent))])
-                                    funcs[methodname][arg.spelling] = default_val
-                                else:
-                                    funcs[methodname][arg.spelling] = None
+                            # print ([a.spelling for a in c.get_children()])
+                            if c.kind == cindex.CursorKind.CXX_METHOD:
+                                args_list = c.get_arguments()
+                                for arg in c.get_arguments():
+                                    arg_walk_kinds = [c.kind for c in arg.walk_preorder()]
+                                    # Check for defualt arg
+                                    if cindex.CursorKind.UNEXPOSED_EXPR in arg_walk_kinds:
+                                        default_val = ''.join([tok.spelling for tok in list(translation_unit.get_tokens(extent=list(arg.walk_preorder())[-1].extent))])
+                                        funcs[methodname][arg.spelling] = default_val
+                                    else:
+                                        funcs[methodname][arg.spelling] = None
 
-        # print funcs
+                            elif c.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
+                                for arg in [a for a in c.get_children() if a.kind == cindex.CursorKind.PARM_DECL]:
+                                    arg_walk_kinds = [c.kind for c in arg.walk_preorder()]
+                                    # Check for defualt arg
+                                    if cindex.CursorKind.UNEXPOSED_EXPR in arg_walk_kinds:
+                                        default_val = ''.join([tok.spelling for tok in list(translation_unit.get_tokens(extent=list(arg.walk_preorder())[-1].extent))])
+                                        funcs[methodname][arg.spelling] = default_val
+                                    else:
+                                        funcs[methodname][arg.spelling] = None                                  
+
         return funcs
 
     def _instantiate(self,args):
@@ -1749,10 +1775,15 @@ class ModuleWorker(object):
 
         line = classname + ' ' + self.name+'('
         for a in args:
-            if a[0].isalpha():
-                line += '"%s", '%(a)
-            else:
-                line += '%s, '%(a)
+            try:
+                if a == "":
+                    line += '"", '
+                elif a[0].isalpha():
+                    line += '"%s", '%(a)
+                else:
+                    line += '%s, '%(a)
+            except:
+                raise ValueError("Constructor argument `%s` not accepted"%a)
 
         if len(args) > 0:
             line = line[:-2] + ');'

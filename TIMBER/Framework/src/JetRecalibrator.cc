@@ -8,37 +8,33 @@ JetRecalibrator::JetRecalibrator(str jesTag, str jetFlavour, bool doResidualJECs
                                 //  bool calculateType1METCorrection,
                                 //  std::map<str, float> type1METParams):
     _jesTag{jesTag}, _jetFlavour{jetFlavour}, _doResidualJECs{doResidualJECs},
-    _uncertType{uncertType}, _upToLevel{upToLevel}
+    _uncertType{uncertType}, _upToLevel{upToLevel}, _paths(_jesTag, _jetFlavour)
 //     _calculateSeparateCorrections{calculateSeparateCorrections},
 //     _calculateType1METCorrection{calculateType1METCorrection}, _type1METParams{type1METParams}
 {
     // Make base corrections
-    JESpaths paths(_jesTag, _jetFlavour);
-
-    _L1JetPar = paths.GetParameters("1");
-    vJCP vPar {_L1JetPar};
-
+    JetCorrectorParameters L1JetPar = _paths.GetParameters("L1");
+    vJCP vPar {L1JetPar};
     if (_upToLevel >= 2) {
-        _L2JetPar = paths.GetParameters("2");;
-        vPar.push_back(_L2JetPar);
+        JetCorrectorParameters L2JetPar = _paths.GetParameters("L2");
+        vPar.push_back(L2JetPar);
     }
 
     if (_upToLevel >= 3) {
-        _L3JetPar = paths.GetParameters("3");;
-        vPar.push_back(_L3JetPar);
+        JetCorrectorParameters L3JetPar = _paths.GetParameters("L3");
+        vPar.push_back(L3JetPar);
     }
     // Add residuals if needed
     if (doResidualJECs) {
-        _ResJetPar = paths.GetParameters("Res");;
-        vPar.push_back(_ResJetPar);
+        JetCorrectorParameters ResJetPar = _paths.GetParameters("Res");
+        vPar.push_back(ResJetPar);
     }
     // Construct FactorizedJetCorrector JetCorrectionUncertinaty objects
-    FactorizedJetCorrector _JetCorrector (vPar);
-    str filename = paths.GetPath("Uncert");
-    JetCorrectionUncertainty _JetUncertainty = paths.GetUncertainty(uncertType);
-    
+    _JetCorrector = new FactorizedJetCorrector(vPar);
+    _JetUncertainty = new JetCorrectionUncertainty(_paths.GetParameters("Uncert",uncertType));
     /* The following was converted from NanoAOD-tools but is not used (even in NanoAOD-tools)
-        // if (boost::filesystem::exists(filename)) {
+    // str filename = _paths.GetPath("Uncert");
+    // if (boost::filesystem::exists(filename)) {
     //     JetCorrectionUncertainty _JetUncertainty (
     //         _jecPath+"/"+jesTag+"_Uncertainty_"+jetFlavour+".txt"
     //     );
@@ -75,4 +71,8 @@ JetRecalibrator::JetRecalibrator(str jesTag, str jetFlavour, bool doResidualJECs
         }
     }
     */
+}
+
+JetRecalibrator::~JetRecalibrator(){
+    delete _JetCorrector;
 }

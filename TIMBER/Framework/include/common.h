@@ -26,6 +26,25 @@ using namespace ROOT::VecOps;
  */
 namespace hardware {  
     /**
+     * @brief Hadamard product of two vectors (`v3[i] = v1[i]*v2[i]`)
+     * 
+     * @param v1 
+     * @param v2 
+     * @return RVec<float> 
+     */
+    RVec<float> HadamardProduct(RVec<float> v1, RVec<float> v2);
+    /**
+     * @brief Hadamard product of two vectors (`v3[i] = v1[i]*v2[i][v2subindex]`)
+     * where v2 has multiple sub-elements, only one of which should be accessed 
+     * (at index of v2subindex).
+     * 
+     * @param v1 
+     * @param v2 
+     * @param v2subindex
+     * @return RVec<float> 
+     */
+    RVec<float> HadamardProduct(RVec<float> v1, RVec<RVec<float>> v2, int v2subindex);
+    /**
      * @brief Calculate the difference in \f$\phi\f$.
      * 
      * @param phi1 
@@ -94,7 +113,7 @@ namespace hardware {
      * @return RVec<ROOT::Math::PtEtaPhiMVector> 
      */
     template<class T>
-    RVec<ROOT::Math::PtEtaPhiMVector> TLvector(RVec<T> objs) {
+    RVec<ROOT::Math::PtEtaPhiMVector> TLvector(std::vector<T> objs) {
         RVec<ROOT::Math::PtEtaPhiMVector> vs;
         vs.reserve(objs.size());
         for (size_t i = 0; i < objs.size(); i++) {
@@ -266,7 +285,7 @@ std::string ReadTarFile(std::string tarname, std::string internalFile);
  */
 class TempDir {
     private:
-        boost::filesystem::path _path;
+        const boost::filesystem::path _path;
         std::vector<std::string> _filesSaved;
 
     public:
@@ -289,5 +308,12 @@ class TempDir {
          * @return std::string 
          */
         std::string Write(std::string filename, std::string in);
+        /**
+         * @brief Generate a hash to create a temporary random folder
+         * 
+         * @return std::string 
+         */
+        std::string Hash();
+
 };
 #endif

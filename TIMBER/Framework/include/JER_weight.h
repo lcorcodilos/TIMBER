@@ -14,12 +14,10 @@ class JER_weight {
         ~JER_weight(){};
 
         template <class Tjet, class TgenJet>
-        RVec< RVec<float> > eval(RVec<Tjet> jets, RVec<TgenJet> genJets){
+        RVec< RVec<float> > eval(std::vector<Tjet> jets, std::vector<TgenJet> genJets, float fixedGridRhoFastjetAll){
             RVec< RVec<float> > out (jets.size());
-            
             for (size_t ijet = 0; ijet < jets.size(); ijet++) {
-                RVec<LorentzV> genJetsV = hardware::TLvector(genJets);
-                out[ijet] = (RVec<float>)GetSmearValsPt(jets[ijet], genJetsV);
+                out[ijet] = (RVec<float>)_smearer.GetSmearValsPt(hardware::TLvector(jets[ijet]), hardware::TLvector(genJets), fixedGridRhoFastjetAll);
             }
             return out;
         }

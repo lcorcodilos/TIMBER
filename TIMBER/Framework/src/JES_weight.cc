@@ -2,8 +2,8 @@
 #include "../include/JES_weight.h"
 
 JES_weight::JES_weight(str jesTag, str jetType, str uncertType, bool redoJECs):
-            _jesTag(jesTag), _jetType(jetType), _uncertType(uncertType), _redoJECs(redoJECs) {
-    JetRecalibrator _jetRecalib (_jesTag, _jetType, true, _uncertType);
+            _jesTag(jesTag), _jetType(jetType), _uncertType(uncertType), _redoJECs(redoJECs),
+            _jetRecalib(_jesTag, _jetType, true, _uncertType){
     if (!this->check_type_exists()) {
         throw "Type '"+_uncertType+"' does not exist in list of sources.";
     }

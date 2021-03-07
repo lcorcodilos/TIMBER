@@ -4,7 +4,6 @@
 #include <map>
 #include <vector>
 #include <algorithm>
-#include <iostream>
 // #include <boost/filesystem.hpp>
 #include "Collection.h"
 #include "JME_common.h"
@@ -23,11 +22,12 @@ class JetRecalibrator {
         str _jesTag, _jetFlavour, _uncertType;
         int _upToLevel;
         // std::map<str, float> _type1METParams;
-        FactorizedJetCorrector _JetCorrector;
+        FactorizedJetCorrector* _JetCorrector;
         float _correction;
         float _uncertainty;
         JetCorrectorParameters _L1JetPar, _L2JetPar, _L3JetPar, _ResJetPar;
-        JetCorrectionUncertainty _JetUncertainty;
+        JetCorrectionUncertainty* _JetUncertainty;
+        JESpaths _paths;
 
     public:
         JetRecalibrator();
@@ -42,31 +42,30 @@ class JetRecalibrator {
                         //     {'skipMuons', 1} // True
                         //  }
                         );
-        ~JetRecalibrator(){};
+        ~JetRecalibrator();
 
         // rho branch should be "fixedGridRhoFastjetAll"
         template <class T>
         void SetCorrection(T jet, float fixedGridRhoFastjetAll){
-            _JetCorrector.setJetPhi(jet.phi);
-            _JetCorrector.setJetEta(jet.eta);
-            _JetCorrector.setJetPt(jet.pt * (1. - jet.rawFactor));
-            _JetCorrector.setJetA(jet.area);
-            _JetCorrector.setRho(fixedGridRhoFastjetAll);
-            _correction = _JetCorrector.getCorrection();
+            _JetCorrector->setJetPhi(jet.phi);
+            _JetCorrector->setJetEta(jet.eta);
+            _JetCorrector->setJetPt(jet.pt * (1. - jet.rawFactor));
+            _JetCorrector->setJetA(jet.area);
+            _JetCorrector->setRho(fixedGridRhoFastjetAll);
+            _correction = _JetCorrector->getCorrection();
         };
 
         template <class T>
         void SetUncertainty(T jet, float delta = 1){
             if (delta != 0) {
-                _JetUncertainty.setJetPhi(jet.phi);
-                _JetUncertainty.setJetEta(jet.eta);
-                _JetUncertainty.setJetPt(_correction * jet.pt * (1.0 - jet.rawFactor));
-                _uncertainty = delta*_JetUncertainty.getUncertainty(true);
+                _JetUncertainty->setJetPhi(jet.phi);
+                _JetUncertainty->setJetEta(jet.eta);
+                _JetUncertainty->setJetPt(_correction * jet.pt * (1.0 - jet.rawFactor));
+                _uncertainty = delta*_JetUncertainty->getUncertainty(true);
 
             } else {
                 _uncertainty = 0;
             }
-
         };
 
         float GetCorrection() {return _correction;};
@@ -80,7 +79,6 @@ class JetRecalibrator {
             if (correction > 0) {
                 out = {jet.pt*raw*correction, jet.mass*raw*correction};
             }
-
             return out;
         };
 };

@@ -29,11 +29,7 @@ class GenJetMatcher {
         float _dRMax, _dPtMaxFactor;
 
     public: 
-        GenJetMatcher() {};
-
-        GenJetMatcher(float dRMax, float dPtMaxFactor = 3) : 
-            _dRMax{dRMax}, _dPtMaxFactor(dPtMaxFactor) {};
-
+        GenJetMatcher(float dRMax, float dPtMaxFactor = 3);
         const LorentzV* match(LorentzV& jet, RVec<LorentzV> genJets, float resolution);
 };
 
@@ -43,16 +39,13 @@ class JetSmearer {
         const std::vector<float> _jmrVals;
 
         std::mt19937 _rnd;
+        JERpaths _path;
         JME::JetParameters _paramsSF;
         JME::JetParameters _paramsRes;
         JME::JetResolution _jer;
         JME::JetResolutionScaleFactor _jerSF;
 
-        std::vector<Variation> _variationIndex {
-                Variation::NOMINAL,
-                Variation::UP,
-                Variation::DOWN
-        };
+        std::vector<Variation> _variationIndex;
         
         std::shared_ptr<GenJetMatcher> _genJetMatcher;
         static constexpr const double MIN_JET_ENERGY = 1e-2;
@@ -61,13 +54,12 @@ class JetSmearer {
         TF1* _puppisd_res_forward;
 
     public:
-        JetSmearer(){};
         // For JER smearing
         JetSmearer( std::string jetType, std::string jerTag);
         // For JMR smearing
         JetSmearer(std::vector<float> jmrVals);
 
-        ~JetSmearer(){};
+        ~JetSmearer();
         /**
          * @brief Smear jet pT to account for measured difference in JER between data and simulation.
          *  The function computes the nominal smeared jet pT simultaneously with the JER up and down shifts,
@@ -85,9 +77,9 @@ class JetSmearer {
          * @param jet Jet Lorentz vector
          * @param genJet GenJet Lorentz vector
          * @param fixedGridRhoFastjetAll 
-         * @return RVec<float> {nom,up,down}
+         * @return std::vector<float> {nom,up,down}
          */
-        RVec<float> GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJets);
+        std::vector<float> GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJets, float fixedGridRhoFastjetAll);
         /**
          * @brief Smear jet m to account for measured difference in JMR between 
          * data and simulation. The function computes the nominal smeared jet m
@@ -107,19 +99,10 @@ class JetSmearer {
          * 
          * @return def 
          */
-        RVec<float> GetSmearValsM(LorentzV jet, RVec<LorentzV> genJets);
+        std::vector<float> GetSmearValsM(LorentzV jet, RVec<LorentzV> genJets);
 
-        TFile* GetPuppiJMRFile() {
-            return TFile::Open(TString(std::string(std::getenv("TIMBERPATH")) + "TIMBER/data/JME/puppiSoftdropResol.root"));;
-        }
-
-        TF1* GetPuppiSDResolutionCentral() {
-            return (TF1*)this->GetPuppiJMRFile()->Get("massResolution_0eta1v3");
-        } 
-
-        TF1* GetPuppiSDResolutionForward() {
-            return (TF1*)this->GetPuppiJMRFile()->Get("massResolution_1v3eta2v5");
-        }
-        
+        TFile* GetPuppiJMRFile();
+        TF1* GetPuppiSDResolutionCentral();
+        TF1* GetPuppiSDResolutionForward();
 };
 #endif

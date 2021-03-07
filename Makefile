@@ -17,7 +17,7 @@ JME_FILES:=$(JME_FILES:%.cc=$(SOURCE_DIR)%.cc)
 ifndef CMSSW_VERSION
 	CPP_FILES:=$(filter-out $(JME_FILES), $(CPP_FILES))
 else
-	CMSSW:=$(CMSSW) -l CondFormatsJetMETObjects
+	CMSSW:=$(CMSSW) -l CondFormatsJetMETObjects -l JetMETCorrectionsModules
 endif
 
 O_FILES=$(CPP_FILES:$(SOURCE_DIR)%.cc=$(BIN_DIR)%.o)

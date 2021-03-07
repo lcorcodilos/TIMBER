@@ -3,7 +3,7 @@ Commonly used functions available for use that can be generic or TIMBER specific
 @{
 '''
 
-import json, ROOT, os, subprocess, TIMBER, sys
+import json, os, subprocess, sys, glob, ROOT
 from ROOT import RDataFrame
 from TIMBER.Tools.CMS import CMS_lumi, tdrstyle
 from contextlib import contextmanager
@@ -109,6 +109,63 @@ def StitchQCD(QCDdict,normDict=None):
 #---------#
 # Generic #
 #---------#
+JEStags = {
+    "2016": "Summer16_07Aug2017_V11",
+    "2017": "Fall17_17Nov2017_V32",
+    "2018": "Autumn18_V19",
+    "2017UL": "Summer19UL17_V5",
+    "2018UL": "Summer19UL18_V5"
+}
+
+JERtags = {
+    "2016":"Summer16_25nsV1b",
+    "2017":"Fall17_V3b",
+    "2018":"Autumn18_V7b",
+    "2017UL":"Summer19UL17_JRV2",
+    "2018UL":"Summer19UL18_JRV2"
+}
+
+def GetJMETag(t,year,setname):
+    '''Return the latest JME tag corresponding to the type `t` (JES or JER),
+    `year`, and `setname` (MC for simulation and A, B, C, etc for data).
+    Returned string is compatible with input needed by JME modules. 
+
+    Args:
+        t (str): JES or JER
+        year (str): 2016, 2017, 2018, 2017UL, or 2018UL
+        setname (str): MC for simulation. A, B, C, D, E, F, G, or H for data.
+
+    Raises:
+        ValueError: Did not provide `t` that is either JES or JER.  
+
+    Returns:
+        str: JME tarball/tag name compatible with input needed by JME modules.
+    '''
+    if setname == 'MC':
+        MCorData = 'MC'
+        subset = ''
+    else:
+        MCorData = 'DATA'
+        subset = setname
+        if year == '2018' or 'UL' in year:
+            subset = '_Run'+setname
+
+    if t == 'JES':
+        tag = JEStags[year]
+        tag_and_version = ['_'.join(tag.split('_')[:-1]),tag.split('_')[-1]]
+        if MCorData == "DATA":
+            fullpath = os.environ["TIMBERPATH"]+"TIMBER/data/JES/{0}*{1}*_{2}_{3}.tar.gz".format(tag_and_version[0],subset,tag_and_version[1],MCorData)
+            out = glob.glob(fullpath)[0].replace(os.environ["TIMBERPATH"]+"TIMBER/data/JES/",'').replace('.tar.gz','')
+        else:
+            out = '{0}{1}_{2}_{3}'.format(tag_and_version[0],subset,tag_and_version[1],MCorData)
+
+    elif t == 'JER':
+        out = '{0}_{1}'.format(JERtags[year],MCorData)
+    else:
+        raise ValueError("Type must be either 'JES' or 'JER'")
+    
+    return out
+
 def CompileCpp(blockcode,library=False):
     '''Compiles C++ code via the gInterpreter.
 
@@ -131,6 +188,7 @@ def CompileCpp(blockcode,library=False):
             ROOT.gSystem.Load('libCondFormatsJetMETObjects')
 
     if not ROOT.gInterpreter.IsLibraryLoaded(os.environ["TIMBERPATH"]+'bin/libtimber/libtimber.so'):
+        ROOT.gSystem.Load(os.environ["TIMBERPATH"]+'bin/libarchive/lib/libarchive.so')
         ROOT.gSystem.Load(os.environ["TIMBERPATH"]+'bin/libtimber/libtimber.so')
 
     if not library:

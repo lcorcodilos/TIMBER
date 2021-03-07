@@ -2,6 +2,24 @@
 #include "libarchive/include/archive.h"
 #include "libarchive/include/archive_entry.h"
 
+RVec<float> hardware::HadamardProduct(RVec<float> v1, RVec<float> v2) {
+    RVec<float> out;
+    out.reserve(v1.size());
+    for (size_t i = 0; i<v1.size(); i++) {
+        out.emplace_back(v1[i]*v2[i]);
+    }
+    return out;
+}
+
+RVec<float> hardware::HadamardProduct(RVec<float> v1, RVec<RVec<float>> v2, int v2subindex) {
+    RVec<float> out;
+    out.reserve(v1.size());
+    for (size_t i = 0; i<v1.size(); i++) {
+        out.emplace_back(v1[i]*v2[i][v2subindex]);
+    }
+    return out;
+}
+
 float hardware::DeltaPhi(float phi1,float phi2) {
     float result = phi1 - phi2;
     while (result > TMath::Pi()) result -= 2*TMath::Pi();
@@ -80,11 +98,10 @@ void Pythonic::Execute(std::string cmd) {
 std::string ReadTarFile(std::string tarname, std::string internalFile) {
     struct archive *_arch;
     struct archive_entry *_entry;
-    const void *buff;
     int64_t offset;
     size_t size;
     std::stringstream outstream;
-    std::string out;
+    std::string out = "";
     int code;
     // Open archive
     _arch = archive_read_new();
@@ -95,32 +112,60 @@ std::string ReadTarFile(std::string tarname, std::string internalFile) {
         throw "Not able to open archive `"+tarname+"`.";
     // Search for file in archive and return
     while (archive_read_next_header(_arch, &_entry) == ARCHIVE_OK) {
-        if (std::string(archive_entry_pathname(_entry)) == internalFile) {
-            archive_read_data_block(_arch, &buff, &size, &offset);
-            outstream.write((char*)buff, size);
+        if (std::string(archive_entry_pathname(_entry)).find(internalFile) !=  std::string::npos) {
+            void *contents;
+            int entry_size = archive_entry_size(_entry);
+            contents = malloc(entry_size);
+            archive_read_data(_arch, contents, entry_size);
+            outstream.write((char*)contents, entry_size);
             out = outstream.str();
+            out.erase(out.find_last_not_of('\n') + 1);
+            free(contents);
             break;
         }
     }
-
     archive_read_free(_arch);
     return out;
 }
 
-TempDir::TempDir(){
-    _path = boost::filesystem::temp_directory_path();
+TempDir::TempDir() :
+    _path (boost::filesystem::temp_directory_path().string()+"/"+this->Hash()+"/") {
     boost::filesystem::create_directories(_path);
 };
 TempDir::~TempDir(){
+    std::cout << "TempDir closing..." << std::endl;
     for (auto f : _filesSaved) {
+        std::cout << "\tremoving " << f << " ..." << std::endl;
         boost::filesystem::remove(f);
     }
+    std::cout << "\tremoving " << _path.string() << " ..." << std::endl;
+    boost::filesystem::remove(_path.string());
 };
+// https://stackoverflow.com/questions/440133/how-do-i-create-a-random-alpha-numeric-string-in-c/12468109#12468109
+std::string TempDir::Hash(){
+    int length = 10;
+    auto randchar = []() -> char
+    {
+        const char charset[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+        const size_t max_index = (sizeof(charset) - 1);
+        return charset[ rand() % max_index ];
+    };
+    std::string str(length,0);
+    std::generate_n( str.begin(), length, randchar );
+    return str;
+}
 std::string TempDir::Write(std::string filename, std::string in) {
-    std::ofstream out(filename);
+    std::string finalpath = _path.string()+filename; 
+    std::ofstream out(finalpath);
+    // std::string in_strip = in;
+    // if (in.at(in.length()-1) == '\n') {
+    //     in_strip.pop_back();
+    // }
     out << in;
     out.close();
-    std::string finalpath (_path.string()+filename); 
     _filesSaved.push_back(finalpath);
     return finalpath;
 };

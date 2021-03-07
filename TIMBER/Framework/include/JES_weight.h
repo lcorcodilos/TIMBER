@@ -26,22 +26,22 @@ class JES_weight {
         std::vector<std::string> get_sources();
 
         template <class T>
-        RVec< RVec<float> > eval(RVec<T> jets, float rho){
+        RVec< RVec<float> > eval(std::vector<T> jets, float fixedGridRhoFastjetAll){
             RVec< RVec<float> > out (jets.size());
-            
+
             for (size_t ijet = 0; ijet < jets.size(); ijet++) {
                 RVec<float> ijet_out {1.0, 1.0, 1.0};
             
                 if (_redoJECs) {
                     float raw = 1.0 - jets[ijet].rawFactor;
-                    _jetRecalib.SetCorrection(jets[ijet], rho);
-                    _jetRecalib.SetUncertainty(jets[ijet], rho);
+                    _jetRecalib.SetCorrection(jets[ijet], fixedGridRhoFastjetAll);
+                    _jetRecalib.SetUncertainty(jets[ijet], fixedGridRhoFastjetAll);
 
                     ijet_out[0] = raw * (_jetRecalib.GetCorrection());
                     ijet_out[1] = raw * (_jetRecalib.GetCorrection()+_jetRecalib.GetUncertainty());
                     ijet_out[2] = raw * (_jetRecalib.GetCorrection()-_jetRecalib.GetUncertainty());
                 } else {
-                    _jetRecalib.SetUncertainty(jets[ijet], rho);
+                    _jetRecalib.SetUncertainty(jets[ijet], fixedGridRhoFastjetAll);
                     ijet_out[1] = 1+_jetRecalib.GetUncertainty();
                     ijet_out[2] = 1+_jetRecalib.GetUncertainty();
                 }

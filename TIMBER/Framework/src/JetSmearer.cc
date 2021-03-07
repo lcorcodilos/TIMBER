@@ -1,5 +1,8 @@
 #include "../include/JetSmearer.h"
 
+GenJetMatcher::GenJetMatcher(float dRMax, float dPtMaxFactor) : 
+    _dRMax(dRMax), _dPtMaxFactor(dPtMaxFactor) {};
+
 const LorentzV* GenJetMatcher::match(LorentzV& jet, RVec<LorentzV> genJets, float resolution) {
     // Match if dR < _dRMax and dPt < dPtMaxFactor
     double min_dR = std::numeric_limits<double>::infinity();
@@ -22,11 +25,10 @@ const LorentzV* GenJetMatcher::match(LorentzV& jet, RVec<LorentzV> genJets, floa
 }
 
 JetSmearer::JetSmearer(std::string jerTag, std::string jetType) : 
-                        _jerTag(jerTag), _jetType(jetType){
+                        _jerTag(jerTag), _jetType(jetType), _path(_jerTag, _jetType),
+                        _jer(_path.GetResPath()), _jerSF(_path.GetSFpath()),
+                        _variationIndex({Variation::NOMINAL,Variation::UP,Variation::DOWN}) {
     _rnd = std::mt19937(123456);
-    JERpaths path(_jerTag, _jetType);
-    JME::JetResolution _jer(path.GetResPath());
-    JME::JetResolutionScaleFactor _jerSF(path.GetSFpath());
     if (Pythonic::InString("AK4",jetType)) {
         _genJetMatcher = std::make_shared<GenJetMatcher>(0.2);
     } else if (Pythonic::InString("AK8",jetType)) {
@@ -38,14 +40,16 @@ JetSmearer::JetSmearer(std::string jerTag, std::string jetType) :
 
 JetSmearer::JetSmearer(std::vector<float> jmrVals) : 
                         _jetType("AK8"), _jmrVals(jmrVals),
-                        _puppisd_res_central(GetPuppiSDResolutionCentral()),
-                        _puppisd_res_forward(GetPuppiSDResolutionForward())
-                         {
+                        _puppisd_res_central(this->GetPuppiSDResolutionCentral()),
+                        _puppisd_res_forward(this->GetPuppiSDResolutionForward()),
+                        _variationIndex({Variation::NOMINAL,Variation::UP,Variation::DOWN}) {
     _genJetMatcher = std::make_shared<GenJetMatcher>(0.4);
 };
 
-RVec<float> JetSmearer::GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJets) {
-    RVec<float> out(3);
+JetSmearer::~JetSmearer(){};
+
+std::vector<float> JetSmearer::GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJets, float fixedGridRhoFastjetAll) {
+    std::vector<float> out(3);
     if (jet.Pt() <= 0.){
         printf("WARNING: jet pT = %f !!", jet.Pt());
         out = {1.,1.,1.};
@@ -53,11 +57,11 @@ RVec<float> JetSmearer::GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJets) {
         // Do resolution first
         _paramsRes.setJetEta(jet.Eta());
         _paramsRes.setJetPt(jet.Pt());
+        _paramsRes.setRho(fixedGridRhoFastjetAll);
         float jet_resolution = _jer.getResolution(_paramsRes);
         const LorentzV* genJet = _genJetMatcher->match(jet, genJets, jet.pt() * jet_resolution);
         float smearFactor, dPt, sigma, jet_sf;
-
-        for (size_t i; i<_variationIndex.size(); i++) {
+        for (size_t i = 0; i<_variationIndex.size(); i++) {
             Variation variation = _variationIndex[i];
             _paramsSF.setJetEta(jet.Eta());
             _paramsSF.setJetPt(jet.Pt());
@@ -86,8 +90,8 @@ RVec<float> JetSmearer::GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJets) {
     return out;
 }
 
-RVec<float> JetSmearer::GetSmearValsM(LorentzV jet, RVec<LorentzV> genJets){
-    RVec<float> out(3);
+std::vector<float> JetSmearer::GetSmearValsM(LorentzV jet, RVec<LorentzV> genJets){
+    std::vector<float> out(3);
     if (jet.M() <= 0.){
         printf("WARNING: jet m = %f !!", jet.M());
         out = {1.,1.,1.};
@@ -99,7 +103,7 @@ RVec<float> JetSmearer::GetSmearValsM(LorentzV jet, RVec<LorentzV> genJets){
         } else {
             jet_resolution = _puppisd_res_forward->Eval(jet.Pt());
         }
-        for (size_t i; i<3; i++) {
+        for (size_t i = 0; i < 3; i++) {
             smearFactor = 1;
             if (genJet) { // Case 1: we have a "good" gen jet matched to the reco jet
                 dMass = jet.M() - genJet->M();
@@ -120,4 +124,16 @@ RVec<float> JetSmearer::GetSmearValsM(LorentzV jet, RVec<LorentzV> genJets){
         }
     }
     return out;
+}
+
+TFile* JetSmearer::GetPuppiJMRFile() {
+    return TFile::Open(TString(std::string(std::getenv("TIMBERPATH")) + "TIMBER/data/JER/puppiSoftdropResol.root"));
+}
+
+TF1* JetSmearer::GetPuppiSDResolutionCentral() {
+    return (TF1*)this->GetPuppiJMRFile()->Get("massResolution_0eta1v3");
+} 
+
+TF1* JetSmearer::GetPuppiSDResolutionForward() {
+    return (TF1*)this->GetPuppiJMRFile()->Get("massResolution_1v3eta2v5");
 }
