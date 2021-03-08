@@ -45,6 +45,17 @@ namespace hardware {
      */
     RVec<float> HadamardProduct(RVec<float> v1, RVec<RVec<float>> v2, int v2subindex);
     /**
+     * @brief Hadamard product of a base vector and a list of N more vectors (`vout[i] = v1[i]*v2[i][v2subindex]*v3[i][v2subindex]...`)
+     * where v<N> has multiple sub-elements, only one of which should be accessed 
+     * (at index of v2subindex).
+     * 
+     * @param v1 
+     * @param v2 
+     * @param v2subindex
+     * @return RVec<float> 
+     */
+    RVec<float> MultiHadamardProduct(RVec<float> v1, RVec<RVec<RVec<float>>> Multiv2, int v2subindex);
+    /**
      * @brief Calculate the difference in \f$\phi\f$.
      * 
      * @param phi1 
@@ -144,6 +155,28 @@ namespace hardware {
      * @return double 
      */
     double invariantMass(RVec<ROOT::Math::PtEtaPhiMVector> vects);
+    /**
+     * @brief Transpose a vector so that output[j][i] = input[i][j]
+     * 
+     * @param v
+     * @return RVec<RVec<T>>
+     */
+    template <class T>
+    RVec<RVec<T>> Transpose(RVec<RVec<T>> v) {
+        if (v.size() == 0) {
+            return RVec<RVec<T>> (0);
+        } else {
+            RVec<RVec<T>> out;
+            for (int i = 0; i < v[0].size(); i++) {
+                RVec<T> inner;
+                for (int j = 0; j < v.size(); j++) {
+                    inner.push_back(v[j][i]);
+                }
+                out.push_back(inner);
+            }
+            return out;
+        }
+    }
 }
 
 namespace Pythonic {

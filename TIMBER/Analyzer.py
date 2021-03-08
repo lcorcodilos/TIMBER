@@ -501,16 +501,20 @@ class analyzer(object):
             SubCollection('TopJets','FatJet','FatJet_msoftdrop > 105 && FatJet_msoftdrop < 220')
         '''
         collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if basecoll in str(cname) and str(cname) not in skip]
-        self.Define(name+'_idx','%s'%(condition))
+        if condition != '': self.Define(name+'_idx','%s'%(condition))
         for b in collBranches:
             replacementName = b.replace(basecoll,name)
             if b == 'n'+basecoll:
-                self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name),nodetype='SubCollDefine')
+                if condition != '': self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name),nodetype='SubCollDefine')
+                else: self.Define(replacementName,b)
+            elif 'Struct>' in self.DataFrame.GetColumnType(b): # skip internal structs
+                continue
             elif 'RVec' not in self.DataFrame.GetColumnType(b):
                 print ('Found type %s during SubCollection'%self.DataFrame.GetColumnType(b))
                 self.Define(replacementName,b,nodetype='SubCollDefine')
             else:
-                self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
+                if condition != '': self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
+                else: self.Define(replacementName,b,nodetype='SubCollDefine')
             
         branches_to_track = []
         for v in collBranches:
@@ -934,16 +938,49 @@ class analyzer(object):
     #---------------------#
     # Handle calibrations #
     #---------------------#
-    def CalibrateVar(self,vars,calib,evalArgs={},newColName=None,node=None):
-        '''Calibrate a variable `var` with the Calibration `calib`. Sets new active node with 
-        new column named as either `<var>_<calib>` or `<newColName>`.
+    def CalibrateVars(self,varCalibDict,evalArgs,newCollectionName,node=None):
+        '''Calibrate variables (all of the same collection - ex. "FatJet") with the Calibrations provided in varCalibDict and
+        arguments provided in evalArgs. Create a new collection
+        with the calibrations applied and any re-ordering of the collection applied. As an example...
 
-        @param vars ([str]): List of names of columns/variables to calibrate/weight.
-        @param calib (Correction): Correction object to weight with.
-        @param evalArgs (dict, optional): Dict with keys as C++ method argument names and values as the actual argument to provide
-                (branch/column names) for per-event evaluation. For any argument names where a key is not provided, will attempt
-                to find branch/column that already matches based on name.
-        @param newColName (str, optional): Specific name for output column.
+```
+a = analyzer(...)
+jes = Calibration("JES","TIMBER/Framework/include/JES_weight.h",
+        [GetJMETag("JES",str(year),"MC"),"AK8PFPuppi","","true"], corrtype="Calibration")
+jer = Calibration("JER","TIMBER/Framework/include/JER_weight.h",
+        [GetJMETag("JER",str(year),"MC"),"AK8PFPuppi"], corrtype="Calibration")
+...
+varCalibDict = {
+    "FatJet_pt" : [jes, jer]
+    "FatJet_mass" : [jes, jer]
+}
+evalArgs = {
+    jes : {"jets":"FatJets"},
+    jer : {"jets":"FatJets","genJets":"GenJets"}
+},
+a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets",reorderBy="FatJet_pt")
+
+```
+        This will apply the JES and JER calibrations and their four variations (up,down pair for each) to FatJet_pt and FatJet_mass branches
+        and create a new collection called "CorrectedFatJets" which will be ordered by the new pt values. Note that if you want to correct a different
+        collection (ex. AK4 based Jet collection), you need a separate payload and separate call to CalibrateVars because only one collection can be generated at a time.
+        Also note that in this example, `jes` and `jer` are initialized with the AK8PFPuppi jets in mind. So if you'd like to apply the JES or JER calibrations to
+        AK4 jets, you would also need to define objects like `jesAK4` and `jerAK4`.
+
+        The calibrations will always be calculated as a seperate
+        column which stores a vector named `<CalibName>__vec` and ordered {nominal, up, down} where "up" and "down" are the absolute weights
+        (ie. not relative to "nominal"). If you'd just like the weights and do not want them applied to any variable, you can provide
+        an empty dictionary (`{}`) for the varCalibDict argument.
+        
+        This method will set the new active node to the one with the new collection defined.
+
+        @param varCalibDict (dict): Dictionary mapping variable to calibrate to calibrations to apply.
+                Best understood through the example above.
+        @param evalArgs (dict): Dictionary mapping calibrations to input evaluation arguments that map the 
+                C++ method definition argument names to the desired input.
+        @param newCollectionName (str): Output collection name.
+        @param reorderBy (str, optional): Branch by which to order the new collection. Defaults to None in which case no reordering
+                is performed.
         @param node (Node, optional): Node to add correction on top of. Defaults to #ActiveNode.
 
         Raises:
@@ -954,22 +991,66 @@ class analyzer(object):
             Node: New #ActiveNode.
         '''
         if node == None: node = self.ActiveNode
-        # Quick type checking
-        if not isinstance(node,Node): raise TypeError('CalibrateVar() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
-        elif not isinstance(calib,Calibration): raise TypeError('CalibrateVar() does not support argument type %s for calibration. Please provide a Calibration.'%(type(calib)))
-
-        newNode = self._addModule(calib, evalArgs, 'Calibration', node)
-
-        for var in vars:
+        # Type checking and create calibration branches
+        newNode = self.__checkCalibrations(node,varCalibDict,evalArgs)      
+        
+        # Create the product of weights
+        new_columns =  OrderedDict()
+        baseCollectionName = varCalibDict.keys()[0].split('_')[0]
+        for var in varCalibDict.keys():
             isRVec = "RVec" in self.DataFrame.GetColumnType(var)
-            for i,v in enumerate(['nom','up','down']):
-                if not isRVec: 
-                    newNode = self.Define(var+'_'+calib.name+'__'+v, var+'*'+calib.name+'__vec[%s]'%i,newNode,nodetype='Calibration')
-                else:
-                    newNode = self.Define(var+'_'+calib.name+'__'+v, 'hardware::HadamardProduct({0},{1},{2})'.format(var,calib.name+'__vec',i),newNode,nodetype='Calibration')
+            # nominal first
+            new_var_name = var.replace(baseCollectionName,newCollectionName)
+            if not isRVec: 
+                new_columns[new_var_name] = var
+                for calib in varCalibDict[var]:
+                    new_columns[new_var_name] += "*"+calib.name+'__vec[0]'     
+            else:
+                calib_list_str = '{%s}'%(','.join(calib.name+'__vec' for calib in varCalibDict[var]))
+                new_columns[new_var_name] = 'hardware::MultiHadamardProduct({0},{1},0)'.format(var,calib_list_str)
+            # now the variations
+            for calib in varCalibDict[var]:
+                for i,v in enumerate(['up','down']):
+                    if not isRVec:
+                        new_columns[new_var_name+'_'+calib.name+'__'+v] = new_columns[new_var_name].replace(calib.name+'__vec[0]',calib.name+'__vec[%s]'%i)
+                    else:
+                        nom_minus_calib = new_columns[new_var_name].replace(calib.name+'__vec,','').replace(calib.name+'__vec','')
+                        new_columns[new_var_name+'_'+calib.name+'__'+v] = 'hardware::HadamardProduct({0},{1},{2})'.format(nom_minus_calib, calib.name+'__vec',i)
+        # Actually define the columns 
+        for c in new_columns.keys():
+            newNode = self.Define(c, new_columns[c], newNode, nodetype='Calibration')
+        
+        newNode = self.SubCollection(newCollectionName,baseCollectionName,'',skip=varCalibDict.keys()+new_columns.keys())
 
         return self.SetActiveNode(newNode)
 
+    def __checkCalibrations(self,node,varCalibDict,evalArgs):
+        newNode = node
+        # Type checking
+        if not isinstance(node,Node): raise TypeError('CalibrateVar() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
+        if varCalibDict != {}:
+            for var in varCalibDict.keys():
+                if not isinstance(var,str): raise TypeError('A varCalibDict variable key is not a string (%s).'%var)
+                for calib in varCalibDict[var]:
+                    if not isinstance(calib,Calibration):
+                        raise TypeError('CalibrateVar() varCalibDict does not support value type %s for calibration. Please provide a Calibration.'%(type(calib)))
+        if not isinstance(evalArgs,dict):
+            raise TypeError('CalibrationVar() evalArgs must be of type dict.')
+        # Build calibration module if it doesn't exist
+        for calib in evalArgs.keys():
+            if not isinstance(calib,Calibration):
+                raise TypeError('CalibrateVar() evalArgs keys do not support value type %s for calibration. Please provide a Calibration.'%(type(calib)))
+            if calib.name+'__vec' not in self.DataFrame.GetColumnNames():
+                print ('Adding Calibration %s'%calib.name)
+                newNode = self._addModule(calib, evalArgs[calib], 'Calibration', newNode)
+                # Does not currently account for un-nested calibration (ie. only RVec<RVec<T>> assumed)
+                transpose_name = calib.name+'__vecT'
+                newNode = self.Define(transpose_name,'hardware::Transpose(%s)'%(calib.name+'__vec'))
+                for i,variation in enumerate(['nom','up','down']):
+                    this_element = transpose_name+'[%s]'%i
+                    # Return element if there are actually jets. Else return an empty vector.
+                    newNode = self.Define(calib.name+'_'+variation,'%s.size() > 0 ? %s : RVec<float> (0);'%(transpose_name,this_element))
+        return self.SetActiveNode(newNode)            
     #----------------------------------------------#
     # Build N-1 "tree" and outputs the final nodes #
     # Beneficial to put most aggressive cuts first #

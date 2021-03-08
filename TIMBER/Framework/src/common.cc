@@ -20,6 +20,19 @@ RVec<float> hardware::HadamardProduct(RVec<float> v1, RVec<RVec<float>> v2, int 
     return out;
 }
 
+RVec<float> hardware::MultiHadamardProduct(RVec<float> v1, RVec<RVec<RVec<float>>> Multiv2, int v2subindex) {
+    RVec<float> out;
+    out.reserve(v1.size());
+    for (size_t i = 0; i<v1.size(); i++) {
+        float val = v1[i];
+        for (RVec<RVec<float>>& v2 : Multiv2) {
+            val *= v2[i][v2subindex];
+        }
+        out.push_back(val);
+    }
+    return out;
+}
+
 float hardware::DeltaPhi(float phi1,float phi2) {
     float result = phi1 - phi2;
     while (result > TMath::Pi()) result -= 2*TMath::Pi();
