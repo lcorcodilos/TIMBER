@@ -12,7 +12,7 @@ BIN_DIR=bin/libtimber/
 CPP_FILES=$(wildcard $(SOURCE_DIR)*.cc TIMBER/Framework/src/ext/*.cpp)
 HEADERS=$(CPP_FILES:$(SOURCE_DIR)%.cc=$(HEADER_DIR)%.h)
 
-JME_FILES=JetSmearer.cc JetRecalibrator.cc JMR_weight.cc JER_weight.cc JES_weight.cc JMS_weight.cc
+JME_FILES=JetSmearer.cc JetRecalibrator.cc JMR_weight.cc JER_weight.cc JES_weight.cc JMS_weight.cc JME_common.cc
 JME_FILES:=$(JME_FILES:%.cc=$(SOURCE_DIR)%.cc)
 ifndef CMSSW_VERSION
 	CPP_FILES:=$(filter-out $(JME_FILES), $(CPP_FILES))
