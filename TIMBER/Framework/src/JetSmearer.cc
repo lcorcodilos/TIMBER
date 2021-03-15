@@ -3,10 +3,10 @@
 GenJetMatcher::GenJetMatcher(float dRMax, float dPtMaxFactor) : 
     _dRMax(dRMax), _dPtMaxFactor(dPtMaxFactor) {};
 
-const LorentzV* GenJetMatcher::match(LorentzV& jet, RVec<LorentzV> genJets, float resolution) {
+LorentzV GenJetMatcher::match(LorentzV& jet, RVec<LorentzV> genJets, float resolution) {
     // Match if dR < _dRMax and dPt < dPtMaxFactor
     double min_dR = std::numeric_limits<double>::infinity();
-    const LorentzV* out = nullptr;
+    LorentzV out (-1,0,0,0);
 
     for (const LorentzV & genJet : genJets) {
         float dR = hardware::DeltaR(genJet, jet);
@@ -17,7 +17,7 @@ const LorentzV* GenJetMatcher::match(LorentzV& jet, RVec<LorentzV> genJets, floa
             double dPt = std::abs(genJet.pt() - jet.pt());
             if ((resolution == -1) || (dPt <= _dPtMaxFactor * resolution)) {
                 min_dR = dR;
-                out = &genJet;
+                out = genJet;
             }
         }
     }
@@ -59,7 +59,7 @@ std::vector<float> JetSmearer::GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJe
         _paramsRes.setJetPt(jet.Pt());
         _paramsRes.setRho(fixedGridRhoFastjetAll);
         float jet_resolution = _jer.getResolution(_paramsRes);
-        const LorentzV* genJet = _genJetMatcher->match(jet, genJets, jet.pt() * jet_resolution);
+        LorentzV genJet = _genJetMatcher->match(jet, genJets, jet.pt() * jet_resolution);
         float smearFactor, dPt, sigma, jet_sf;
         for (size_t i = 0; i<_variationIndex.size(); i++) {
             Variation variation = _variationIndex[i];
@@ -68,14 +68,14 @@ std::vector<float> JetSmearer::GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJe
             
             jet_sf = _jerSF.getScaleFactor(_paramsSF, variation);
 
-            smearFactor = 1;
-            if (genJet) { // Case 1: we have a "good" gen jet matched to the reco jet
-                dPt = jet.pt() - genJet->pt();
-                smearFactor = 1. + (jet_sf -1.) * dPt / jet.pt();
+            if (genJet.Pt() > -1) { // Case 1: we have a "good" gen jet matched to the reco jet
+                dPt = jet.Pt() - genJet.Pt();
+                smearFactor = 1. + (jet_sf -1.) * dPt / jet.Pt();
             } else if (jet_sf > 1) { // Case 2: we don't have a gen jet. Smear jet pt using a random gaussian variation
-                sigma = jet_resolution * std::sqrt(jet_sf * jet_sf - 1.);
-                std::normal_distribution<> d(0, sigma);
-                smearFactor = 1. + d(_rnd);
+                std::normal_distribution<> d(0, jet_resolution);
+                smearFactor = 1. + d(_rnd) * std::sqrt(jet_sf * jet_sf - 1.);
+            } else {
+                smearFactor = 1.;
             }
 
             if (jet.E() *  smearFactor < MIN_JET_ENERGY) {
@@ -96,7 +96,7 @@ std::vector<float> JetSmearer::GetSmearValsM(LorentzV jet, RVec<LorentzV> genJet
         printf("WARNING: jet m = %f !!", jet.M());
         out = {1.,1.,1.};
     } else {
-        const LorentzV* genJet = _genJetMatcher->match(jet, genJets, -1); // -1 removes pt requirement
+        const LorentzV genJet = _genJetMatcher->match(jet, genJets, -1); // -1 removes pt requirement
         float smearFactor, dMass, sigma, jet_resolution;
         if (std::abs(jet.Eta()) <= 1.3) {
             jet_resolution = _puppisd_res_central->Eval(jet.Pt());
@@ -105,8 +105,8 @@ std::vector<float> JetSmearer::GetSmearValsM(LorentzV jet, RVec<LorentzV> genJet
         }
         for (size_t i = 0; i < 3; i++) {
             smearFactor = 1;
-            if (genJet) { // Case 1: we have a "good" gen jet matched to the reco jet
-                dMass = jet.M() - genJet->M();
+            if (genJet.Pt() > -1) { // Case 1: we have a "good" gen jet matched to the reco jet
+                dMass = jet.M() - genJet.M();
                 smearFactor = 1. + (_jmrVals[i] -1.) * dMass / jet.M();
             } else if (_jmrVals[i] > 1) { // Case 2: we don't have a gen jet. Smear jet pt using a random gaussian variation
                 sigma = jet_resolution * std::sqrt(_jmrVals[i] * _jmrVals[i] - 1.);

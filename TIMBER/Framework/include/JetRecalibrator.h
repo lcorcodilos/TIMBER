@@ -52,7 +52,7 @@ class JetRecalibrator {
             _JetCorrector->setJetPt(jet.pt * (1. - jet.rawFactor));
             _JetCorrector->setJetA(jet.area);
             _JetCorrector->setRho(fixedGridRhoFastjetAll);
-            _correction = _JetCorrector->getCorrection();
+            _correction = _JetCorrector->getCorrection() * (1. - jet.rawFactor);
         };
 
         template <class T>
@@ -60,7 +60,7 @@ class JetRecalibrator {
             if (delta != 0) {
                 _JetUncertainty->setJetPhi(jet.phi);
                 _JetUncertainty->setJetEta(jet.eta);
-                _JetUncertainty->setJetPt(_correction * jet.pt * (1.0 - jet.rawFactor));
+                _JetUncertainty->setJetPt(_correction * jet.pt);
                 _uncertainty = delta*_JetUncertainty->getUncertainty(true);
 
             } else {

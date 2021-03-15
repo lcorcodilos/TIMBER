@@ -30,7 +30,7 @@ class GenJetMatcher {
 
     public: 
         GenJetMatcher(float dRMax, float dPtMaxFactor = 3);
-        const LorentzV* match(LorentzV& jet, RVec<LorentzV> genJets, float resolution);
+        LorentzV match(LorentzV& jet, RVec<LorentzV> genJets, float resolution);
 };
 
 class JetSmearer {

@@ -33,17 +33,16 @@ class JES_weight {
                 RVec<float> ijet_out {1.0, 1.0, 1.0};
             
                 if (_redoJECs) {
-                    float raw = 1.0 - jets[ijet].rawFactor;
                     _jetRecalib.SetCorrection(jets[ijet], fixedGridRhoFastjetAll);
-                    _jetRecalib.SetUncertainty(jets[ijet], fixedGridRhoFastjetAll);
+                    _jetRecalib.SetUncertainty(jets[ijet]);
 
-                    ijet_out[0] = raw * (_jetRecalib.GetCorrection());
-                    ijet_out[1] = raw * (_jetRecalib.GetCorrection()+_jetRecalib.GetUncertainty());
-                    ijet_out[2] = raw * (_jetRecalib.GetCorrection()-_jetRecalib.GetUncertainty());
+                    ijet_out[0] = _jetRecalib.GetCorrection();
+                    ijet_out[1] = _jetRecalib.GetCorrection()*(1+_jetRecalib.GetUncertainty());
+                    ijet_out[2] = _jetRecalib.GetCorrection()*(1-_jetRecalib.GetUncertainty());
                 } else {
                     _jetRecalib.SetUncertainty(jets[ijet], fixedGridRhoFastjetAll);
                     ijet_out[1] = 1+_jetRecalib.GetUncertainty();
-                    ijet_out[2] = 1+_jetRecalib.GetUncertainty();
+                    ijet_out[2] = 1-_jetRecalib.GetUncertainty();
                 }
                 out[ijet] = ijet_out;
             }
