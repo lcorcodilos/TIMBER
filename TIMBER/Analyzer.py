@@ -1012,10 +1012,10 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets",reorderBy="FatJet_pt")
             for calib in varCalibDict[var]:
                 for i,v in enumerate(['up','down']):
                     if not isRVec:
-                        new_columns[new_var_name+'_'+calib.name+'__'+v] = new_columns[new_var_name].replace(calib.name+'__vec[0]',calib.name+'__vec[%s]'%i)
+                        new_columns[new_var_name+'_'+calib.name+'__'+v] = new_columns[new_var_name].replace(calib.name+'__vec[0]',calib.name+'__vec[%s]'%i+1)
                     else:
                         nom_minus_calib = new_columns[new_var_name].replace(calib.name+'__vec,','').replace(calib.name+'__vec','')
-                        new_columns[new_var_name+'_'+calib.name+'__'+v] = 'hardware::HadamardProduct({0},{1},{2})'.format(nom_minus_calib, calib.name+'__vec',i)
+                        new_columns[new_var_name+'_'+calib.name+'__'+v] = 'hardware::HadamardProduct({0},{1},{2})'.format(nom_minus_calib, calib.name+'__vec',i+1)
         # Actually define the columns 
         for c in new_columns.keys():
             newNode = self.Define(c, new_columns[c], newNode, nodetype='Calibration')
