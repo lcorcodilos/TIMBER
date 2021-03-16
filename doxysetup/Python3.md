@@ -22,6 +22,8 @@ If you'd like to use an older version of ROOT, you'll need to build from source 
 
 ## With CMSSW on LXPLUS or LPC
 
+WARNING: THESE INSTRUCTIONS DO NOT WORK CONSISTENTLY ACROSS USE CASES.
+
 There's no good resource that explains which CMSSW versions have which python and ROOT versions (if you know of one,
 please send it to me and I'll add it here!). One can parse the information in `cvmfs` but these instructions are
 so you can avoid that! CMSSW versions almost always come with some version of Python 2.7 and Python 3.x but 
