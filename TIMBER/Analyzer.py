@@ -40,8 +40,8 @@ class analyzer(object):
         branch (#lhaid), if the file is data (#isData), and if the file is before NanoAOD
         version 6 (#preV6).
 
-        @param fileName (str): A ROOT file path or the path to a txt file which contains several ROOT file paths separated by 
-                new line characters.
+        @param fileName (str): A ROOT file path, a path to a txt file which contains several ROOT file paths separated by 
+                new line characters, or a list of either .root and/or .txt files.
         @param eventsTreeName (str, optional): Name of TTree in fileName where events are stored. Defaults to "Events" (for NanoAOD)
         @param runTreeName (str, optional): Name of TTree in fileName where run information is stored (for generated event info in 
                 simulation). Defaults to "Runs" (for NanoAOD) 
@@ -96,16 +96,9 @@ class analyzer(object):
         if isinstance(self.fileName,list):
             for f in self.fileName:
                 self.__addFile(f)
-        elif ".root" in self.fileName: 
+        else:
             self.__addFile(self.fileName)
-        elif ".txt" in self.fileName: 
-            txt_file = open(self.fileName,"r")
-            for l in txt_file.readlines():
-                thisfile = l.strip()
-                self.__addFile(thisfile)
-        else: 
-            raise Exception("File name extension not supported. Please provide a single .root file or a .txt file with a line-separated list of .root files to chain together.")
-
+        
         # Make base RDataFrame
         BaseDataFrame = ROOT.RDataFrame(self.__eventsChain) 
         self.BaseNode = Node('base',BaseDataFrame) 
@@ -169,10 +162,18 @@ class analyzer(object):
         Args:
             f (str): File to add.
         '''
-        if 'root://' not in f and f.startswith('/store/'):
-            f='root://cms-xrd-global.cern.ch/'+f
-        self.__eventsChain.Add(f)
-        self.RunChain.Add(f)
+        if f.endswith(".root"): 
+            if 'root://' not in f and f.startswith('/store/'):
+                f='root://cms-xrd-global.cern.ch/'+f
+            self.__eventsChain.Add(f)
+            self.RunChain.Add(f)
+        elif f.endswith(".txt"): 
+            txt_file = open(f,"r")
+            for l in txt_file.readlines():
+                thisfile = l.strip()
+                self.__addFile(thisfile)
+        else:
+            raise Exception("File name extension not supported. Please provide a single or list of .root files or a .txt file with a line-separated list of .root files to chain together.")
 
     def Close(self):
         '''Safely deletes analyzer instance.
