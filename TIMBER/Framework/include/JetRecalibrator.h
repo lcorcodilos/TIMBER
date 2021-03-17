@@ -15,7 +15,11 @@
 typedef std::string str;
 typedef ROOT::VecOps::RVec<float> rvec_f;
 typedef std::vector<JetCorrectorParameters> vJCP;
-
+/**
+ * @brief C++ class to recalibrate the \f$p_{T}\f$ of jets.
+ *  Initialized with basic parameters and calculations done on vectors of jets from
+ *  an event using the class methods.
+ */
 class JetRecalibrator {
     private:
         bool _doResidualJECs;//, _calculateSeparateCorrections, _calculateType1METCorrection;

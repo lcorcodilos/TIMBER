@@ -14,7 +14,7 @@ using namespace ROOT::VecOps;
 using LVector = ROOT::Math::PtEtaPhiMVector;
 
 namespace GenMatching {
-    /** @brief Unwraps an integer to check for bitwise flags.
+    /** @brief C++ function. Unwraps an integer to check for bitwise flags.
      * Checks if the bit of a number is true or false.
      * 
      * @param bit Bit to check.
@@ -23,17 +23,17 @@ namespace GenMatching {
      * @return Bool of whether the bit in the number is 0 or 1 */
     bool BitChecker(const int &bit, int &number);
 
-    /** @brief Map of the PDG ID values to the particle names.
+    /** @brief C++ map of the PDG ID values to the particle names.
      * used for plotting decay structure. */
     extern std::map <int, std::string> PDGIds;
 
-    /** @brief Converts flag name to the corresponding bit in the
+    /** @brief C++ map. Converts flag name to the corresponding bit in the
      * value for statusFlags branch. */
     extern std::map <std::string, int> GenParticleStatusFlags;
 }
 
 /** @class Particle
- * @brief Stores identifying features of a particle
+ * @brief C++ class. Stores identifying features of a particle
  * in the GenPart collection.
  */
 class Particle {
@@ -70,7 +70,7 @@ class Particle {
 
 
 /** @class GenParticleTree
- *  @brief Constructs tree by adding particles.
+ *  @brief C++ class. Constructs tree by adding particles.
  *  Establish relationships between particles (parent, child)
  *  and allows you to search for a chain of decays.
  */
@@ -127,7 +127,7 @@ class GenParticleTree
 };
 
 /** @class GenParticleObjs
- *  @brief Object that stores and manipulates the information for gen particles.
+ *  @brief C++ class. Class that stores and manipulates the information for gen particles.
  *  Stores all gen particles in the event and member functions can be used to
  *  access the gen particles by index.
 */

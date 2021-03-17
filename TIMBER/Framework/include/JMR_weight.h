@@ -7,7 +7,7 @@
 
 using namespace ROOT::VecOps;
 /**
- * @brief Class to directly handle JMR weights in the case of tau21
+ * @brief C++ class to directly handle JMR weights in the case of tau21
  * jet substructure. The values used (nominal, up, down) are:
  *  - 2016: 1.00, 1.2,  0.8
  *  - 2017: 1.09, 1.14, 1.04

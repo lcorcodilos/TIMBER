@@ -22,7 +22,7 @@
 using namespace ROOT::VecOps;
 /**
  * @namespace hardware
- * @brief Namespace for common physics functions.
+ * @brief C++ namespace for common physics functions.
  */
 namespace hardware {  
     /**
@@ -50,7 +50,7 @@ namespace hardware {
      * (at index of v2subindex).
      * 
      * @param v1 
-     * @param v2 
+     * @param Multiv2 
      * @param v2subindex
      * @return RVec<float> 
      */
@@ -143,8 +143,7 @@ namespace hardware {
      * @param obj_phi 
      * @return float 
      */
-    float transverseMass(float MET_pt, float obj_pt, float MET_phi, float obj_phi);
-
+    float TransverseMass(float MET_pt, float obj_pt, float MET_phi, float obj_phi);
     /**
      * @brief Calculates the invariant mass of a vector of Lorentz vectors
      * (ROOT::Math::PtEtaPhiMVector). Note that this is an alternative
@@ -154,7 +153,7 @@ namespace hardware {
      * @param vects 
      * @return double 
      */
-    double invariantMass(RVec<ROOT::Math::PtEtaPhiMVector> vects);
+    double InvariantMass(RVec<ROOT::Math::PtEtaPhiMVector> vects);
     /**
      * @brief Transpose a vector so that output[j][i] = input[i][j]
      * 
@@ -314,7 +313,7 @@ namespace Pythonic {
 std::string ReadTarFile(std::string tarname, std::string internalFile);
 
 /**
- * @brief Creates a temporary directory that is destroyed on delete.
+ * @brief C++ class. Creates a temporary directory that is destroyed on delete.
  */
 class TempDir {
     private:

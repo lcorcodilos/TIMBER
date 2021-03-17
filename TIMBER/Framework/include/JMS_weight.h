@@ -9,7 +9,7 @@
 using namespace ROOT::VecOps;
 
 /**
- * @brief Class to directly handle JMS weights in the case of tau21
+ * @brief C++ class to directly handle JMS weights in the case of tau21
  *  jet substructure. The values used (nominal, up, down) are:
  *  - 2016: 1.000, 1.0094, 0.9906
  *  - 2017: 0.982, 0.986,  0.978

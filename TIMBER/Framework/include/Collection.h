@@ -8,7 +8,7 @@ using namespace ROOT::VecOps;
 using namespace std;
 
 /** 
- * @brief Structure to store maps of the various types of objects in a collection.
+ * @brief C++ structure to store maps of the various types of objects in a collection.
  * OUTDATED BY analyzer.CreateAllCollections
  * UChar not considered.
  * Use by building each map as <branchName, branchValue> and

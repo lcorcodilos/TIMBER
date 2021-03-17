@@ -5,7 +5,9 @@
 #include "JetSmearer.h"
 
 using namespace ROOT::VecOps;
-
+/**
+ * @brief C++ class to handle the JER weight calculations
+ */
 class JER_weight {
     private:
         JetSmearer _smearer;

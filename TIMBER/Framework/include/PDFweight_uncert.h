@@ -11,7 +11,7 @@ using namespace ROOT::VecOps;
 
 /**
  * @class PDFweight_uncert
- * @brief PDF weight uncertainty lookup class.
+ * @brief C++ class. PDF weight uncertainty lookup class.
  * 
  * Accounts for hessians vs replicas by using LHA ID.
  */

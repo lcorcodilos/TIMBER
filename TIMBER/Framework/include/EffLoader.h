@@ -4,7 +4,7 @@
 
 /**
  * @class EffLoader
- * @brief Generic histogram loader with methods to return bin values.
+ * @brief C++ class. Generic histogram loader with methods to return bin values.
  */
 class EffLoader {
     private:

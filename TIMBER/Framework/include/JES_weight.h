@@ -11,7 +11,9 @@
 #include "common.h"
 
 using namespace ROOT::VecOps;
-
+/**
+ * @brief C++ class to handle the JES/JEC weight calculations
+ */
 class JES_weight {
     private:
         const std::string _jecTag, _jetType, _uncertType;

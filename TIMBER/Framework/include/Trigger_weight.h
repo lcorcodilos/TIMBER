@@ -7,7 +7,7 @@
 using namespace ROOT::VecOps;
 
 /** @class Trigger_weight
- *  @brief Specializes in the construction of trigger efficiency weights stored as histograms.
+ *  @brief C++ class. Specializes in the construction of trigger efficiency weights stored as histograms.
  * Uncertainties are calculated as one half of the trigger inefficiency (ie. (1-eff)/2).
  * 
  * Uncertainties are capped to never be greater than 1 or less

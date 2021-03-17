@@ -59,11 +59,11 @@ RVec<ROOT::Math::PtEtaPhiMVector> hardware::TLvector(RVec<float> pt,RVec<float> 
     }
     return vs;
 }
-float hardware::transverseMass(float MET_pt, float obj_pt, float MET_phi, float obj_phi) {
+float hardware::TransverseMass(float MET_pt, float obj_pt, float MET_phi, float obj_phi) {
     return sqrt(2.0*MET_pt*obj_pt-(1-cos(DeltaPhi(MET_phi,obj_phi))));
 }
 
-double hardware::invariantMass(RVec<ROOT::Math::PtEtaPhiMVector> vects) {
+double hardware::InvariantMass(RVec<ROOT::Math::PtEtaPhiMVector> vects) {
     ROOT::Math::PtEtaPhiMVector sum;
     sum.SetCoordinates(0,0,0,0);
     for (size_t i = 0; i < vects.size(); i++) {

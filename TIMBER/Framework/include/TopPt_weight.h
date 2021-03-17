@@ -10,7 +10,7 @@
 using namespace ROOT::VecOps;
 
 /** @class TopPt_weight
- *  @brief Handles the top \f$p_T\f$ reweighting value for \f$t\bar{t}\f$ simulation
+ *  @brief C++ class. Handles the top \f$p_T\f$ reweighting value for \f$t\bar{t}\f$ simulation
  * based on doing gen particle matching. The weight is calculated as 
  * 
  * \f[ \sqrt{e^{\alpha - \beta \cdot p_{T}^{\textrm{Gen} t}} \cdot e^{\alpha - \beta \cdot p_{T}^{\textrm{Gen} \bar{t}} }} \f].

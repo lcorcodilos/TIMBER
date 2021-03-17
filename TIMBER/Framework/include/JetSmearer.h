@@ -25,7 +25,7 @@ using namespace ROOT::VecOps;
 using LorentzV = ROOT::Math::PtEtaPhiMVector;
 
 /**
- * @brief Class to match single reconstructed jet (represented as a Lorentz vector)
+ * @brief C++ class to match single reconstructed jet (represented as a Lorentz vector)
  * to the closest generator jet in a vector of generator jets (represented as Lorentz vectors).
  * 
  */
@@ -55,7 +55,7 @@ class GenJetMatcher {
 };
 
 /**
- * @brief Class to handle the smearing of jet pt and mass using
+ * @brief C++ class to handle the smearing of jet pt and mass using
  * the JER and JMR inputs, respectively.
  * 
  */
@@ -113,7 +113,7 @@ class JetSmearer {
          *          "unsmear" the jet, which is impossible.
          * 
          * @param jet Jet Lorentz vector
-         * @param genJet GenJet Lorentz vector
+         * @param genJets Vector of possible matching GenJet Lorentz vectors
          * @param fixedGridRhoFastjetAll Stored in the NanoAOD with this name as the branch name.
          * @return std::vector<float> {nominal,up,down}
          */
@@ -135,7 +135,7 @@ class JetSmearer {
          * PhysicsTools/PatUtils/interface/SmearedJetProducerT.h
          * Procedure outline in: https://twiki.cern.ch/twiki/bin/view/Sandbox/PUPPIJetMassScaleAndResolution
          * @param jet Jet Lorentz vector
-         * @param genJet GenJet Lorentz vector
+         * @param genJets Vector of possible matching GenJet Lorentz vectors
          * @return std::vector<float> {nominal,up,down}
          */
         std::vector<float> GetSmearValsM(LorentzV jet, RVec<LorentzV> genJets);

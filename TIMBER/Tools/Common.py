@@ -1,4 +1,4 @@
-'''@addtogroup Common Common Tools
+'''@addtogroup Common Common Tools (Common.py)
 Commonly used functions available for use that can be generic or TIMBER specific.
 @{
 '''
@@ -39,6 +39,8 @@ def CutflowHist(name,node,initial=None,efficiency=False):
 
     @param name (str): Name of output histogram
     @param node (Node): Input Node from which to get the cutflow.
+    @param initial (int): Initial number events. Defaults to None
+        in which case the number in the top-most parent Node is used.
     @param efficiency (bool, optional): Reports an efficiency instead of yields
             (relative to number of events before any cuts on Node).
 
@@ -109,6 +111,8 @@ def StitchQCD(QCDdict,normDict=None):
 #---------#
 # Generic #
 #---------#
+## Dictionary of the JES/JEC tags corresponding to
+# tarballs stored in TIMBER/data/JES.
 JEStags = {
     "2016": "Summer16_07Aug2017_V11",
     "2017": "Fall17_17Nov2017_V32",
@@ -116,7 +120,8 @@ JEStags = {
     "2017UL": "Summer19UL17_V5",
     "2018UL": "Summer19UL18_V5"
 }
-
+## Dictionary of the JER tags corresponding to
+# tarballs stored in TIMBER/data/JER.
 JERtags = {
     "2016":"Summer16_25nsV1b",
     "2017":"Fall17_V3b",

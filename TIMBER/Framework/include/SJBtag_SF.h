@@ -8,7 +8,7 @@ using namespace ROOT::VecOps;
 
 /**
  * @class SJBtag_SF
- * @brief Subjet b tagging scale factor lookup.
+ * @brief C++ class. Subjet b tagging scale factor lookup.
  */
 class SJBtag_SF {
     private:

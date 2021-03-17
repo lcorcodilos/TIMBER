@@ -7,14 +7,24 @@
 
 using str = std::string;
 
+/**
+ * @brief C++ class. Parent class to handle shared attributes and methods
+ *  among JESpaths and JERpaths.
+ */
 class JMEpaths {
-    /**
-     * @brief Parent class to handle shared attributes and methods
-     *  among JESpaths and JERpaths.
-     */
     protected:
+        /**
+         * @brief Full path to TIMBER's home
+         */
         const str _timberPath;
+        /**
+         * @brief Full path to the tarball archives being accessed.
+         */
         const str _jmeArchivePath;
+        /**
+         * @brief Temporary directory object which makes and deletes a staging
+         * area for the extracted JME text files. 
+         */
         TempDir _tempdir;
 
     public:
@@ -40,7 +50,10 @@ class JMEpaths {
          */
         str _GetTxtFileStr(str tarfile, str jmefile);
 };
-
+/**
+ * @brief C++ class to handle the extraction of JES objects (aka JEC)
+ * starting from the JEC tags and jet types. 
+ */
 class JESpaths : JMEpaths {
     private:
         const str _jecTag, _jetType;
@@ -76,7 +89,10 @@ class JESpaths : JMEpaths {
          */
         JetCorrectorParameters GetParameters(str level, str uncertType = "");
 };
-
+/**
+ * @brief C++ class to handle the extraction of JER objects
+ * starting from the JER tags and jet types. 
+ */
 class JERpaths : JMEpaths {
     private:
         const str _jerTag, _jetType;

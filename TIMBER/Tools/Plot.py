@@ -1,4 +1,4 @@
-'''@addtogroup Plot Plotting Tools
+'''@addtogroup Plot Plotting Tools (Plot.py)
  Functions to easily plot histograms together in various configurations.
  @{
 '''

@@ -84,6 +84,14 @@ class analyzer(object):
         # Node
         #
         # Active node. Access via GetActiveNode(). Set via SetActiveNode().
+        ## @var silent
+        # bool
+        #
+        # Silences the verbose output of each Cut and Define. Defaults to False but can be modified by the user at will.
+        ## @var RunChain
+        # ROOT.TChain
+        #
+        # The TChain of the `<runTreeName>` TTree.
 
         super(analyzer, self).__init__()
         self.fileName = fileName 
@@ -92,7 +100,7 @@ class analyzer(object):
 
         # Setup TChains for multiple or single file
         self.__eventsChain = ROOT.TChain(self.__eventsTreeName) 
-        self.RunChain = ROOT.TChain(runTreeName) # Has generated event count information - will be deleted after initialization
+        self.RunChain = ROOT.TChain(runTreeName) 
         if isinstance(self.fileName,list):
             for f in self.fileName:
                 self.__addFile(f)
@@ -219,6 +227,11 @@ class analyzer(object):
         return self.SetActiveNode(self.ActiveNode.Range(*argv))
 
     def GetCollectionNames(self):
+        '''Return a list of all collections that currently exist (including those that have been added).
+
+        Returns:
+            list(str): Collection names.
+        '''
         return self.__collectionDict.keys()
 
     def SetActiveNode(self,node):
@@ -959,7 +972,7 @@ evalArgs = {
     jes : {"jets":"FatJets"},
     jer : {"jets":"FatJets","genJets":"GenJets"}
 },
-a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets",reorderBy="FatJet_pt")
+a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
 
 ```
         This will apply the JES and JER calibrations and their four variations (up,down pair for each) to FatJet_pt and FatJet_mass branches
@@ -980,8 +993,6 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets",reorderBy="FatJet_pt")
         @param evalArgs (dict): Dictionary mapping calibrations to input evaluation arguments that map the 
                 C++ method definition argument names to the desired input.
         @param newCollectionName (str): Output collection name.
-        @param reorderBy (str, optional): Branch by which to order the new collection. Defaults to None in which case no reordering
-                is performed.
         @param node (Node, optional): Node to add correction on top of. Defaults to #ActiveNode.
 
         Raises:
@@ -1339,6 +1350,7 @@ class Node(object):
         @param var (str): A one-line C++ string that evaluates to desired value to store. 
         @param nodetype (str, optional): Defaults to None in which case the new Node will
             be type "Define".
+        @param silent (bool, optional): If False, prints the definition action to the terminal. Defaults to False.
 
         Returns:
             Node: New Node object with new column added.
@@ -1356,6 +1368,7 @@ class Node(object):
         @param cut (str): A one-line C++ string that evaluates as a boolean.
         @param nodetype (str, optional): Defaults to None in which case the new Node will
             be type "Cut".
+        @param silent (bool, optional): If False, prints the definition action to the terminal. Defaults to False.
 
         Returns:
             Node: New Node object with cut applied.
@@ -1702,9 +1715,14 @@ class HistGroup(Group):
 # Module handling classes #
 ###########################
 class ModuleWorker(object):
-    '''Class to handle C++ class modules generically.
-    '''
+    '''Class to handle C++ class modules generically. 
 
+    Uses clang in python to parse the C++ code and determine function names, 
+    namespaces, and argument names and types. 
+
+    Writing the C++ modules requires the desired branch/column names must be specified or be used as the argument variable names
+    to allow the framework to automatically determine what branch/column to use in GetCall().
+    '''
     def __init__(self,name,script,constructor=[],mainFunc='eval',columnList=None,isClone=False):
         '''Constructor
 
@@ -1751,7 +1769,6 @@ class ModuleWorker(object):
 
         @param name (str): Clone name.
         @param newMainFunc (str, optional): Name of the function to use inside script. Defaults to None and the original is used.
-        @param newType (str, optional): New type for the cloned correction. Defaults to None and the original is used.
         Returns:
             ModuleWorker: Clone of instance with same script but different function (newMainFunc).
         '''
@@ -1980,8 +1997,7 @@ class Correction(ModuleWorker):
     to allow the framework to automatically determine what branch/column to use in GetCall(),
 
     (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
-    <up, down> for "uncert" type.    
-
+    <up, down> for "uncert" type.
     '''
     def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False):
         '''Constructor
@@ -2060,6 +2076,19 @@ class Correction(ModuleWorker):
         return self._type
 
 class Calibration(Correction):
+    '''Class to handle calibrations produced by C++ modules.
+
+    Uses clang in python to parse the C++ code and determine function names, 
+    namespaces, and argument names and types. 
+
+    Writing the C++ modules has two requirements:
+
+    (1) the desired branch/column names must be specified or be used as the argument variable names
+    to allow the framework to automatically determine what branch/column to use in GetCall(),
+
+    (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
+    <up, down> for "uncert" type.
+    '''
     def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False):
         '''Constructor
 
