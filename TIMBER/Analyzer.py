@@ -952,7 +952,7 @@ class analyzer(object):
     #---------------------#
     # Handle calibrations #
     #---------------------#
-    def CalibrateVars(self,varCalibDict,evalArgs,newCollectionName,node=None):
+    def CalibrateVars(self,varCalibDict,evalArgs,newCollectionName,variationsFlag=True,node=None):
         '''Calibrate variables (all of the same collection - ex. "FatJet") with the Calibrations provided in varCalibDict and
         arguments provided in evalArgs. Create a new collection
         with the calibrations applied and any re-ordering of the collection applied. As an example...
@@ -993,6 +993,7 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
         @param evalArgs (dict): Dictionary mapping calibrations to input evaluation arguments that map the 
                 C++ method definition argument names to the desired input.
         @param newCollectionName (str): Output collection name.
+        @param variationsFlag (bool): If True, calculate systematic variations. If False, do not calculate variations. Defaults to True.
         @param node (Node, optional): Node to add correction on top of. Defaults to #ActiveNode.
 
         Raises:
@@ -1022,12 +1023,13 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
                 new_columns[new_var_name] = 'hardware::MultiHadamardProduct({0},{1},0)'.format(var,calib_list_str)
             # now the variations
             for calib in varCalibDict[var]:
-                for i,v in enumerate(['up','down']):
-                    if not isRVec:
-                        new_columns[new_var_name+'_'+calib.name+'__'+v] = new_columns[new_var_name].replace(calib.name+'__vec[0]',calib.name+'__vec[%s]'%i+1)
-                    else:
-                        nom_minus_calib = new_columns[new_var_name].replace(calib.name+'__vec,','').replace(calib.name+'__vec','')
-                        new_columns[new_var_name+'_'+calib.name+'__'+v] = 'hardware::HadamardProduct({0},{1},{2})'.format(nom_minus_calib, calib.name+'__vec',i+1)
+                if variationsFlag == True:
+                    for i,v in enumerate(['up','down']):
+                        if not isRVec:
+                            new_columns[new_var_name+'_'+calib.name+'__'+v] = new_columns[new_var_name].replace(calib.name+'__vec[0]',calib.name+'__vec[%s]'%i+1)
+                        else:
+                            nom_minus_calib = new_columns[new_var_name].replace(calib.name+'__vec,','').replace(calib.name+'__vec','')
+                            new_columns[new_var_name+'_'+calib.name+'__'+v] = 'hardware::HadamardProduct({0},{1},{2})'.format(nom_minus_calib, calib.name+'__vec',i+1)
         # Actually define the columns 
         for c in new_columns.keys():
             newNode = self.Define(c, new_columns[c], newNode, nodetype='Calibration')
