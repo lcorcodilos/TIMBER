@@ -1,14 +1,14 @@
 #include "../include/JetRecalibrator.h"
 
-JetRecalibrator::JetRecalibrator(): _jesTag(""), _jetFlavour(""),_doResidualJECs(true),_uncertType(""),_upToLevel(3){};
+JetRecalibrator::JetRecalibrator(): _jecTag(""), _jetType(""),_doResidualJECs(true),_uncertType(""),_upToLevel(3){};
 
-JetRecalibrator::JetRecalibrator(str jesTag, str jetFlavour, bool doResidualJECs,
+JetRecalibrator::JetRecalibrator(str jecTag, str jetType, bool doResidualJECs,
                                  str uncertType, int upToLevel)://,
                                 //  bool calculateSeparateCorrections,
                                 //  bool calculateType1METCorrection,
                                 //  std::map<str, float> type1METParams):
-    _jesTag{jesTag}, _jetFlavour{jetFlavour}, _doResidualJECs{doResidualJECs},
-    _uncertType{uncertType}, _upToLevel{upToLevel}, _paths(_jesTag, _jetFlavour)
+    _jecTag{jecTag}, _jetType{jetType}, _doResidualJECs{doResidualJECs},
+    _uncertType{uncertType}, _upToLevel{upToLevel}, _paths(_jecTag, _jetType)
 //     _calculateSeparateCorrections{calculateSeparateCorrections},
 //     _calculateType1METCorrection{calculateType1METCorrection}, _type1METParams{type1METParams}
 {
@@ -36,7 +36,7 @@ JetRecalibrator::JetRecalibrator(str jesTag, str jetFlavour, bool doResidualJECs
     // str filename = _paths.GetPath("Uncert");
     // if (boost::filesystem::exists(filename)) {
     //     JetCorrectionUncertainty _JetUncertainty (
-    //         _jecPath+"/"+jesTag+"_Uncertainty_"+jetFlavour+".txt"
+    //         _jecPath+"/"+jecTag+"_Uncertainty_"+jetType+".txt"
     //     );
     // } else {
     //     std::cout << "Missing JEC uncertainty file '"+filename+"', so jet energy uncertainties will not be available!" << std::endl;

@@ -26,7 +26,7 @@ LorentzV GenJetMatcher::match(LorentzV& jet, RVec<LorentzV> genJets, float resol
 
 JetSmearer::JetSmearer(std::string jerTag, std::string jetType) : 
                         _jerTag(jerTag), _jetType(jetType), _path(_jerTag, _jetType),
-                        _jer(_path.GetResPath()), _jerSF(_path.GetSFpath()),
+                        _jer(_path.GetResolution()), _jerSF(_path.GetSF()),
                         _variationIndex({Variation::NOMINAL,Variation::UP,Variation::DOWN}) {
     _rnd = std::mt19937(123456);
     if (Pythonic::InString("AK4",jetType)) {

@@ -24,15 +24,41 @@
 using namespace ROOT::VecOps;
 using LorentzV = ROOT::Math::PtEtaPhiMVector;
 
+/**
+ * @brief Class to match single reconstructed jet (represented as a Lorentz vector)
+ * to the closest generator jet in a vector of generator jets (represented as Lorentz vectors).
+ * 
+ */
 class GenJetMatcher {
     private:
         float _dRMax, _dPtMaxFactor;
 
     public: 
+        /**
+         * @brief Construct a new GenJetMatcher object
+         * 
+         * @param dRMax The maximum \f$\Delta R\f$ to consider. For an AK8 jet, use 0.4.
+         * @param dPtMaxFactor The maximum \f$p_{T}\f$ factor to consider where the difference
+         *  \f$p_{T}\f$ between the reco and gen jets must be less than dPtMaxFactor times the resolution
+         * (provided as an argument to GenJetMatcher::match). Default is 3.
+         */
         GenJetMatcher(float dRMax, float dPtMaxFactor = 3);
+        /**
+         * @brief Perform the actual matching
+         * 
+         * @param jet Lorentz vector for the reco jet.
+         * @param genJets Vector of Lorentz vectors of the gen jets.
+         * @param resolution \f$p_{T}\f$ resolution to consider.
+         * @return LorentzV The gen jet that matches.
+         */
         LorentzV match(LorentzV& jet, RVec<LorentzV> genJets, float resolution);
 };
 
+/**
+ * @brief Class to handle the smearing of jet pt and mass using
+ * the JER and JMR inputs, respectively.
+ * 
+ */
 class JetSmearer {
     private:
         const std::string _jetType, _jerTag;
@@ -54,9 +80,21 @@ class JetSmearer {
         TF1* _puppisd_res_forward;
 
     public:
-        // For JER smearing
-        JetSmearer( std::string jetType, std::string jerTag);
-        // For JMR smearing
+        /**
+         * @brief Construct a new Jet Smearer object for jet
+         * energy smearing.
+         * 
+         * @param jerTag The JER tag to identify the JER files to load.
+         * @param jetType The type of jet - ex. AK8PFPuppi
+         */
+        JetSmearer( std::string jerTag, std::string jetType);
+        /**
+         * @brief Construct a new Jet Smearer object for jet 
+         * mass smearing.
+         * 
+         * @param jmrVals The JMR values stored as a vector ordered as
+         * nominal, up, down. 
+         */
         JetSmearer(std::vector<float> jmrVals);
 
         ~JetSmearer();
@@ -67,28 +105,28 @@ class JetSmearer {
          *  
          *  The implementation of this function follows PhysicsTools/PatUtils/interface/SmearedJetProducerT.h
          * 
-         *  Consider three cases:
-         *      Case 1: we have a "good" generator level jet matched to the reconstructed jet
-         *      Case 2: we don't have a generator level jet. Smear jet pT using a random Gaussian variation
+         *  The function considers three cases:
+         *      Case 1: we have a "good" generator level jet matched to the reconstructed jet,
+         *      Case 2: we don't have a generator level jet so we smear jet pT using a random Gaussian variation,
          *      Case 3: we cannot smear this jet, as we don't have a generator level jet and the resolution
          *          in data is better than the resolution in the simulation, so we would need to randomly
-         *          "unsmear" the jet, which is impossible
+         *          "unsmear" the jet, which is impossible.
          * 
          * @param jet Jet Lorentz vector
          * @param genJet GenJet Lorentz vector
-         * @param fixedGridRhoFastjetAll 
-         * @return std::vector<float> {nom,up,down}
+         * @param fixedGridRhoFastjetAll Stored in the NanoAOD with this name as the branch name.
+         * @return std::vector<float> {nominal,up,down}
          */
         std::vector<float> GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJets, float fixedGridRhoFastjetAll);
         /**
-         * @brief Smear jet m to account for measured difference in JMR between 
-         * data and simulation. The function computes the nominal smeared jet m
+         * @brief Smear jet mass to account for measured difference in JMR between 
+         * data and simulation. The function computes the nominal smeared jet mass
          * simultaneously with the JMR up and down shifts, in order to use the
          * same random number to smear all three (for consistency reasons).
          * 
          * Consider three cases:
-         *  Case 1: we have a "good" generator level jet matched to the reconstructed jet
-         *  Case 2: we don't have a generator level jet. Smear jet m using a random Gaussian variation
+         *  Case 1: we have a "good" generator level jet matched to the reconstructed jet,
+         *  Case 2: we don't have a generator level jet so we smear jet mass using a random Gaussian variation,
          *  Case 3: we cannot smear this jet, as we don't have a generator level jet and the
          *      resolution in data is better than the resolution in the simulation, so we would need
          *      to randomly "unsmear" the jet, which is impossible.
@@ -96,13 +134,28 @@ class JetSmearer {
          * The implementation of this function follows:
          * PhysicsTools/PatUtils/interface/SmearedJetProducerT.h
          * Procedure outline in: https://twiki.cern.ch/twiki/bin/view/Sandbox/PUPPIJetMassScaleAndResolution
-         * 
-         * @return def 
+         * @param jet Jet Lorentz vector
+         * @param genJet GenJet Lorentz vector
+         * @return std::vector<float> {nominal,up,down}
          */
         std::vector<float> GetSmearValsM(LorentzV jet, RVec<LorentzV> genJets);
-
+        /**
+         * @brief Get the file for mass resolution smearing.
+         * 
+         * @return TFile* 
+         */
         TFile* GetPuppiJMRFile();
+        /**
+         * @brief Get the function for the mass resolution for the central portion of the detector.
+         * 
+         * @return TF1* 
+         */
         TF1* GetPuppiSDResolutionCentral();
+        /**
+         * @brief Get the function for the mass resolution for the forward portion of the detector.
+         * 
+         * @return TF1* 
+         */
         TF1* GetPuppiSDResolutionForward();
 };
 #endif

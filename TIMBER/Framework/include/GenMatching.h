@@ -14,19 +14,20 @@ using namespace ROOT::VecOps;
 using LVector = ROOT::Math::PtEtaPhiMVector;
 
 namespace GenMatching {
-    /**Unwraps an integer to check for bitwise flags.
+    /** @brief Unwraps an integer to check for bitwise flags.
      * Checks if the bit of a number is true or false.
+     * 
      * @param bit Bit to check.
      * @param number Number to check.
      * 
      * @return Bool of whether the bit in the number is 0 or 1 */
     bool BitChecker(const int &bit, int &number);
 
-    /**Map of the PDG ID values to the particle names.
+    /** @brief Map of the PDG ID values to the particle names.
      * used for plotting decay structure. */
     extern std::map <int, std::string> PDGIds;
 
-    /**Converts flag name to the corresponding bit in the
+    /** @brief Converts flag name to the corresponding bit in the
      * value for statusFlags branch. */
     extern std::map <std::string, int> GenParticleStatusFlags;
 }
@@ -68,10 +69,11 @@ class Particle {
 };
 
 
-/**@class GenParticleTree
- * @brief Constructs tree by adding particles.
- * Establish relationships between particles (parent, child)
- * and allows you to search for a chain of decays. */
+/** @class GenParticleTree
+ *  @brief Constructs tree by adding particles.
+ *  Establish relationships between particles (parent, child)
+ *  and allows you to search for a chain of decays.
+ */
 class GenParticleTree
 {
     private:
@@ -124,10 +126,11 @@ class GenParticleTree
         std::vector<std::vector<Particle*>> FindChain(std::string chainstring);
 };
 
-/**@class GenParticleObjs
- * @brief Object that stores and manipulates the information for gen particles.
- * Stores all gen particles in the event and member functions can be used to
- * access the gen particles by index. */
+/** @class GenParticleObjs
+ *  @brief Object that stores and manipulates the information for gen particles.
+ *  Stores all gen particles in the event and member functions can be used to
+ *  access the gen particles by index.
+*/
 class GenParticleObjs {
     private:
         Collection GenPartCollection; /** Struct holding maps of values */
@@ -179,8 +182,8 @@ class GenParticleObjs {
          * @return Particle 
          */
         Particle SetIndex(int idx);   
-        /**Returns the bool for the flag name provided
-         * @param  flagName
+        /** @brief Returns the bool for the flag name provided
+         * @param flagName
          * @return int Status flag.
          */
         int GetStatusFlag(std::string flagName);

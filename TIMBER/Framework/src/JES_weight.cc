@@ -1,9 +1,9 @@
 // Requires CMSSW
 #include "../include/JES_weight.h"
 
-JES_weight::JES_weight(str jesTag, str jetType, str uncertType, bool redoJECs):
-            _jesTag(jesTag), _jetType(jetType), _uncertType(uncertType), _redoJECs(redoJECs),
-            _jetRecalib(_jesTag, _jetType, true, _uncertType){
+JES_weight::JES_weight(str jecTag, str jetType, str uncertType, bool redoJECs):
+            _jecTag(jecTag), _jetType(jetType), _uncertType(uncertType), _redoJECs(redoJECs),
+            _jetRecalib(_jecTag, _jetType, true, _uncertType){
     if (!this->check_type_exists()) {
         throw "Type '"+_uncertType+"' does not exist in list of sources.";
     }
@@ -24,7 +24,7 @@ bool JES_weight::check_type_exists() {
 }
 
 std::vector<std::string> JES_weight::get_sources() {
-    JESpaths paths(_jesTag, _jetType);
+    JESpaths paths(_jecTag, _jetType);
     std::istringstream f(paths.GetTxtFileStr("Uncert"));
     std::string line;
     std::vector<std::string> sources;

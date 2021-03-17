@@ -23,7 +23,7 @@ JESpaths::JESpaths(str jesTag, str jetType) :
                 _jesTag(jesTag), _jetType(jetType),
                 _jesArchivePath(_jmeArchivePath+"JES/"){};
 
-str JESpaths::GetLevel(str level){
+str JESpaths::GetLevelStr(str level){
     str out = "_";
     if (level == "L1") {out = "_L1FastJet_";}
     else if (level == "L2") {out = "_L2Relative_";}
@@ -35,13 +35,13 @@ str JESpaths::GetLevel(str level){
 
 str JESpaths::GetPath(str level) {
     str tarfile = _jesArchivePath + _jesTag + ".tar.gz";
-    str jmefile = _jesTag+this->GetLevel(level)+_jetType+".txt";
+    str jmefile = _jesTag+this->GetLevelStr(level)+_jetType+".txt";
     return this->_GetPath(tarfile, jmefile);
 }
 
 str JESpaths::GetTxtFileStr(str level) {
     str tarfile = _jesArchivePath + _jesTag + ".tar.gz";
-    str jmefile = _jesTag+this->GetLevel(level)+_jetType+".txt";
+    str jmefile = _jesTag+this->GetLevelStr(level)+_jetType+".txt";
     return this->_GetTxtFileStr(tarfile, jmefile);
 }
 
@@ -68,10 +68,10 @@ str JERpaths::GetTxtFileStr(str resOrSF) {
     return this->_GetTxtFileStr(tarfile, jmefile);
 };
 
-JME::JetResolution JERpaths::GetResPath() {
+JME::JetResolution JERpaths::GetResolution() {
     return JME::JetResolution(this->GetPath("_PtResolution_"));
 }
 
-JME::JetResolutionScaleFactor JERpaths::GetSFpath() {
+JME::JetResolutionScaleFactor JERpaths::GetSF() {
     return JME::JetResolutionScaleFactor(this->GetPath("_SF_"));
 }

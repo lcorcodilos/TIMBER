@@ -11,6 +11,12 @@ using namespace ROOT::VecOps;
  * @brief Subjet b tagging scale factor lookup.
  */
 class SJBtag_SF {
+    private:
+        std::string csv_file;
+        BTagEntry::OperatingPoint operating_point;
+        BTagCalibration calib;
+        BTagCalibrationReader reader;
+
     public:
         /**
          * @brief Construct a new subjet b tag scale factor lookup object
@@ -29,11 +35,5 @@ class SJBtag_SF {
          * @return RVec<float> Nominal, up, down scale factor values.
          */
         RVec<float> eval(float pt, float eta);
-    
-    private:
-        std::string csv_file;
-        BTagEntry::OperatingPoint operating_point;
-        BTagCalibration calib;
-        BTagCalibrationReader reader;
 };
 #endif
