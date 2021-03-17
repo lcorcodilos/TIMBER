@@ -19,8 +19,8 @@ str JMEpaths::_GetTxtFileStr(str tarfile, str jmefile) {
 JESpaths::JESpaths() : 
     _jesArchivePath(_jmeArchivePath+"JES/"){};
 
-JESpaths::JESpaths(str jesTag, str jetType) :
-                _jesTag(jesTag), _jetType(jetType),
+JESpaths::JESpaths(str jecTag, str jetType) :
+                _jecTag(jecTag), _jetType(jetType),
                 _jesArchivePath(_jmeArchivePath+"JES/"){};
 
 str JESpaths::GetLevelStr(str level){
@@ -34,14 +34,14 @@ str JESpaths::GetLevelStr(str level){
 }
 
 str JESpaths::GetPath(str level) {
-    str tarfile = _jesArchivePath + _jesTag + ".tar.gz";
-    str jmefile = _jesTag+this->GetLevelStr(level)+_jetType+".txt";
+    str tarfile = _jesArchivePath + _jecTag + ".tar.gz";
+    str jmefile = _jecTag+this->GetLevelStr(level)+_jetType+".txt";
     return this->_GetPath(tarfile, jmefile);
 }
 
 str JESpaths::GetTxtFileStr(str level) {
-    str tarfile = _jesArchivePath + _jesTag + ".tar.gz";
-    str jmefile = _jesTag+this->GetLevelStr(level)+_jetType+".txt";
+    str tarfile = _jesArchivePath + _jecTag + ".tar.gz";
+    str jmefile = _jecTag+this->GetLevelStr(level)+_jetType+".txt";
     return this->_GetTxtFileStr(tarfile, jmefile);
 }
 

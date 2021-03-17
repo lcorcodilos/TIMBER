@@ -47,7 +47,6 @@ class JESpaths : JMEpaths {
         const str _jesArchivePath;
         str GetLevelStr(str level);
         str GetPath(str level);
-        str GetTxtFileStr(str level);
 
     public:
         /**
@@ -62,9 +61,16 @@ class JESpaths : JMEpaths {
          */
         JESpaths(str jecTag, str jetType);
         /**
+         * @brief Get the JEC file as a string. Used in JES_weight for parsing possible uncertainty sources.
+         * 
+         * @param level Correction level (ex. "L1").
+         * @return str 
+         */
+        str GetTxtFileStr(str level);
+        /**
          * @brief Get the JetCorrectorParameters object
          * 
-         * @param level JEC level. Ex. "L1"
+         * @param level Correction level (ex. "L1").
          * @param uncertType Empty string for the total uncertainty but any uncertainty in the JEC file can be provided.
          * @return JetCorrectorParameters 
          */
