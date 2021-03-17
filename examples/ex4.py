@@ -38,7 +38,7 @@ myVars = VarGroup('myVars')
 myVars.Add('pt_sum',            'FatJet_pt[0] + FatJet_pt[1]')
 myVars.Add('lead_vector',       'hardware::TLvector(FatJet_pt[0],FatJet_eta[0],FatJet_phi[0],FatJet_msoftdrop[0])')
 myVars.Add('sublead_vector',    'hardware::TLvector(FatJet_pt[1],FatJet_eta[1],FatJet_phi[1],FatJet_msoftdrop[1])')
-myVars.Add('invariantMass',     'hardware::invariantMass({lead_vector,sublead_vector})') 
+myVars.Add('invariantMass',     'hardware::InvariantMass({lead_vector,sublead_vector})') 
 myVars.Add('tau32',        'tau32Maker(FatJet_tau3,FatJet_tau2)')
 myVars.Add('subjet_btag',  'sjbtagMaker(FatJet_subJetIdx1,FatJet_subJetIdx2,SubJet_btagDeepB)')
 myVars.Add('lead_mass', 'FatJet_msoftdrop[0]') # need to book these to plot mass
