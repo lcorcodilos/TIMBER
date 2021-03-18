@@ -32,7 +32,7 @@ if options.inputs != '':
 # Make JDL from template
 timestr = time.strftime("%Y%m%d-%H%M%S")
 out_jdl = 'temp_'+timestr+'_jdl'
-commands.append("sed 's$TEMPSCRIPT$"+options.runscript+"$g' $CMSSW_BASE/src/JHUanalyzer/condor/templates/jdl_template > "+out_jdl)
+commands.append("sed 's$TEMPSCRIPT$"+options.runscript+"$g' $TIMBERPATH/TIMBER/Utilities/Condor/templates/jdl_template > "+out_jdl)
 commands.append("sed -i 's$TEMPARGS$"+options.args+"$g' "+out_jdl)
 commands.append("condor_submit "+out_jdl+" -debugfile condor_submit_debug.log")
 commands.append("mv "+out_jdl+" logs/")

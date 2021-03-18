@@ -12,6 +12,12 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -21,6 +27,7 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr style="height: 56px;">
+  <td id="projectlogo"><img alt="Logo" src="logo_small.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">TIMBER
    &#160;<span id="projectnumber">beta</span>
@@ -62,13 +69,220 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_jet_recalibrator-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">JetRecalibrator Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>TIMBER/Framework/Corrections/JetCorrections/JetRecalibrator.cc</li>
+
+<p>C++ class to recalibrate the \(p_{T}\) of jets. Initialized with basic parameters and calculations done on vectors of jets from an event using the class methods.  
+ <a href="class_jet_recalibrator.html#details">More...</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a59528eb7baa741c768d28fec38e757e7"><td class="memItemLeft" align="right" valign="top"><a id="a59528eb7baa741c768d28fec38e757e7"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_jet_recalibrator.html#a59528eb7baa741c768d28fec38e757e7">JetRecalibrator</a> ()</td></tr>
+<tr class="memdesc:a59528eb7baa741c768d28fec38e757e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Jet Recalibrator object. <br /></td></tr>
+<tr class="separator:a59528eb7baa741c768d28fec38e757e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21c541c19ac10fc4d482187f0828328a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_jet_recalibrator.html#a21c541c19ac10fc4d482187f0828328a">JetRecalibrator</a> (str jecTag, str jetType, bool doResidualJECs, str uncertType, int upToLevel=3)</td></tr>
+<tr class="memdesc:a21c541c19ac10fc4d482187f0828328a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Jet Recalibrator object.  <a href="#a21c541c19ac10fc4d482187f0828328a">More...</a><br /></td></tr>
+<tr class="separator:a21c541c19ac10fc4d482187f0828328a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71ff65053a682f1603ec20cbaa4806b2"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a71ff65053a682f1603ec20cbaa4806b2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_jet_recalibrator.html#a71ff65053a682f1603ec20cbaa4806b2">CalculateCorrection</a> (T jet, float fixedGridRhoFastjetAll)</td></tr>
+<tr class="memdesc:a71ff65053a682f1603ec20cbaa4806b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the correction for a given jet and rho and store the value internally.  <a href="#a71ff65053a682f1603ec20cbaa4806b2">More...</a><br /></td></tr>
+<tr class="separator:a71ff65053a682f1603ec20cbaa4806b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a421ef5254ce33277d9b89b3b0515b0cf"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a421ef5254ce33277d9b89b3b0515b0cf"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_jet_recalibrator.html#a421ef5254ce33277d9b89b3b0515b0cf">CalculateUncertainty</a> (T jet, float delta=1)</td></tr>
+<tr class="memdesc:a421ef5254ce33277d9b89b3b0515b0cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the correction uncertainty for a given jet and store the value internally. WARNING: CalculateCorrection must be run first.  <a href="#a421ef5254ce33277d9b89b3b0515b0cf">More...</a><br /></td></tr>
+<tr class="separator:a421ef5254ce33277d9b89b3b0515b0cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c792950fda96b05f137c4425b576616"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_jet_recalibrator.html#a6c792950fda96b05f137c4425b576616">GetCorrection</a> ()</td></tr>
+<tr class="memdesc:a6c792950fda96b05f137c4425b576616"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the internally stored correction value that was calculated during CalculateCorrection.  <a href="#a6c792950fda96b05f137c4425b576616">More...</a><br /></td></tr>
+<tr class="separator:a6c792950fda96b05f137c4425b576616"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa7f3c7cf9571beb929bdf0b4cc37782"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_jet_recalibrator.html#afa7f3c7cf9571beb929bdf0b4cc37782">GetUncertainty</a> ()</td></tr>
+<tr class="memdesc:afa7f3c7cf9571beb929bdf0b4cc37782"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the internally stored uncertainty value that was calculated during CalculateUncertainty.  <a href="#afa7f3c7cf9571beb929bdf0b4cc37782">More...</a><br /></td></tr>
+<tr class="separator:afa7f3c7cf9571beb929bdf0b4cc37782"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>C++ class to recalibrate the \(p_{T}\) of jets. Initialized with basic parameters and calculations done on vectors of jets from an event using the class methods. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a21c541c19ac10fc4d482187f0828328a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21c541c19ac10fc4d482187f0828328a">&#9670;&nbsp;</a></span>JetRecalibrator()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_jet_recalibrator.html">JetRecalibrator</a> </td>
+          <td>(</td>
+          <td class="paramtype">str&#160;</td>
+          <td class="paramname"><em>jecTag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">str&#160;</td>
+          <td class="paramname"><em>jetType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>doResidualJECs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">str&#160;</td>
+          <td class="paramname"><em>uncertType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>upToLevel</em> = <code>3</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Construct a new Jet Recalibrator object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">jecTag</td><td>The JEC tag to identify the JEC files to load. </td></tr>
+    <tr><td class="paramname">jetType</td><td>The type of jet - ex. AK8PFPuppi. </td></tr>
+    <tr><td class="paramname">doResidualJECs</td><td>Flag to turn on or off the residual JECs </td></tr>
+    <tr><td class="paramname">uncertType</td><td>Empty string for the total uncertainty but any uncertainty in the JEC file can be provided. </td></tr>
+    <tr><td class="paramname">upToLevel</td><td>Correction level to apply. Options are 1, 2, or 3 (corresponding to L1, L2, L3). Defaults to 3. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a71ff65053a682f1603ec20cbaa4806b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71ff65053a682f1603ec20cbaa4806b2">&#9670;&nbsp;</a></span>CalculateCorrection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CalculateCorrection </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>jet</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>fixedGridRhoFastjetAll</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculate the correction for a given jet and rho and store the value internally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">jet</td><td>TIMBER jet struct (generated automatically by TIMBER's analyzer()) which stores the attributes of the jet (pt, eta, phi, tagging values, etc). </td></tr>
+    <tr><td class="paramname">fixedGridRhoFastjetAll</td><td>Stored in the NanoAOD with this name as the branch name. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="a421ef5254ce33277d9b89b3b0515b0cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a421ef5254ce33277d9b89b3b0515b0cf">&#9670;&nbsp;</a></span>CalculateUncertainty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CalculateUncertainty </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>jet</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>delta</em> = <code>1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculate the correction uncertainty for a given jet and store the value internally. WARNING: CalculateCorrection must be run first. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">jet</td><td>TIMBER jet struct (generated automatically by TIMBER's analyzer()) which stores the attributes of the jet (pt, eta, phi, tagging values, etc). </td></tr>
+    <tr><td class="paramname">delta</td><td>Multiplicative factor on the uncertainty. Defaults to 1. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6c792950fda96b05f137c4425b576616"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c792950fda96b05f137c4425b576616">&#9670;&nbsp;</a></span>GetCorrection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float GetCorrection </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the internally stored correction value that was calculated during CalculateCorrection. </p>
+<dl class="section return"><dt>Returns</dt><dd>float </dd></dl>
+
+</div>
+</div>
+<a id="afa7f3c7cf9571beb929bdf0b4cc37782"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa7f3c7cf9571beb929bdf0b4cc37782">&#9670;&nbsp;</a></span>GetUncertainty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float GetUncertainty </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the internally stored uncertainty value that was calculated during CalculateUncertainty. </p>
+<dl class="section return"><dt>Returns</dt><dd>float </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>TIMBER/Framework/include/<a class="el" href="_jet_recalibrator_8h_source.html">JetRecalibrator.h</a></li>
+<li>TIMBER/Framework/src/JetRecalibrator.cc</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

@@ -1,6 +1,15 @@
-#ifndef COMMON_H
-#define COMMON_H
-#endif
+#ifndef _TIMBER_COMMON
+#define _TIMBER_COMMON
+
+#include <fstream>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <algorithm>
+#include <iterator>
+#include <vector>
+#include <stdexcept>
+#include <boost/filesystem.hpp>
 
 #include <cmath>
 #include <cstdlib>
@@ -13,9 +22,39 @@
 using namespace ROOT::VecOps;
 /**
  * @namespace hardware
- * @brief Namespace for common physics functions.
+ * @brief C++ namespace for common physics functions.
  */
 namespace hardware {  
+    /**
+     * @brief Hadamard product of two vectors (`v3[i] = v1[i]*v2[i]`)
+     * 
+     * @param v1 
+     * @param v2 
+     * @return RVec<float> 
+     */
+    RVec<float> HadamardProduct(RVec<float> v1, RVec<float> v2);
+    /**
+     * @brief Hadamard product of two vectors (`v3[i] = v1[i]*v2[i][v2subindex]`)
+     * where v2 has multiple sub-elements, only one of which should be accessed 
+     * (at index of v2subindex).
+     * 
+     * @param v1 
+     * @param v2 
+     * @param v2subindex
+     * @return RVec<float> 
+     */
+    RVec<float> HadamardProduct(RVec<float> v1, RVec<RVec<float>> v2, int v2subindex);
+    /**
+     * @brief Hadamard product of a base vector and a list of N more vectors (`vout[i] = v1[i]*v2[i][v2subindex]*v3[i][v2subindex]...`)
+     * where v<N> has multiple sub-elements, only one of which should be accessed 
+     * (at index of v2subindex).
+     * 
+     * @param v1 
+     * @param Multiv2 
+     * @param v2subindex
+     * @return RVec<float> 
+     */
+    RVec<float> MultiHadamardProduct(RVec<float> v1, RVec<RVec<RVec<float>>> Multiv2, int v2subindex);
     /**
      * @brief Calculate the difference in \f$\phi\f$.
      * 
@@ -23,12 +62,7 @@ namespace hardware {
      * @param phi2 
      * @return float Difference in \f$\phi\f$.
      */
-    float DeltaPhi(float phi1,float phi2) {
-        float result = phi1 - phi2;
-        while (result > TMath::Pi()) result -= 2*TMath::Pi();
-        while (result <= -TMath::Pi()) result += 2*TMath::Pi();
-        return result;
-    }
+    float DeltaPhi(float phi1,float phi2);
     /**
      * @brief Calculate \f$\Delta R\f$ between two vectors.
      * 
@@ -36,7 +70,18 @@ namespace hardware {
      * @param v2 
      * @return float 
      */
-    float DeltaR(ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2) {
+    float DeltaR(ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2);
+    /**
+     * @brief Calculate \f$\Delta R\f$ between two objects.
+     * 
+     * @param in1 
+     * @param in2 
+     * @return float 
+     */
+    template<class T1, class T2>
+    float DeltaR(T1 in1, T2 in2) {
+        ROOT::Math::PtEtaPhiMVector v1(in1.pt, in1.eta, in1.phi, in1.mass);
+        ROOT::Math::PtEtaPhiMVector v2(in2.pt, in2.eta, in2.phi, in2.mass);
         float deta = v1.Eta()-v2.Eta();
         float dphi = DeltaPhi(v1.Phi(),v2.Phi());
         return sqrt(deta*deta+dphi*dphi);
@@ -50,10 +95,7 @@ namespace hardware {
      * @param m 
      * @return ROOT::Math::PtEtaPhiMVector 
      */
-    ROOT::Math::PtEtaPhiMVector TLvector(float pt,float eta,float phi,float m) {
-        ROOT::Math::PtEtaPhiMVector v(pt,eta,phi,m);
-        return v;
-    }
+    ROOT::Math::PtEtaPhiMVector TLvector(float pt,float eta,float phi,float m);
     /**
      * @brief Create a vector of ROOT::Math::PtEtaPhiMVectors.
      * 
@@ -63,11 +105,30 @@ namespace hardware {
      * @param m 
      * @return RVec<ROOT::Math::PtEtaPhiMVector> 
      */
-    RVec<ROOT::Math::PtEtaPhiMVector> TLvector(RVec<float> pt,RVec<float> eta,RVec<float> phi,RVec<float> m) {
+    RVec<ROOT::Math::PtEtaPhiMVector> TLvector(RVec<float> pt,RVec<float> eta,RVec<float> phi,RVec<float> m);
+    /**
+     * @brief Create a ROOT::Math::PtEtaPhiMVectors.
+     * 
+     * @param obj
+     * @return ROOT::Math::PtEtaPhiMVector
+     */
+    template<class T>
+    ROOT::Math::PtEtaPhiMVector TLvector(T obj) {
+        ROOT::Math::PtEtaPhiMVector v (obj.pt, obj.eta, obj.phi, obj.mass);
+        return v;
+    }
+    /**
+     * @brief Create a vector of ROOT::Math::PtEtaPhiMVectors.
+     * 
+     * @param objs 
+     * @return RVec<ROOT::Math::PtEtaPhiMVector> 
+     */
+    template<class T>
+    RVec<ROOT::Math::PtEtaPhiMVector> TLvector(std::vector<T> objs) {
         RVec<ROOT::Math::PtEtaPhiMVector> vs;
-        for (size_t i = 0; i < pt.size(); i++) {
-            ROOT::Math::PtEtaPhiMVector v(pt[i],eta[i],phi[i],m[i]);
-            vs.push_back(v);
+        vs.reserve(objs.size());
+        for (size_t i = 0; i < objs.size(); i++) {
+            vs.emplace_back(objs[i].pt, objs[i].eta, objs[i].phi, objs[i].mass);
         }
         return vs;
     }
@@ -82,10 +143,7 @@ namespace hardware {
      * @param obj_phi 
      * @return float 
      */
-    float transverseMass(float MET_pt, float obj_pt, float MET_phi, float obj_phi) {
-        return sqrt(2.0*MET_pt*obj_pt-(1-cos(DeltaPhi(MET_phi,obj_phi))));
-    }
-
+    float TransverseMass(float MET_pt, float obj_pt, float MET_phi, float obj_phi);
     /**
      * @brief Calculates the invariant mass of a vector of Lorentz vectors
      * (ROOT::Math::PtEtaPhiMVector). Note that this is an alternative
@@ -95,63 +153,199 @@ namespace hardware {
      * @param vects 
      * @return double 
      */
-    double invariantMass(RVec<ROOT::Math::PtEtaPhiMVector> vects) {
-        ROOT::Math::PtEtaPhiMVector sum;
-        sum.SetCoordinates(0,0,0,0);
-        for (size_t i = 0; i < vects.size(); i++) {
-            sum = sum + vects[i];
+    double InvariantMass(RVec<ROOT::Math::PtEtaPhiMVector> vects);
+    /**
+     * @brief Transpose a vector so that output[j][i] = input[i][j]
+     * 
+     * @param v
+     * @return RVec<RVec<T>>
+     */
+    template <class T>
+    RVec<RVec<T>> Transpose(RVec<RVec<T>> v) {
+        if (v.size() == 0) {
+            return RVec<RVec<T>> (0);
+        } else {
+            RVec<RVec<T>> out;
+            for (int i = 0; i < v[0].size(); i++) {
+                RVec<T> inner;
+                for (int j = 0; j < v.size(); j++) {
+                    inner.push_back(v[j][i]);
+                }
+                out.push_back(inner);
+            }
+            return out;
         }
-        return sum.M();
+    }
+}
+
+namespace Pythonic {
+    /**
+     * @brief Python-like range function.
+     * https://stackoverflow.com/questions/13152252/is-there-a-compact-equivalent-to-python-range-in-c-stl
+     * 
+     * @tparam IntType 
+     * @param start Starting point, inclusive.
+     * @param stop Stopping point, exclusive.
+     * @param step Defaults to 1.
+     * @return std::vector<IntType> Vector of range with provided step.
+     */
+    template <typename IntType>
+    std::vector<IntType> Range(IntType start, IntType stop, IntType step) {
+        if (step == IntType(0)) {
+            throw std::invalid_argument("step for range must be non-zero");
+        }
+
+        std::vector<IntType> result;
+        IntType i = start;
+        while ((step > 0) ? (i < stop) : (i > stop)) {
+            result.push_back(i);
+            i += step;
+        }
+
+        return result;
     }
 
-    // std::pair<int,float> closest(obj, collection, presel=lambda x, y: True):
-    //     ret = None
-    //     drMin = 999
-    //     for x in collection:
-    //         if not presel(obj, x):
-    //             continue
-    //         dr = deltaR(obj, x)
-    //         if dr < drMin:
-    //             ret = x
-    //             drMin = dr
-    //     return (ret, drMin)
+    /**
+     * @brief Python-like range function with step 1.
+     * https://stackoverflow.com/questions/13152252/is-there-a-compact-equivalent-to-python-range-in-c-stl
+     * 
+     * @tparam IntType 
+     * @param start Starting point, inclusive.
+     * @param stop Stopping point, exclusive.
+     * @return std::vector<IntType> Vector of range with step of 1.
+     */
+    template <typename IntType>
+    std::vector<IntType> Range(IntType start, IntType stop) {
+        return Range(start, stop, IntType(1));
+    }
 
+    /**
+     * @brief Python-like range function with step 1 and start assumed to be 0.
+     * https://stackoverflow.com/questions/13152252/is-there-a-compact-equivalent-to-python-range-in-c-stl
+     * 
+     * @tparam IntType 
+     * @param start Starting point, inclusive.
+     * @return std::vector<IntType> Vector of range with step of 1 and start of 0.
+     */
+    template <typename IntType>
+    std::vector<IntType> Range(IntType stop) {
+        return Range(IntType(0), stop, IntType(1));
+    }
 
-    // def matchObjectCollection(objs,
-    //                         collection,
-    //                         dRmax=0.4,
-    //                         presel=lambda x, y: True):
-    //     pairs = {}
-    //     if len(objs) == 0:
-    //         return pairs
-    //     if len(collection) == 0:
-    //         return dict(list(zip(objs, [None] * len(objs))))
-    //     for obj in objs:
-    //         (bm, dR) = closest(obj,
-    //                         [mobj for mobj in collection if presel(obj, mobj)])
-    //         if dR < dRmax:
-    //             pairs[obj] = bm
-    //         else:
-    //             pairs[obj] = None
-    //     return pairs
+    /**
+     * @brief Python-like string splitter based on a delimiter.
+     * 
+     * Adapted from http://www.martinbroadhurst.com/how-to-split-a-string-in-c.html
+     * 
+     * @param str String to split.
+     * @param delim Char to split around.
+     * @return std::vector<std::string> Vector of pieces split around delimiter.
+     */
+    std::vector<std::string> Split(const std::string& str, char delim = ' ');
 
+    // Personal
+    /**
+     * @brief Checks for object in a list.
+     * 
+     * @tparam T 
+     * @param obj Object to look for.
+     * @param list List to look in.
+     * @return bool True or false based on whether object is found in list.
+     */
+    template<typename T>
+    bool InList(T obj, std::vector<T> list) {
+        bool out;
+        auto pos = std::find(std::begin(list), std::end(list), obj);
+        if (pos != std::end(list)){
+            out = true;
+        } else {out = false;}
+        return out;
+    }
 
-    // def matchObjectCollectionMultiple(
-    //         objs,
-    //         collection,
-    //         dRmax=0.4,
-    //         presel=lambda x, y: True
-    // ):
-    //     pairs = {}
-    //     if len(objs) == 0:
-    //         return pairs
-    //     if len(collection) == 0:
-    //         return dict(list(zip(objs, [None] * len(objs))))
-    //     for obj in objs:
-    //         matched = []
-    //         for c in collection:
-    //             if presel(obj, c) and deltaR(obj, c) < dRmax:
-    //                 matched.append(c)
-    //         pairs[obj] = matched
-    //     return pairs
+    /**
+     * @brief Check for string in another string.
+     * 
+     * @param sub Substring to look for.
+     * @param main String to look in.
+     * @return out  True or false based on whether sub is found in main.
+     * @return false 
+     */
+    bool InString(std::string sub, std::string main);
+
+    /**
+     * @brief Extend vector with another vector (modifies base in-place).
+     * 
+     * @tparam T 
+     * @param base Modif
+     * @param extension 
+     */
+    template<typename T>
+    void Extend(std::vector<T> base, std::vector<T> extension) {
+        for (int i = 0; i < extension.size(); i++) {
+            base.push_back(extension.at(i));
+        }
+    }
+
+    /**
+     * @brief Checks if directory exists.
+     * From https://stackoverflow.com/questions/3828192/checking-if-a-directory-exists-in-unix-system-call
+     * 
+     * @param dirname 
+     * @return exists 
+     */
+    bool IsDir(char* dirname);
+    /**
+     * @brief Prints command and executes via std::system.
+     * 
+     * @param cmd 
+     */
+    void Execute(std::string cmd);
 }
+
+/**
+ * @brief Streams a tgz file (tarname) and searches for internalFile
+ * within the tgz. Returns a string of the internalFile contents.
+ * 
+ * @param tarname 
+ * @param internalFile 
+ * @return std::string 
+ */
+std::string ReadTarFile(std::string tarname, std::string internalFile);
+
+/**
+ * @brief C++ class. Creates a temporary directory that is destroyed on delete.
+ */
+class TempDir {
+    private:
+        const boost::filesystem::path _path;
+        std::vector<std::string> _filesSaved;
+
+    public:
+        /**
+         * @brief Construct a new Temp Dir object
+         * 
+         */
+        TempDir();
+        /**
+         * @brief Destroy the Temp Dir object
+         * 
+         */
+        ~TempDir();
+        /**
+         * @brief Write a string (in) to a file (filename) within the 
+         * temporary directory.
+         * 
+         * @param filename 
+         * @param in 
+         * @return std::string 
+         */
+        std::string Write(std::string filename, std::string in);
+        /**
+         * @brief Generate a hash to create a temporary random folder
+         * 
+         * @return std::string 
+         */
+        std::string Hash();
+
+};
+#endif

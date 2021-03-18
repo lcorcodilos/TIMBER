@@ -6,14 +6,13 @@ from TIMBER.Tools.Common import CompileCpp
 class TestAnalyzer():
     @classmethod
     def setup_class(cls):
-        CompileCpp('TIMBER/Framework/include/common.h') # Compile (via gInterpreter) commonly used c++ code
         CompileCpp('examples/example.cc')
-        # CompileCpp('test/test_weight.cc')
+        CompileCpp('test/test_weight.cc')
         cls.a = analyzer('examples/GluGluToHToTauTau.root')
         cls.a.Cut("test_cut1", "Jet_pt.size() > 0")
         cls.a.Define('lead_vector', 'hardware::TLvector(Jet_pt[0],Jet_eta[0],Jet_phi[0],Jet_mass[0])')
         cls.a.Define('sublead_vector','hardware::TLvector(Jet_pt[1],Jet_eta[1],Jet_phi[1],Jet_mass[1])')
-        cls.a.Define('invariantMass','hardware::invariantMass({lead_vector,sublead_vector})')
+        cls.a.Define('invariantMass','hardware::InvariantMass({lead_vector,sublead_vector})')
 
     def test_genEventCount_None(self):
         '''Test genEventCount is assigned 0 when branch doesn't exist in test file'''
@@ -99,7 +98,7 @@ def test_Groups():
     test_vg = VarGroup('test_vg')
     test_vg.Add('lead_vector', 'hardware::TLvector(Jet_pt[0],Jet_eta[0],Jet_phi[0],Jet_mass[0])')
     test_vg.Add('sublead_vector','hardware::TLvector(Jet_pt[1],Jet_eta[1],Jet_phi[1],Jet_mass[1])')
-    test_vg.Add('invariantMass','hardware::invariantMass({lead_vector,sublead_vector})')
+    test_vg.Add('invariantMass','hardware::InvariantMass({lead_vector,sublead_vector})')
     
     test_cg = CutGroup('test_cg')
     test_cg.Add("test_cut1", "Jet_pt.size() > 0")

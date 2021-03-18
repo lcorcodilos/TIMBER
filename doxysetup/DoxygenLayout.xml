@@ -4,13 +4,13 @@
   <navindex>
     <tab type="mainpage" visible="yes" title=""/>
     <tab type="pages" visible="yes" title="Guides" intro=""/>
-    <tab type="modules" visible="yes" title="Tools" intro=""/>
-    <tab type="namespaces" visible="yes" title="">
-      <tab type="namespacelist" visible="yes" title="" intro=""/>
-      <tab type="namespacemembers" visible="yes" title="" intro=""/>
-    </tab>
+    <tab type="modules" visible="yes" title="Python Tools" intro=""/>
+    <tab type="namespacelist" visible="yes" title="C++ Tools"/>
+      <!-- <tab type="namespacelist" visible="yes" title="" intro=""/>
+      <tab type="namespacemembers" visible="yes" title="" intro=""/> -->
+    <!-- </tab> -->
     <!-- <tab type="classes" visible="yes" title=""> -->
-    <tab type="classlist" visible="yes" title="" intro=""/>
+    <tab type="classlist" visible="yes" title="All Classes" intro=""/>
       <!-- <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/>  -->
       <!-- <tab type="hierarchy" visible="yes" title="" intro=""/> -->
       <!-- <tab type="classmembers" visible="yes" title="" intro=""/> -->

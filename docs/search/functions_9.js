@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['invariantmass',['invariantMass',['../namespacehardware.html#a35a91a442950509fafc36c5d5d4c58ed',1,'hardware']]]
+  ['invariantmass',['InvariantMass',['../namespacehardware.html#aced1b3d9699adc39619ed7a1272a8484',1,'hardware']]]
 ];

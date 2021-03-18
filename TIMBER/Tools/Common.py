@@ -1,9 +1,9 @@
-'''@addtogroup Common Common Tools
+'''@addtogroup Common Common Tools (Common.py)
 Commonly used functions available for use that can be generic or TIMBER specific.
 @{
 '''
 
-import json, ROOT, os, subprocess, TIMBER, sys
+import json, os, subprocess, sys, glob, ROOT
 from ROOT import RDataFrame
 from TIMBER.Tools.CMS import CMS_lumi, tdrstyle
 from contextlib import contextmanager
@@ -11,10 +11,12 @@ from collections import OrderedDict
 #-----------------#
 # TIMBER specific #
 #-----------------#
-def CutflowDict(node):
+def CutflowDict(node,initial=None):
     '''Turns the RDataFrame cutflow report into an OrderedDict.
 
     @param node (Node): Input Node from which to get the cutflow.
+    @param initial (int): Initial number events. Defaults to None
+        in which case the number in the top-most parent Node is used.
 
     Returns:
         OrderedDict: Ordered cutflow dictionary with filter names as keys and number of 
@@ -23,17 +25,22 @@ def CutflowDict(node):
     filters = node.DataFrame.GetFilterNames()
     rdf_report = node.DataFrame.Report()
     cutflow = OrderedDict()
-    cutflow['Initial'] = int(node.DataFrame.Count().GetValue())
-    for i,filtername in enumerate(filters): 
+    if initial == None: 
+        cutflow['Initial'] = int(node.GetBaseNode().DataFrame.Count().GetValue())
+    else:
+        cutflow['Initial'] = initial
+    for filtername in filters: 
         cutflow[str(filtername)] = int(rdf_report.At(filtername).GetPass())
 
     return cutflow
 
-def CutflowHist(name,node,efficiency=False):
+def CutflowHist(name,node,initial=None,efficiency=False):
     '''Draws a cutflow histogram using the report feature of RDF.
 
     @param name (str): Name of output histogram
     @param node (Node): Input Node from which to get the cutflow.
+    @param initial (int): Initial number events. Defaults to None
+        in which case the number in the top-most parent Node is used.
     @param efficiency (bool, optional): Reports an efficiency instead of yields
             (relative to number of events before any cuts on Node).
 
@@ -41,7 +48,7 @@ def CutflowHist(name,node,efficiency=False):
         TH1: Histogram with each bin showing yield (or efficiency) for
             progressive cuts.
     '''
-    cutflow_dict = CutflowDict(node)
+    cutflow_dict = CutflowDict(node,initial)
     ncuts = len(cutflow_dict.keys())
     h = ROOT.TH1F(name,name,ncuts,0,ncuts)
 
@@ -104,6 +111,66 @@ def StitchQCD(QCDdict,normDict=None):
 #---------#
 # Generic #
 #---------#
+## Dictionary of the JES/JEC tags corresponding to
+# tarballs stored in TIMBER/data/JES.
+JEStags = {
+    "2016": "Summer16_07Aug2017_V11",
+    "2017": "Fall17_17Nov2017_V32",
+    "2018": "Autumn18_V19",
+    "2017UL": "Summer19UL17_V5",
+    "2018UL": "Summer19UL18_V5"
+}
+## Dictionary of the JER tags corresponding to
+# tarballs stored in TIMBER/data/JER.
+JERtags = {
+    "2016":"Summer16_25nsV1b",
+    "2017":"Fall17_V3b",
+    "2018":"Autumn18_V7b",
+    "2017UL":"Summer19UL17_JRV2",
+    "2018UL":"Summer19UL18_JRV2"
+}
+
+def GetJMETag(t,year,setname):
+    '''Return the latest JME tag corresponding to the type `t` (JES or JER),
+    `year`, and `setname` (MC for simulation and A, B, C, etc for data).
+    Returned string is compatible with input needed by JME modules. 
+
+    Args:
+        t (str): JES or JER
+        year (str): 2016, 2017, 2018, 2017UL, or 2018UL
+        setname (str): MC for simulation. A, B, C, D, E, F, G, or H for data.
+
+    Raises:
+        ValueError: Did not provide `t` that is either JES or JER.  
+
+    Returns:
+        str: JME tarball/tag name compatible with input needed by JME modules.
+    '''
+    if setname == 'MC':
+        MCorData = 'MC'
+        subset = ''
+    else:
+        MCorData = 'DATA'
+        subset = setname
+        if year == '2018' or 'UL' in year:
+            subset = '_Run'+setname
+
+    if t == 'JES':
+        tag = JEStags[year]
+        tag_and_version = ['_'.join(tag.split('_')[:-1]),tag.split('_')[-1]]
+        if MCorData == "DATA":
+            fullpath = os.environ["TIMBERPATH"]+"TIMBER/data/JES/{0}*{1}*_{2}_{3}.tar.gz".format(tag_and_version[0],subset,tag_and_version[1],MCorData)
+            out = glob.glob(fullpath)[0].replace(os.environ["TIMBERPATH"]+"TIMBER/data/JES/",'').replace('.tar.gz','')
+        else:
+            out = '{0}{1}_{2}_{3}'.format(tag_and_version[0],subset,tag_and_version[1],MCorData)
+
+    elif t == 'JER':
+        out = '{0}_{1}'.format(JERtags[year],MCorData)
+    else:
+        raise ValueError("Type must be either 'JES' or 'JER'")
+    
+    return out
+
 def CompileCpp(blockcode,library=False):
     '''Compiles C++ code via the gInterpreter.
 
@@ -117,11 +184,20 @@ def CompileCpp(blockcode,library=False):
     @param library (bool, optional): Compiles a library which can be later loaded
             to avoid compilation time. Defaults to False.
     '''
-    if os.environ["TIMBERPATH"] not in ROOT.gSystem.GetIncludePath():
+    if '-I"'+os.environ["TIMBERPATH"]+'"' not in ROOT.gSystem.GetIncludePath():
         ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"])
+        ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"]+'TIMBER/Framework/src')
+        ROOT.gInterpreter.AddIncludePath(os.environ["TIMBERPATH"]+"bin")
+        ROOT.gInterpreter.ProcessLine('#pragma clang diagnostic ignored "-Wunknown-attributes"')
+        if 'CMSSW_BASE' in os.environ.keys():
+            ROOT.gSystem.Load('libCondFormatsJetMETObjects')
+
+    if not ROOT.gInterpreter.IsLibraryLoaded(os.environ["TIMBERPATH"]+'bin/libtimber/libtimber.so'):
+        ROOT.gSystem.Load(os.environ["TIMBERPATH"]+'bin/libarchive/lib/libarchive.so')
+        ROOT.gSystem.Load(os.environ["TIMBERPATH"]+'bin/libtimber/libtimber.so')
 
     if not library:
-        if '\n' in blockcode or ';' in blockcode: # must be multiline string
+        if '\n' in blockcode or ';' in blockcode: # must be multiline string\
             ROOT.gInterpreter.Declare(blockcode)
         else: # must be file name to compile
             if ('TIMBER/Framework/' in blockcode) and (os.environ['TIMBERPATH'] not in blockcode):

@@ -13,7 +13,7 @@ fi
 
 python setup.py install
 activate_path=$VIRTUAL_ENV/bin/activate
-TIMBERPATH="$PWD/"
+export TIMBERPATH="$PWD/"
 
 if grep -q $TIMBERPATH $activate_path
 then
@@ -25,4 +25,20 @@ else
   source activate_ext.sh.cpy
   cat activate_ext.sh.cpy >> $activate_path
   rm activate_ext.sh.cpy
+fi
+
+if [ ! -d "bin/libarchive" ] 
+then
+  git clone https://github.com/libarchive/libarchive.git
+  cd libarchive
+  cmake . -DCMAKE_INSTALL_PREFIX=../bin/libarchive
+  make
+  make install
+  cd ..
+  rm -rf libarchive
+fi
+
+if [ ! -d "bin/libtimber" ]
+then
+  make
 fi

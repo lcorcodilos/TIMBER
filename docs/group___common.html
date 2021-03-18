@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>TIMBER: Common Tools</title>
+<title>TIMBER: Common Tools (Common.py)</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -69,9 +69,10 @@ $(function() {
 
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
-<div class="title">Common Tools</div>  </div>
+<div class="title">Common Tools (Common.py)</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -80,57 +81,69 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:gae6b78b44267b07448079c63bfe9a8413"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gae6b78b44267b07448079c63bfe9a8413">CutflowDict</a> (node)</td></tr>
-<tr class="memdesc:gae6b78b44267b07448079c63bfe9a8413"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turns the RDataFrame cutflow report into an OrderedDict.  <a href="group___common.html#gae6b78b44267b07448079c63bfe9a8413">More...</a><br /></td></tr>
-<tr class="separator:gae6b78b44267b07448079c63bfe9a8413"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9d19a9ceee7d4de34321b40563c1070a"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga9d19a9ceee7d4de34321b40563c1070a">CutflowHist</a> (name, node, efficiency=False)</td></tr>
-<tr class="memdesc:ga9d19a9ceee7d4de34321b40563c1070a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws a cutflow histogram using the report feature of RDF.  <a href="group___common.html#ga9d19a9ceee7d4de34321b40563c1070a">More...</a><br /></td></tr>
-<tr class="separator:ga9d19a9ceee7d4de34321b40563c1070a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga73228e3cf96ee395949c7e563f89f312"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga73228e3cf96ee395949c7e563f89f312">CutflowTxt</a> (name, node, efficiency=False)</td></tr>
-<tr class="memdesc:ga73228e3cf96ee395949c7e563f89f312"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes out the cutflow as a text file using the report feature of RDF.  <a href="group___common.html#ga73228e3cf96ee395949c7e563f89f312">More...</a><br /></td></tr>
-<tr class="separator:ga73228e3cf96ee395949c7e563f89f312"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga80bc14c9dd0fa60d53515a31dbd67c2c"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga80bc14c9dd0fa60d53515a31dbd67c2c">StitchQCD</a> (QCDdict, normDict=None)</td></tr>
-<tr class="memdesc:ga80bc14c9dd0fa60d53515a31dbd67c2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stitches together histograms in QCD hist groups.  <a href="group___common.html#ga80bc14c9dd0fa60d53515a31dbd67c2c">More...</a><br /></td></tr>
-<tr class="separator:ga80bc14c9dd0fa60d53515a31dbd67c2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga24e95c0ad4d54297700d2323325e809f"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga24e95c0ad4d54297700d2323325e809f">CompileCpp</a> (blockcode, library=False)</td></tr>
-<tr class="memdesc:ga24e95c0ad4d54297700d2323325e809f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compiles C++ code via the gInterpreter.  <a href="group___common.html#ga24e95c0ad4d54297700d2323325e809f">More...</a><br /></td></tr>
-<tr class="separator:ga24e95c0ad4d54297700d2323325e809f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4b63a003f89b48ce9f994c29a40dcf96"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga4b63a003f89b48ce9f994c29a40dcf96">OpenJSON</a> (filename)</td></tr>
-<tr class="memdesc:ga4b63a003f89b48ce9f994c29a40dcf96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens JSON file as a dictionary (accounting for unicode encoding)  <a href="group___common.html#ga4b63a003f89b48ce9f994c29a40dcf96">More...</a><br /></td></tr>
-<tr class="separator:ga4b63a003f89b48ce9f994c29a40dcf96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga08af29d3395591fa501a98fcc3bb5ea0"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga08af29d3395591fa501a98fcc3bb5ea0">AsciiEncodeDict</a> (data)</td></tr>
 <tr class="memdesc:ga08af29d3395591fa501a98fcc3bb5ea0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encodes dict to ascii from unicode for python 2.7.  <a href="group___common.html#ga08af29d3395591fa501a98fcc3bb5ea0">More...</a><br /></td></tr>
 <tr class="separator:ga08af29d3395591fa501a98fcc3bb5ea0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf0721d1f79a9542d2a07df88852114a8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaf0721d1f79a9542d2a07df88852114a8">ConcatCols</a> (colnames, val='1', connector='&amp;&amp;')</td></tr>
-<tr class="memdesc:gaf0721d1f79a9542d2a07df88852114a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Concatenates a list of column names evaluating to a common <code>val</code> (usually 1 or 0) with some <code>connector</code> (bool logic operator).  <a href="group___common.html#gaf0721d1f79a9542d2a07df88852114a8">More...</a><br /></td></tr>
-<tr class="separator:gaf0721d1f79a9542d2a07df88852114a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf88df070cc47d0cf19d7b9e8a3f6368c"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaf88df070cc47d0cf19d7b9e8a3f6368c">GetHistBinningTuple</a> (h)</td></tr>
-<tr class="memdesc:gaf88df070cc47d0cf19d7b9e8a3f6368c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the binning information for a histogram and returns it as a tuple ordered like the arguments to construct a new histogram.  <a href="group___common.html#gaf88df070cc47d0cf19d7b9e8a3f6368c">More...</a><br /></td></tr>
-<tr class="separator:gaf88df070cc47d0cf19d7b9e8a3f6368c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa2fdf2788bfd524b2f3b53f37d11613e"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaa2fdf2788bfd524b2f3b53f37d11613e">ColliMate</a> (myString, width=18)</td></tr>
-<tr class="memdesc:gaa2fdf2788bfd524b2f3b53f37d11613e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collimates strings to have consistent spacing between first character of word i with the first character of word i+1 and i-1.  <a href="group___common.html#gaa2fdf2788bfd524b2f3b53f37d11613e">More...</a><br /></td></tr>
-<tr class="separator:gaa2fdf2788bfd524b2f3b53f37d11613e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf716e063fa7f868daa3fb300a135e160"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaf716e063fa7f868daa3fb300a135e160">DictStructureCopy</a> (inDict)</td></tr>
-<tr class="memdesc:gaf716e063fa7f868daa3fb300a135e160"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively copies the structure of a dictionary with non-dict items replaced with 0.  <a href="group___common.html#gaf716e063fa7f868daa3fb300a135e160">More...</a><br /></td></tr>
-<tr class="separator:gaf716e063fa7f868daa3fb300a135e160"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1aaec96a73bafbbbc9890df3fdf1ac8e"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga1aaec96a73bafbbbc9890df3fdf1ac8e">DictCopy</a> (inDict)</td></tr>
-<tr class="memdesc:ga1aaec96a73bafbbbc9890df3fdf1ac8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively copy dictionary structure and values.  <a href="group___common.html#ga1aaec96a73bafbbbc9890df3fdf1ac8e">More...</a><br /></td></tr>
-<tr class="separator:ga1aaec96a73bafbbbc9890df3fdf1ac8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf20f16aa6eff8f36c885f1017d18863b"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaf20f16aa6eff8f36c885f1017d18863b">ExecuteCmd</a> (cmd, dryrun=False)</td></tr>
-<tr class="memdesc:gaf20f16aa6eff8f36c885f1017d18863b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes shell command via <code>subprocess.call()</code> and prints the command for posterity.  <a href="group___common.html#gaf20f16aa6eff8f36c885f1017d18863b">More...</a><br /></td></tr>
-<tr class="separator:gaf20f16aa6eff8f36c885f1017d18863b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga03accc09d6689d1b8387555e06048661"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga03accc09d6689d1b8387555e06048661">DictToLatexTable</a> (dict2convert, outfilename, roworder=[], columnorder=[])</td></tr>
-<tr class="memdesc:ga03accc09d6689d1b8387555e06048661"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a dictionary with two layers (ie.  <a href="group___common.html#ga03accc09d6689d1b8387555e06048661">More...</a><br /></td></tr>
-<tr class="separator:ga03accc09d6689d1b8387555e06048661"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa4e8229330d67d54397e18048078ddd2"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaa4e8229330d67d54397e18048078ddd2">FindCommonString</a> (string_list)</td></tr>
-<tr class="memdesc:gaa4e8229330d67d54397e18048078ddd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a common string between a list of strings.  <a href="group___common.html#gaa4e8229330d67d54397e18048078ddd2">More...</a><br /></td></tr>
-<tr class="separator:gaa4e8229330d67d54397e18048078ddd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga362ce18096811fbbc2dba955e605ffa0"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga362ce18096811fbbc2dba955e605ffa0">GetStandardFlags</a> ()</td></tr>
-<tr class="memdesc:ga362ce18096811fbbc2dba955e605ffa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of the following recommended flags as of Jan.  <a href="group___common.html#ga362ce18096811fbbc2dba955e605ffa0">More...</a><br /></td></tr>
-<tr class="separator:ga362ce18096811fbbc2dba955e605ffa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6e0f471be6c0aab5d2c8390cd3337aa2"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga6e0f471be6c0aab5d2c8390cd3337aa2">cd</a> (newdir)</td></tr>
 <tr class="memdesc:ga6e0f471be6c0aab5d2c8390cd3337aa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Context manager to cd to another folder in the middle of a python script.  <a href="group___common.html#ga6e0f471be6c0aab5d2c8390cd3337aa2">More...</a><br /></td></tr>
 <tr class="separator:ga6e0f471be6c0aab5d2c8390cd3337aa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa2fdf2788bfd524b2f3b53f37d11613e"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaa2fdf2788bfd524b2f3b53f37d11613e">ColliMate</a> (myString, width=18)</td></tr>
+<tr class="memdesc:gaa2fdf2788bfd524b2f3b53f37d11613e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collimates strings to have consistent spacing between first character of word i with the first character of word i+1 and i-1.  <a href="group___common.html#gaa2fdf2788bfd524b2f3b53f37d11613e">More...</a><br /></td></tr>
+<tr class="separator:gaa2fdf2788bfd524b2f3b53f37d11613e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga24e95c0ad4d54297700d2323325e809f"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga24e95c0ad4d54297700d2323325e809f">CompileCpp</a> (blockcode, library=False)</td></tr>
+<tr class="memdesc:ga24e95c0ad4d54297700d2323325e809f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compiles C++ code via the gInterpreter.  <a href="group___common.html#ga24e95c0ad4d54297700d2323325e809f">More...</a><br /></td></tr>
+<tr class="separator:ga24e95c0ad4d54297700d2323325e809f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf0721d1f79a9542d2a07df88852114a8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaf0721d1f79a9542d2a07df88852114a8">ConcatCols</a> (colnames, val='1', connector='&amp;&amp;')</td></tr>
+<tr class="memdesc:gaf0721d1f79a9542d2a07df88852114a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Concatenates a list of column names evaluating to a common <code>val</code> (usually 1 or 0) with some <code>connector</code> (bool logic operator).  <a href="group___common.html#gaf0721d1f79a9542d2a07df88852114a8">More...</a><br /></td></tr>
+<tr class="separator:gaf0721d1f79a9542d2a07df88852114a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac353ddeada21eaa7ebb16125bb81aa88"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gac353ddeada21eaa7ebb16125bb81aa88">CutflowDict</a> (node, initial=None)</td></tr>
+<tr class="memdesc:gac353ddeada21eaa7ebb16125bb81aa88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turns the RDataFrame cutflow report into an OrderedDict.  <a href="group___common.html#gac353ddeada21eaa7ebb16125bb81aa88">More...</a><br /></td></tr>
+<tr class="separator:gac353ddeada21eaa7ebb16125bb81aa88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7e63bb1ee3328941b20b939b0cf166e5"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga7e63bb1ee3328941b20b939b0cf166e5">CutflowHist</a> (name, node, initial=None, efficiency=False)</td></tr>
+<tr class="memdesc:ga7e63bb1ee3328941b20b939b0cf166e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws a cutflow histogram using the report feature of RDF.  <a href="group___common.html#ga7e63bb1ee3328941b20b939b0cf166e5">More...</a><br /></td></tr>
+<tr class="separator:ga7e63bb1ee3328941b20b939b0cf166e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga73228e3cf96ee395949c7e563f89f312"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga73228e3cf96ee395949c7e563f89f312">CutflowTxt</a> (name, node, efficiency=False)</td></tr>
+<tr class="memdesc:ga73228e3cf96ee395949c7e563f89f312"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes out the cutflow as a text file using the report feature of RDF.  <a href="group___common.html#ga73228e3cf96ee395949c7e563f89f312">More...</a><br /></td></tr>
+<tr class="separator:ga73228e3cf96ee395949c7e563f89f312"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1aaec96a73bafbbbc9890df3fdf1ac8e"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga1aaec96a73bafbbbc9890df3fdf1ac8e">DictCopy</a> (inDict)</td></tr>
+<tr class="memdesc:ga1aaec96a73bafbbbc9890df3fdf1ac8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively copy dictionary structure and values.  <a href="group___common.html#ga1aaec96a73bafbbbc9890df3fdf1ac8e">More...</a><br /></td></tr>
+<tr class="separator:ga1aaec96a73bafbbbc9890df3fdf1ac8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf716e063fa7f868daa3fb300a135e160"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaf716e063fa7f868daa3fb300a135e160">DictStructureCopy</a> (inDict)</td></tr>
+<tr class="memdesc:gaf716e063fa7f868daa3fb300a135e160"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively copies the structure of a dictionary with non-dict items replaced with 0.  <a href="group___common.html#gaf716e063fa7f868daa3fb300a135e160">More...</a><br /></td></tr>
+<tr class="separator:gaf716e063fa7f868daa3fb300a135e160"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga03accc09d6689d1b8387555e06048661"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga03accc09d6689d1b8387555e06048661">DictToLatexTable</a> (dict2convert, outfilename, roworder=[], columnorder=[])</td></tr>
+<tr class="memdesc:ga03accc09d6689d1b8387555e06048661"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a dictionary with two layers (ie.  <a href="group___common.html#ga03accc09d6689d1b8387555e06048661">More...</a><br /></td></tr>
+<tr class="separator:ga03accc09d6689d1b8387555e06048661"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf20f16aa6eff8f36c885f1017d18863b"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaf20f16aa6eff8f36c885f1017d18863b">ExecuteCmd</a> (cmd, dryrun=False)</td></tr>
+<tr class="memdesc:gaf20f16aa6eff8f36c885f1017d18863b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes shell command via <code>subprocess.call()</code> and prints the command for posterity.  <a href="group___common.html#gaf20f16aa6eff8f36c885f1017d18863b">More...</a><br /></td></tr>
+<tr class="separator:gaf20f16aa6eff8f36c885f1017d18863b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa4e8229330d67d54397e18048078ddd2"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaa4e8229330d67d54397e18048078ddd2">FindCommonString</a> (string_list)</td></tr>
+<tr class="memdesc:gaa4e8229330d67d54397e18048078ddd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a common string between a list of strings.  <a href="group___common.html#gaa4e8229330d67d54397e18048078ddd2">More...</a><br /></td></tr>
+<tr class="separator:gaa4e8229330d67d54397e18048078ddd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf88df070cc47d0cf19d7b9e8a3f6368c"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaf88df070cc47d0cf19d7b9e8a3f6368c">GetHistBinningTuple</a> (h)</td></tr>
+<tr class="memdesc:gaf88df070cc47d0cf19d7b9e8a3f6368c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the binning information for a histogram and returns it as a tuple ordered like the arguments to construct a new histogram.  <a href="group___common.html#gaf88df070cc47d0cf19d7b9e8a3f6368c">More...</a><br /></td></tr>
+<tr class="separator:gaf88df070cc47d0cf19d7b9e8a3f6368c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga44bea0d695dca90009a611daf179d081"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga44bea0d695dca90009a611daf179d081">GetJMETag</a> (t, year, setname)</td></tr>
+<tr class="memdesc:ga44bea0d695dca90009a611daf179d081"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the latest JME tag corresponding to the type <code>t</code> (JES or JER), <code>year</code>, and <code>setname</code> (MC for simulation and A, B, C, etc for data).  <a href="group___common.html#ga44bea0d695dca90009a611daf179d081">More...</a><br /></td></tr>
+<tr class="separator:ga44bea0d695dca90009a611daf179d081"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga362ce18096811fbbc2dba955e605ffa0"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga362ce18096811fbbc2dba955e605ffa0">GetStandardFlags</a> ()</td></tr>
+<tr class="memdesc:ga362ce18096811fbbc2dba955e605ffa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of the following recommended flags as of Jan.  <a href="group___common.html#ga362ce18096811fbbc2dba955e605ffa0">More...</a><br /></td></tr>
+<tr class="separator:ga362ce18096811fbbc2dba955e605ffa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4b63a003f89b48ce9f994c29a40dcf96"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga4b63a003f89b48ce9f994c29a40dcf96">OpenJSON</a> (filename)</td></tr>
+<tr class="memdesc:ga4b63a003f89b48ce9f994c29a40dcf96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens JSON file as a dictionary (accounting for unicode encoding)  <a href="group___common.html#ga4b63a003f89b48ce9f994c29a40dcf96">More...</a><br /></td></tr>
+<tr class="separator:ga4b63a003f89b48ce9f994c29a40dcf96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga80bc14c9dd0fa60d53515a31dbd67c2c"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga80bc14c9dd0fa60d53515a31dbd67c2c">StitchQCD</a> (QCDdict, normDict=None)</td></tr>
+<tr class="memdesc:ga80bc14c9dd0fa60d53515a31dbd67c2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stitches together histograms in QCD hist groups.  <a href="group___common.html#ga80bc14c9dd0fa60d53515a31dbd67c2c">More...</a><br /></td></tr>
+<tr class="separator:ga80bc14c9dd0fa60d53515a31dbd67c2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:gaf1cdaa09ad301d50d682dc4a1882ed31"><td class="memItemLeft" align="right" valign="top">dictionary&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gaf1cdaa09ad301d50d682dc4a1882ed31">JERtags</a></td></tr>
+<tr class="memdesc:gaf1cdaa09ad301d50d682dc4a1882ed31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dictionary of the JER tags corresponding to tarballs stored in TIMBER/data/JER.  <a href="group___common.html#gaf1cdaa09ad301d50d682dc4a1882ed31">More...</a><br /></td></tr>
+<tr class="separator:gaf1cdaa09ad301d50d682dc4a1882ed31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5be74aa1436dc12afe520ce9222fdf61"><td class="memItemLeft" align="right" valign="top">dictionary&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga5be74aa1436dc12afe520ce9222fdf61">JEStags</a></td></tr>
+<tr class="memdesc:ga5be74aa1436dc12afe520ce9222fdf61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dictionary of the JES/JEC tags corresponding to tarballs stored in TIMBER/data/JES.  <a href="group___common.html#ga5be74aa1436dc12afe520ce9222fdf61">More...</a><br /></td></tr>
+<tr class="separator:ga5be74aa1436dc12afe520ce9222fdf61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Commonly used functions available for use that can be generic or TIMBER specific. </p>
@@ -319,8 +332,8 @@ str Concatenated string of the entire evaluation that in C++ will return a bool.
 
 </div>
 </div>
-<a id="gae6b78b44267b07448079c63bfe9a8413"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae6b78b44267b07448079c63bfe9a8413">&#9670;&nbsp;</a></span>CutflowDict()</h2>
+<a id="gac353ddeada21eaa7ebb16125bb81aa88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac353ddeada21eaa7ebb16125bb81aa88">&#9670;&nbsp;</a></span>CutflowDict()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -329,8 +342,18 @@ str Concatenated string of the entire evaluation that in C++ will return a bool.
           <td class="memname">def TIMBER.Tools.Common.CutflowDict </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>node</em></td><td>)</td>
+          <td class="paramname"><em>node</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>initial</em> = <code>None</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -338,7 +361,8 @@ str Concatenated string of the entire evaluation that in C++ will return a bool.
 <p>Turns the RDataFrame cutflow report into an OrderedDict. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">node</td><td>(Node): Input Node from which to get the cutflow.</td></tr>
+    <tr><td class="paramname">node</td><td>(Node): Input Node from which to get the cutflow. </td></tr>
+    <tr><td class="paramname">initial</td><td>(int): Initial number events. Defaults to None in which case the number in the top-most parent Node is used.</td></tr>
   </table>
   </dd>
 </dl>
@@ -348,8 +372,8 @@ OrderedDict Ordered cutflow dictionary with filter names as keys and number of e
 
 </div>
 </div>
-<a id="ga9d19a9ceee7d4de34321b40563c1070a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga9d19a9ceee7d4de34321b40563c1070a">&#9670;&nbsp;</a></span>CutflowHist()</h2>
+<a id="ga7e63bb1ee3328941b20b939b0cf166e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7e63bb1ee3328941b20b939b0cf166e5">&#9670;&nbsp;</a></span>CutflowHist()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -370,6 +394,12 @@ OrderedDict Ordered cutflow dictionary with filter names as keys and number of e
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>initial</em> = <code>None</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
           <td class="paramname"><em>efficiency</em> = <code>False</code>&#160;</td>
         </tr>
         <tr>
@@ -385,6 +415,7 @@ OrderedDict Ordered cutflow dictionary with filter names as keys and number of e
   <table class="params">
     <tr><td class="paramname">name</td><td>(str): Name of output histogram </td></tr>
     <tr><td class="paramname">node</td><td>(Node): Input Node from which to get the cutflow. </td></tr>
+    <tr><td class="paramname">initial</td><td>(int): Initial number events. Defaults to None in which case the number in the top-most parent Node is used. </td></tr>
     <tr><td class="paramname">efficiency</td><td>(bool, optional): Reports an efficiency instead of yields (relative to number of events before any cuts on Node).</td></tr>
   </table>
   </dd>
@@ -652,6 +683,60 @@ str Matched sub-string. </dd></dl>
 
 </div>
 </div>
+<a id="ga44bea0d695dca90009a611daf179d081"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga44bea0d695dca90009a611daf179d081">&#9670;&nbsp;</a></span>GetJMETag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def TIMBER.Tools.Common.GetJMETag </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>t</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>year</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>setname</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the latest JME tag corresponding to the type <code>t</code> (JES or JER), <code>year</code>, and <code>setname</code> (MC for simulation and A, B, C, etc for data). </p>
+<p>Returned string is compatible with input needed by JME modules.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">t</td><td>JES or JER </td></tr>
+    <tr><td class="paramname">year</td><td>2016, 2017, 2018, 2017UL, or 2018UL </td></tr>
+    <tr><td class="paramname">setname</td><td>MC for simulation. A, B, C, D, E, F, G, or H for data.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">ValueError</td><td>Did not provide <code>t</code> that is either JES or JER.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd>
+<dd>
+str JME tarball/tag name compatible with input needed by JME modules. </dd></dl>
+
+</div>
+</div>
 <a id="ga362ce18096811fbbc2dba955e605ffa0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga362ce18096811fbbc2dba955e605ffa0">&#9670;&nbsp;</a></span>GetStandardFlags()</h2>
 
@@ -739,6 +824,39 @@ dict Python dictionary with JSON content. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd></dd>
 <dd>
 HistGroup New HistGroup with histograms in group being the final stitched versions </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="gaf1cdaa09ad301d50d682dc4a1882ed31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf1cdaa09ad301d50d682dc4a1882ed31">&#9670;&nbsp;</a></span>JERtags</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dictionary JERtags</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;=  {</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;    <span class="stringliteral">&quot;2016&quot;</span>:<span class="stringliteral">&quot;Summer16_25nsV1b&quot;</span>,</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    <span class="stringliteral">&quot;2017&quot;</span>:<span class="stringliteral">&quot;Fall17_V3b&quot;</span>,</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;    <span class="stringliteral">&quot;2018&quot;</span>:<span class="stringliteral">&quot;Autumn18_V7b&quot;</span>,</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    <span class="stringliteral">&quot;2017UL&quot;</span>:<span class="stringliteral">&quot;Summer19UL17_JRV2&quot;</span>,</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="stringliteral">&quot;2018UL&quot;</span>:<span class="stringliteral">&quot;Summer19UL18_JRV2&quot;</span></div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;}</div></div><!-- fragment -->
+<p>Dictionary of the JER tags corresponding to tarballs stored in TIMBER/data/JER. </p>
+
+</div>
+</div>
+<a id="ga5be74aa1436dc12afe520ce9222fdf61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5be74aa1436dc12afe520ce9222fdf61">&#9670;&nbsp;</a></span>JEStags</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dictionary JEStags</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;=  {</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;    <span class="stringliteral">&quot;2016&quot;</span>: <span class="stringliteral">&quot;Summer16_07Aug2017_V11&quot;</span>,</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    <span class="stringliteral">&quot;2017&quot;</span>: <span class="stringliteral">&quot;Fall17_17Nov2017_V32&quot;</span>,</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;    <span class="stringliteral">&quot;2018&quot;</span>: <span class="stringliteral">&quot;Autumn18_V19&quot;</span>,</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    <span class="stringliteral">&quot;2017UL&quot;</span>: <span class="stringliteral">&quot;Summer19UL17_V5&quot;</span>,</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="stringliteral">&quot;2018UL&quot;</span>: <span class="stringliteral">&quot;Summer19UL18_V5&quot;</span></div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;}</div></div><!-- fragment -->
+<p>Dictionary of the JES/JEC tags corresponding to tarballs stored in TIMBER/data/JES. </p>
 
 </div>
 </div>

@@ -75,41 +75,66 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Namespace for common physics functions.  
+<p>C++ namespace for common physics functions.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aed751de3ad381dd4b6b17c2b506dea5f"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#aed751de3ad381dd4b6b17c2b506dea5f">DeltaPhi</a> (float phi1, float phi2)</td></tr>
-<tr class="memdesc:aed751de3ad381dd4b6b17c2b506dea5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the difference in \(\phi\).  <a href="#aed751de3ad381dd4b6b17c2b506dea5f">More...</a><br /></td></tr>
-<tr class="separator:aed751de3ad381dd4b6b17c2b506dea5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4b8b087606d67425cb9534692e47e0e"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#ad4b8b087606d67425cb9534692e47e0e">DeltaR</a> (ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2)</td></tr>
-<tr class="memdesc:ad4b8b087606d67425cb9534692e47e0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate \(\Delta R\) between two vectors.  <a href="#ad4b8b087606d67425cb9534692e47e0e">More...</a><br /></td></tr>
-<tr class="separator:ad4b8b087606d67425cb9534692e47e0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86cac73d45dc208c29d331a6438cc5d1"><td class="memItemLeft" align="right" valign="top">ROOT::Math::PtEtaPhiMVector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#a86cac73d45dc208c29d331a6438cc5d1">TLvector</a> (float pt, float eta, float phi, float m)</td></tr>
-<tr class="memdesc:a86cac73d45dc208c29d331a6438cc5d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a ROOT::Math::PtEtaPhiMVector.  <a href="#a86cac73d45dc208c29d331a6438cc5d1">More...</a><br /></td></tr>
-<tr class="separator:a86cac73d45dc208c29d331a6438cc5d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abfdf87f14ffb0769dc41c74a62d90b6e"><td class="memItemLeft" align="right" valign="top">RVec&lt; ROOT::Math::PtEtaPhiMVector &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#abfdf87f14ffb0769dc41c74a62d90b6e">TLvector</a> (RVec&lt; float &gt; pt, RVec&lt; float &gt; eta, RVec&lt; float &gt; phi, RVec&lt; float &gt; m)</td></tr>
-<tr class="memdesc:abfdf87f14ffb0769dc41c74a62d90b6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a vector of ROOT::Math::PtEtaPhiMVectors.  <a href="#abfdf87f14ffb0769dc41c74a62d90b6e">More...</a><br /></td></tr>
-<tr class="separator:abfdf87f14ffb0769dc41c74a62d90b6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aece5e1d3b9c47f248f8bb83f1206b04f"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#aece5e1d3b9c47f248f8bb83f1206b04f">transverseMass</a> (float MET_pt, float obj_pt, float MET_phi, float obj_phi)</td></tr>
-<tr class="memdesc:aece5e1d3b9c47f248f8bb83f1206b04f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the transverse mass from MET \(p_T\) and \(\eta\) and an object's \(p_T\) and \(\eta\).  <a href="#aece5e1d3b9c47f248f8bb83f1206b04f">More...</a><br /></td></tr>
-<tr class="separator:aece5e1d3b9c47f248f8bb83f1206b04f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35a91a442950509fafc36c5d5d4c58ed"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#a35a91a442950509fafc36c5d5d4c58ed">invariantMass</a> (RVec&lt; ROOT::Math::PtEtaPhiMVector &gt; vects)</td></tr>
-<tr class="memdesc:a35a91a442950509fafc36c5d5d4c58ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the invariant mass of a vector of Lorentz vectors (ROOT::Math::PtEtaPhiMVector). Note that this is an alternative to <a href="https://root.cern/doc/master/namespaceROOT_1_1VecOps.html#a2c531eae910edad48bbf7319cc6d7e58">ROOT::VecOps::InvariantMasses()</a> which does not need the intermediate Lorentz vector.  <a href="#a35a91a442950509fafc36c5d5d4c58ed">More...</a><br /></td></tr>
-<tr class="separator:a35a91a442950509fafc36c5d5d4c58ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abea680048ee5f5858b3668405e18eceb"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#abea680048ee5f5858b3668405e18eceb">DeltaPhi</a> (float phi1, float phi2)</td></tr>
+<tr class="memdesc:abea680048ee5f5858b3668405e18eceb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the difference in \(\phi\).  <a href="#abea680048ee5f5858b3668405e18eceb">More...</a><br /></td></tr>
+<tr class="separator:abea680048ee5f5858b3668405e18eceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf5aea2b75bbacb4d9b340091de32f63"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#acf5aea2b75bbacb4d9b340091de32f63">DeltaR</a> (ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2)</td></tr>
+<tr class="memdesc:acf5aea2b75bbacb4d9b340091de32f63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate \(\Delta R\) between two vectors.  <a href="#acf5aea2b75bbacb4d9b340091de32f63">More...</a><br /></td></tr>
+<tr class="separator:acf5aea2b75bbacb4d9b340091de32f63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c6dc2cce56b078337b1d625310de9e1"><td class="memTemplParams" colspan="2">template&lt;class T1 , class T2 &gt; </td></tr>
+<tr class="memitem:a2c6dc2cce56b078337b1d625310de9e1"><td class="memTemplItemLeft" align="right" valign="top">float&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacehardware.html#a2c6dc2cce56b078337b1d625310de9e1">DeltaR</a> (T1 in1, T2 in2)</td></tr>
+<tr class="memdesc:a2c6dc2cce56b078337b1d625310de9e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate \(\Delta R\) between two objects.  <a href="#a2c6dc2cce56b078337b1d625310de9e1">More...</a><br /></td></tr>
+<tr class="separator:a2c6dc2cce56b078337b1d625310de9e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada97dc35a6c86dd103ad7d001a5017a2"><td class="memItemLeft" align="right" valign="top">RVec&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#ada97dc35a6c86dd103ad7d001a5017a2">HadamardProduct</a> (RVec&lt; float &gt; v1, RVec&lt; float &gt; v2)</td></tr>
+<tr class="memdesc:ada97dc35a6c86dd103ad7d001a5017a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hadamard product of two vectors (<code>v3[i] = v1[i]*v2[i]</code>)  <a href="#ada97dc35a6c86dd103ad7d001a5017a2">More...</a><br /></td></tr>
+<tr class="separator:ada97dc35a6c86dd103ad7d001a5017a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c8c93bd94db0b61b65881a8ad972e6e"><td class="memItemLeft" align="right" valign="top">RVec&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#a4c8c93bd94db0b61b65881a8ad972e6e">HadamardProduct</a> (RVec&lt; float &gt; v1, RVec&lt; RVec&lt; float &gt;&gt; v2, int v2subindex)</td></tr>
+<tr class="memdesc:a4c8c93bd94db0b61b65881a8ad972e6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hadamard product of two vectors (<code>v3[i] = v1[i]*v2[i][v2subindex]</code>) where v2 has multiple sub-elements, only one of which should be accessed (at index of v2subindex).  <a href="#a4c8c93bd94db0b61b65881a8ad972e6e">More...</a><br /></td></tr>
+<tr class="separator:a4c8c93bd94db0b61b65881a8ad972e6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aced1b3d9699adc39619ed7a1272a8484"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#aced1b3d9699adc39619ed7a1272a8484">InvariantMass</a> (RVec&lt; ROOT::Math::PtEtaPhiMVector &gt; vects)</td></tr>
+<tr class="memdesc:aced1b3d9699adc39619ed7a1272a8484"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the invariant mass of a vector of Lorentz vectors (ROOT::Math::PtEtaPhiMVector). Note that this is an alternative to <a href="https://root.cern/doc/master/namespaceROOT_1_1VecOps.html#a2c531eae910edad48bbf7319cc6d7e58">ROOT::VecOps::InvariantMasses()</a> which does not need the intermediate Lorentz vector.  <a href="#aced1b3d9699adc39619ed7a1272a8484">More...</a><br /></td></tr>
+<tr class="separator:aced1b3d9699adc39619ed7a1272a8484"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12762e8b570c50e94a3d906fa578e698"><td class="memItemLeft" align="right" valign="top">RVec&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#a12762e8b570c50e94a3d906fa578e698">MultiHadamardProduct</a> (RVec&lt; float &gt; v1, RVec&lt; RVec&lt; RVec&lt; float &gt;&gt;&gt; Multiv2, int v2subindex)</td></tr>
+<tr class="memdesc:a12762e8b570c50e94a3d906fa578e698"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hadamard product of a base vector and a list of N more vectors (<code>vout[i] = v1[i]*v2[i][v2subindex]*v3[i][v2subindex]...</code>) where v&lt;N&gt; has multiple sub-elements, only one of which should be accessed (at index of v2subindex).  <a href="#a12762e8b570c50e94a3d906fa578e698">More...</a><br /></td></tr>
+<tr class="separator:a12762e8b570c50e94a3d906fa578e698"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4cf6f794442c05cd45c12422be730d3"><td class="memItemLeft" align="right" valign="top">ROOT::Math::PtEtaPhiMVector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#ac4cf6f794442c05cd45c12422be730d3">TLvector</a> (float pt, float eta, float phi, float m)</td></tr>
+<tr class="memdesc:ac4cf6f794442c05cd45c12422be730d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a ROOT::Math::PtEtaPhiMVector.  <a href="#ac4cf6f794442c05cd45c12422be730d3">More...</a><br /></td></tr>
+<tr class="separator:ac4cf6f794442c05cd45c12422be730d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a538fac1c9c327eb4e05136fea180a9d8"><td class="memItemLeft" align="right" valign="top">RVec&lt; ROOT::Math::PtEtaPhiMVector &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#a538fac1c9c327eb4e05136fea180a9d8">TLvector</a> (RVec&lt; float &gt; pt, RVec&lt; float &gt; eta, RVec&lt; float &gt; phi, RVec&lt; float &gt; m)</td></tr>
+<tr class="memdesc:a538fac1c9c327eb4e05136fea180a9d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a vector of ROOT::Math::PtEtaPhiMVectors.  <a href="#a538fac1c9c327eb4e05136fea180a9d8">More...</a><br /></td></tr>
+<tr class="separator:a538fac1c9c327eb4e05136fea180a9d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab991c7323636100b62631322a422a78c"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:ab991c7323636100b62631322a422a78c"><td class="memTemplItemLeft" align="right" valign="top">ROOT::Math::PtEtaPhiMVector&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacehardware.html#ab991c7323636100b62631322a422a78c">TLvector</a> (T obj)</td></tr>
+<tr class="memdesc:ab991c7323636100b62631322a422a78c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a ROOT::Math::PtEtaPhiMVectors.  <a href="#ab991c7323636100b62631322a422a78c">More...</a><br /></td></tr>
+<tr class="separator:ab991c7323636100b62631322a422a78c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7687b73710a4919516fc68482452951"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:aa7687b73710a4919516fc68482452951"><td class="memTemplItemLeft" align="right" valign="top">RVec&lt; ROOT::Math::PtEtaPhiMVector &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacehardware.html#aa7687b73710a4919516fc68482452951">TLvector</a> (std::vector&lt; T &gt; objs)</td></tr>
+<tr class="memdesc:aa7687b73710a4919516fc68482452951"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a vector of ROOT::Math::PtEtaPhiMVectors.  <a href="#aa7687b73710a4919516fc68482452951">More...</a><br /></td></tr>
+<tr class="separator:aa7687b73710a4919516fc68482452951"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07f9a8f4312c39c75e4c193b6c0517c1"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a07f9a8f4312c39c75e4c193b6c0517c1"><td class="memTemplItemLeft" align="right" valign="top">RVec&lt; RVec&lt; T &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacehardware.html#a07f9a8f4312c39c75e4c193b6c0517c1">Transpose</a> (RVec&lt; RVec&lt; T &gt;&gt; v)</td></tr>
+<tr class="memdesc:a07f9a8f4312c39c75e4c193b6c0517c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transpose a vector so that output[j][i] = input[i][j].  <a href="#a07f9a8f4312c39c75e4c193b6c0517c1">More...</a><br /></td></tr>
+<tr class="separator:a07f9a8f4312c39c75e4c193b6c0517c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49a5a3b0f7467731a7169650922c10df"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#a49a5a3b0f7467731a7169650922c10df">TransverseMass</a> (float MET_pt, float obj_pt, float MET_phi, float obj_phi)</td></tr>
+<tr class="memdesc:a49a5a3b0f7467731a7169650922c10df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the transverse mass from MET \(p_T\) and \(\eta\) and an object's \(p_T\) and \(\eta\).  <a href="#a49a5a3b0f7467731a7169650922c10df">More...</a><br /></td></tr>
+<tr class="separator:a49a5a3b0f7467731a7169650922c10df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Namespace for common physics functions. </p>
+<div class="textblock"><p>C++ namespace for common physics functions. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="aed751de3ad381dd4b6b17c2b506dea5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed751de3ad381dd4b6b17c2b506dea5f">&#9670;&nbsp;</a></span>DeltaPhi()</h2>
+<a id="abea680048ee5f5858b3668405e18eceb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abea680048ee5f5858b3668405e18eceb">&#9670;&nbsp;</a></span>DeltaPhi()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float hardware::DeltaPhi </td>
+          <td class="memname">float DeltaPhi </td>
           <td>(</td>
           <td class="paramtype">float&#160;</td>
           <td class="paramname"><em>phi1</em>, </td>
@@ -140,14 +165,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ad4b8b087606d67425cb9534692e47e0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4b8b087606d67425cb9534692e47e0e">&#9670;&nbsp;</a></span>DeltaR()</h2>
+<a id="acf5aea2b75bbacb4d9b340091de32f63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf5aea2b75bbacb4d9b340091de32f63">&#9670;&nbsp;</a></span>DeltaR() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float hardware::DeltaR </td>
+          <td class="memname">float DeltaR </td>
           <td>(</td>
           <td class="paramtype">ROOT::Math::PtEtaPhiMVector&#160;</td>
           <td class="paramname"><em>v1</em>, </td>
@@ -178,14 +203,135 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a35a91a442950509fafc36c5d5d4c58ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a35a91a442950509fafc36c5d5d4c58ed">&#9670;&nbsp;</a></span>invariantMass()</h2>
+<a id="a2c6dc2cce56b078337b1d625310de9e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c6dc2cce56b078337b1d625310de9e1">&#9670;&nbsp;</a></span>DeltaR() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double hardware::invariantMass </td>
+          <td class="memname">float hardware::DeltaR </td>
+          <td>(</td>
+          <td class="paramtype">T1&#160;</td>
+          <td class="paramname"><em>in1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T2&#160;</td>
+          <td class="paramname"><em>in2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculate \(\Delta R\) between two objects. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in1</td><td></td></tr>
+    <tr><td class="paramname">in2</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>float </dd></dl>
+
+</div>
+</div>
+<a id="ada97dc35a6c86dd103ad7d001a5017a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada97dc35a6c86dd103ad7d001a5017a2">&#9670;&nbsp;</a></span>HadamardProduct() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RVec&lt; float &gt; HadamardProduct </td>
+          <td>(</td>
+          <td class="paramtype">RVec&lt; float &gt;&#160;</td>
+          <td class="paramname"><em>v1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">RVec&lt; float &gt;&#160;</td>
+          <td class="paramname"><em>v2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Hadamard product of two vectors (<code>v3[i] = v1[i]*v2[i]</code>) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v1</td><td></td></tr>
+    <tr><td class="paramname">v2</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>RVec&lt;float&gt; </dd></dl>
+
+</div>
+</div>
+<a id="a4c8c93bd94db0b61b65881a8ad972e6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c8c93bd94db0b61b65881a8ad972e6e">&#9670;&nbsp;</a></span>HadamardProduct() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RVec&lt; float &gt; HadamardProduct </td>
+          <td>(</td>
+          <td class="paramtype">RVec&lt; float &gt;&#160;</td>
+          <td class="paramname"><em>v1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">RVec&lt; RVec&lt; float &gt;&gt;&#160;</td>
+          <td class="paramname"><em>v2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>v2subindex</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Hadamard product of two vectors (<code>v3[i] = v1[i]*v2[i][v2subindex]</code>) where v2 has multiple sub-elements, only one of which should be accessed (at index of v2subindex). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v1</td><td></td></tr>
+    <tr><td class="paramname">v2</td><td></td></tr>
+    <tr><td class="paramname">v2subindex</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>RVec&lt;float&gt; </dd></dl>
+
+</div>
+</div>
+<a id="aced1b3d9699adc39619ed7a1272a8484"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aced1b3d9699adc39619ed7a1272a8484">&#9670;&nbsp;</a></span>InvariantMass()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double InvariantMass </td>
           <td>(</td>
           <td class="paramtype">RVec&lt; ROOT::Math::PtEtaPhiMVector &gt;&#160;</td>
           <td class="paramname"><em>vects</em></td><td>)</td>
@@ -205,14 +351,59 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a86cac73d45dc208c29d331a6438cc5d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a86cac73d45dc208c29d331a6438cc5d1">&#9670;&nbsp;</a></span>TLvector() <span class="overload">[1/2]</span></h2>
+<a id="a12762e8b570c50e94a3d906fa578e698"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12762e8b570c50e94a3d906fa578e698">&#9670;&nbsp;</a></span>MultiHadamardProduct()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ROOT::Math::PtEtaPhiMVector hardware::TLvector </td>
+          <td class="memname">RVec&lt; float &gt; MultiHadamardProduct </td>
+          <td>(</td>
+          <td class="paramtype">RVec&lt; float &gt;&#160;</td>
+          <td class="paramname"><em>v1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">RVec&lt; RVec&lt; RVec&lt; float &gt;&gt;&gt;&#160;</td>
+          <td class="paramname"><em>Multiv2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>v2subindex</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Hadamard product of a base vector and a list of N more vectors (<code>vout[i] = v1[i]*v2[i][v2subindex]*v3[i][v2subindex]...</code>) where v&lt;N&gt; has multiple sub-elements, only one of which should be accessed (at index of v2subindex). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v1</td><td></td></tr>
+    <tr><td class="paramname">Multiv2</td><td></td></tr>
+    <tr><td class="paramname">v2subindex</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>RVec&lt;float&gt; </dd></dl>
+
+</div>
+</div>
+<a id="ac4cf6f794442c05cd45c12422be730d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4cf6f794442c05cd45c12422be730d3">&#9670;&nbsp;</a></span>TLvector() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ROOT::Math::PtEtaPhiMVector TLvector </td>
           <td>(</td>
           <td class="paramtype">float&#160;</td>
           <td class="paramname"><em>pt</em>, </td>
@@ -257,14 +448,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="abfdf87f14ffb0769dc41c74a62d90b6e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abfdf87f14ffb0769dc41c74a62d90b6e">&#9670;&nbsp;</a></span>TLvector() <span class="overload">[2/2]</span></h2>
+<a id="a538fac1c9c327eb4e05136fea180a9d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a538fac1c9c327eb4e05136fea180a9d8">&#9670;&nbsp;</a></span>TLvector() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">RVec&lt;ROOT::Math::PtEtaPhiMVector&gt; hardware::TLvector </td>
+          <td class="memname">RVec&lt; ROOT::Math::PtEtaPhiMVector &gt; TLvector </td>
           <td>(</td>
           <td class="paramtype">RVec&lt; float &gt;&#160;</td>
           <td class="paramname"><em>pt</em>, </td>
@@ -309,14 +500,95 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aece5e1d3b9c47f248f8bb83f1206b04f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aece5e1d3b9c47f248f8bb83f1206b04f">&#9670;&nbsp;</a></span>transverseMass()</h2>
+<a id="ab991c7323636100b62631322a422a78c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab991c7323636100b62631322a422a78c">&#9670;&nbsp;</a></span>TLvector() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float hardware::transverseMass </td>
+          <td class="memname">ROOT::Math::PtEtaPhiMVector hardware::TLvector </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>obj</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a ROOT::Math::PtEtaPhiMVectors. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">obj</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>ROOT::Math::PtEtaPhiMVector </dd></dl>
+
+</div>
+</div>
+<a id="aa7687b73710a4919516fc68482452951"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7687b73710a4919516fc68482452951">&#9670;&nbsp;</a></span>TLvector() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RVec&lt;ROOT::Math::PtEtaPhiMVector&gt; hardware::TLvector </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; T &gt;&#160;</td>
+          <td class="paramname"><em>objs</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a vector of ROOT::Math::PtEtaPhiMVectors. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">objs</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>RVec&lt;ROOT::Math::PtEtaPhiMVector&gt; </dd></dl>
+
+</div>
+</div>
+<a id="a07f9a8f4312c39c75e4c193b6c0517c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07f9a8f4312c39c75e4c193b6c0517c1">&#9670;&nbsp;</a></span>Transpose()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RVec&lt;RVec&lt;T&gt; &gt; hardware::Transpose </td>
+          <td>(</td>
+          <td class="paramtype">RVec&lt; RVec&lt; T &gt;&gt;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Transpose a vector so that output[j][i] = input[i][j]. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>RVec&lt;RVec&lt;T&gt;&gt; </dd></dl>
+
+</div>
+</div>
+<a id="a49a5a3b0f7467731a7169650922c10df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49a5a3b0f7467731a7169650922c10df">&#9670;&nbsp;</a></span>TransverseMass()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float TransverseMass </td>
           <td>(</td>
           <td class="paramtype">float&#160;</td>
           <td class="paramname"><em>MET_pt</em>, </td>

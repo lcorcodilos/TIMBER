@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['rvecfloat',['RVecFloat',['../struct_collection.html#aa99b31ef8d2531c6ea052a482f95c06e',1,'Collection']]],
-  ['rvecint',['RVecInt',['../struct_collection.html#afaab1969951afe78b5ad759bdc1e1e0e',1,'Collection']]]
+  ['name',['name',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#ab74e6bf80237ddc4109968cedc58c151',1,'TIMBER.Analyzer.Node.name()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#ab74e6bf80237ddc4109968cedc58c151',1,'TIMBER.Analyzer.Group.name()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_module_worker.html#ab74e6bf80237ddc4109968cedc58c151',1,'TIMBER.Analyzer.ModuleWorker.name()']]]
 ];

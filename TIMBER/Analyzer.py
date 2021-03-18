@@ -4,12 +4,13 @@ Home of main classes for TIMBER.
 
 """
 
+from TIMBER.Utilities.CollectionGen import BuildCollectionDict, GetKeyValForBranch, StructDef, StructObj
 from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags
 from clang import cindex
 from collections import OrderedDict
 
 import ROOT
-import pprint, copy, os, subprocess, textwrap
+import pprint, copy, os, subprocess, textwrap, re, glob
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -30,7 +31,7 @@ class analyzer(object):
 
     When using class functions to perform actions, an active node will always be tracked so that the next action uses 
     the active node and assigns the output node as the new #ActiveNode"""
-    def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs"):
+    def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs", createAllCollections=False):
         """Constructor.
         
         Sets up the tracking of actions on an RDataFrame as nodes. Also
@@ -39,11 +40,13 @@ class analyzer(object):
         branch (#lhaid), if the file is data (#isData), and if the file is before NanoAOD
         version 6 (#preV6).
 
-        @param fileName (str): A ROOT file path or the path to a txt file which contains several ROOT file paths separated by 
-                new line characters.
+        @param fileName (str): A ROOT file path, a path to a txt file which contains several ROOT file paths separated by 
+                new line characters, or a list of either .root and/or .txt files.
         @param eventsTreeName (str, optional): Name of TTree in fileName where events are stored. Defaults to "Events" (for NanoAOD)
-        @param runTreeName (str, optional): NAme of TTree in fileName where run information is stored (for generated event info in 
+        @param runTreeName (str, optional): Name of TTree in fileName where run information is stored (for generated event info in 
                 simulation). Defaults to "Runs" (for NanoAOD) 
+        @param createAllCollections (str, optional): Create all of the collection structs immediately. This consumes memory no matter what
+                and the collections will increase processing times compared to accessing column values directly. Defaults to False. 
         """
 
         ## @var fileName
@@ -81,27 +84,29 @@ class analyzer(object):
         # Node
         #
         # Active node. Access via GetActiveNode(). Set via SetActiveNode().
+        ## @var silent
+        # bool
+        #
+        # Silences the verbose output of each Cut and Define. Defaults to False but can be modified by the user at will.
+        ## @var RunChain
+        # ROOT.TChain
+        #
+        # The TChain of the `<runTreeName>` TTree.
 
         super(analyzer, self).__init__()
         self.fileName = fileName 
         self.__eventsTreeName = eventsTreeName
+        self.silent = False
 
         # Setup TChains for multiple or single file
         self.__eventsChain = ROOT.TChain(self.__eventsTreeName) 
-        RunChain = ROOT.TChain(runTreeName) # Has generated event count information - will be deleted after initialization
-        if ".root" in self.fileName: 
-            self.__eventsChain.Add(self.fileName)
-            RunChain.Add(self.fileName)
-        elif ".txt" in self.fileName: 
-            txt_file = open(self.fileName,"r")
-            for l in txt_file.readlines():
-                thisfile = l.strip()
-                if 'root://' not in thisfile and thisfile.startswith('/store/'): thisfile='root://cms-xrd-global.cern.ch/'+thisfile
-                self.__eventsChain.Add(thisfile)
-                RunChain.Add(thisfile)
-        else: 
-            raise Exception("File name extension not supported. Please provide a single .root file or a .txt file with a line-separated list of .root files to chain together.")
-
+        self.RunChain = ROOT.TChain(runTreeName) 
+        if isinstance(self.fileName,list):
+            for f in self.fileName:
+                self.__addFile(f)
+        else:
+            self.__addFile(self.fileName)
+        
         # Make base RDataFrame
         BaseDataFrame = ROOT.RDataFrame(self.__eventsChain) 
         self.BaseNode = Node('base',BaseDataFrame) 
@@ -110,21 +115,21 @@ class analyzer(object):
         self.Corrections = {} 
 
         # Check if dealing with data
-        if hasattr(RunChain,'genEventCount'): 
+        if hasattr(self.RunChain,'genEventCount'): 
             self.isData = False 
             self.preV6 = True 
-        elif hasattr(RunChain,'genEventCount_'): 
+        elif hasattr(self.RunChain,'genEventCount_'): 
             self.isData = False
             self.preV6 = False
         else: self.isData = True
  
         # Count number of generated events if not data
-        self.genEventCount = 0 
+        self.genEventCount = 0.0
         if not self.isData: 
-            for i in range(RunChain.GetEntries()): 
-                RunChain.GetEntry(i)
-                if self.preV6: self.genEventCount+= RunChain.genEventCount
-                else: self.genEventCount+= RunChain.genEventCount_
+            for i in range(self.RunChain.GetEntries()): 
+                self.RunChain.GetEntry(i)
+                if self.preV6: self.genEventCount+= self.RunChain.genEventCount
+                else: self.genEventCount+= self.RunChain.genEventCount_
 
         # Get LHAID from LHEPdfWeights branch
         self.lhaid = "-1"
@@ -141,13 +146,43 @@ class analyzer(object):
                             continue
                         else:
                             break
-                    self.lhaid = str(int(self.lhaid)-1)
+                    self.lhaid = str(int(self.lhaid)-1) if self.lhaid[-1] == 1 else self.lhaid
                     print ('LHA ID: '+self.lhaid)
 
-        # Cleanup
-        del RunChain
         self.ActiveNode = self.BaseNode
+        # Auto create collections
+        self.__collectionDict = BuildCollectionDict(BaseDataFrame)
+        self.__builtCollections = []
+        if createAllCollections:
+            self.__createAllCollections(silent=True)
+
+        skipHeaders = []
+        if 'CMSSW_BASE' not in os.environ.keys():
+            skipHeaders = ['JME_common.h','JetSmearer.h','JetRecalibrator.h','JES_weight.h','JER_weight.h','JMS_weight.h','JMR_weight.h']
+
+        for f in glob.glob(os.environ["TIMBERPATH"]+'TIMBER/Framework/include/*.h'):
+            if f.split('/')[-1] in skipHeaders: continue
+            CompileCpp('#include "%s"\n'%f)
  
+    def __addFile(self,f):
+        '''Add file to TChains being tracked.
+
+        Args:
+            f (str): File to add.
+        '''
+        if f.endswith(".root"): 
+            if 'root://' not in f and f.startswith('/store/'):
+                f='root://cms-xrd-global.cern.ch/'+f
+            self.__eventsChain.Add(f)
+            self.RunChain.Add(f)
+        elif f.endswith(".txt"): 
+            txt_file = open(f,"r")
+            for l in txt_file.readlines():
+                thisfile = l.strip()
+                self.__addFile(thisfile)
+        else:
+            raise Exception("File name extension not supported. Please provide a single or list of .root files or a .txt file with a line-separated list of .root files to chain together.")
+
     def Close(self):
         '''Safely deletes analyzer instance.
         
@@ -190,6 +225,14 @@ class analyzer(object):
     def Range(self,*argv):
         '''@see Node#Range'''
         return self.SetActiveNode(self.ActiveNode.Range(*argv))
+
+    def GetCollectionNames(self):
+        '''Return a list of all collections that currently exist (including those that have been added).
+
+        Returns:
+            list(str): Collection names.
+        '''
+        return self.__collectionDict.keys()
 
     def SetActiveNode(self,node):
         '''Sets the active node.
@@ -341,11 +384,13 @@ class analyzer(object):
         if isinstance(cuts,CutGroup):
             for c in cuts.keys():
                 cut = cuts[c]
-                newNode = newNode.Cut(c,cut,nodetype=nodetype)
+                newNode = self.__collectionDefCheck(cut, newNode)
+                newNode = newNode.Cut(c,cut,nodetype=nodetype,silent=self.silent)
                 newNode.name = cuts.name+'__'+c
                 self.TrackNode(newNode)
         elif isinstance(cuts,str):
-            newNode = newNode.Cut(name,cuts,nodetype=nodetype)
+            newNode = self.__collectionDefCheck(cuts, newNode)
+            newNode = newNode.Cut(name,cuts,nodetype=nodetype,silent=self.silent)
             self.TrackNode(newNode)
         else:
             raise TypeError("Second argument to Cut method must be a string of a single cut or of type CutGroup (which provides an OrderedDict).")
@@ -375,17 +420,27 @@ class analyzer(object):
         if isinstance(variables,VarGroup):
             for v in variables.keys():
                 var = variables[v]
-                newNode = newNode.Define(v,var,nodetype=nodetype)
+                newNode = self.__collectionDefCheck(var, newNode)
+                newNode = newNode.Define(v,var,nodetype=nodetype,silent=self.silent)
                 newNode.name = variables.name+'__'+v
                 self.TrackNode(newNode)
             # newNode.name = variables.name
         elif isinstance(variables,str):
-            newNode = newNode.Define(name,variables,nodetype=nodetype)
+            newNode = self.__collectionDefCheck(variables, newNode)
+            newNode = newNode.Define(name,variables,nodetype=nodetype,silent=self.silent)
             self.TrackNode(newNode)
         else:
             raise TypeError("Second argument to Define method must be a string of a single var or of type VarGroup (which provides an OrderedDict).")
 
-        # self.TrackNode(newNode)
+        return self.SetActiveNode(newNode)
+
+    def __collectionDefCheck(self, action_str, node):
+        newNode = node
+        for c in self.__collectionDict.keys():
+            if (c+'s' not in self.__builtCollections) and re.search(r"\b" + re.escape(c+'s') + r"\b", action_str):
+                print ('MAKING %ss for %s'%(c,action_str))
+                newNode = self.__createCollection(c,self.__collectionDict[c],silent=True,node=newNode)
+                self.__builtCollections.append(c+'s')
         return self.SetActiveNode(newNode)
 
     # Applies a bunch of action groups (cut or var) in one-shot in the order they are given
@@ -460,18 +515,47 @@ class analyzer(object):
             SubCollection('TopJets','FatJet','FatJet_msoftdrop > 105 && FatJet_msoftdrop < 220')
         '''
         collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if basecoll in str(cname) and str(cname) not in skip]
-        self.Define(name+'_idx','%s'%(condition))
+        if condition != '': self.Define(name+'_idx','%s'%(condition))
         for b in collBranches:
             replacementName = b.replace(basecoll,name)
             if b == 'n'+basecoll:
-                self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name),nodetype='SubCollDefine')
+                if condition != '': self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name),nodetype='SubCollDefine')
+                else: self.Define(replacementName,b)
+            elif 'Struct>' in self.DataFrame.GetColumnType(b): # skip internal structs
+                continue
             elif 'RVec' not in self.DataFrame.GetColumnType(b):
                 print ('Found type %s during SubCollection'%self.DataFrame.GetColumnType(b))
                 self.Define(replacementName,b,nodetype='SubCollDefine')
             else:
-                self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
+                if condition != '': self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
+                else: self.Define(replacementName,b,nodetype='SubCollDefine')
             
+        branches_to_track = []
+        for v in collBranches:
+            v_with_type = GetKeyValForBranch(self.DataFrame, v)[1]
+            if v_with_type != '': branches_to_track.append(v_with_type)
+        self.__trackNewCollection(name,branches_to_track)
+
         return self.ActiveNode
+
+    def ReorderCollection(self, name, basecoll, newOrderCol, skip=[]):
+        '''Reorders a collection (from a NanoAOD-like format) where the 
+        new order is another column of vectors with the new indices specified.
+
+        @param name (str): Name of new collection.
+        @param basecoll (str): Name of derivative collection.
+        @param newOrderCol (str): Order for the new collection (stored as column in RDataFrame).
+        @param skip ([str]): List of variable names in the collection to skip.
+
+        Returns:
+            Node: New #ActiveNode.
+
+        Example:
+            a = analyzer(...)
+            a.Define('NewFatJetIdxs','ReorderJets(...)')
+            a.ReorderCollection('ReorderedFatJets','FatJet','NewFatJetIdxs')
+        '''
+        return self.SubCollection(name, basecoll, newOrderCol, skip)
 
     def ObjectFromCollection(self,name,basecoll,index,skip=[]):
         '''Similar to creating a SubCollection except the newly defined columns
@@ -525,6 +609,30 @@ class analyzer(object):
 
         self.Define('n'+name,'+'.join(['n'+n for n in collectionNames]),nodetype='MergeDefine')
 
+        self.__trackNewCollection(name,[GetKeyValForBranch(self.DataFrame,collectionNames[0]+'_'+v)[1] for v in vars_to_make])
+
+    def __trackNewCollection(self,name,branches):
+        self.__collectionDict[name] = []
+        for b in branches:
+            self.__collectionDict[name].append(b)
+
+    def __createCollection(self,collection,attributes,silent=True,node=None):
+        init_silent = self.silent
+        self.silent = silent
+        if collection+'s' not in self.__builtCollections:
+            self.__builtCollections.append(collection+'s')
+            CompileCpp(StructDef(collection,attributes))
+            newNode = self.Define(collection+'s', StructObj(collection,attributes),node)
+        else:
+            raise RuntimeError('Collections `%s` already built.'%(collection+'s'))
+        self.silent = init_silent
+        return self.SetActiveNode(newNode)
+
+    def __createAllCollections(self,silent=True):
+        collDict = BuildCollectionDict(self.BaseNode.DataFrame)
+        for c in collDict.keys():
+            self.__createCollection(c,collDict[c],silent)
+
     def CommonVars(self,collections):
         '''Find the common variables between collections.
 
@@ -544,6 +652,21 @@ class analyzer(object):
 
         return list(set.intersection(*map(set,commonVars)))
 
+    def _addModule(self, module, evalArgs, nodetype, node=None):
+        if node == None: node = self.ActiveNode
+
+        # Quick type checking
+        if not isinstance(node,Node): raise TypeError('_addModule() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
+
+        # Make the call
+        module.MakeCall(evalArgs,node)
+
+        # Make new node
+        newNode = self.Define(module.name+'__vec',module.GetCall(),node,nodetype=nodetype)
+
+        # self.TrackNode(returnNode)
+        return self.SetActiveNode(newNode)
+
     #---------------------#
     # Corrections/Weights #
     #---------------------#
@@ -553,8 +676,9 @@ class analyzer(object):
         variations calculated as new columns.
 
         @param correction (Correction): Correction object to add.
-        @param evalArgs ([str], optional): List of arguments (NanoAOD branch names) to provide to per-event evaluation method.
-                              Default empty and clang will deduce if method definition argument names match columns in RDataFrame.
+        @param evalArgs (dict, optional): Dict with keys as C++ method argument names and values as the actual argument to provide
+                (branch/column names) for per-event evaluation. For any argument names where a key is not provided, will attempt
+                to find branch/column that already matches based on name.
         @param node (Node, optional): Node to add correction on top of. Defaults to #ActiveNode.
 
         Raises:
@@ -564,20 +688,15 @@ class analyzer(object):
         Returns:
             Node: New #ActiveNode.
         '''
-        if node == None: node = self.ActiveNode
-
         # Quick type checking
-        if not isinstance(node,Node): raise TypeError('AddCorrection() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
-        elif not isinstance(correction,Correction): raise TypeError('AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
+        if not isinstance(correction,Correction): raise TypeError('AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
+        elif isinstance(correction, Calibration): raise TypeError('Attempting to add a Calibration and not a Correction. Corrections weight events while Calibrations weight variables.')
 
-        # Make the call
-        correction.MakeCall(evalArgs,node)
-
+        newNode = self._addModule(correction, evalArgs, 'Correction', node)
         # Add correction to track
         self.Corrections[correction.name] = correction
 
         # Make new node
-        newNode = self.Define(correction.name+'__vec',correction.GetCall(),node,nodetype='Correction')
         if correction.GetType() == 'weight':
             variations = ['nom','up','down']
         elif correction.GetType() == 'uncert':
@@ -760,23 +879,17 @@ class analyzer(object):
         # Wait to GetValue and SetTitle so that the histogram filling happens simultaneously
         for k in out.keys():
             if dimension == 1: 
-                out[k] = out[k].GetValue()
                 out[k].GetXaxis().SetTitle(variables[0])
             elif dimension == 2: 
-                out[k] = out[k].GetValue()
                 out[k].GetXaxis().SetTitle(variables[0])
                 out[k].GetYaxis().SetTitle(variables[1])
             elif dimension == 3: 
-                out[k] = out[k].GetValue()
                 out[k].GetXaxis().SetTitle(variables[0])
                 out[k].GetYaxis().SetTitle(variables[1])
                 out[k].GetZaxis().SetTitle(variables[2])
 
         return out
 
-    #----------------------------------------------------------------#
-    # Draw templates together to see up/down effects against nominal #
-    #----------------------------------------------------------------#
     def DrawTemplates(self,hGroup,saveLocation,projection='X',projectionArgs=(),fileType='pdf'):
         '''Draw the template uncertainty histograms created by #MakeTemplateHistos(). 
 
@@ -826,9 +939,9 @@ class analyzer(object):
             down.SetLineColor(ROOT.kBlue)
 
             leg = ROOT.TLegend(0.7,0.7,0.9,0.9)
-            leg.AddEntry(nominal,'Nominal','lf')
-            leg.AddEntry(up,'Up','l')
-            leg.AddEntry(down,'Down','l')
+            leg.AddEntry(nominal.GetValue(),'Nominal','lf')
+            leg.AddEntry(up.GetValue(),'Up','l')
+            leg.AddEntry(down.GetValue(),'Down','l')
 
             up.Draw('same hist')
             down.Draw('same hist')
@@ -836,6 +949,122 @@ class analyzer(object):
 
             canvas.Print('%s%s_%s.%s'%(saveLocation,baseName,corr,fileType),fileType)
 
+    #---------------------#
+    # Handle calibrations #
+    #---------------------#
+    def CalibrateVars(self,varCalibDict,evalArgs,newCollectionName,variationsFlag=True,node=None):
+        '''Calibrate variables (all of the same collection - ex. "FatJet") with the Calibrations provided in varCalibDict and
+        arguments provided in evalArgs. Create a new collection
+        with the calibrations applied and any re-ordering of the collection applied. As an example...
+
+```
+a = analyzer(...)
+jes = Calibration("JES","TIMBER/Framework/include/JES_weight.h",
+        [GetJMETag("JES",str(year),"MC"),"AK8PFPuppi","","true"], corrtype="Calibration")
+jer = Calibration("JER","TIMBER/Framework/include/JER_weight.h",
+        [GetJMETag("JER",str(year),"MC"),"AK8PFPuppi"], corrtype="Calibration")
+...
+varCalibDict = {
+    "FatJet_pt" : [jes, jer]
+    "FatJet_mass" : [jes, jer]
+}
+evalArgs = {
+    jes : {"jets":"FatJets"},
+    jer : {"jets":"FatJets","genJets":"GenJets"}
+},
+a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
+
+```
+        This will apply the JES and JER calibrations and their four variations (up,down pair for each) to FatJet_pt and FatJet_mass branches
+        and create a new collection called "CorrectedFatJets" which will be ordered by the new pt values. Note that if you want to correct a different
+        collection (ex. AK4 based Jet collection), you need a separate payload and separate call to CalibrateVars because only one collection can be generated at a time.
+        Also note that in this example, `jes` and `jer` are initialized with the AK8PFPuppi jets in mind. So if you'd like to apply the JES or JER calibrations to
+        AK4 jets, you would also need to define objects like `jesAK4` and `jerAK4`.
+
+        The calibrations will always be calculated as a seperate
+        column which stores a vector named `<CalibName>__vec` and ordered {nominal, up, down} where "up" and "down" are the absolute weights
+        (ie. not relative to "nominal"). If you'd just like the weights and do not want them applied to any variable, you can provide
+        an empty dictionary (`{}`) for the varCalibDict argument.
+        
+        This method will set the new active node to the one with the new collection defined.
+
+        @param varCalibDict (dict): Dictionary mapping variable to calibrate to calibrations to apply.
+                Best understood through the example above.
+        @param evalArgs (dict): Dictionary mapping calibrations to input evaluation arguments that map the 
+                C++ method definition argument names to the desired input.
+        @param newCollectionName (str): Output collection name.
+        @param variationsFlag (bool): If True, calculate systematic variations. If False, do not calculate variations. Defaults to True.
+        @param node (Node, optional): Node to add correction on top of. Defaults to #ActiveNode.
+
+        Raises:
+            TypeError: If argument types are not Node and Correction.
+            ValueError: If Correction type is not a weight or uncertainty.
+
+        Returns:
+            Node: New #ActiveNode.
+        '''
+        if node == None: node = self.ActiveNode
+        # Type checking and create calibration branches
+        newNode = self.__checkCalibrations(node,varCalibDict,evalArgs)      
+        
+        # Create the product of weights
+        new_columns =  OrderedDict()
+        baseCollectionName = varCalibDict.keys()[0].split('_')[0]
+        for var in varCalibDict.keys():
+            isRVec = "RVec" in self.DataFrame.GetColumnType(var)
+            # nominal first
+            new_var_name = var.replace(baseCollectionName,newCollectionName)
+            if not isRVec: 
+                new_columns[new_var_name] = var
+                for calib in varCalibDict[var]:
+                    new_columns[new_var_name] += "*"+calib.name+'__vec[0]'     
+            else:
+                calib_list_str = '{%s}'%(','.join(calib.name+'__vec' for calib in varCalibDict[var]))
+                new_columns[new_var_name] = 'hardware::MultiHadamardProduct({0},{1},0)'.format(var,calib_list_str)
+            # now the variations
+            for calib in varCalibDict[var]:
+                if variationsFlag == True:
+                    for i,v in enumerate(['up','down']):
+                        if not isRVec:
+                            new_columns[new_var_name+'_'+calib.name+'__'+v] = new_columns[new_var_name].replace(calib.name+'__vec[0]',calib.name+'__vec[%s]'%i+1)
+                        else:
+                            nom_minus_calib = new_columns[new_var_name].replace(calib.name+'__vec,','').replace(calib.name+'__vec','')
+                            new_columns[new_var_name+'_'+calib.name+'__'+v] = 'hardware::HadamardProduct({0},{1},{2})'.format(nom_minus_calib, calib.name+'__vec',i+1)
+        # Actually define the columns 
+        for c in new_columns.keys():
+            newNode = self.Define(c, new_columns[c], newNode, nodetype='Calibration')
+        
+        newNode = self.SubCollection(newCollectionName,baseCollectionName,'',skip=varCalibDict.keys()+new_columns.keys())
+
+        return self.SetActiveNode(newNode)
+
+    def __checkCalibrations(self,node,varCalibDict,evalArgs):
+        newNode = node
+        # Type checking
+        if not isinstance(node,Node): raise TypeError('CalibrateVar() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
+        if varCalibDict != {}:
+            for var in varCalibDict.keys():
+                if not isinstance(var,str): raise TypeError('A varCalibDict variable key is not a string (%s).'%var)
+                for calib in varCalibDict[var]:
+                    if not isinstance(calib,Calibration):
+                        raise TypeError('CalibrateVar() varCalibDict does not support value type %s for calibration. Please provide a Calibration.'%(type(calib)))
+        if not isinstance(evalArgs,dict):
+            raise TypeError('CalibrationVar() evalArgs must be of type dict.')
+        # Build calibration module if it doesn't exist
+        for calib in evalArgs.keys():
+            if not isinstance(calib,Calibration):
+                raise TypeError('CalibrateVar() evalArgs keys do not support value type %s for calibration. Please provide a Calibration.'%(type(calib)))
+            if calib.name+'__vec' not in self.DataFrame.GetColumnNames():
+                print ('Adding Calibration %s'%calib.name)
+                newNode = self._addModule(calib, evalArgs[calib], 'Calibration', newNode)
+                # Does not currently account for un-nested calibration (ie. only RVec<RVec<T>> assumed)
+                transpose_name = calib.name+'__vecT'
+                newNode = self.Define(transpose_name,'hardware::Transpose(%s)'%(calib.name+'__vec'))
+                for i,variation in enumerate(['nom','up','down']):
+                    this_element = transpose_name+'[%s]'%i
+                    # Return element if there are actually jets. Else return an empty vector.
+                    newNode = self.Define(calib.name+'_'+variation,'%s.size() > 0 ? %s : RVec<float> (0);'%(transpose_name,this_element))
+        return self.SetActiveNode(newNode)            
     #----------------------------------------------#
     # Build N-1 "tree" and outputs the final nodes #
     # Beneficial to put most aggressive cuts first #
@@ -913,11 +1142,11 @@ class analyzer(object):
         for skip in toSkip:
             for node in graph.nodes:
                 if skip in graph.nodes[node]["type"]:
-                    graph = nx.contracted_edge(graph,(graph.pred[node].keys()[0],node),self_loops=False)
+                    graph = nx.contracted_edge(graph,(list(graph.pred[node].keys())[0],node),self_loops=False)
         # Write out dot and draw
         dot = nx.nx_pydot.to_pydot(graph)
         extension = outfilename.split('.')[-1]
-        filename = outfilename.split('.')[:-1]
+        filename = ''.join(outfilename.split('.')[:-1])
         if extension not in [outfilename,'dot']:
             try:
                 getattr(dot,'write_'+extension)(outfilename)
@@ -1116,35 +1345,37 @@ class Node(object):
         else:
             raise TypeError('Attempting to add children that are not in a list or dict.')
 
-    def Define(self,name,var,nodetype=None):
+    def Define(self,name,var,nodetype=None,silent=False):
         '''Produces a new Node with the provided variable/column added.
 
         @param name (str): Name for the column for internal tracking and later reference.
         @param var (str): A one-line C++ string that evaluates to desired value to store. 
         @param nodetype (str, optional): Defaults to None in which case the new Node will
             be type "Define".
+        @param silent (bool, optional): If False, prints the definition action to the terminal. Defaults to False.
 
         Returns:
             Node: New Node object with new column added.
         '''
-        print('Defining %s: %s' %(name,var))
+        if not silent: print('Defining %s: %s' %(name,var))
         newNodeType = 'Define' if nodetype == None else nodetype
         newNode = Node(name,self.DataFrame.Define(name,var),children=[],parent=self,action=var,nodetype=newNodeType)
         self.SetChild(newNode)
         return newNode
 
-    def Cut(self,name,cut,nodetype=None):
+    def Cut(self,name,cut,nodetype=None,silent=False):
         '''Produces a new Node with the provided cut/filter applied.
 
         @param name (str): Name for the cut for internal tracking and later reference.
         @param cut (str): A one-line C++ string that evaluates as a boolean.
         @param nodetype (str, optional): Defaults to None in which case the new Node will
             be type "Cut".
+        @param silent (bool, optional): If False, prints the definition action to the terminal. Defaults to False.
 
         Returns:
             Node: New Node object with cut applied.
         '''
-        print('Filtering %s: %s' %(name,cut))
+        if not silent: print('Filtering %s: %s' %(name,cut))
         newNodeType = 'Define' if nodetype == None else nodetype
         newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],parent=self,action=cut,nodetype=newNodeType)
         self.SetChild(newNode)
@@ -1206,11 +1437,14 @@ class Node(object):
         return Node(self.name+'_range', self.DataFrame.Range(*argv),
                     action=action_name, nodetype='range', children=[], parent=self)
 
-    # IMPORTANT: When writing a variable size array through Snapshot, it is required that the column indicating its size is also written out and it appears before the array in the columns list.
-    # columns should be an empty string if you'd like to keep everything
     def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='RECREATE'): # columns can be a list or a regular expression or 'all'
         '''Takes a snapshot of the RDataFrame corresponding to this Node.
         Compression algorithm set to 1 (ZLIB) and compression level are set to 1.
+
+        IMPORTANT: When writing a variable size array through Snapshot, it is required
+        that the column indicating its size is also written out and it appears before
+        the array in the columns list. The `columns` argument should be `"all"` if you'd like
+        to keep everything.
 
         @param columns ([str] or str): List of columns to keep (str) with regex matching.
                 Provide single string 'all' to include all columns.
@@ -1236,9 +1470,21 @@ class Node(object):
         else:
             column_vec = ''
             for c in columns:
+                if c == '': continue
                 column_vec += c+'|'
             column_vec = column_vec[:-1]
             self.DataFrame.Snapshot(treename,outfilename,column_vec,opts)
+      
+    def GetBaseNode(self):
+        '''Returns the top-most parent Node by climbing node tree until a Node with no parent is reached.
+
+        Returns:
+            Node: Top-most parent Node.
+        '''
+        thisnode = self
+        while thisnode.parent != None:
+            thisnode = thisnode.parent
+        return thisnode
       
 ##############################
 # Group class and subclasses #
@@ -1467,36 +1713,27 @@ class HistGroup(Group):
                 out.Add(self[key])
         return out
 
-####################
-# Correction class #
-####################
-class Correction(object):
-    '''Class to handle corrections produced by C++ modules.
+###########################
+# Module handling classes #
+###########################
+class ModuleWorker(object):
+    '''Class to handle C++ class modules generically. 
 
     Uses clang in python to parse the C++ code and determine function names, 
     namespaces, and argument names and types. 
 
-    Writing the C++ modules has two requirements:
-
-    (1) the desired branch/column names must be used as the argument variable names
-    to allow the framework to automatically determine what branch/column to use in GetCall(),
-
-    (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
-    <up, down> for "uncert" type.    
-
+    Writing the C++ modules requires the desired branch/column names must be specified or be used as the argument variable names
+    to allow the framework to automatically determine what branch/column to use in GetCall().
     '''
-    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False):
+    def __init__(self,name,script,constructor=[],mainFunc='eval',columnList=None,isClone=False):
         '''Constructor
 
-        @param name (str): Correction name.
-        @param script (str): Path to C++ script with function to calculate correction.
+        @param name (str): Unique name to identify the instantiated worker object.
+        @param script (str): Path to C++ script with function to calculate correction. For a TIMBER module,
+                use the header file.
         @param constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
         @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
                 and the class will try to deduce it.
-        @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty), "corr"
-                (only a correction), or 
-                "uncert" (only an uncertainty). Defaults to '' and the class will try to
-                deduce it.
         @param columnList ([str], optional): List of column names to search mainFunc arguments against.
                 Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used.
         @param isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
@@ -1506,26 +1743,27 @@ class Correction(object):
         ## @var name
         # str
         # Correction name
-
         self.name = name
-        self.__script = self.__getScript(script)
-        self.__setType(corrtype)
-        self.__funcInfo = self.__getFuncInfo(mainFunc)
-        self.__mainFunc = list(self.__funcInfo.keys())[0]
-        self.__columnNames = LoadColumnNames() if columnList == None else columnList
-        self.__constructor = constructor 
-        self.__objectName = self.name
-        self.__call = None
+        self._script = self._getScript(script)
+        self._funcInfo = self._getFuncInfo(mainFunc)
+        self._mainFunc = list(self._funcInfo.keys())[0]
+        self._columnNames = LoadColumnNames() if columnList == None else columnList
+        self._constructor = constructor 
+        self._objectName = self.name
+        self._call = None
         # self.__funcNames = self.__funcInfo.keys()        
 
         if not isClone:
-            if not self.__mainFunc.endswith(mainFunc):
-                raise ValueError('Correction() instance provided with %s argument does not exist in %s (%s)'%(mainFunc,self.__script, self.__mainFunc))
-            CompileCpp(self.__script,library=True)
+            if not self._mainFunc.endswith(mainFunc):
+                raise ValueError('ModuleWorker() instance provided with %s argument does not exist in %s (%s)'%(mainFunc,self._script, self._mainFunc))
+            if '.h' in self._script:
+                CompileCpp('#include "%s"\n'%self._script)
+            else:
+                CompileCpp(self._script)
 
-        self.__instantiate(constructor)
+        self._instantiate(constructor)
 
-    def Clone(self,name,newMainFunc=None,newType=None):
+    def Clone(self,name,newMainFunc=None):
         '''Makes a clone of current instance.
 
         If multiple functions are in the same script, one can clone the correction and reassign the mainFunc
@@ -1533,16 +1771,14 @@ class Correction(object):
 
         @param name (str): Clone name.
         @param newMainFunc (str, optional): Name of the function to use inside script. Defaults to None and the original is used.
-        @param newType (str, optional): New type for the cloned correction. Defaults to None and the original is used.
         Returns:
-            Correction: Clone of instance with same script but different function (newMainFunc).
+            ModuleWorker: Clone of instance with same script but different function (newMainFunc).
         '''
-        if newMainFunc == None: newMainFunc = self.__mainFunc.split('::')[-1]
-        return Correction(name,self.__script,self.__constructor,newMainFunc,
-                          corrtype=self.__type if newType == None else newType,
-                          isClone=True,columnList=self.__columnNames)
+        if newMainFunc == None: newMainFunc = self._mainFunc.split('::')[-1]
+        return ModuleWorker(name,self._script,self._constructor,newMainFunc,
+                          isClone=True,columnList=self._columnNames)
 
-    def __getScript(self,script):
+    def _getScript(self,script):
         '''Does a basic check that script file exists and modifies path if necessary
         so relative paths to TIMBER/Framework/ can be used.
 
@@ -1565,37 +1801,7 @@ class Correction(object):
             raise NameError('File %s does not exist'%outname)
         return outname
 
-    def __setType(self,inType):
-        '''Sets the type of correction.
-        Will attempt to deduce from input script name if inType=''. File name
-        must have suffix '_weight' or '_SF' for weight type (correction plus uncertainties)
-        or '_uncert' for 'uncert' type (only uncertainties).
-
-        @param inType (str): Type of Correction. Use '' to deduce from input script name.
-
-        Raises:
-            NameError: If inType is '' and the type cannot be deduced from the input
-                script name.
-        '''
-        out_type = None
-        if inType in ['weight','uncert','corr']:
-            out_type = inType
-        elif inType not in ['weight','uncert','corr'] and inType != None:
-            print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...'%inType)
-
-        if out_type == None:
-            if '_weight.' in self.__script.lower() or '_sf.' in self.__script.lower():
-                out_type = 'weight'
-            elif '_uncert.' in self.__script.lower():
-                out_type = 'uncert'
-            elif '_corr.' in self.__script.lower():
-                out_type = 'corr'
-            else:
-                raise NameError('Attempting to add correction "%s" but script name (%s) does not end in "_weight.<ext>", "_SF.<ext>" or "_uncert.<ext>" and so the type of correction cannot be determined.'%(self.name,self.__script))
-
-        self.__type = out_type
-
-    def __getFuncInfo(self,funcname):
+    def _getFuncInfo(self,funcname):
         '''Parses script with clang to get the function information including name, namespace, and argument names.
 
         @param funcname (str): C++ class method name to search for in script.
@@ -1604,14 +1810,14 @@ class Correction(object):
             OrderedDict: Dictionary organized as `myreturn[methodname][argname] = argtype`.
         '''
         cpp_idx = cindex.Index.create()
-        translation_unit = cpp_idx.parse(self.__script, args=cpp_args)
+        translation_unit = cpp_idx.parse(self._script, args=cpp_args)
         filename = translation_unit.cursor.spelling
         funcs = OrderedDict()
         namespace = ''
         classname = None
         methodname = None
 
-        print ('Parsing %s with clang...'%self.__script)
+        print ('Parsing %s with clang...'%self._script)
         # Walk cursor over script
         for c in translation_unit.cursor.walk_preorder():
             # Pass over file errors
@@ -1623,45 +1829,62 @@ class Correction(object):
                     namespace = c.spelling
                 elif c.kind == cindex.CursorKind.CLASS_DECL or c.kind == cindex.CursorKind.CONSTRUCTOR:
                     classname = c.spelling
-                elif c.kind == cindex.CursorKind.CXX_METHOD:
+                elif c.kind == cindex.CursorKind.CXX_METHOD or c.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
                     methodname = classname+'::'+c.spelling
                     if namespace != '': # this will not support classes outside of the namespace and always assume it's inside
                         methodname = namespace + '::' + methodname
 
-                    # print methodname.split('::')[-1]
-                    # print funcname
+                    # print (methodname.split('::')[-1])
+                    # print (funcname)
                     if methodname.split('::')[-1] == funcname:
-                        # print methodname
+                        # print (methodname)
                         if methodname not in funcs.keys():
-                            # print methodname
+                            # print (methodname)
                             funcs[methodname] = OrderedDict()
-                            for arg in c.get_arguments():
-                                arg_walk_kinds = [c.kind for c in arg.walk_preorder()]
-                                # Check for defualt arg
-                                if cindex.CursorKind.UNEXPOSED_EXPR in [a for a in arg_walk_kinds]:
-                                    default_val = ''.join([tok.spelling for tok in list(translation_unit.get_tokens(extent=list(arg.walk_preorder())[-1].extent))])
-                                    funcs[methodname][arg.spelling] = default_val
-                                else:
-                                    funcs[methodname][arg.spelling] = None
+                            # print ([a.spelling for a in c.get_children()])
+                            if c.kind == cindex.CursorKind.CXX_METHOD:
+                                args_list = c.get_arguments()
+                                for arg in c.get_arguments():
+                                    arg_walk_kinds = [c.kind for c in arg.walk_preorder()]
+                                    # Check for defualt arg
+                                    if cindex.CursorKind.UNEXPOSED_EXPR in arg_walk_kinds:
+                                        default_val = ''.join([tok.spelling for tok in list(translation_unit.get_tokens(extent=list(arg.walk_preorder())[-1].extent))])
+                                        funcs[methodname][arg.spelling] = default_val
+                                    else:
+                                        funcs[methodname][arg.spelling] = None
 
-        # print funcs
+                            elif c.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
+                                for arg in [a for a in c.get_children() if a.kind == cindex.CursorKind.PARM_DECL]:
+                                    arg_walk_kinds = [c.kind for c in arg.walk_preorder()]
+                                    # Check for defualt arg
+                                    if cindex.CursorKind.UNEXPOSED_EXPR in arg_walk_kinds:
+                                        default_val = ''.join([tok.spelling for tok in list(translation_unit.get_tokens(extent=list(arg.walk_preorder())[-1].extent))])
+                                        funcs[methodname][arg.spelling] = default_val
+                                    else:
+                                        funcs[methodname][arg.spelling] = None                                  
+
         return funcs
 
-    def __instantiate(self,args):
+    def _instantiate(self,args):
         '''Instantiates the class in the provided script with the provided arguments.
 
         @param args ([str]): Ordered list of arguments to provide to C++ class to instantiate
                 the object in memory.
         '''
-        classname = self.__mainFunc.split('::')[-2]
+        classname = self._mainFunc.split('::')[-2]
         # constructor_name = classname+'::'+classname
 
         line = classname + ' ' + self.name+'('
         for a in args:
-            if a[0].isalpha():
-                line += '"%s", '%(a)
-            else:
-                line += '%s, '%(a)
+            try:
+                if a == "":
+                    line += '"", '
+                elif a[0].isalpha():
+                    line += '"%s", '%(a)
+                else:
+                    line += '%s, '%(a)
+            except:
+                raise ValueError("Constructor argument `%s` not accepted"%a)
 
         if len(args) > 0:
             line = line[:-2] + ');'
@@ -1697,8 +1920,8 @@ class Correction(object):
         else: raise TypeError('Input argument `toCheck` is not of type Node, RDataFrame, list, or None.')
             
         # Loop over function arguments
-        for a in self.__funcInfo[self.__mainFunc].keys():
-            default_value = self.__funcInfo[self.__mainFunc][a]
+        for a in self._funcInfo[self._mainFunc].keys():
+            default_value = self._funcInfo[self._mainFunc][a]
             skip_existence_check = False
             # if default argument exists
             if default_value != None:  
@@ -1720,17 +1943,17 @@ class Correction(object):
 
             # quick check it exists
             if not skip_existence_check and (arg_to_add not in cols_to_check):
-                print ('WARNING: Not able to find arg %s written in %s in available columns. '%(arg_to_add,self.__script))
+                print ('WARNING: Not able to find arg %s written in %s in available columns. '%(arg_to_add,self._script))
                 print ('         If `%s` is a value and not a column name, this warning can be ignored.'%(arg_to_add))
             args_to_use.append(arg_to_add)
 
-        # var_types = [self.__funcInfo[self.__mainFunc][a] for a in self.__funcInfo[self.__mainFunc].keys()]
-        out = '%s('%(self.__objectName+'.'+self.__mainFunc.split('::')[-1])
+        # var_types = [self._funcInfo[self._mainFunc][a] for a in self._funcInfo[self._mainFunc].keys()]
+        out = '%s('%(self._objectName+'.'+self._mainFunc.split('::')[-1])
         for i,a in enumerate(args_to_use):
             out += '%s, '%(a)
         out = out[:-2]+')'
 
-        self.__call = out
+        self._call = out
 
     def GetCall(self,inArgs = {},toCheck = None):
         '''Gets the call to the method to be evaluated per-event.
@@ -1744,9 +1967,9 @@ class Correction(object):
         Returns:
             str: The string that calls the method to evaluate per-event. Pass to Analyzer.Define(), Analyzer.Cut(), etc.
         '''
-        if self.__call == None:
+        if self._call == None:
             self.MakeCall(inArgs,toCheck)
-        return self.__call
+        return self._call
 
     def GetMainFunc(self):
         '''Gets full main function name.
@@ -1754,15 +1977,7 @@ class Correction(object):
         Returns:
             str: Name of function assigned from C++ script.
         '''
-        return self.__mainFunc
-
-    def GetType(self):
-        '''Gets Correction type.
-
-        Returns:
-            str: Correction type.
-        '''
-        return self.__type
+        return self._mainFunc
 
     def GetFuncNames(self):
         '''Gets list of function names in C++ script.
@@ -1770,8 +1985,132 @@ class Correction(object):
         Returns:
             [str]: List of possible function names found in C++ script.
         '''
-        return list(self.__funcInfo.keys())
+        return list(self._funcInfo.keys())
 
+class Correction(ModuleWorker):
+    '''Class to handle corrections produced by C++ modules.
+
+    Uses clang in python to parse the C++ code and determine function names, 
+    namespaces, and argument names and types. 
+
+    Writing the C++ modules has two requirements:
+
+    (1) the desired branch/column names must be specified or be used as the argument variable names
+    to allow the framework to automatically determine what branch/column to use in GetCall(),
+
+    (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
+    <up, down> for "uncert" type.
+    '''
+    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False):
+        '''Constructor
+
+        @param name (str): Correction name.
+        @param script (str): Path to C++ script with function to calculate correction.
+        @param constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
+        @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
+                and the class will try to deduce it.
+        @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty), "corr"
+                (only a correction), or 
+                "uncert" (only an uncertainty). Defaults to '' and the class will try to
+                deduce it.
+        @param columnList ([str], optional): List of column names to search mainFunc arguments against.
+                Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used.
+        @param isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
+                not duplicate compile the same script if two functions are needed in one C++ script.
+        '''
+
+        super(Correction,self).__init__(name,script,constructor,mainFunc,columnList,isClone)
+        self._setType(corrtype)
+
+    def Clone(self,name,newMainFunc=None,newType=None):
+        '''Makes a clone of current instance.
+
+        If multiple functions are in the same script, one can clone the correction and reassign the mainFunc
+        to avoid compiling the same script twice.
+
+        @param name (str): Clone name.
+        @param newMainFunc (str, optional): Name of the function to use inside script. Defaults to None and the original is used.
+        @param newType (str, optional): New type for the cloned correction. Defaults to None and the original is used.
+        Returns:
+            Correction: Clone of instance with same script but different function (newMainFunc).
+        '''
+        if newMainFunc == None: newMainFunc = self._mainFunc.split('::')[-1]
+        return Correction(name,self._script,self._constructor,newMainFunc,
+                          corrtype=self._type if newType == None else newType,
+                          isClone=True,columnList=self._columnNames)
+
+    def _setType(self,inType):
+        '''Sets the type of correction.
+        Will attempt to deduce from input script name if inType=''. File name
+        must have suffix '_weight' or '_SF' for weight type (correction plus uncertainties)
+        or '_uncert' for 'uncert' type (only uncertainties).
+
+        @param inType (str): Type of Correction. Use '' to deduce from input script name.
+
+        Raises:
+            NameError: If inType is '' and the type cannot be deduced from the input
+                script name.
+        '''
+        out_type = None
+        if inType in ['weight','uncert','corr']:
+            out_type = inType
+        elif inType not in ['weight','uncert','corr'] and inType != None:
+            print ('WARNING: Correction type %s is not accepted. Only "weight" or "uncert". Will attempt to resolve...'%inType)
+
+        if out_type == None:
+            if '_weight.' in self._script.lower() or '_sf.' in self._script.lower():
+                out_type = 'weight'
+            elif '_uncert.' in self._script.lower():
+                out_type = 'uncert'
+            elif '_corr.' in self._script.lower():
+                out_type = 'corr'
+            else:
+                raise NameError('Attempting to add correction "%s" but script name (%s) does not end in "_weight.<ext>", "_SF.<ext>" or "_uncert.<ext>" and so the type of correction cannot be determined.'%(self.name,self._script))
+
+        self._type = out_type
+
+    def GetType(self):
+        '''Gets Correction type.
+
+        Returns:
+            str: Correction type.
+        '''
+        return self._type
+
+class Calibration(Correction):
+    '''Class to handle calibrations produced by C++ modules.
+
+    Uses clang in python to parse the C++ code and determine function names, 
+    namespaces, and argument names and types. 
+
+    Writing the C++ modules has two requirements:
+
+    (1) the desired branch/column names must be specified or be used as the argument variable names
+    to allow the framework to automatically determine what branch/column to use in GetCall(),
+
+    (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
+    <up, down> for "uncert" type.
+    '''
+    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False):
+        '''Constructor
+
+        @param name (str): Correction name.
+        @param script (str): Path to C++ script with function to calculate correction.
+        @param constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
+        @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
+                and the class will try to deduce it.
+        @param corrtype (str, optional): Either "weight" (nominal weight to apply with an uncertainty), "corr"
+                (only a correction), or 
+                "uncert" (only an uncertainty). Defaults to '' and the class will try to
+                deduce it.
+        @param columnList ([str], optional): List of column names to search mainFunc arguments against.
+                Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used.
+        @param isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
+                not duplicate compile the same script if two functions are needed in one C++ script.
+        '''
+
+        super(Calibration,self).__init__(name,script,constructor,mainFunc,columnList,isClone)
+        
 def LoadColumnNames(source=''):
     '''Loads column names from a text file.
 

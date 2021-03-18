@@ -77,42 +77,42 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Stores identifying features of a particle in the GenPart collection.  
+<p>C++ class. Stores identifying features of a particle in the GenPart collection.  
  <a href="class_particle.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a089d18b57a5fc65fa72df180c1d01cad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#a089d18b57a5fc65fa72df180c1d01cad">AddParent</a> (int idx)</td></tr>
-<tr class="memdesc:a089d18b57a5fc65fa72df180c1d01cad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add parent index to track.  <a href="#a089d18b57a5fc65fa72df180c1d01cad">More...</a><br /></td></tr>
-<tr class="separator:a089d18b57a5fc65fa72df180c1d01cad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb900ac432e4c38ad6765c4d6b5a6321"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#acb900ac432e4c38ad6765c4d6b5a6321">AddChild</a> (int idx)</td></tr>
 <tr class="memdesc:acb900ac432e4c38ad6765c4d6b5a6321"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add child index to track.  <a href="#acb900ac432e4c38ad6765c4d6b5a6321">More...</a><br /></td></tr>
 <tr class="separator:acb900ac432e4c38ad6765c4d6b5a6321"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a089d18b57a5fc65fa72df180c1d01cad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#a089d18b57a5fc65fa72df180c1d01cad">AddParent</a> (int idx)</td></tr>
+<tr class="memdesc:a089d18b57a5fc65fa72df180c1d01cad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add parent index to track.  <a href="#a089d18b57a5fc65fa72df180c1d01cad">More...</a><br /></td></tr>
+<tr class="separator:a089d18b57a5fc65fa72df180c1d01cad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a217625337b1642ead85a1fb1c0c80660"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#a217625337b1642ead85a1fb1c0c80660">DeltaR</a> (LVector input_vector)</td></tr>
-<tr class="memdesc:a217625337b1642ead85a1fb1c0c80660"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate DeltaR between this and input vector.  <a href="#a217625337b1642ead85a1fb1c0c80660">More...</a><br /></td></tr>
+<tr class="memdesc:a217625337b1642ead85a1fb1c0c80660"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate \(\Delta R\) between current particle and input vector.  <a href="#a217625337b1642ead85a1fb1c0c80660">More...</a><br /></td></tr>
 <tr class="separator:a217625337b1642ead85a1fb1c0c80660"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:a6f2e99182732bd6db261eae6202a4ca1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#a6f2e99182732bd6db261eae6202a4ca1">childIndex</a></td></tr>
+<tr class="separator:a6f2e99182732bd6db261eae6202a4ca1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b3ab54ed3e81c69863d65e4e6c424a0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#a8b3ab54ed3e81c69863d65e4e6c424a0">flag</a> = true</td></tr>
 <tr class="separator:a8b3ab54ed3e81c69863d65e4e6c424a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a750b5d744c39a06bfb13e6eb010e35d0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#a750b5d744c39a06bfb13e6eb010e35d0">index</a></td></tr>
 <tr class="separator:a750b5d744c39a06bfb13e6eb010e35d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac120842e7faaa838279f15b0b0e7d210"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#ac120842e7faaa838279f15b0b0e7d210">parentIndex</a></td></tr>
+<tr class="separator:ac120842e7faaa838279f15b0b0e7d210"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3fdb24d523e00a1ce48a6dd2a2c283cd"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#a3fdb24d523e00a1ce48a6dd2a2c283cd">pdgId</a></td></tr>
 <tr class="separator:a3fdb24d523e00a1ce48a6dd2a2c283cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0cb30d84f44ed74c600711d9405b85a5"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#a0cb30d84f44ed74c600711d9405b85a5">status</a></td></tr>
 <tr class="separator:a0cb30d84f44ed74c600711d9405b85a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a217c4e30f87d5903ed0367f2d253f298"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#a217c4e30f87d5903ed0367f2d253f298">statusFlags</a></td></tr>
 <tr class="separator:a217c4e30f87d5903ed0367f2d253f298"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac120842e7faaa838279f15b0b0e7d210"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#ac120842e7faaa838279f15b0b0e7d210">parentIndex</a></td></tr>
-<tr class="separator:ac120842e7faaa838279f15b0b0e7d210"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f2e99182732bd6db261eae6202a4ca1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#a6f2e99182732bd6db261eae6202a4ca1">childIndex</a></td></tr>
-<tr class="separator:a6f2e99182732bd6db261eae6202a4ca1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a36c244243007833951b034201ab89d"><td class="memItemLeft" align="right" valign="top">LVector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_particle.html#a8a36c244243007833951b034201ab89d">vect</a></td></tr>
 <tr class="separator:a8a36c244243007833951b034201ab89d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Stores identifying features of a particle in the GenPart collection. </p>
+<div class="textblock"><p>C++ class. Stores identifying features of a particle in the GenPart collection. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="acb900ac432e4c38ad6765c4d6b5a6321"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acb900ac432e4c38ad6765c4d6b5a6321">&#9670;&nbsp;</a></span>AddChild()</h2>
@@ -182,21 +182,14 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Calculate DeltaR between this and input vector. </p>
+<p>Calculate \(\Delta R\) between current particle and input vector. </p>
 <dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">input_vector</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>float</dd></dl>
-<p>Calculates \(\Delta R\) between current particle and input vector. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">input_vector</td><td>The vector to compare against the current particle. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>\(\Delta R\) value. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>float \(\Delta R\) value </dd></dl>
 
 </div>
 </div>
@@ -321,8 +314,9 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>TIMBER/Framework/include/<a class="el" href="_gen_matching_8h_source.html">GenMatching.h</a></li>
+<li>TIMBER/Framework/src/GenMatching.cc</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

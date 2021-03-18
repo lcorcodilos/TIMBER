@@ -76,20 +76,20 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Specializes in the construction of trigger efficiency weights. Uncertainties are calculated as one half of the trigger inefficiency (ie. (1-eff)/2).  
+<p>C++ class. Specializes in the construction of trigger efficiency weights stored as histograms. Uncertainties are calculated as one half of the trigger inefficiency (ie. (1-eff)/2).  
  <a href="class_trigger__weight.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:add6c70823ca2c13e555d3a45ccd2a607"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_trigger__weight.html#add6c70823ca2c13e555d3a45ccd2a607">Trigger_weight</a> (std::string filename, std::string histname)</td></tr>
-<tr class="memdesc:add6c70823ca2c13e555d3a45ccd2a607"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="class_trigger__weight.html" title="Specializes in the construction of trigger efficiency weights. Uncertainties are calculated as one ha...">Trigger_weight</a> object.  <a href="#add6c70823ca2c13e555d3a45ccd2a607">More...</a><br /></td></tr>
+<tr class="memdesc:add6c70823ca2c13e555d3a45ccd2a607"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="class_trigger__weight.html" title="C++ class. Specializes in the construction of trigger efficiency weights stored as histograms...">Trigger_weight</a> object.  <a href="#add6c70823ca2c13e555d3a45ccd2a607">More...</a><br /></td></tr>
 <tr class="separator:add6c70823ca2c13e555d3a45ccd2a607"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac846f7f0fce4e3c397d11a0b2dbc5856"><td class="memItemLeft" align="right" valign="top">RVec&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_trigger__weight.html#ac846f7f0fce4e3c397d11a0b2dbc5856">eval</a> (float var, float plateau=0)</td></tr>
 <tr class="memdesc:ac846f7f0fce4e3c397d11a0b2dbc5856"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the efficiency as a weight for the provided value, <code>var</code>. Also calculates variations of the weight with uncertainties calculated as one half of the trigger inefficiency.  <a href="#ac846f7f0fce4e3c397d11a0b2dbc5856">More...</a><br /></td></tr>
 <tr class="separator:ac846f7f0fce4e3c397d11a0b2dbc5856"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Specializes in the construction of trigger efficiency weights. Uncertainties are calculated as one half of the trigger inefficiency (ie. (1-eff)/2). </p>
+<div class="textblock"><p>C++ class. Specializes in the construction of trigger efficiency weights stored as histograms. Uncertainties are calculated as one half of the trigger inefficiency (ie. (1-eff)/2). </p>
 <p>Uncertainties are capped to never be greater than 1 or less than 0. Additionally, a plateau value can be provided which assumes 100% efficiency (and zero uncertainty) beyond the provided threshold.</p>
 <p>Finally, if a bin is 0 and the surrounding bins are non-zero (this could happen in the case of poor statistics), a value for the 0 bin will be linearly interpolated from the two neighboring bins. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -119,7 +119,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Construct a new <a class="el" href="class_trigger__weight.html" title="Specializes in the construction of trigger efficiency weights. Uncertainties are calculated as one ha...">Trigger_weight</a> object. </p>
+<p>Construct a new <a class="el" href="class_trigger__weight.html" title="C++ class. Specializes in the construction of trigger efficiency weights stored as histograms...">Trigger_weight</a> object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">filename</td><td></td></tr>
@@ -169,7 +169,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>TIMBER/Framework/include/<a class="el" href="_trigger__weight_8h_source.html">Trigger_weight.h</a></li>
 <li>TIMBER/Framework/src/Trigger_weight.cc</li>
 </ul>
 </div><!-- contents -->

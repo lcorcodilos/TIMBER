@@ -5,9 +5,12 @@ TIMBER (Tree Interface for Making Binned Events with RDataFrame) is an easy-to-u
 Default arguments assume the use of the NanoAOD format but any ROOT TTree can be processed.
 
 ## Quick install
-Python 3 is recommended since Python 2.7 reached end-of-life on January 1st, 2020. Remember to make sure your 
+Despite the fact that Python 2.7 reached end-of-life on January 1st, 2020, it is still the dominant
+version used by CMS. If you need CMSSW (ex. for JME modules), Python 2.7 is recommended. Otherwise,
+please take this opportunity to start using Python 3! Remember to make sure your 
 ROOT version has been built with Python 3 compatibility. For information on how to do this, see
-[this explanation](doxysetup/Python3.md).
+[this explanation](doxysetup/Python3.md). Though this does not always work consistently when CMSSW code is needed.
+
 Working in a virtual environment is also recommended. Below are the commands for using virtualenv but
 you're obviously free to use your favorite tool for the job (you can install virtualenv for Python 3 with 
 `pip install virtualenv` (`pip3` for Python 3)).
