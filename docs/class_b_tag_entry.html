@@ -12,6 +12,12 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-styles.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -21,6 +27,7 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr style="height: 56px;">
+  <td id="projectlogo"><img alt="Logo" src="logo_small.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">TIMBER
    &#160;<span id="projectnumber">beta</span>
@@ -77,7 +84,7 @@ Collaboration diagram for BTagEntry:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_b_tag_entry__coll__graph.png" border="0" usemap="#_b_tag_entry_coll__map" alt="Collaboration graph"/></div>
 <map name="_b_tag_entry_coll__map" id="_b_tag_entry_coll__map">
-<area shape="rect" id="node2" href="struct_b_tag_entry_1_1_parameters.html" title="BTagEntry::Parameters" alt="" coords="5,5,164,32"/>
+<area shape="rect" id="node2" href="struct_b_tag_entry_1_1_parameters.html" title="Parameters" alt="" coords="5,5,95,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -88,53 +95,53 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a1031a5dca9c8ce2606a19b8f76ee18f4"><td class="memItemLeft" align="right" valign="top"><a id="a1031a5dca9c8ce2606a19b8f76ee18f4"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>OperatingPoint</b> { <b>OP_LOOSE</b> =0, 
+<tr class="memitem:ae16aed8c7677033d5a69d8a0c35cc52e"><td class="memItemLeft" align="right" valign="top"><a id="ae16aed8c7677033d5a69d8a0c35cc52e"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>OperatingPoint</b> { <b>OP_LOOSE</b> =0, 
 <b>OP_MEDIUM</b> =1, 
 <b>OP_TIGHT</b> =2, 
 <b>OP_RESHAPING</b> =3
  }</td></tr>
-<tr class="separator:a1031a5dca9c8ce2606a19b8f76ee18f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0b62b49b3c9f52e3904efbde2fd5a34"><td class="memItemLeft" align="right" valign="top"><a id="ab0b62b49b3c9f52e3904efbde2fd5a34"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>JetFlavor</b> { <b>FLAV_B</b> =0, 
+<tr class="separator:ae16aed8c7677033d5a69d8a0c35cc52e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fd5232a2e417afd0331baa9b1a07e07"><td class="memItemLeft" align="right" valign="top"><a id="a6fd5232a2e417afd0331baa9b1a07e07"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>JetFlavor</b> { <b>FLAV_B</b> =0, 
 <b>FLAV_C</b> =1, 
 <b>FLAV_UDSG</b> =2
  }</td></tr>
-<tr class="separator:ab0b62b49b3c9f52e3904efbde2fd5a34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a6fd5232a2e417afd0331baa9b1a07e07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae2023de00a2ae07cab150295dba88001"><td class="memItemLeft" align="right" valign="top"><a id="ae2023de00a2ae07cab150295dba88001"></a>
+<tr class="memitem:af6deb6d8067c4b52d4509c11681909a0"><td class="memItemLeft" align="right" valign="top"><a id="af6deb6d8067c4b52d4509c11681909a0"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BTagEntry</b> (const std::string &amp;csvLine)</td></tr>
-<tr class="separator:ae2023de00a2ae07cab150295dba88001"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65cc903d99c4293e07fe63982dd78015"><td class="memItemLeft" align="right" valign="top"><a id="a65cc903d99c4293e07fe63982dd78015"></a>
+<tr class="separator:af6deb6d8067c4b52d4509c11681909a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f67e81b46d3802e933ab467c9e8e7b2"><td class="memItemLeft" align="right" valign="top"><a id="a6f67e81b46d3802e933ab467c9e8e7b2"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BTagEntry</b> (const std::string &amp;func, <a class="el" href="struct_b_tag_entry_1_1_parameters.html">Parameters</a> p)</td></tr>
-<tr class="separator:a65cc903d99c4293e07fe63982dd78015"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20a048aa9be02b7259c0ff5b4a0d96c7"><td class="memItemLeft" align="right" valign="top"><a id="a20a048aa9be02b7259c0ff5b4a0d96c7"></a>
+<tr class="separator:a6f67e81b46d3802e933ab467c9e8e7b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80ab211c25c166d2feeec91d5941cafe"><td class="memItemLeft" align="right" valign="top"><a id="a80ab211c25c166d2feeec91d5941cafe"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BTagEntry</b> (const TF1 *func, <a class="el" href="struct_b_tag_entry_1_1_parameters.html">Parameters</a> p)</td></tr>
-<tr class="separator:a20a048aa9be02b7259c0ff5b4a0d96c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d669384391c444ba8b59f7da3dbbf6c"><td class="memItemLeft" align="right" valign="top"><a id="a8d669384391c444ba8b59f7da3dbbf6c"></a>
+<tr class="separator:a80ab211c25c166d2feeec91d5941cafe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a7c560777dfaeafb3b4ac6df0694cd9"><td class="memItemLeft" align="right" valign="top"><a id="a4a7c560777dfaeafb3b4ac6df0694cd9"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BTagEntry</b> (const TH1 *histo, <a class="el" href="struct_b_tag_entry_1_1_parameters.html">Parameters</a> p)</td></tr>
-<tr class="separator:a8d669384391c444ba8b59f7da3dbbf6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63e43da8807ae884b7f3ed21d6ce0c0c"><td class="memItemLeft" align="right" valign="top"><a id="a63e43da8807ae884b7f3ed21d6ce0c0c"></a>
+<tr class="separator:a4a7c560777dfaeafb3b4ac6df0694cd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a967ea57e52db54783de911170f77b83b"><td class="memItemLeft" align="right" valign="top"><a id="a967ea57e52db54783de911170f77b83b"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>makeCSVLine</b> () const</td></tr>
-<tr class="separator:a63e43da8807ae884b7f3ed21d6ce0c0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a967ea57e52db54783de911170f77b83b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a5fd0ee244953b085c3048b26487da486"><td class="memItemLeft" align="right" valign="top"><a id="a5fd0ee244953b085c3048b26487da486"></a>
+<tr class="memitem:ae1db921abc6d2c81f3ee0fb9ea49e2e9"><td class="memItemLeft" align="right" valign="top"><a id="ae1db921abc6d2c81f3ee0fb9ea49e2e9"></a>
 static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>makeCSVHeader</b> ()</td></tr>
-<tr class="separator:a5fd0ee244953b085c3048b26487da486"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62e4493a9bf28a0982ecc95d102282fb"><td class="memItemLeft" align="right" valign="top"><a id="a62e4493a9bf28a0982ecc95d102282fb"></a>
+<tr class="separator:ae1db921abc6d2c81f3ee0fb9ea49e2e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa99a247497317c0d8d52731ef653d069"><td class="memItemLeft" align="right" valign="top"><a id="aa99a247497317c0d8d52731ef653d069"></a>
 static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>trimStr</b> (std::string str)</td></tr>
-<tr class="separator:a62e4493a9bf28a0982ecc95d102282fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:aa99a247497317c0d8d52731ef653d069"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:abe0158a7f368d1121df1e7ce666fbcfa"><td class="memItemLeft" align="right" valign="top"><a id="abe0158a7f368d1121df1e7ce666fbcfa"></a>
+<tr class="memitem:abd26b82ccd5d7c4a0e1053b67abecaaf"><td class="memItemLeft" align="right" valign="top"><a id="abd26b82ccd5d7c4a0e1053b67abecaaf"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>formula</b></td></tr>
-<tr class="separator:abe0158a7f368d1121df1e7ce666fbcfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96814b58a0739a1226b6b2cd72276121"><td class="memItemLeft" align="right" valign="top"><a id="a96814b58a0739a1226b6b2cd72276121"></a>
+<tr class="separator:abd26b82ccd5d7c4a0e1053b67abecaaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af55f3dd183c15fb61461d5c9963f8eec"><td class="memItemLeft" align="right" valign="top"><a id="af55f3dd183c15fb61461d5c9963f8eec"></a>
 <a class="el" href="struct_b_tag_entry_1_1_parameters.html">Parameters</a>&#160;</td><td class="memItemRight" valign="bottom"><b>params</b></td></tr>
-<tr class="separator:a96814b58a0739a1226b6b2cd72276121"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:af55f3dd183c15fb61461d5c9963f8eec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="class_b_tag_entry.html">BTagEntry</a></p>
@@ -142,8 +149,8 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>formula</b></t
 <p>measurement_type: e.g. comb, ttbar, di-mu, boosted, ... sys_type: e.g. central, plus, minus, plus_JEC, plus_JER, ...</p>
 <p>Everything is converted into a function, as it is easiest to store it in a txt or json file. </p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
-<li>TIMBER/Framework/ExternalTools/<a class="el" href="_b_tag_calibration_standalone_8h_source.html">BTagCalibrationStandalone.h</a></li>
-<li>TIMBER/Framework/ExternalTools/BTagCalibrationStandalone.cpp</li>
+<li>TIMBER/Framework/ext/<a class="el" href="_b_tag_calibration_standalone_8h_source.html">BTagCalibrationStandalone.h</a></li>
+<li>TIMBER/Framework/ext/BTagCalibrationStandalone.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

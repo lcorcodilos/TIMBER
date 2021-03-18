@@ -76,7 +76,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Constructs tree by adding particles. Establish relationships between particles (parent, child) and allows you to search for a chain of decays.  
+<p>C++ class. Constructs tree by adding particles. Establish relationships between particles (parent, child) and allows you to search for a chain of decays.  
  <a href="class_gen_particle_tree.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -84,21 +84,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abb1f8139f3e928faf36ad322697fd5af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_tree.html#abb1f8139f3e928faf36ad322697fd5af">AddParticle</a> (<a class="el" href="class_particle.html">Particle</a> *particle)</td></tr>
 <tr class="memdesc:abb1f8139f3e928faf36ad322697fd5af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add particle to tree.  <a href="#abb1f8139f3e928faf36ad322697fd5af">More...</a><br /></td></tr>
 <tr class="separator:abb1f8139f3e928faf36ad322697fd5af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9867e896c69d44a613ffcb00dd287f1c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_particle.html">Particle</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_tree.html#a9867e896c69d44a613ffcb00dd287f1c">GetParticles</a> ()</td></tr>
-<tr class="memdesc:a9867e896c69d44a613ffcb00dd287f1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of particle objects.  <a href="#a9867e896c69d44a613ffcb00dd287f1c">More...</a><br /></td></tr>
-<tr class="separator:a9867e896c69d44a613ffcb00dd287f1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3eb638a3431c774e952404690bc2cf9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; <a class="el" href="class_particle.html">Particle</a> * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_tree.html#aa3eb638a3431c774e952404690bc2cf9">FindChain</a> (std::string chainstring)</td></tr>
+<tr class="memdesc:aa3eb638a3431c774e952404690bc2cf9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a chain of decays in the tree.  <a href="#aa3eb638a3431c774e952404690bc2cf9">More...</a><br /></td></tr>
+<tr class="separator:aa3eb638a3431c774e952404690bc2cf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4512e01e57691c5498e42064e95227a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_particle.html">Particle</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_tree.html#ad4512e01e57691c5498e42064e95227a">GetChildren</a> (<a class="el" href="class_particle.html">Particle</a> *particle)</td></tr>
 <tr class="memdesc:ad4512e01e57691c5498e42064e95227a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of child particles for a given particle in the tree.  <a href="#ad4512e01e57691c5498e42064e95227a">More...</a><br /></td></tr>
 <tr class="separator:ad4512e01e57691c5498e42064e95227a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f812e9b9b5de2498fa03ba6003af7e9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_particle.html">Particle</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_tree.html#a7f812e9b9b5de2498fa03ba6003af7e9">GetParent</a> (<a class="el" href="class_particle.html">Particle</a> *particle)</td></tr>
 <tr class="memdesc:a7f812e9b9b5de2498fa03ba6003af7e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the parent of the given particle in the tree.  <a href="#a7f812e9b9b5de2498fa03ba6003af7e9">More...</a><br /></td></tr>
 <tr class="separator:a7f812e9b9b5de2498fa03ba6003af7e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3eb638a3431c774e952404690bc2cf9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; <a class="el" href="class_particle.html">Particle</a> * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_tree.html#aa3eb638a3431c774e952404690bc2cf9">FindChain</a> (std::string chainstring)</td></tr>
-<tr class="memdesc:aa3eb638a3431c774e952404690bc2cf9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a chain of decays in the tree.  <a href="#aa3eb638a3431c774e952404690bc2cf9">More...</a><br /></td></tr>
-<tr class="separator:aa3eb638a3431c774e952404690bc2cf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9867e896c69d44a613ffcb00dd287f1c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_particle.html">Particle</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_tree.html#a9867e896c69d44a613ffcb00dd287f1c">GetParticles</a> ()</td></tr>
+<tr class="memdesc:a9867e896c69d44a613ffcb00dd287f1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of particle objects.  <a href="#a9867e896c69d44a613ffcb00dd287f1c">More...</a><br /></td></tr>
+<tr class="separator:a9867e896c69d44a613ffcb00dd287f1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Constructs tree by adding particles. Establish relationships between particles (parent, child) and allows you to search for a chain of decays. </p>
+<div class="textblock"><p>C++ class. Constructs tree by adding particles. Establish relationships between particles (parent, child) and allows you to search for a chain of decays. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="abb1f8139f3e928faf36ad322697fd5af"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abb1f8139f3e928faf36ad322697fd5af">&#9670;&nbsp;</a></span>AddParticle()</h2>
@@ -227,8 +227,9 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>TIMBER/Framework/include/<a class="el" href="_gen_matching_8h_source.html">GenMatching.h</a></li>
+<li>TIMBER/Framework/src/GenMatching.cc</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

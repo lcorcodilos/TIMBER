@@ -1,9 +1,9 @@
 var searchData=
 [
   ['dataframe',['DataFrame',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a1ba09da1969b6677c42489b42495ba0f',1,'TIMBER::Analyzer::analyzer']]],
-  ['define',['Define',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2b2e0a06dac0a384b1435823ada82792',1,'TIMBER.Analyzer.analyzer.Define()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a10d358548c587a45ae627eeb6948aef8',1,'TIMBER.Analyzer.Node.Define()']]],
-  ['deltaphi',['DeltaPhi',['../namespacehardware.html#aed751de3ad381dd4b6b17c2b506dea5f',1,'hardware']]],
-  ['deltar',['DeltaR',['../class_particle.html#a217625337b1642ead85a1fb1c0c80660',1,'Particle::DeltaR()'],['../namespacehardware.html#ad4b8b087606d67425cb9534692e47e0e',1,'hardware::DeltaR()']]],
+  ['define',['Define',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2b2e0a06dac0a384b1435823ada82792',1,'TIMBER.Analyzer.analyzer.Define()'],['../class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html#a8ff550364fe4b1d6d019d89ad0d6f98b',1,'TIMBER.Analyzer.Node.Define()']]],
+  ['deltaphi',['DeltaPhi',['../namespacehardware.html#abea680048ee5f5858b3668405e18eceb',1,'hardware']]],
+  ['deltar',['DeltaR',['../class_particle.html#a217625337b1642ead85a1fb1c0c80660',1,'Particle::DeltaR()'],['../namespacehardware.html#acf5aea2b75bbacb4d9b340091de32f63',1,'hardware::DeltaR(ROOT::Math::PtEtaPhiMVector v1, ROOT::Math::PtEtaPhiMVector v2)'],['../namespacehardware.html#a2c6dc2cce56b078337b1d625310de9e1',1,'hardware::DeltaR(T1 in1, T2 in2)']]],
   ['dictcopy',['DictCopy',['../group___common.html#ga1aaec96a73bafbbbc9890df3fdf1ac8e',1,'TIMBER::Tools::Common']]],
   ['dictstructurecopy',['DictStructureCopy',['../group___common.html#gaf716e063fa7f868daa3fb300a135e160',1,'TIMBER::Tools::Common']]],
   ['dicttolatextable',['DictToLatexTable',['../group___common.html#ga03accc09d6689d1b8387555e06048661',1,'TIMBER::Tools::Common']]],

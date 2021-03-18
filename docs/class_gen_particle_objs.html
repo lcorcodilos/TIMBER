@@ -77,33 +77,34 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Object that stores and manipulates the information for gen particles. Stores all gen particles in the event and member functions can be used to access the gen particles by index.  
+<p>C++ class. Class that stores and manipulates the information for gen particles. Stores all gen particles in the event and member functions can be used to access the gen particles by index.  
  <a href="class_gen_particle_objs.html#details">More...</a></p>
 <div class="dynheader">
 Collaboration diagram for GenParticleObjs:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_gen_particle_objs__coll__graph.png" border="0" usemap="#_gen_particle_objs_coll__map" alt="Collaboration graph"/></div>
 <map name="_gen_particle_objs_coll__map" id="_gen_particle_objs_coll__map">
-<area shape="rect" id="node2" href="class_particle.html" title="Stores identifying features of a particle in the GenPart collection. " alt="" coords="31,5,97,32"/>
+<area shape="rect" id="node2" href="class_particle.html" title="C++ class. Stores identifying features of a particle in the GenPart collection. " alt="" coords="31,5,97,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a5a36271980ffa82d725d97cfd1be1a1a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#a5a36271980ffa82d725d97cfd1be1a1a">GenParticleObjs</a> (RVec&lt; float &gt; in_pt, RVec&lt; float &gt; in_eta, RVec&lt; float &gt; in_phi, RVec&lt; float &gt; in_m, RVec&lt; int &gt; in_pdgId, RVec&lt; int &gt; in_status, RVec&lt; int &gt; in_statusFlags, RVec&lt; int &gt; in_genPartIdxMother)</td></tr>
-<tr class="memdesc:a5a36271980ffa82d725d97cfd1be1a1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Gen <a class="el" href="class_particle.html" title="Stores identifying features of a particle in the GenPart collection. ">Particle</a> object.  <a href="#a5a36271980ffa82d725d97cfd1be1a1a">More...</a><br /></td></tr>
+<tr class="memdesc:a5a36271980ffa82d725d97cfd1be1a1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor which takes in all info from the GenPart collection in NanoAOD Just assigns the inputs to internal variables.  <a href="#a5a36271980ffa82d725d97cfd1be1a1a">More...</a><br /></td></tr>
 <tr class="separator:a5a36271980ffa82d725d97cfd1be1a1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae26a40274b535d7e7f0a7abe3a73f01a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#ae26a40274b535d7e7f0a7abe3a73f01a">GenParticleObjs</a> (<a class="el" href="struct_collection.html">Collection</a> genParts)</td></tr>
-<tr class="memdesc:ae26a40274b535d7e7f0a7abe3a73f01a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Gen <a class="el" href="class_particle.html" title="Stores identifying features of a particle in the GenPart collection. ">Particle</a> object.  <a href="#ae26a40274b535d7e7f0a7abe3a73f01a">More...</a><br /></td></tr>
+<tr class="memdesc:ae26a40274b535d7e7f0a7abe3a73f01a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Gen <a class="el" href="class_particle.html" title="C++ class. Stores identifying features of a particle in the GenPart collection. ">Particle</a> object.  <a href="#ae26a40274b535d7e7f0a7abe3a73f01a">More...</a><br /></td></tr>
 <tr class="separator:ae26a40274b535d7e7f0a7abe3a73f01a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97a10edf215b0459fcdba2a7d8e173cc"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#a97a10edf215b0459fcdba2a7d8e173cc">CompareToVector</a> (LVector vect)</td></tr>
 <tr class="memdesc:a97a10edf215b0459fcdba2a7d8e173cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares GenPart object to a provided vector.  <a href="#a97a10edf215b0459fcdba2a7d8e173cc">More...</a><br /></td></tr>
 <tr class="separator:a97a10edf215b0459fcdba2a7d8e173cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3c5d3a3186bb6e46381b5abf4a9d065"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#aa3c5d3a3186bb6e46381b5abf4a9d065">GetStatusFlag</a> (std::string flagName)</td></tr>
+<tr class="memdesc:aa3c5d3a3186bb6e46381b5abf4a9d065"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the bool for the flag name provided.  <a href="#aa3c5d3a3186bb6e46381b5abf4a9d065">More...</a><br /></td></tr>
+<tr class="separator:aa3c5d3a3186bb6e46381b5abf4a9d065"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28cffdddc2a7e6f88c82bd1915311103"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_particle.html">Particle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#a28cffdddc2a7e6f88c82bd1915311103">SetIndex</a> (int idx)</td></tr>
 <tr class="memdesc:a28cffdddc2a7e6f88c82bd1915311103"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the index of the lookup particle.  <a href="#a28cffdddc2a7e6f88c82bd1915311103">More...</a><br /></td></tr>
 <tr class="separator:a28cffdddc2a7e6f88c82bd1915311103"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3c5d3a3186bb6e46381b5abf4a9d065"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_objs.html#aa3c5d3a3186bb6e46381b5abf4a9d065">GetStatusFlag</a> (std::string flagName)</td></tr>
-<tr class="separator:aa3c5d3a3186bb6e46381b5abf4a9d065"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -111,7 +112,7 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a3fdd1544a8ce44bbd4eef935f71b8cb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Object that stores and manipulates the information for gen particles. Stores all gen particles in the event and member functions can be used to access the gen particles by index. </p>
+<div class="textblock"><p>C++ class. Class that stores and manipulates the information for gen particles. Stores all gen particles in the event and member functions can be used to access the gen particles by index. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a5a36271980ffa82d725d97cfd1be1a1a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5a36271980ffa82d725d97cfd1be1a1a">&#9670;&nbsp;</a></span>GenParticleObjs() <span class="overload">[1/2]</span></h2>
@@ -175,7 +176,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Construct a new Gen <a class="el" href="class_particle.html" title="Stores identifying features of a particle in the GenPart collection. ">Particle</a> object. </p>
+<p>Constructor which takes in all info from the GenPart collection in NanoAOD Just assigns the inputs to internal variables. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">in_pt</td><td>Input \(p_T\) </td></tr>
@@ -185,20 +186,7 @@ Public Attributes</h2></td></tr>
     <tr><td class="paramname">in_pdgId</td><td>Input PDG ID </td></tr>
     <tr><td class="paramname">in_status</td><td>Input status </td></tr>
     <tr><td class="paramname">in_statusFlags</td><td>Input status flags </td></tr>
-    <tr><td class="paramname">in_genPartIdxMother</td><td>Input mother index</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>Constructor which takes in all info from the GenPart collection in NanoAOD Just assigns the inputs to internal variables. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">in_pt</td><td>\( p_{T} \) </td></tr>
-    <tr><td class="paramname">in_eta</td><td>\( \eta \) </td></tr>
-    <tr><td class="paramname">in_phi</td><td>\( \phi \) </td></tr>
-    <tr><td class="paramname">in_m</td><td>\( m \) </td></tr>
-    <tr><td class="paramname">in_pdgId</td><td>PDG ID </td></tr>
-    <tr><td class="paramname">in_status</td><td>Pythia status </td></tr>
-    <tr><td class="paramname">in_statusFlags</td><td>Status flags </td></tr>
-    <tr><td class="paramname">in_genPartIdxMother</td><td>Mother indices </td></tr>
+    <tr><td class="paramname">in_genPartIdxMother</td><td>Input mother index </td></tr>
   </table>
   </dd>
 </dl>
@@ -221,7 +209,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Construct a new Gen <a class="el" href="class_particle.html" title="Stores identifying features of a particle in the GenPart collection. ">Particle</a> object. </p>
+<p>Construct a new Gen <a class="el" href="class_particle.html" title="C++ class. Stores identifying features of a particle in the GenPart collection. ">Particle</a> object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">genParts</td><td><a class="el" href="struct_collection.html">Collection</a> object filled with GenPart branches from NanoAOD. </td></tr>
@@ -274,7 +262,9 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Returns the bool for the flag name provided </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Returns the bool for the flag name provided. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">flagName</td><td></td></tr>
   </table>
@@ -307,7 +297,7 @@ Public Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_particle.html" title="Stores identifying features of a particle in the GenPart collection. ">Particle</a> </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_particle.html" title="C++ class. Stores identifying features of a particle in the GenPart collection. ">Particle</a> </dd></dl>
 
 </div>
 </div>
@@ -327,8 +317,9 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>TIMBER/Framework/include/<a class="el" href="_gen_matching_8h_source.html">GenMatching.h</a></li>
+<li>TIMBER/Framework/src/GenMatching.cc</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

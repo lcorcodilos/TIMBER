@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['jetsmearer',['JetSmearer',['../class_jet_smearer.html',1,'']]]
+  ['lumifilter',['LumiFilter',['../class_lumi_filter.html',1,'']]]
 ];
