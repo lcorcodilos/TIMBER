@@ -24,11 +24,10 @@ def AutoJME(a, jetCollection, year, dataEra=''):
 
     For data, only recalibrate the jets for the new JECs.
 
-    Args:
-        a ([type]): analyzer object which will be manipulated and returned.
-        jetCollection (str): FatJet or Jet.
-        year (int): 2016, 2017, 2018, 2017UL, or 2018UL
-        dataEra (str, optional): If providing data, include the "era" (A or B or C, etc). Defaults to ''.
+    @param a (analyzer): TIMBER analyzer object which will be manipulated and returned.
+    @param jetCollection (str): FatJet or Jet.
+    @param year (int): 2016, 2017, 2018, 2017UL, or 2018UL.
+    @param dataEra (str, optional): If providing data, include the "era" (A or B or C, etc). Defaults to ''.
 
     Raises:
         ValueError: Provided jet collection is not "FatJet" or "Jet"
@@ -36,7 +35,7 @@ def AutoJME(a, jetCollection, year, dataEra=''):
     Returns:
         analyzer: Manipulated version of the input analyzer object.
     '''
-    dataEra = dataEra.lower().replace('data','').upper()
+    dataEraLetter = dataEra.lower().replace('data','').upper()
     if jetCollection == "FatJet":
         jetType = "AK8PFPuppi"
         genJetColl = "GenJetAK8"
@@ -68,7 +67,7 @@ def AutoJME(a, jetCollection, year, dataEra=''):
         }
     else:
         jes = Calibration("JES","TIMBER/Framework/include/JES_weight.h",
-                [GetJMETag("JES",str(year),dataEra),jetType,"","true"], corrtype="Calibration")
+                [GetJMETag("JES",str(year),dataEraLetter),jetType,"","true"], corrtype="Calibration")
         
         calibdict = {"%s_pt"%jetCollection:[jes],"%s_mass"%jetCollection:[jes]}
         evalargs = {
