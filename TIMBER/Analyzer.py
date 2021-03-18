@@ -5,7 +5,7 @@ Home of main classes for TIMBER.
 """
 
 from TIMBER.Utilities.CollectionGen import BuildCollectionDict, GetKeyValForBranch, StructDef, StructObj
-from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags
+from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags, ExecuteCmd
 from clang import cindex
 from collections import OrderedDict
 
@@ -146,7 +146,7 @@ class analyzer(object):
                             continue
                         else:
                             break
-                    self.lhaid = str(int(self.lhaid)-1) if self.lhaid[-1] == 1 else self.lhaid
+                    self.lhaid = str(int(self.lhaid)-1) if self.lhaid[-1] == "1" else self.lhaid
                     print ('LHA ID: '+self.lhaid)
 
         self.ActiveNode = self.BaseNode
@@ -221,6 +221,27 @@ class analyzer(object):
     def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='RECREATE'):
         '''@see Node#Snapshot'''
         self.ActiveNode.Snapshot(columns,outfilename,treename,lazy,openOption)
+
+    def SaveRunChain(self,filename,merge=True):
+        '''Save the Run tree (chain of all input files) to filename.
+        If filename already exists, some staging will occur to properly
+        merge the files via hadd.
+
+        @param filename (str): Output file name.
+        @param merge (bool, optional): Whether to merge with a file that already exists. Defaults to True.
+
+        Returns:
+            None
+        '''
+        if (not os.path.exists(filename)) or (not merge): # If it doesn't already exist, nothing special
+            self.RunChain.Merge(filename)
+        elif merge:
+            merge_filename = filename.replace('.root','_temp1.root')
+            current_filename = filename.replace('.root','_temp2.root')
+            ExecuteCmd('cp %s %s'%(filename, current_filename)) # copy existing file to <filename>_temp2.root
+            self.RunChain.Merge(merge_filename) # create merged tree as <filename>_temp1.root
+            ExecuteCmd('hadd -f %s %s %s'%(filename,merge_filename,current_filename)) # hadd them together into original filename (force overwrite not the greatest)
+            ExecuteCmd('rm %s %s'%(merge_filename,current_filename)) # clean up
 
     def Range(self,*argv):
         '''@see Node#Range'''
