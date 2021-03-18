@@ -1,8 +1,19 @@
+'''@addtogroup Common AutoJME (AutoJME.py)
+Automatic calculation of JES, JER, JMS, and JMR factors and uncertainties
+per-jet per-event and calibration of \f$p_{T}\f$ and mass with associated
+variations performed as well.
+@{
+'''
+
 from TIMBER.Tools.Common import GetJMETag
 from TIMBER.Analyzer import Calibration
 
 def AutoJME(a, jetCollection, year, dataEra=''):
-    '''Apply standard JME modules to analyzer() object `a` for 
+    '''Automatic calculation of JES, JER, JMS, and JMR factors and uncertainties
+    per-jet per-event and calibration of \f$p_{T}\f$ and mass with associated
+    variations performed as well.
+    
+    Apply standard JME modules to analyzer() object `a` for 
     a given jet collection, year, and data era (if a.isData).
     Output collection name will be called "Calibrated<jetCollection>"
     and will have the modified mass and pt and if MC, will have four possible variations
