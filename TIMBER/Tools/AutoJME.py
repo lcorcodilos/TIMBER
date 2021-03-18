@@ -1,4 +1,4 @@
-'''@addtogroup Common AutoJME (AutoJME.py)
+'''@addtogroup AutoJME AutoJME tool (AutoJME.py)
 Automatic calculation of JES, JER, JMS, and JMR factors and uncertainties
 per-jet per-event and calibration of \f$p_{T}\f$ and mass with associated
 variations performed as well.
@@ -28,7 +28,7 @@ def AutoJME(a, jetCollection, year, dataEra=''):
         a ([type]): analyzer object which will be manipulated and returned.
         jetCollection (str): FatJet or Jet.
         year (int): 2016, 2017, 2018, 2017UL, or 2018UL
-        dataEra (str, optional): [description]. Defaults to ''.
+        dataEra (str, optional): If providing data, include the "era" (A or B or C, etc). Defaults to ''.
 
     Raises:
         ValueError: Provided jet collection is not "FatJet" or "Jet"
