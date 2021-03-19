@@ -60,6 +60,7 @@ class TestAnalyzer():
         self.a.MakeWeightCols()
         htemplate = ROOT.TH1F('th1','',100,0,1000)
         hgroup = self.a.MakeTemplateHistos(htemplate,'Jet_pt0')
+        print ('TESTING GetWeightName: %s'%(self.a.GetWeightName(c,'up','')))
         print ([hgroup[h].GetName() for h in hgroup.keys()])
         self.a.DrawTemplates(hgroup, './')
         pass

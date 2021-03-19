@@ -861,6 +861,29 @@ class analyzer(object):
         # self.TrackNode(returnNode)
         return self.SetActiveNode(returnNode)
 
+    def GetWeightName(self,corr,variation,name=""):
+        '''Return the branch/column name of the requested weight
+
+        @param corr (str,Correction): Either the correction object or the name of the correction.
+        @param variation (str): "up" or "down".
+        @param name (str,optional): Name given MakeWeightCols to denote group of weight columns. Defaults to "".
+
+        Raises:
+            NameError: If weight name does not exist in the columns.
+
+        Returns:
+            str: Name of the requested weight branch/column.
+        '''
+        if isinstance(corr,Correction):
+            corrname = corr.name
+        elif isinstance(corr,str):
+            corrname = corr
+        namemod = '' if name == '' else '_'+name
+        weightname = 'weight%s__%s_%s'%(namemod,corrname,variation)
+        if weightname not in self.DataFrame.GetColumnNames():
+            raise NameError("The weight name `%s` does not exist in the current columns. Are you sure the correction has been made and MakeWeightCols has been called?"%weightname)
+        return weightname
+
     def MakeTemplateHistos(self,templateHist,variables,node=None):
         '''Generates the uncertainty template histograms based on the weights created by #MakeWeightCols(). 
 
