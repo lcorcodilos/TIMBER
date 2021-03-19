@@ -31,5 +31,6 @@ var searchData=
   ['gettriggerstring',['GetTriggerString',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a818bf6c1ef57461de293ebf6a4c7ea6a',1,'TIMBER::Analyzer::analyzer']]],
   ['gettxtfilestr',['GetTxtFileStr',['../class_j_e_spaths.html#a2c29bad825d3fa85e6c9c235d1d29491',1,'JESpaths']]],
   ['gettype',['GetType',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html#afde9a246543a0b49710f9312d6020b7b',1,'TIMBER::Analyzer::Correction']]],
-  ['getuncertainty',['GetUncertainty',['../class_jet_recalibrator.html#afa7f3c7cf9571beb929bdf0b4cc37782',1,'JetRecalibrator']]]
+  ['getuncertainty',['GetUncertainty',['../class_jet_recalibrator.html#afa7f3c7cf9571beb929bdf0b4cc37782',1,'JetRecalibrator']]],
+  ['getweightname',['GetWeightName',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2f8118d1dc9a46dd6155791323a8ad63',1,'TIMBER::Analyzer::analyzer']]]
 ];
