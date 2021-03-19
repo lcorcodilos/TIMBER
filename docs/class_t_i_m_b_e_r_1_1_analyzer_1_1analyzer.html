@@ -110,6 +110,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a1ba09da1969b6677c42489b42495ba0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9396d0acbc67a31bbae81c20944900c"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ac9396d0acbc67a31bbae81c20944900c">Snapshot</a> (self, columns, outfilename, treename, lazy=False, openOption='RECREATE')</td></tr>
 <tr class="separator:ac9396d0acbc67a31bbae81c20944900c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71c3df3ecfe0afd1abe50caabea431c6"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a71c3df3ecfe0afd1abe50caabea431c6">SaveRunChain</a> (self, filename, merge=True)</td></tr>
+<tr class="memdesc:a71c3df3ecfe0afd1abe50caabea431c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the Run tree (chain of all input files) to filename.  <a href="#a71c3df3ecfe0afd1abe50caabea431c6">More...</a><br /></td></tr>
+<tr class="separator:a71c3df3ecfe0afd1abe50caabea431c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a361306a468fa48145cf99ee48c82bf25"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a361306a468fa48145cf99ee48c82bf25">Range</a> (self, argv)</td></tr>
 <tr class="separator:a361306a468fa48145cf99ee48c82bf25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a62e71f7ad8a428d1eb03076a7d72c506"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a62e71f7ad8a428d1eb03076a7d72c506">GetCollectionNames</a> (self)</td></tr>
@@ -181,6 +184,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af222479f97b45564dfcc91fec275c48b"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#af222479f97b45564dfcc91fec275c48b">MakeWeightCols</a> (self, name='', node=None, correctionNames=None, dropList=[])</td></tr>
 <tr class="memdesc:af222479f97b45564dfcc91fec275c48b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes columns/variables to store total weights based on the Corrections that have been added.  <a href="#af222479f97b45564dfcc91fec275c48b">More...</a><br /></td></tr>
 <tr class="separator:af222479f97b45564dfcc91fec275c48b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f8118d1dc9a46dd6155791323a8ad63"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2f8118d1dc9a46dd6155791323a8ad63">GetWeightName</a> (self, corr, variation, name=&quot;&quot;)</td></tr>
+<tr class="memdesc:a2f8118d1dc9a46dd6155791323a8ad63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the branch/column name of the requested weight.  <a href="#a2f8118d1dc9a46dd6155791323a8ad63">More...</a><br /></td></tr>
+<tr class="separator:a2f8118d1dc9a46dd6155791323a8ad63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a611faeda8b08b76181109820e549c232"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a611faeda8b08b76181109820e549c232">MakeTemplateHistos</a> (self, templateHist, variables, node=None)</td></tr>
 <tr class="memdesc:a611faeda8b08b76181109820e549c232"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the uncertainty template histograms based on the weights created by <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#af222479f97b45564dfcc91fec275c48b" title="Makes columns/variables to store total weights based on the Corrections that have been added...">MakeWeightCols()</a>.  <a href="#a611faeda8b08b76181109820e549c232">More...</a><br /></td></tr>
 <tr class="separator:a611faeda8b08b76181109820e549c232"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1169,6 +1175,65 @@ str Statement to evaluate as the set of triggers. </dd></dl>
 
 </div>
 </div>
+<a id="a2f8118d1dc9a46dd6155791323a8ad63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f8118d1dc9a46dd6155791323a8ad63">&#9670;&nbsp;</a></span>GetWeightName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def GetWeightName </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>corr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>variation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>name</em> = <code>&quot;&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the branch/column name of the requested weight. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">corr</td><td>(str,<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_correction.html" title="Class to handle corrections produced by C++ modules. ">Correction</a>): Either the correction object or the name of the correction. </td></tr>
+    <tr><td class="paramname">variation</td><td>(str): "up" or "down". </td></tr>
+    <tr><td class="paramname">name</td><td>(str,optional): Name given MakeWeightCols to denote group of weight columns. Defaults to "".</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">NameError</td><td>If weight name does not exist in the columns.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd>
+<dd>
+str Name of the requested weight branch/column. </dd></dl>
+
+</div>
+</div>
 <a id="a033c29fbbeb320baadaec86ca25ff829"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a033c29fbbeb320baadaec86ca25ff829">&#9670;&nbsp;</a></span>MakeHistsWithBinning()</h2>
 
@@ -1629,6 +1694,53 @@ None </dd></dl>
 <dd>
 <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> New <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a517b5caa6818e1f61b5b742625e575f4" title="Node. ">ActiveNode</a>.</dd></dl>
 <p><b>Examples</b> </p><div class="fragment"></div><!-- fragment --><p> a = analyzer(...) </p><div class="fragment"><div class="line">a.Define(<span class="stringliteral">&#39;NewFatJetIdxs&#39;</span>,<span class="stringliteral">&#39;ReorderJets(...)&#39;</span>)</div><div class="line">a.ReorderCollection(<span class="stringliteral">&#39;ReorderedFatJets&#39;</span>,<span class="stringliteral">&#39;FatJet&#39;</span>,<span class="stringliteral">&#39;NewFatJetIdxs&#39;</span>)</div></div><!-- fragment --> 
+</div>
+</div>
+<a id="a71c3df3ecfe0afd1abe50caabea431c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71c3df3ecfe0afd1abe50caabea431c6">&#9670;&nbsp;</a></span>SaveRunChain()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def SaveRunChain </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>merge</em> = <code>True</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Save the Run tree (chain of all input files) to filename. </p>
+<p>If filename already exists, some staging will occur to properly merge the files via hadd.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filename</td><td>(str): Output file name. </td></tr>
+    <tr><td class="paramname">merge</td><td>(bool, optional): Whether to merge with a file that already exists. Defaults to True.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd>
+<dd>
+None </dd></dl>
+
 </div>
 </div>
 <a id="a3f19f4e3f9344e283f5cf6ae2371fc70"></a>

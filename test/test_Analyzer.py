@@ -41,11 +41,17 @@ class TestAnalyzer():
         self.a.SetActiveNode(bookmark)
         assert nevents.GetValue() == 500
 
-    def test_snapshot(self,tmp_path):
+    def test_snapshot(self):
         '''Makes a simple snapshot'''
         out_vars = ['nJet','test_define']
-        self.a.GetActiveNode().Snapshot(out_vars,str(tmp_path)+'/ex1_out.root','test_snapshot',lazy=False,openOption='RECREATE') 
+        self.a.GetActiveNode().Snapshot(out_vars,'test_out.root','test_snapshot',lazy=False,openOption='RECREATE') 
         assert True
+    
+    # No Runs tree in test file currently
+    # def test_SaveRunChain(self):
+    #     '''Save out RunChain'''
+    #     self.a.SaveRunChain("test_out.root")
+    #     assert True
 
     def test_Correction(self):
         c = Correction('testWeight','test/test_weight.cc')
@@ -54,6 +60,7 @@ class TestAnalyzer():
         self.a.MakeWeightCols()
         htemplate = ROOT.TH1F('th1','',100,0,1000)
         hgroup = self.a.MakeTemplateHistos(htemplate,'Jet_pt0')
+        print ('TESTING GetWeightName: %s'%(self.a.GetWeightName(c,'up','')))
         print ([hgroup[h].GetName() for h in hgroup.keys()])
         self.a.DrawTemplates(hgroup, './')
         pass
