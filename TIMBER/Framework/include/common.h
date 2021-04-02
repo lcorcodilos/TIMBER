@@ -253,12 +253,12 @@ namespace Pythonic {
      * @return bool True or false based on whether object is found in list.
      */
     template<typename T>
-    bool InList(T obj, std::vector<T> list) {
-        bool out;
+    int InList(T obj, std::vector<T> list) {
+        int out;
         auto pos = std::find(std::begin(list), std::end(list), obj);
         if (pos != std::end(list)){
-            out = true;
-        } else {out = false;}
+            out = pos - std::begin(list);
+        } else {out = -1;}
         return out;
     }
 
