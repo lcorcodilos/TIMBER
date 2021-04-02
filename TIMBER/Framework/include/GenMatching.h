@@ -5,7 +5,6 @@
 #include <numeric>
 #include <math.h>
 #include <cstdlib>
-#include "Collection.h"
 #include "common.h"
 #include <Math/Vector4D.h>
 #include <Math/VectorUtil.h>
@@ -40,13 +39,30 @@ class Particle {
     public:
         bool flag = true; /**< Should always be true unless we need to return a None-like particle */
         int index; /**< Index in collection */
-        int* pdgId; /**< PDG ID of particle */
-        int* status; /**< Pythia status of particle */
         std::map <std::string, int> statusFlags; /**< Map of status flags for set gen particle  */
-        int parentIndex; /**< Parent index  */
-        std::vector<int> childIndex; /**< Children indices */
+        int parentIndex; /**< Parent index in GenParticleTree */
+        std::vector<int> childIndex; /**< Children indices in GenParticleTree */
         LVector vect; /**< Lorentz vector */
+        int genPartIdxMother; /**< Index of the mother particle in NanoAOD*/
+        int pdgId; /**< PDG id*/
+        int status; /**< Particle status*/
+        /**
+         * @brief Construct a new Particle object
+         */
         Particle();
+        /**
+         * @brief Construct a new Particle object with TIMBER collection struct as input
+         * 
+         * @tparam T 
+         * @param i index
+         * @param p struct
+         */
+        template <class T>
+        Particle(int i, T p) : 
+            vect(LVector(p.pt, p.eta, p.phi, p.mass)), index(i), genPartIdxMother(p.genPartIdxMother),
+            pdgId(p.pdgId), status(p.status) {
+                SetStatusFlags(p.statusFlags);
+        };
         /**
          * @brief Add parent index to track.
          * 
@@ -59,6 +75,8 @@ class Particle {
          * @param idx Child index
          */
         void AddChild(int idx);
+        int GetParent();
+        std::vector<int> GetChild();
         /**
          * @brief Calculate \f$\Delta R\f$ between current particle and input vector.
          * 
@@ -66,6 +84,24 @@ class Particle {
          * @return float \f$\Delta R\f$ value
          */
         float DeltaR(LVector input_vector);
+        /**
+         * @brief Set the internal status flags map
+         * @param flags Integer from NanoAOD
+         */
+        void SetStatusFlags(int flags);
+        /** @brief Returns the bool for the flag name provided
+         * @param flagName
+         * @return int Status flag.
+         */
+        int GetStatusFlag(std::string flagName);
+        /**
+         * @brief Compares particle to a provided vector.
+         * 
+         * @param vect The vector to compare against the current particle. 
+         * @return std::map< std::string, bool> Map with keys "sameHemisphere" (phi<pi/2), "deltaR" 
+         * (deltaR < 0.8), "deltaM" (|delta m|/m_gen < 0.05) which all return bools.
+         */
+        std::map< std::string, bool> CompareToVector(LVector vect);
 };
 
 
@@ -77,37 +113,45 @@ class Particle {
 class GenParticleTree
 {
     private:
-        Collection GenParts;
-        std::vector<Particle*> nodes;
-        std::vector<Particle*> heads;
+        std::vector<Particle> _nodes;
+        std::vector<Particle*> _heads;
+        // std::vector<int> _storedIndexes;
 
-        bool MatchParticleToString(Particle* particle, std::string string);
-        std::vector<Particle*> RunChain(Particle* node, std::vector<std::string> chain);
+        bool _matchParticleToString(Particle* particle, std::string string);
+        std::vector<Particle*> _runChain(Particle* node, std::vector<std::string> chain);
 
-        std::vector<int> StoredIndexes();
-        Particle NoneParticle;
+        Particle _noneParticle;
 
     public:
-        GenParticleTree(){
-            NoneParticle.flag = false;
-        };
+        GenParticleTree(int nParticles);
         /**
          * @brief Add particle to tree.
          * 
          * @param particle 
          */
-        void AddParticle(Particle* particle);
+        Particle* AddParticle(Particle particle);
+        template <class T>
+        Particle* AddParticle(int index, T p) {
+            Particle particle(index, p);
+            return AddParticle(particle);
+        }
         /**
          * @brief Get the list of particle objects.
          * 
          * @return std::vector<Particle*> 
          */
-        std::vector<Particle*> GetParticles() {return nodes;}
+        std::vector<Particle*> GetParticles() {
+            std::vector<Particle*> out;
+            for (int inode = 0; inode<_nodes.size(); inode++) {
+                out.push_back(&_nodes[inode]);
+            }
+            return out;
+        }
         /**
          * @brief Get the list of child particles for a given particle in the tree.
          * 
          * @param particle 
-         * @return std::vector<Particle*> 
+         * @return std::vector<Particle>* 
          */
         std::vector<Particle*> GetChildren(Particle* particle);
         /**
@@ -124,68 +168,5 @@ class GenParticleTree
          * @return std::vector<std::vector<Particle*>> 
          */
         std::vector<std::vector<Particle*>> FindChain(std::string chainstring);
-};
-
-/** @class GenParticleObjs
- *  @brief C++ class. Class that stores and manipulates the information for gen particles.
- *  Stores all gen particles in the event and member functions can be used to
- *  access the gen particles by index.
-*/
-class GenParticleObjs {
-    private:
-        Collection GenPartCollection; /** Struct holding maps of values */
-
-        /**
-         * @brief Sets the status flags for the current particle.
-         * Called by \ref SetIndex. */
-        void SetStatusFlags(int particleIndex);
-
-    public:
-        /**
-         * @brief Constructor which takes in all info from the GenPart collection in NanoAOD 
-         * Just assigns the inputs to internal variables.
-         * 
-         * @param in_pt Input \f$p_T\f$
-         * @param in_eta Input \f$eta\f$
-         * @param in_phi Input \f$phi\f$
-         * @param in_m Input mass
-         * @param in_pdgId Input PDG ID
-         * @param in_status Input status
-         * @param in_statusFlags Input status flags
-         * @param in_genPartIdxMother Input mother index
-         */
-        GenParticleObjs(RVec<float> in_pt, 
-                        RVec<float> in_eta, RVec<float> in_phi, 
-                        RVec<float> in_m, RVec<int> in_pdgId, 
-                        RVec<int> in_status, RVec<int> in_statusFlags, 
-                        RVec<int> in_genPartIdxMother);
-        /**
-         * @brief Construct a new Gen Particle object
-         * 
-         * @param genParts @ref Collection object filled with GenPart branches from NanoAOD.
-         */
-        GenParticleObjs(Collection genParts);   
-
-        Particle particle; /**< the current particle object queued for access*/
-        /**
-         * @brief Compares GenPart object to a provided vector.
-         * 
-         * @param vect The vector to compare against the current particle. 
-         * @return std::map< std::string, bool> Map with keys "sameHemisphere" (phi<pi), "deltaR" 
-         * (deltaR < 0.8), "deltaM" (|delta m|/m_gen < 0.05) which  all return bools.
-         */
-        std::map< std::string, bool> CompareToVector(LVector vect);
-        /**
-         * @brief Sets the index of the lookup particle 
-         * 
-         * @param idx The index in the collection 
-         * @return Particle 
-         */
-        Particle SetIndex(int idx);   
-        /** @brief Returns the bool for the flag name provided
-         * @param flagName
-         * @return int Status flag.
-         */
-        int GetStatusFlag(std::string flagName);
 };
 #endif
