@@ -1905,7 +1905,14 @@ class ModuleWorker(object):
                                         default_val = ''.join([tok.spelling for tok in list(translation_unit.get_tokens(extent=list(arg.walk_preorder())[-1].extent))])
                                         funcs[methodname][arg.spelling] = default_val
                                     else:
-                                        funcs[methodname][arg.spelling] = None                                  
+                                        funcs[methodname][arg.spelling] = None  
+
+        if len(list(funcs.keys())) == 0:
+            if ('TIMBER/Framework/src' in self._script):
+                self._script = self._script.replace('src','include').replace('.cc','.h')
+                funcs = self._getFuncInfo(funcname)
+            else:
+                raise ValueError('Could not find `%s` in file %s'%(funcname,self._script))
 
         return funcs
 
