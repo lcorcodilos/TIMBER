@@ -1930,6 +1930,12 @@ class ModuleWorker(object):
             try:
                 if a == "":
                     line += '"", '
+                elif a == "true" or a == "false":
+                    line += '%s, '%(a)
+                elif isinstance(a,bool) and a == True:
+                    line += 'true, '
+                elif isinstance(a,bool) and a == False:
+                    line += 'false, '
                 elif a[0].isalpha():
                     line += '"%s", '%(a)
                 else:
