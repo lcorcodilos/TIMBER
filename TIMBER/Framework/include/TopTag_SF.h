@@ -11,6 +11,10 @@
 using LVector = ROOT::Math::PtEtaPhiMVector;
 
 class TopTag_SF {
+    /**
+     * @brief C++ class to access scale factors associated with tau32+subjet btag(+mass)
+     * based top tagging. More details provided at https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetTopTagging](https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetTopTagging)
+     */
     private:
         std::string workpoint_name;
         int _year;
@@ -18,11 +22,37 @@ class TopTag_SF {
         TFile *_file;
 
     public:
+        /**
+         * @brief Construct a new TopTag_SF object
+         * 
+         * @param year 2016, 2017, 2018
+         * @param workpoint 1 through 5. See Twiki above for details.
+         * @param NoMassCut Bool based on whether a jet mass cut is applied for the tag.
+         */
         TopTag_SF(int year, int workpoint, bool NoMassCut=false);
         ~TopTag_SF(){};
+        /**
+         * @brief Finds the number of merged generator particles
+         * in the reconstructed jet.
+         * 
+         * @param top_vect LorentzVector of the reconstructed top jet
+         * @param Ws Vector of (pointers to) the W particles
+         * @param quarks Vector of (pointers to) the non-top quark particles
+         * @param GPT GenParticleTree object with particles already added to tree.
+         * @return int Number of merged particles. Maximum of 3 (ie. if more than 
+         *      three are found, three is returned).
+         */
         int NMerged(LVector top_vect, RVec<Particle*> Ws,
                 RVec<Particle*> quarks, GenParticleTree GPT);
-
+        /**
+         * @brief Evaluation function based on the reconstructed top jet pt
+         *  and the matched generator particles (GenParts).
+         *  
+         * @tparam T Array of structs constructed dynamically by TIMBER
+         * @param top_vect Reconstructed top jet LorentzVector
+         * @param GenParts Generator particles array of structs created dynamically by TIMBER (named `GenParts`).
+         * @return RVec<double> Scale factor values, {nominal, up, down} (absolute)
+         */
         template <class T>
         RVec<double> eval(LVector top_vect, std::vector<T> GenParts){
             GenParticleTree GPT(GenParts.size());
