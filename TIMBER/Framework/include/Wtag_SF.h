@@ -1,3 +1,5 @@
+#ifndef _TIMBER_WTAG_SF
+#define _TIMBER_WTAG_SF
 #include <ROOT/RVec.hxx>
 
 class Wtag_SF {
@@ -25,3 +27,4 @@ class Wtag_SF {
          */
         ROOT::VecOps::RVec<float> eval(float tau21);
 };
+#endif
