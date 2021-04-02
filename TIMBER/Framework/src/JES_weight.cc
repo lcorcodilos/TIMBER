@@ -14,7 +14,7 @@ bool JES_weight::check_type_exists() {
     if (_uncertType == "") {
         out = true;
     } else {
-        if (Pythonic::InList(_uncertType,this->get_sources())) {
+        if (Pythonic::InList(_uncertType,this->get_sources())>-1) {
             out = true;
         } else {
             out = false;

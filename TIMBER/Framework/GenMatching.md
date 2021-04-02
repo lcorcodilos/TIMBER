@@ -23,11 +23,8 @@ First, one should construct the skeleton of the function.
 
 using LVector = ROOT::Math::PtEtaPhiMVector;
 
-int NMerged(LVector top_vect, int nGenPart,
-                RVec<float> GenPart_pt, RVec<float> GenPart_eta,
-                RVec<float> GenPart_phi, RVec<float> GenPart_mass,
-                RVec<int> GenPart_pdgId, RVec<int> GenPart_status,
-                RVec<int> GenPart_statusFlags, RVec<int> GenPart_genPartIdxMother) {
+template <class T>
+int NMerged(LVector top_vect, T GenParts) {
 
     int nmerged = 0;
     /*
@@ -38,37 +35,25 @@ int NMerged(LVector top_vect, int nGenPart,
 }
 ```
 
-Now create a GenParticleObjs instance. This is effectively reconfigures the
-input information from vectors of properties to a vector of Particle objects,
-each with its own properties. Adding to the `rest of the code here` area...
+Here, GenParts is an array of structs that is created dynamically by TIMBER
+to house the generator particle information by particle rather than by attribute.
+The type will not be defined prior to compilation which is why we need a template.
+
+Adding to the `rest of the code here` area, we initialize the tree and some storage objects...
 
 ```.cc
-GenParticleObjs GenParticles (GenPart_pt, GenPart_eta,
-                                  GenPart_phi, GenPart_mass,
-                                  GenPart_pdgId, GenPart_status,
-                                  GenPart_statusFlags, GenPart_genPartIdxMother);
-```
-
-Now initialize the tree and some storage objects...
-
-```.cc
-GenParticleTree GPT;
+GenParticleTree GPT(GenParts.size());
 // prongs are final particles we'll check
-vector<Particle*> tops, Ws, quarks, prongs; 
+RVec<Particle*> Ws, quarks, prongs; 
 ```
 
-Now we can start filling in the tree and tracking particle we care about (top, W, non-top quarks)...
+Now we can start filling in the tree and tracking particle we care about (W, non-top quarks)...
 ```.cc
-for (int i = 0; i < nGenPart; i++) {
-    GenParticles.SetIndex(i); // access ith particle
-    Particle* this_particle = &GenParticles.particle;
-    GPT.AddParticle(this_particle); // add particle to tree
-    
-    int this_pdgId = *(this_particle->pdgId);
-
-    if (abs(this_pdgId) == 6 && this_particle->DeltaR(top_vect) < 0.8) {
-        tops.push_back(this_particle);
-    } else if (abs(this_pdgId) == 24) {
+int this_pdgId;
+for (size_t i = 0; i < GenParts.size(); i++) {
+    Particle* this_particle = GPT.AddParticle(Particle(i,GenParts[i])); // add particle to tree
+    this_pdgId = this_particle->pdgId;
+    if (abs(this_pdgId) == 24) {
         Ws.push_back(this_particle);
     } else if (abs(this_pdgId) >= 1 && abs(this_pdgId) <= 5) {
         quarks.push_back(this_particle);
@@ -76,17 +61,17 @@ for (int i = 0; i < nGenPart; i++) {
 }
 ```
 
-With the tree built and all of the tops, Ws, and non-top quarks tracked,
+With the tree built and all of the Ws and non-top quarks tracked,
 we'll look for the bottom quark (from the matching top).
 ```.cc
 Particle *q, *bottom_parent;
-for (int iq = 0; iq < quarks.size(); iq++) {
+for (size_t iq = 0; iq < quarks.size(); iq++) {
     q = quarks[iq];
-    if (abs(*(q->pdgId)) == 5) { // if bottom
+    if (abs(q->pdgId) == 5) { // if bottom
         bottom_parent = GPT.GetParent(q);
         if (bottom_parent->flag != false) { // if has parent
             // if parent is a matched top
-            if (abs(*(bottom_parent->pdgId)) == 6 && bottom_parent->DeltaR(top_vect) < 0.8) { 
+            if (abs(bottom_parent->pdgId) == 6 && bottom_parent->DeltaR(top_vect) < 0.8) { 
                 prongs.push_back(q);
             }
         }
@@ -97,24 +82,24 @@ for (int iq = 0; iq < quarks.size(); iq++) {
 Next, look for W (from the matching top) and then get the daughter quarks.
 ```.cc
 Particle *W, *this_W, *wChild, *wParent;
-vector<Particle*> this_W_children;
-for (int iW = 0; iW < Ws.size(); iW++) {
+std::vector<Particle*> this_W_children;
+for (size_t iW = 0; iW < Ws.size(); iW++) {
     W = Ws[iW];
     wParent = GPT.GetParent(W);
     if (wParent->flag != false) {
         // Make sure parent is top that's in the jet
-        if (abs(*(wParent->pdgId)) == 6 && wParent->DeltaR(top_vect) < 0.8) {
+        if (abs(wParent->pdgId) == 6 && wParent->DeltaR(top_vect) < 0.8) {
             this_W = W;
             this_W_children = GPT.GetChildren(this_W);
             // Make sure the child is not just another W
-            if (this_W_children.size() == 1 && this_W_children[0]->pdgId == W->pdgId) {
+            if ((this_W_children.size() == 1) && (this_W_children[0]->pdgId == W->pdgId)) {
                 this_W = this_W_children[0];
                 this_W_children = GPT.GetChildren(this_W);
             }
             // Add children as prongs
-            for (int ichild = 0; ichild < this_W_children.size(); ichild++) {
+            for (size_t ichild = 0; ichild < this_W_children.size(); ichild++) {
                 wChild = this_W_children[ichild];
-                int child_pdgId = *(wChild->pdgId);
+                int child_pdgId = wChild->pdgId;
                 if (abs(child_pdgId) >= 1 && abs(child_pdgId) <= 5) {
                     prongs.push_back(wChild);
                 }
@@ -131,6 +116,7 @@ for (int iprong = 0; iprong < prongs.size(); iprong++) {
         nmerged++;
     }
 }
-
-return nmerged;
+return std::min(nmerged,3);
 ```
+
+At the final line, we enforce that any more than three prongs also be considered a "merged" top.

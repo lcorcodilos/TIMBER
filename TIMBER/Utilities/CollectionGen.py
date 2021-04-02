@@ -25,7 +25,10 @@ def GetKeyValForBranch(rdf, bname, includeType=True):
     varname = '_'.join(bname.split('_')[1:])
     out = (collname, '')
 
-    if varname != '':
+    branch_names = [str(b) for b in rdf.GetColumnNames()]
+    if varname == '' or 'n'+collname not in branch_names:
+        pass
+    elif varname != '':
         collType = str(rdf.GetColumnType(bname)).replace('ROOT::VecOps::RVec<','')
         if collType.endswith('>'): collType = collType[:-1]
         collType += '&'

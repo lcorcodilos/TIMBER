@@ -16,8 +16,10 @@ setuptools.setup(
     include_package_data=True,
     # cmdclass={'install': AddToPath},
     install_requires = [
+        "decorator==4.4.2",
+        "pyparsing==2.4.7",
         "graphviz==0.14.2",
-        "pydot",
+        "pydot==1.4.1",
         "networkx==2.2",
         "clang==6.0.0.2"
     ]
