@@ -33,3 +33,12 @@
 | 2017UL | Mar 18, 2021 | Summer19UL17_JRV2_DATA(MC).tar.gz | |
 | 2018UL | Mar 18, 2021 | Summer19UL18_JRV2_DATA(MC).tar.gz | |
 | All    | Mar 18, 2021 | puppiSoftdropResol.root           | https://github.com/cms-jet/PuppiSoftdropMassCorrections/tree/80X/weights |
+
+## Prefire Maps
+| Era    | Date added   | Files                             | Sources |
+|--------|--------------|-----------------------------------|---------|
+| 2016   | Apr 5, 2021  | L1prefiring_*pt_2016BtoH.root     | https://github.com/cms-nanoAOD/nanoAOD-tools/tree/master/data/prefire_maps |
+| 2017   | Apr 5, 2021  | L1prefiring_*pt_2017BtoF.root     | |
+
+## PDF sets
+File pdfsets.index downloaded from [https://lhapdfsets.web.cern.ch/current/pdfsets.index](https://lhapdfsets.web.cern.ch/current/pdfsets.index) on Oct. 19, 2020.
