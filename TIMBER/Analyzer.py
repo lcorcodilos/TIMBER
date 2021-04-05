@@ -13,7 +13,6 @@ import ROOT
 import pprint, copy, os, subprocess, textwrap, re, glob
 pp = pprint.PrettyPrinter(indent=4)
 
-
 # For parsing c++ modules
 libs = subprocess.Popen('$ROOTSYS/bin/root-config --libs',shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0].strip()
 rootpath = subprocess.Popen('echo $ROOTSYS',shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0].strip()

@@ -4,11 +4,10 @@ TopTag_SF::TopTag_SF(int year, int workpoint, bool NoMassCut) :
         _year(year > 2000 ? year - 2000 : year) {
 
     workpoint_name = "wp"+std::to_string(workpoint);
-    std::string filename = "SFs/20"+std::to_string(_year)+"TopTaggingScaleFactors";
+    std::string filename = "TIMBER/data/OfficialSFs/20"+std::to_string(_year)+"TopTaggingScaleFactors";
     if (NoMassCut){filename += "_NoMassCut.root";}
     else {filename += ".root";}
-    
-    _file = new TFile(filename.c_str(),"READ");
+    _file = hardware::Open(filename);
 
     _hists[3]["nom"] = (TH1F*)_file->Get(TString("PUPPI_"+workpoint_name+"_btag/sf_mergedTop_nominal"));
     _hists[3]["up"] = (TH1F*)_file->Get(TString("PUPPI_"+workpoint_name+"_btag/sf_mergedTop_up"));
