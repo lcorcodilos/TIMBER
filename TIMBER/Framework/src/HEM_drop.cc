@@ -1,4 +1,4 @@
-#include "../include/HEM_check.h"
+#include "../include/HEM_drop.h"
 
 float HEM_drop(std::string setname, RVec<float> FatJet_eta, RVec<float> FatJet_phi, int run, std::vector<int> idxToCheck) {
     bool isAffectedData = InString("data",setname) && (InString("C",setname) || InString("D",setname) || InString("B",setname));
