@@ -14,15 +14,17 @@ Prefire_weight::Prefire_weight(int year, bool UseEMpt) :
     } else {
         throw "Prefire_weight: Year not supported. 2016 or 2017 only.";
     }
-    _jetroot = new TFile(("TIMBER/data/PrefireMaps/"+_jetmapname+".root").c_str());
-    _photonroot = new TFile(("TIMBER/data/PrefireMaps/"+_photonmapname+".root").c_str());
+    _jetroot = hardware::Open("TIMBER/data/PrefireMaps/"+_jetmapname+".root");
+    _photonroot = hardware::Open("TIMBER/data/PrefireMaps/"+_photonmapname+".root");
+    _jetmap = (TH2F*)_jetroot->Get(_jetmapname.c_str());
+    _photonmap = (TH2F*)_photonroot->Get(_photonmapname.c_str());
 }
 Prefire_weight::~Prefire_weight() {
     _jetroot->Close();
     _photonroot->Close();
 }
 
-float Prefire_weight::GetPrefireProbability(TH1* map, float eta, float pt, float maxpt) {
+float Prefire_weight::GetPrefireProbability(TH2F* map, float eta, float pt, float maxpt) {
     int bin = map->FindBin(eta, std::min(pt, (float)(maxpt - 0.01)));
     float pref_prob = map->GetBinContent(bin);
 

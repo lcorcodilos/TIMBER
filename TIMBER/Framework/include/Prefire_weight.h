@@ -1,7 +1,7 @@
 #ifndef _TIMBER_PREFIRE_WEIGHT
 #define _TIMBER_PREFIRE_WEIGHT
 #include "TFile.h"
-#include "TH1.h"
+#include "TH2F.h"
 #include <ROOT/RVec.hxx>
 #include <string>
 #include <algorithm>
@@ -12,7 +12,7 @@ class Prefire_weight {
     private:
         std::string _jetmapname, _photonmapname;
         TFile *_jetroot, *_photonroot;
-        TH1* _jetmap, *_photonmap;
+        TH2F *_jetmap, *_photonmap;
         std::pair<float,float> _jetPtRange, _jetEtaRange, _photonPtRange, _photonEtaRange;
         std::vector<std::pair<int, std::string>> _variations = {{0,"PrefireWeight"},{1,"PrefireWeight_Up"},{-1,"PrefireWeight_Down"}};
         int _variation;
@@ -56,7 +56,7 @@ class Prefire_weight {
             return phopf;
         }
 
-        float GetPrefireProbability(TH1* map, float eta, float pt, float maxpt);
+        float GetPrefireProbability(TH2F* map, float eta, float pt, float maxpt);
         bool PhotonInRange(float pt, float eta);
         bool JetInRange(float pt, float eta);
         bool ObjInRange(float pt, float eta, std::pair<float,float> ptRange, std::pair<float,float> etaRange);

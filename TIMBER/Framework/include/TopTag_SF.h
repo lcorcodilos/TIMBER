@@ -2,7 +2,7 @@
 #define _TIMBER_TOPTAG_SF
 #include <string>
 #include <TFile.h>
-#include <TH1.h>
+#include <TH1F.h>
 #include <TString.h>
 #include <Math/Vector4Dfwd.h>
 #include <Math/GenVector/LorentzVector.h>
