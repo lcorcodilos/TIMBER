@@ -2,6 +2,10 @@
 #include "libarchive/include/archive.h"
 #include "libarchive/include/archive_entry.h"
 
+TFile *hardware::Open(std::string file){
+    return new TFile((std::string(std::getenv("TIMBERPATH"))+file).c_str());
+}
+
 RVec<float> hardware::HadamardProduct(RVec<float> v1, RVec<float> v2) {
     RVec<float> out;
     out.reserve(v1.size());

@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <ROOT/RVec.hxx>
 #include <TMath.h>
+#include <TFile.h>
 #include <Math/GenVector/LorentzVector.h>
 #include <Math/GenVector/PtEtaPhiM4D.h>
 #include <Math/Vector4Dfwd.h>
@@ -25,6 +26,14 @@ using namespace ROOT::VecOps;
  * @brief C++ namespace for common physics functions.
  */
 namespace hardware {  
+    /**
+     * @brief Open a ROOT file inside the TIMBER path. Thsi function essentially
+     * just does the char + string formatting for you.
+     * 
+     * @param file Ex. TIMBER/data/example.root
+     * @return TFile* 
+     */
+    TFile *Open(std::string file);
     /**
      * @brief Hadamard product of two vectors (`v3[i] = v1[i]*v2[i]`)
      * 
