@@ -16,6 +16,7 @@
 #include <ROOT/RVec.hxx>
 #include <TMath.h>
 #include <TFile.h>
+#include <TH1.h>
 #include <Math/GenVector/LorentzVector.h>
 #include <Math/GenVector/PtEtaPhiM4D.h>
 #include <Math/Vector4Dfwd.h>
@@ -31,9 +32,19 @@ namespace hardware {
      * just does the char + string formatting for you.
      * 
      * @param file Ex. TIMBER/data/example.root
+     * @param option Defaults to "READ" for read-only.
      * @return TFile* 
      */
-    TFile *Open(std::string file);
+    TFile *Open(std::string file, const char *option = "READ");
+    /**
+     * @brief Generically open a histogram from a file into memory (closing
+     * the file in the process).
+     * 
+     * @param filename 
+     * @param histname 
+     * @return TH1* 
+     */
+    TH1 *LoadHist(std::string filename, std::string histname);
     /**
      * @brief Hadamard product of two vectors (`v3[i] = v1[i]*v2[i]`)
      * 

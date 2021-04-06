@@ -1,15 +1,16 @@
+SOURCE_DIR=TIMBER/Framework/src/
+HEADER_DIR=TIMBER/Framework/include/
+EXT_DIR=TIMBER/Framework/ext/
+BIN_DIR=bin/libtimber/
+
 CC=gcc
-INCLUDE=-I/usr/include/ -I bin/ -I./ `root-config --cflags --ldflags --glibs` -I/usr/include/
+INCLUDE=-I/usr/include/ -I bin/ -I./ `root-config --cflags --ldflags --glibs` -I/usr/include/ -I$(EXT_DIR)
 LIBS=-lstdc++ -l boost_wserialization -l boost_filesystem -L bin/libarchive/lib/ -Wl,-rpath=bin/libarchive/lib/ -l archive
 CFLAGS=-g -Wno-attributes -fPIC -c
 CVMFS=/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/cms/cmssw/$(CMSSW_VERSION)
 CMSSW=-I$(CVMFS)/src -I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/boost/1.72.0-bcolbf/include -L/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/boost/1.72.0-bcolbf/lib -L$(CVMFS)/lib/$(SCRAM_ARCH)
 
-SOURCE_DIR=TIMBER/Framework/src/
-HEADER_DIR=TIMBER/Framework/include/
-BIN_DIR=bin/libtimber/
-
-CPP_FILES=$(wildcard $(SOURCE_DIR)*.cc TIMBER/Framework/src/ext/*.cpp)
+CPP_FILES=$(wildcard $(SOURCE_DIR)*.cc $(EXT_DIR)*.cpp  $(EXT_DIR)*.cc)
 HEADERS=$(CPP_FILES:$(SOURCE_DIR)%.cc=$(HEADER_DIR)%.h)
 
 JME_FILES=JetSmearer.cc JetRecalibrator.cc JMR_weight.cc JER_weight.cc JES_weight.cc JMS_weight.cc JME_common.cc
@@ -28,7 +29,7 @@ O_FILES=$(CPP_FILES:$(SOURCE_DIR)%.cc=$(BIN_DIR)%.o)
 all: libtimber
 
 libtimber: $(O_FILES)
-	$(CC) -shared $(CMSSW) $(INCLUDE) $(LIBS) -o $(BIN_DIR)libtimber.so $(O_FILES)
+	$(CC) -fPIC -shared $(CMSSW) $(INCLUDE) $(LIBS) -o $(BIN_DIR)libtimber.so $(O_FILES)
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
