@@ -26,7 +26,7 @@ def AutoJME(a, jetCollection, year, dataEra=''):
 
     @param a (analyzer): TIMBER analyzer object which will be manipulated and returned.
     @param jetCollection (str): FatJet or Jet.
-    @param year (int): 2016, 2017, 2018, 2017UL, or 2018UL.
+    @param year (str): 2016, 2017, 2018, 2017UL, or 2018UL.
     @param dataEra (str, optional): If providing data, include the "era" (A or B or C, etc). Defaults to ''.
 
     Raises:
@@ -49,14 +49,14 @@ def AutoJME(a, jetCollection, year, dataEra=''):
     
     if not a.isData:
         jes = Calibration("JES","TIMBER/Framework/include/JES_weight.h",
-                [GetJMETag("JES",str(year),"MC"),jetType,"","true"], corrtype="Calibration")
+                [GetJMETag("JES",year,"MC"),jetType,"","true"], corrtype="Calibration")
         jer = Calibration("JER","TIMBER/Framework/include/JER_weight.h",
-                [GetJMETag("JER",str(year),"MC"),jetType], corrtype="Calibration")
+                [GetJMETag("JER",year,"MC"),jetType], corrtype="Calibration")
         if doMass:
             jms = Calibration("JMS","TIMBER/Framework/include/JMS_weight.h",
-                    [str(year)], corrtype="Calibration")
+                    [year], corrtype="Calibration")
             jmr = Calibration("JMR","TIMBER/Framework/include/JMR_weight.h",
-                    [str(year)], corrtype="Calibration")
+                    [year], corrtype="Calibration")
 
         calibdict = {"%s_pt"%jetCollection:[jes,jer],"%s_mass"%jetCollection:[jes,jer,jms,jmr]}
         evalargs = {
