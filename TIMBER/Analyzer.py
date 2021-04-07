@@ -147,6 +147,7 @@ class analyzer(object):
                             break
                     self.lhaid = str(int(self.lhaid)-1) if self.lhaid[-1] == "1" else self.lhaid
                     print ('LHA ID: '+self.lhaid)
+        self.lhaid = int(self.lhaid)
 
         self.ActiveNode = self.BaseNode
         # Auto create collections
@@ -1908,7 +1909,7 @@ class ModuleWorker(object):
 
         if len(list(funcs.keys())) == 0:
             if ('TIMBER/Framework/src' in self._script):
-                self._script = self._script.replace('src','include').replace('.cc','.h')
+                self._script = self._script.replace('TIMBER/Framework/src','TIMBER/Framework/include').replace('.cc','.h')
                 funcs = self._getFuncInfo(funcname)
             else:
                 raise ValueError('Could not find `%s` in file %s'%(funcname,self._script))
@@ -1935,7 +1936,9 @@ class ModuleWorker(object):
                     line += 'true, '
                 elif isinstance(a,bool) and a == False:
                     line += 'false, '
-                elif a[0].isalpha():
+                elif isinstance(a,int) or isinstance(a,float):
+                    line += '%s, '%(a)
+                elif isinstance(a,str):
                     line += '"%s", '%(a)
                 else:
                     line += '%s, '%(a)

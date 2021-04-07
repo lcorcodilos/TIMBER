@@ -49,14 +49,14 @@ def AutoJME(a, jetCollection, year, dataEra=''):
     
     if not a.isData:
         jes = Calibration("JES","TIMBER/Framework/include/JES_weight.h",
-                [GetJMETag("JES",year,"MC"),jetType,"","true"], corrtype="Calibration")
+                [GetJMETag("JES",year,"MC"),jetType,"",True], corrtype="Calibration")
         jer = Calibration("JER","TIMBER/Framework/include/JER_weight.h",
                 [GetJMETag("JER",year,"MC"),jetType], corrtype="Calibration")
         if doMass:
             jms = Calibration("JMS","TIMBER/Framework/include/JMS_weight.h",
-                    [year], corrtype="Calibration")
+                    [int(year.replace('UL',''))], corrtype="Calibration")
             jmr = Calibration("JMR","TIMBER/Framework/include/JMR_weight.h",
-                    [year], corrtype="Calibration")
+                    [int(year.replace('UL',''))], corrtype="Calibration")
 
         calibdict = {"%s_pt"%jetCollection:[jes,jer],"%s_mass"%jetCollection:[jes,jer,jms,jmr]}
         evalargs = {
@@ -67,7 +67,7 @@ def AutoJME(a, jetCollection, year, dataEra=''):
         }
     else:
         jes = Calibration("JES","TIMBER/Framework/include/JES_weight.h",
-                [GetJMETag("JES",str(year),dataEraLetter),jetType,"","true"], corrtype="Calibration")
+                [GetJMETag("JES",year,dataEraLetter),jetType,"",True], corrtype="Calibration")
         
         calibdict = {"%s_pt"%jetCollection:[jes],"%s_mass"%jetCollection:[jes]}
         evalargs = {
