@@ -9,6 +9,10 @@
 #include "../ext/WeightCalculatorFromHistogram.h"
 
 class Pileup_weight {
+    /**
+     * @brief C++ class to handle pileup reweighting. Used in AutoPU.py.
+     * 
+     */
     private:
         TFile *_dataFile, *_mcFile;
         TH1 *_dataHist, *_dataHistUp, *_dataHistDown,
@@ -22,7 +26,7 @@ class Pileup_weight {
     public:
         /**
          * @brief Construct a new Pileup_weight object, providing custom MC and 
-         * data histograms.
+         * data histograms to take the ratio of the true number of primary vertices.
          * 
          * @param filename_mc Use "auto" to get the number of primary vertices directly from "autoPU" histogram in memory (gDirectory)
          * @param filename_data 
@@ -33,15 +37,17 @@ class Pileup_weight {
                       std::string histname_mc, std::string histname_data);
         /**
          * @brief Construct a new Pileup_weight object. Assumes "auto" pileup calculation
-         * for MC distribution.
+         * for MC distribution. Calculates the ratio of the true number of primary vertices
+         * between data and simulation.
          * 
          * @param era 2016(UL), 2017(UL), 2018(UL)
          */
         Pileup_weight(std::string era);
         /**
-         * @brief Save the Pileup_nTrueInt MC distribution if using "auto" mode.
+         * @brief Evaluate the pileup weight (value of ratio of data to simulation).
          * 
-         * @param outfile Name of the output file (opened in UPDATE mode).
+         * @param Pileup_nTrueInt 
+         * @return std::vector<float> 
          */
         std::vector<float> eval(int Pileup_nTrueInt);
         ~Pileup_weight(){};
