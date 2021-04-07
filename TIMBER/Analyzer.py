@@ -797,7 +797,7 @@ class analyzer(object):
 
         return correctionsToApply
 
-    def MakeWeightCols(self,name='',node=None,correctionNames=None,dropList=[]):
+    def MakeWeightCols(self,name='',node=None,correctionNames=None,dropList=[],correlations=[]):
         '''Makes columns/variables to store total weights based on the Corrections that have been added.
 
         This function automates the calculation of the columns that store the nominal weight and the 
@@ -818,6 +818,8 @@ class analyzer(object):
                 being tracked are considered.
         @param dropList list(str): List of correction names (strings) to not consider. Default is empty lists in which case no corrections
                 are dropped from consideration.
+        @param correlations list(tuple of strings): List of tuples of correlations to create. Ex. If you have syst1, syst2, syst3 corrections and you want
+                to correlate syst1 and syst2, provide [("syst1","syst2")]. To anti-correlate, add a "!" infront of the correction name. Ex. [("syst1","!syst2")]
 
         Returns:
             Node: New #ActiveNode.
@@ -840,18 +842,45 @@ class analyzer(object):
         if weights['nominal'] == '':  weights['nominal'] = '1'
 
         # Vary nominal weight for each correction ("weight" and "uncert")
+        countedByCorrelation = []
         for corrname in correctionsToApply:
-            corr = self.Corrections[corrname]
-            if corr.GetType() == 'weight':
-                weights[corrname+'_up'] = weights['nominal'].replace(' '+corrname+'__nom',' '+corrname+'__up') #extra space at beginning of replace to avoid substrings
-                weights[corrname+'_down'] = weights['nominal'].replace(' '+corrname+'__nom',' '+corrname+'__down')
-            elif corr.GetType() == 'uncert':
-                weights[corrname+'_up'] = weights['nominal']+' * '+corrname+'__up'
-                weights[corrname+'_down'] = weights['nominal']+' * '+corrname+'__down'
-            elif corr.GetType() == 'corr':
+            if corrname in countedByCorrelation:
                 continue
-            else:
-                raise TypeError('Correction "%s" not identified as either "weight" or "uncert"'%(corrname))
+            corr = self.Corrections[corrname]
+            # Organize any correlated corrections
+            correlatedWithOthers = [corrname]
+            for correlationTuple in correlations:
+                if corrname in correlationTuple:
+                    correlatedWithOthers = list(correlationTuple)
+                    for otherCorrection in correlationTuple:
+                        if otherCorrection not in countedByCorrelation:
+                            countedByCorrelation.append(otherCorrection)
+            
+            weights[corrname+'_up'] = weights['nominal']
+            weights[corrname+'_down'] = weights['nominal']
+
+            for correctionName in correlatedWithOthers:
+                if corr.GetType() == 'weight':
+                    if correctionName.startswith('!'): #anti-correlated
+                        weights[corrname+'_up'] = weights[corrname+'_up'].replace(' '+correctionName[1:]+'__nom',' '+correctionName[1:]+'__down') #extra space at beginning of replace to avoid substrings
+                        weights[corrname+'_down'] = weights[corrname+'_down'].replace(' '+correctionName[1:]+'__nom',' '+correctionName[1:]+'__up')
+                    else:
+                        weights[corrname+'_up'] = weights[corrname+'_up'].replace(' '+correctionName+'__nom',' '+correctionName+'__up')
+                        weights[corrname+'_down'] = weights[corrname+'_down'].replace(' '+correctionName+'__nom',' '+correctionName+'__down')
+            
+                elif corr.GetType() == 'uncert':
+                    if correctionName.startswith('!'): #anti-correlated
+                        weights[corrname+'_up'] += ' * '+correctionName+'__down'
+                        weights[corrname+'_down'] += ' * '+correctionName+'__up'
+                    else:
+                        weights[corrname+'_up'] += ' * '+correctionName+'__up'
+                        weights[corrname+'_down'] += ' * '+correctionName+'__down'
+
+                elif corr.GetType() == 'corr':
+                    continue
+            
+                else:
+                    raise TypeError('Correction "%s" not identified as either "weight", "uncert", or "corr"'%(corrname))
 
         # Make a node with all weights calculated
         returnNode = node
@@ -1518,7 +1547,7 @@ class Node(object):
                 column_vec += c+'|'
             column_vec = column_vec[:-1]
             self.DataFrame.Snapshot(treename,outfilename,column_vec,opts)
-      
+
     def GetBaseNode(self):
         '''Returns the top-most parent Node by climbing node tree until a Node with no parent is reached.
 
