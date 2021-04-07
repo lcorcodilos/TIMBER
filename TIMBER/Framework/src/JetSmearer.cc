@@ -127,7 +127,7 @@ std::vector<float> JetSmearer::GetSmearValsM(LorentzV jet, RVec<LorentzV> genJet
 }
 
 TFile* JetSmearer::GetPuppiJMRFile() {
-    return hardware::Open("TIMBER/data/JER/puppiSoftdropResol.root"));
+    return hardware::Open("TIMBER/data/JER/puppiSoftdropResol.root");
 }
 
 TF1* JetSmearer::GetPuppiSDResolutionCentral() {
