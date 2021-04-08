@@ -20,7 +20,7 @@ class TestAnalyzer():
 
     def test_lhaid_None(self):
         '''Test lhaid is assigned 0 when branch doesn't exist in test file'''
-        assert self.a.lhaid == '-1'
+        assert self.a.lhaid == -1
 
     def test_GetTrackedNodeNames(self):
         '''Test GetTrackNodeNames method after adding a node'''
