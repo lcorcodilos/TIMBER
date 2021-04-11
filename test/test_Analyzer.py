@@ -97,6 +97,9 @@ class TestAnalyzer():
         assert self.a.GetFlagString(['HLT_IsoMu24','HLT_IsoMu24_eta2p1','NotReal']) == '((HLT_IsoMu24==1) && (HLT_IsoMu24_eta2p1==1))'
         pass
 
+    def test_CollectionStruct(self):
+        self.a.Cut('structCut','Jets[0].pt > 0')
+
 def test_Groups():
     a = analyzer('examples/GluGluToHToTauTau.root')
     # CompileCpp('TIMBER/Framework/include/common.h') # Compile (via gInterpreter) commonly used c++ code
@@ -113,3 +116,7 @@ def test_Groups():
     a.Apply([test_vg, test_cg])
     rep = a.DataFrame.Report()
     rep.Print()
+
+def test_CollectionGroup():
+    a = analyzer('examples/GluGluToHToTauTau.root')
+    assert ('Jet' in a.GetCollectionNames())

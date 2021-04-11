@@ -4,6 +4,7 @@ Home of main classes for TIMBER.
 
 """
 
+from TIMBER.CollectionOrganizer import CollectionOrganizer
 from TIMBER.Utilities.CollectionGen import BuildCollectionDict, GetKeyValForBranch, StructDef, StructObj
 from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags, ExecuteCmd
 from clang import cindex
@@ -151,10 +152,7 @@ class analyzer(object):
 
         self.ActiveNode = self.BaseNode
         # Auto create collections
-        self.__collectionDict = BuildCollectionDict(BaseDataFrame)
-        self.__builtCollections = []
-        if createAllCollections:
-            self.__createAllCollections(silent=True)
+        self._collectionOrg = CollectionOrganizer(BaseDataFrame)
 
         skipHeaders = []
         if 'CMSSW_BASE' not in os.environ.keys():
@@ -253,7 +251,7 @@ class analyzer(object):
         Returns:
             list(str): Collection names.
         '''
-        return self.__collectionDict.keys()
+        return self._collectionOrg.collectionDict.keys()
 
     def SetActiveNode(self,node):
         '''Sets the active node.
@@ -405,12 +403,12 @@ class analyzer(object):
         if isinstance(cuts,CutGroup):
             for c in cuts.keys():
                 cut = cuts[c]
-                newNode = self.__collectionDefCheck(cut, newNode)
+                newNode = self._collectionOrg.CollectionDefCheck(cut, newNode)
                 newNode = newNode.Cut(c,cut,nodetype=nodetype,silent=self.silent)
                 newNode.name = cuts.name+'__'+c
                 self.TrackNode(newNode)
         elif isinstance(cuts,str):
-            newNode = self.__collectionDefCheck(cuts, newNode)
+            newNode = self._collectionOrg.CollectionDefCheck(cuts, newNode)
             newNode = newNode.Cut(name,cuts,nodetype=nodetype,silent=self.silent)
             self.TrackNode(newNode)
         else:
@@ -441,27 +439,20 @@ class analyzer(object):
         if isinstance(variables,VarGroup):
             for v in variables.keys():
                 var = variables[v]
-                newNode = self.__collectionDefCheck(var, newNode)
+                newNode = self._collectionOrg.CollectionDefCheck(var, newNode)
                 newNode = newNode.Define(v,var,nodetype=nodetype,silent=self.silent)
+                self._collectionOrg.AddBranch(v)
                 newNode.name = variables.name+'__'+v
                 self.TrackNode(newNode)
             # newNode.name = variables.name
         elif isinstance(variables,str):
-            newNode = self.__collectionDefCheck(variables, newNode)
+            newNode = self._collectionOrg.CollectionDefCheck(variables, newNode)
             newNode = newNode.Define(name,variables,nodetype=nodetype,silent=self.silent)
+            self._collectionOrg.AddBranch(name, str(newNode.DataFrame.GetColumnType(name)))
             self.TrackNode(newNode)
         else:
             raise TypeError("Second argument to Define method must be a string of a single var or of type VarGroup (which provides an OrderedDict).")
 
-        return self.SetActiveNode(newNode)
-
-    def __collectionDefCheck(self, action_str, node):
-        newNode = node
-        for c in self.__collectionDict.keys():
-            if (c+'s' not in self.__builtCollections) and re.search(r"\b" + re.escape(c+'s') + r"\b", action_str):
-                print ('MAKING %ss for %s'%(c,action_str))
-                newNode = self.__createCollection(c,self.__collectionDict[c],silent=True,node=newNode)
-                self.__builtCollections.append(c+'s')
         return self.SetActiveNode(newNode)
 
     # Applies a bunch of action groups (cut or var) in one-shot in the order they are given
@@ -550,12 +541,6 @@ class analyzer(object):
             else:
                 if condition != '': self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
                 else: self.Define(replacementName,b,nodetype='SubCollDefine')
-            
-        branches_to_track = []
-        for v in collBranches:
-            v_with_type = GetKeyValForBranch(self.DataFrame, v)[1]
-            if v_with_type != '': branches_to_track.append(v_with_type)
-        self.__trackNewCollection(name,branches_to_track)
 
         return self.ActiveNode
 
@@ -629,30 +614,6 @@ class analyzer(object):
                 self.Define(name+'_'+var,concat_str,nodetype='MergeDefine')
 
         self.Define('n'+name,'+'.join(['n'+n for n in collectionNames]),nodetype='MergeDefine')
-
-        self.__trackNewCollection(name,[GetKeyValForBranch(self.DataFrame,collectionNames[0]+'_'+v)[1] for v in vars_to_make])
-
-    def __trackNewCollection(self,name,branches):
-        self.__collectionDict[name] = []
-        for b in branches:
-            self.__collectionDict[name].append(b)
-
-    def __createCollection(self,collection,attributes,silent=True,node=None):
-        init_silent = self.silent
-        self.silent = silent
-        if collection+'s' not in self.__builtCollections:
-            self.__builtCollections.append(collection+'s')
-            CompileCpp(StructDef(collection,attributes))
-            newNode = self.Define(collection+'s', StructObj(collection,attributes),node)
-        else:
-            raise RuntimeError('Collections `%s` already built.'%(collection+'s'))
-        self.silent = init_silent
-        return self.SetActiveNode(newNode)
-
-    def __createAllCollections(self,silent=True):
-        collDict = BuildCollectionDict(self.BaseNode.DataFrame)
-        for c in collDict.keys():
-            self.__createCollection(c,collDict[c],silent)
 
     def CommonVars(self,collections):
         '''Find the common variables between collections.
