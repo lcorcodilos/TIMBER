@@ -94,20 +94,20 @@ class analyzer(object):
 
         super(analyzer, self).__init__()
         self.fileName = fileName 
-        self.__eventsTreeName = eventsTreeName
+        self._eventsTreeName = eventsTreeName
         self.silent = False
 
         # Setup TChains for multiple or single file
-        self.__eventsChain = ROOT.TChain(self.__eventsTreeName) 
+        self._eventsChain = ROOT.TChain(self._eventsTreeName) 
         self.RunChain = ROOT.TChain(runTreeName) 
         if isinstance(self.fileName,list):
             for f in self.fileName:
-                self.__addFile(f)
+                self._addFile(f)
         else:
-            self.__addFile(self.fileName)
+            self._addFile(self.fileName)
         
         # Make base RDataFrame
-        BaseDataFrame = ROOT.RDataFrame(self.__eventsChain) 
+        BaseDataFrame = ROOT.RDataFrame(self._eventsChain) 
         self.BaseNode = Node('base',BaseDataFrame) 
         self.BaseNode.children = [] # protect against memory issue when running over multiple sets in one script
         self.AllNodes = [self.BaseNode] 
@@ -133,7 +133,7 @@ class analyzer(object):
         # Get LHAID from LHEPdfWeights branch
         self.lhaid = "-1"
         if not self.isData:
-            pdfbranch = self.__eventsChain.GetBranch("LHEPdfWeight")
+            pdfbranch = self._eventsChain.GetBranch("LHEPdfWeight")
             if pdfbranch != None:
                 branch_title = pdfbranch.GetTitle()
                 if branch_title != '': 
@@ -164,7 +164,7 @@ class analyzer(object):
             if f.split('/')[-1] in skipHeaders: continue
             CompileCpp('#include "%s"\n'%f)
  
-    def __addFile(self,f):
+    def _addFile(self,f):
         '''Add file to TChains being tracked.
 
         Args:
@@ -173,13 +173,13 @@ class analyzer(object):
         if f.endswith(".root"): 
             if 'root://' not in f and f.startswith('/store/'):
                 f='root://cms-xrd-global.cern.ch/'+f
-            self.__eventsChain.Add(f)
+            self._eventsChain.Add(f)
             self.RunChain.Add(f)
         elif f.endswith(".txt"): 
             txt_file = open(f,"r")
             for l in txt_file.readlines():
                 thisfile = l.strip()
-                self.__addFile(thisfile)
+                self._addFile(thisfile)
         else:
             raise Exception("File name extension not supported. Please provide a single or list of .root files or a .txt file with a line-separated list of .root files to chain together.")
 
@@ -190,7 +190,7 @@ class analyzer(object):
             None
         '''
         self.BaseNode.Close()
-        self.__eventsChain.Reset()
+        self._eventsChain.Reset()
 
     def __str__(self):
         '''Call with `print(<analyzer>)` to print a nicely formatted description
@@ -751,7 +751,7 @@ class analyzer(object):
 
         return self.SetActiveNode(newNode)
 
-    def __checkCorrections(self,node,correctionNames,dropList):
+    def _checkCorrections(self,node,correctionNames,dropList):
         '''Starting at the provided node, will scale up the tree,
         grabbing all corrections added along the way. This ensures
         corrections from other forks of the analyzer tree are not
@@ -829,7 +829,7 @@ class analyzer(object):
         if name != '': namemod = '_'+name
         else: namemod = ''
 
-        correctionsToApply = self.__checkCorrections(node,correctionNames,dropList)
+        correctionsToApply = self._checkCorrections(node,correctionNames,dropList)
         
         # Build nominal weight first (only "weight", no "uncert")
         weights = {'nominal':''}
@@ -1078,7 +1078,7 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
         '''
         if node == None: node = self.ActiveNode
         # Type checking and create calibration branches
-        newNode = self.__checkCalibrations(node,varCalibDict,evalArgs)      
+        newNode = self._checkCalibrations(node,varCalibDict,evalArgs)      
         
         # Create the product of weights
         new_columns =  OrderedDict()
@@ -1111,7 +1111,7 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
 
         return self.SetActiveNode(newNode)
 
-    def __checkCalibrations(self,node,varCalibDict,evalArgs):
+    def _checkCalibrations(self,node,varCalibDict,evalArgs):
         newNode = node
         # Type checking
         if not isinstance(node,Node): raise TypeError('CalibrateVar() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
@@ -1825,7 +1825,6 @@ class ModuleWorker(object):
         self._constructor = constructor 
         self._objectName = self.name
         self._call = None
-        # self.__funcNames = self.__funcInfo.keys()        
 
         if not isClone:
             if not self._mainFunc.endswith(mainFunc):
