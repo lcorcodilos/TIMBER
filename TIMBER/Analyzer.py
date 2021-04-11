@@ -147,6 +147,7 @@ class analyzer(object):
                             break
                     self.lhaid = str(int(self.lhaid)-1) if self.lhaid[-1] == "1" else self.lhaid
                     print ('LHA ID: '+self.lhaid)
+        self.lhaid = int(self.lhaid)
 
         self.ActiveNode = self.BaseNode
         # Auto create collections
@@ -796,7 +797,7 @@ class analyzer(object):
 
         return correctionsToApply
 
-    def MakeWeightCols(self,name='',node=None,correctionNames=None,dropList=[]):
+    def MakeWeightCols(self,name='',node=None,correctionNames=None,dropList=[],correlations=[]):
         '''Makes columns/variables to store total weights based on the Corrections that have been added.
 
         This function automates the calculation of the columns that store the nominal weight and the 
@@ -817,6 +818,8 @@ class analyzer(object):
                 being tracked are considered.
         @param dropList list(str): List of correction names (strings) to not consider. Default is empty lists in which case no corrections
                 are dropped from consideration.
+        @param correlations list(tuple of strings): List of tuples of correlations to create. Ex. If you have syst1, syst2, syst3 corrections and you want
+                to correlate syst1 and syst2, provide [("syst1","syst2")]. To anti-correlate, add a "!" infront of the correction name. Ex. [("syst1","!syst2")]
 
         Returns:
             Node: New #ActiveNode.
@@ -839,18 +842,45 @@ class analyzer(object):
         if weights['nominal'] == '':  weights['nominal'] = '1'
 
         # Vary nominal weight for each correction ("weight" and "uncert")
+        countedByCorrelation = []
         for corrname in correctionsToApply:
-            corr = self.Corrections[corrname]
-            if corr.GetType() == 'weight':
-                weights[corrname+'_up'] = weights['nominal'].replace(' '+corrname+'__nom',' '+corrname+'__up') #extra space at beginning of replace to avoid substrings
-                weights[corrname+'_down'] = weights['nominal'].replace(' '+corrname+'__nom',' '+corrname+'__down')
-            elif corr.GetType() == 'uncert':
-                weights[corrname+'_up'] = weights['nominal']+' * '+corrname+'__up'
-                weights[corrname+'_down'] = weights['nominal']+' * '+corrname+'__down'
-            elif corr.GetType() == 'corr':
+            if corrname in countedByCorrelation:
                 continue
-            else:
-                raise TypeError('Correction "%s" not identified as either "weight" or "uncert"'%(corrname))
+            corr = self.Corrections[corrname]
+            # Organize any correlated corrections
+            correlatedWithOthers = [corrname]
+            for correlationTuple in correlations:
+                if corrname in correlationTuple:
+                    correlatedWithOthers = list(correlationTuple)
+                    for otherCorrection in correlationTuple:
+                        if otherCorrection not in countedByCorrelation:
+                            countedByCorrelation.append(otherCorrection)
+            
+            weights[corrname+'_up'] = weights['nominal']
+            weights[corrname+'_down'] = weights['nominal']
+
+            for correctionName in correlatedWithOthers:
+                if corr.GetType() == 'weight':
+                    if correctionName.startswith('!'): #anti-correlated
+                        weights[corrname+'_up'] = weights[corrname+'_up'].replace(' '+correctionName[1:]+'__nom',' '+correctionName[1:]+'__down') #extra space at beginning of replace to avoid substrings
+                        weights[corrname+'_down'] = weights[corrname+'_down'].replace(' '+correctionName[1:]+'__nom',' '+correctionName[1:]+'__up')
+                    else:
+                        weights[corrname+'_up'] = weights[corrname+'_up'].replace(' '+correctionName+'__nom',' '+correctionName+'__up')
+                        weights[corrname+'_down'] = weights[corrname+'_down'].replace(' '+correctionName+'__nom',' '+correctionName+'__down')
+            
+                elif corr.GetType() == 'uncert':
+                    if correctionName.startswith('!'): #anti-correlated
+                        weights[corrname+'_up'] += ' * '+correctionName+'__down'
+                        weights[corrname+'_down'] += ' * '+correctionName+'__up'
+                    else:
+                        weights[corrname+'_up'] += ' * '+correctionName+'__up'
+                        weights[corrname+'_down'] += ' * '+correctionName+'__down'
+
+                elif corr.GetType() == 'corr':
+                    continue
+            
+                else:
+                    raise TypeError('Correction "%s" not identified as either "weight", "uncert", or "corr"'%(corrname))
 
         # Make a node with all weights calculated
         returnNode = node
@@ -1517,7 +1547,7 @@ class Node(object):
                 column_vec += c+'|'
             column_vec = column_vec[:-1]
             self.DataFrame.Snapshot(treename,outfilename,column_vec,opts)
-      
+
     def GetBaseNode(self):
         '''Returns the top-most parent Node by climbing node tree until a Node with no parent is reached.
 
@@ -1768,7 +1798,7 @@ class ModuleWorker(object):
     Writing the C++ modules requires the desired branch/column names must be specified or be used as the argument variable names
     to allow the framework to automatically determine what branch/column to use in GetCall().
     '''
-    def __init__(self,name,script,constructor=[],mainFunc='eval',columnList=None,isClone=False):
+    def __init__(self,name,script,constructor=[],mainFunc='eval',columnList=None,isClone=False,cloneFuncInfo=None):
         '''Constructor
 
         @param name (str): Unique name to identify the instantiated worker object.
@@ -1788,7 +1818,8 @@ class ModuleWorker(object):
         # Correction name
         self.name = name
         self._script = self._getScript(script)
-        self._funcInfo = self._getFuncInfo(mainFunc)
+        if not isClone: self._funcInfo = self._getFuncInfo(mainFunc)
+        else: self._funcInfo = cloneFuncInfo
         self._mainFunc = list(self._funcInfo.keys())[0]
         self._columnNames = LoadColumnNames() if columnList == None else columnList
         self._constructor = constructor 
@@ -1804,7 +1835,7 @@ class ModuleWorker(object):
             else:
                 CompileCpp(self._script)
 
-        self._instantiate(constructor)
+            self._instantiate(constructor)
 
     def Clone(self,name,newMainFunc=None):
         '''Makes a clone of current instance.
@@ -1818,8 +1849,10 @@ class ModuleWorker(object):
             ModuleWorker: Clone of instance with same script but different function (newMainFunc).
         '''
         if newMainFunc == None: newMainFunc = self._mainFunc.split('::')[-1]
-        return ModuleWorker(name,self._script,self._constructor,newMainFunc,
-                          isClone=True,columnList=self._columnNames)
+        clone = ModuleWorker(name,self._script,self._constructor,newMainFunc,
+                          isClone=True,columnList=self._columnNames,cloneFuncInfo=self._funcInfo)
+        clone._objectName = self.name
+        return clone
 
     def _getScript(self,script):
         '''Does a basic check that script file exists and modifies path if necessary
@@ -1908,7 +1941,7 @@ class ModuleWorker(object):
 
         if len(list(funcs.keys())) == 0:
             if ('TIMBER/Framework/src' in self._script):
-                self._script = self._script.replace('src','include').replace('.cc','.h')
+                self._script = self._script.replace('TIMBER/Framework/src','TIMBER/Framework/include').replace('.cc','.h')
                 funcs = self._getFuncInfo(funcname)
             else:
                 raise ValueError('Could not find `%s` in file %s'%(funcname,self._script))
@@ -1935,7 +1968,9 @@ class ModuleWorker(object):
                     line += 'true, '
                 elif isinstance(a,bool) and a == False:
                     line += 'false, '
-                elif a[0].isalpha():
+                elif isinstance(a,int) or isinstance(a,float):
+                    line += '%s, '%(a)
+                elif isinstance(a,str):
                     line += '"%s", '%(a)
                 else:
                     line += '%s, '%(a)
@@ -2057,7 +2092,7 @@ class Correction(ModuleWorker):
     (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
     <up, down> for "uncert" type.
     '''
-    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False):
+    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False,cloneFuncInfo=None):
         '''Constructor
 
         @param name (str): Correction name.
@@ -2075,7 +2110,7 @@ class Correction(ModuleWorker):
                 not duplicate compile the same script if two functions are needed in one C++ script.
         '''
 
-        super(Correction,self).__init__(name,script,constructor,mainFunc,columnList,isClone)
+        super(Correction,self).__init__(name,script,constructor,mainFunc,columnList,isClone,cloneFuncInfo)
         self._setType(corrtype)
 
     def Clone(self,name,newMainFunc=None,newType=None):
@@ -2091,9 +2126,11 @@ class Correction(ModuleWorker):
             Correction: Clone of instance with same script but different function (newMainFunc).
         '''
         if newMainFunc == None: newMainFunc = self._mainFunc.split('::')[-1]
-        return Correction(name,self._script,self._constructor,newMainFunc,
+        clone = Correction(name,self._script,self._constructor,newMainFunc,
                           corrtype=self._type if newType == None else newType,
-                          isClone=True,columnList=self._columnNames)
+                          isClone=True,columnList=self._columnNames,cloneFuncInfo=self._funcInfo)
+        clone._objectName = self.name
+        return clone
 
     def _setType(self,inType):
         '''Sets the type of correction.
