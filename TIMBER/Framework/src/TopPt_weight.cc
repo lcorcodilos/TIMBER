@@ -1,5 +1,7 @@
 #include "../include/TopPt_weight.h"
 
+TopPt_weight::TopPt_weight(){};
+
 std::vector<float> TopPt_weight::matchingGenPt(
         RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vects,
         ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1){
@@ -24,9 +26,9 @@ std::vector<float> TopPt_weight::matchingGenPt(
     return {genTPt,genTbarPt};
 }
 
-RVec<float> TopPt_weight::corr(
+RVec<float> TopPt_weight::eval(
         RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vects,
-        ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1) {
+        ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1, float scale){
 
     std::vector<float> matched = matchingGenPt(GenPart_pdgId, GenPart_statusFlags,
                                           GenPart_vects, jet0, jet1);
@@ -34,66 +36,22 @@ RVec<float> TopPt_weight::corr(
     float genTbarPt = matched[1];
 
     float wTPt = 1.0;
+    float wTPt_up = 1.0;
+    float wTPt_down = 1.0;
     if (genTPt > 0){ 
         wTPt = exp(0.0615 - 0.0005*genTPt);
+        wTPt_up = exp((1+scale)*0.0615 - 0.0005*genTPt);
+        wTPt_down = exp((1-scale)*0.0615 - 0.0005*genTPt);
     }
 
     float wTbarPt = 1.0;
-    if (genTbarPt > 0){ 
+    float wTbarPt_up = 1.0;
+    float wTbarPt_down = 1.0;
+    if (genTbarPt > 0){
         wTbarPt = exp(0.0615 - 0.0005*genTbarPt);
+        wTbarPt_up = exp((1+scale)*0.0615 - 0.0005*genTbarPt);
+        wTbarPt_down = exp((1-scale)*0.0615 - 0.0005*genTbarPt);
     }
 
-    return {sqrt(wTPt*wTbarPt)};
-}
-
-RVec<float> TopPt_weight::alpha(
-        RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vects,
-        ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1, float scale){
-
-    std::vector<float> matched = matchingGenPt(GenPart_pdgId, GenPart_statusFlags,
-                                          GenPart_vects, jet0, jet1);
-    float genTPt = matched[0];
-    float genTbarPt = matched[1];
-
-    float wTPt_up = 1.0;
-    float wTPt_down = 1.0;
-    if (genTPt > 0){ 
-        wTPt_up = exp((1+scale)*0.0615 - 0.0005*genTPt) / exp(0.0615 - 0.0005*genTPt);
-        wTPt_down = exp((1-scale)*0.0615 - 0.0005*genTPt) / exp(0.0615 - 0.0005*genTPt);
-    }
-
-    float wTbarPt_up = 1.0;
-    float wTbarPt_down = 1.0;
-    if (genTbarPt > 0){ 
-        wTbarPt_up = exp((1+scale)*0.0615 - 0.0005*genTbarPt) / exp(0.0615 - 0.0005*genTbarPt);
-        wTbarPt_down = exp((1-scale)*0.0615 - 0.0005*genTbarPt) / exp(0.0615 - 0.0005*genTbarPt);
-    }
-
-    return {sqrt(wTPt_up*wTbarPt_up),sqrt(wTPt_down*wTbarPt_down)};
-}
-
-RVec<float> TopPt_weight::beta(
-        RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vects,
-        ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1, float scale){
-
-    std::vector<float> matched = matchingGenPt(GenPart_pdgId, GenPart_statusFlags,
-                                          GenPart_vects, jet0, jet1);
-    float genTPt = matched[0];
-    float genTbarPt = matched[1];
-
-    float wTPt_up = 1.0;
-    float wTPt_down = 1.0;
-    if (genTPt > 0){ 
-        wTPt_up = exp(0.0615 - (1+scale)*0.0005*genTPt) / exp(0.0615 - 0.0005*genTPt);
-        wTPt_down = exp(0.0615 - (1-scale)*0.0005*genTPt) / exp(0.0615 - 0.0005*genTPt);
-    }
-
-    float wTbarPt_up = 1.0;
-    float wTbarPt_down = 1.0;
-    if (genTbarPt > 0){ 
-        wTbarPt_up = exp(0.0615 - (1+scale)*0.0005*genTbarPt) / exp(0.0615 - 0.0005*genTbarPt);
-        wTbarPt_down = exp(0.0615 - (1-scale)*0.0005*genTbarPt) / exp(0.0615 - 0.0005*genTbarPt);
-    }
-
-    return {sqrt(wTPt_up*wTbarPt_up),sqrt(wTPt_down*wTbarPt_down)};
+    return {sqrt(wTPt*wTbarPt),sqrt(wTPt_up*wTbarPt_up),sqrt(wTPt_down*wTbarPt_down)};
 }
