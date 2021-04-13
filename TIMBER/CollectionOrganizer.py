@@ -1,18 +1,27 @@
 from TIMBER.Tools.Common import CompileCpp
 import re
-'''
-- Check for current handling of __collectionDict in Analyzer and replace with this
-- Replace instances of BuildCollectionDict and GetKeyValForBranch
-- Write ProcessLine
-- Implement ProcessLine in analyzer
-'''
+
 class CollectionOrganizer:
+    '''Tracks the available collections, collection attributes, and solo branches
+    in the dataframe while processing. The initial set of branches will be read
+    on startup and any new branch will be added accordingly. Collection names
+    are deduced from the branch name by being the string before the first underscore
+    (if there is an underscore).
+    '''
     def __init__(self, rdf):
+        '''Constructor
+
+        @param rdf (RDataFrame): RDataFrame from which to organize.
+        '''
         self.baseBranches = [str(b) for b in rdf.GetColumnNames()]
         self.generateFromRDF(rdf)
         self.builtCollections = []
 
     def generateFromRDF(self, rdf):
+        '''Generate the collection from the RDataFrame.
+
+        @param rdf (RDataFrame): RDataFrame from which to organize.
+        '''
         self.collectionDict = {}
         self.otherBranches = {}
 
@@ -20,6 +29,15 @@ class CollectionOrganizer:
             self.AddBranch(b,rdf.GetColumnType(b))
 
     def parsetype(self, t):
+        '''Deduce the type that TIMBER needs to see for the 
+        collection structs. If t is an RVec, deduce the internal type
+        of the RVec.
+
+        @param t (str): Type name from RDataFrame.GetColumnType()
+
+        Returns:
+            str: TIMBER-friendly version of the type.
+        '''
         if not t.startswith('ROOT::VecOps::RVec<'):
             collType = False
         else:
@@ -36,13 +54,32 @@ class CollectionOrganizer:
         return collType
 
     def AddCollection(self, c):
+        '''Add a collection to tracking.
+
+        @param c (str): Collection name only.
+        '''
         if c not in self.collectionDict.keys():
             self.collectionDict[c] = {'alias': False}
 
     def GetCollectionAttributes(self, c):
+        '''Get all attributes of a collection. Example, for the 'Electron'
+        collection, will return a list of `['pt', 'eta', ...]`.
+
+        @param c (str): Collection name.
+
+        Returns:
+            list(str): List of attributes for the collection.
+        '''
         return [c for c in self.collectionDict[c] if c != 'alias']
 
     def AddBranch(self, b, btype=''):
+        '''Add a branch to track. Will deduce if it is in a collection
+        in which case, the attribute will be added to the tracked collection.
+
+        @param b (str): Branch name
+        @param btype (str, optional): Type of branch. Defaults to '' but should only be left
+            this way in rare cases.
+        '''
         collname = b.split('_')[0]
         varname = '_'.join(b.split('_')[1:])
         typeStr = self.parsetype(btype)
@@ -60,6 +97,15 @@ class CollectionOrganizer:
             }
 
     def Alias(self, alias, name):
+        '''Add an alias for a solo branch, collection, or collection attribute.
+
+        @param alias (str): Alias name.
+        @param name (str): Full branch name or a collection name. If an alias for a
+            collection attribute is desired, provide the full branch name (ie. <collectionName>_<attributeName>).
+
+        Raises:
+            ValueError: Entries do not exist so an alias cannot be added.
+        '''
         # Name is either in otherBranches, is a collection name, or is a full name <collection>_<attr>
         if name in self.otherBranches.keys():
             self.otherBranches[name]['alias'] = alias
@@ -76,10 +122,20 @@ class CollectionOrganizer:
             else:
                 raise ValueError('Cannot add alias `%s` because collection `%s` does not exist'%(alias,collname))
 
-    def ProcessLine(self, line):
-        return line
-
     def BuildCppCollection(self,collection,node,silent=True):
+        '''Build the collection as a struct in C++ so that it's accessible
+        to the RDataFrame loop.
+
+        @param collection (str): Collection name.
+        @param node (Node): Node on which to act.
+        @param silent (bool, optional): Whether output should be silenced. Defaults to True.
+
+        Raises:
+            RuntimeError: Collection already built.
+
+        Returns:
+            Node: Manipulated node with the collection struct now defined.
+        '''
         newNode = node
         attributes = []
         for aname in self.GetCollectionAttributes(collection):
@@ -95,6 +151,16 @@ class CollectionOrganizer:
         return newNode
 
     def CollectionDefCheck(self, action_str, node):
+        '''Checks if a collection C++ struct is needed in the action string.
+        If in the string but not defined, this function builds it. Does not
+        apply the action.
+
+        @param action_str (str): Action being performed on the Node/RDataFrame.
+        @param node (Node): Node being acted on.
+
+        Returns:
+            Node: Manipulated node with the C++ struct built (the action string is not applied though).
+        '''
         newNode = node
         for c in self.collectionDict.keys():
             if re.search(r"\b" + re.escape(c+'s') + r"\b", action_str) and (c+'s' not in self.builtCollections):
@@ -102,54 +168,15 @@ class CollectionOrganizer:
                 newNode = self.BuildCppCollection(c,newNode,silent=True)
         return newNode
 
-#
-# Utilities already written
-#
-# def BuildCollectionDict(rdf, includeType = True):
-#     '''Turns a list of branches from an RDataFrame into a dictionary of collections.
-
-#     Args:
-#         rdf ([str]): RDataFrame from which to get the branches and types.
-#         includeType (bool, optional): Include the type in the stored variable name (prepended). Defaults to True.
-
-#     Returns:
-#         dict: Dictionary where key is collection name and value is list of variable names.
-#     '''
-#     collections = {}
-#     lone_branch = []
-
-#     branch_names = [str(b) for b in rdf.GetColumnNames()]
-#     for b in branch_names:
-#         collname, varname = GetKeyValForBranch(rdf, b, includeType)
-#         if varname == '' or 'n'+collname not in branch_names:
-#             lone_branch.append(collname)
-#         if collname not in collections.keys():
-#             collections[collname] = []
-#         collections[collname].append(varname)
-
-#     return collections,lone_branch
-
-# def GetKeyValForBranch(rdf, bname, includeType=True):
-#     collname = bname.split('_')[0]
-#     varname = '_'.join(bname.split('_')[1:])
-#     out = (collname, '')
-
-#     branch_names = [str(b) for b in rdf.GetColumnNames()]
-#     if varname == '' or 'n'+collname not in branch_names:
-#         pass
-#     elif varname != '':
-#         collType = str(rdf.GetColumnType(bname)).replace('ROOT::VecOps::RVec<','')
-#         if collType.endswith('>'): collType = collType[:-1]
-#         collType += '&'
-#         if 'Bool_t' in collType: collType = collType.replace('Bool_t&','std::_Bit_reference')
-#         if includeType:
-#             out = (collname, collType+' '+varname)
-#         else:
-#             out = (collname, collType+' '+varname)
-
-#     return out
-
 def StructDef(collectionName, varList):
+    '''Defines the struct in C++/Cling memory.
+
+    @param collectionName (str): Name of the collection to define.
+    @param varList (str): List of attributes of the collection to include.
+
+    Returns:
+        str: C++ string defining the struct.
+    '''
     out_str = '''
 struct {0}Struct {{
         {1}
@@ -170,6 +197,14 @@ struct {0}Struct {{
     return out_str
 
 def StructObj(collectionName, varList):
+    '''Initializes an instance of the C++ struct for the collection in C++/Cling memory.
+
+    @param collectionName (str): Name of the collection to define.
+    @param varList (str): List of attributes of the collection to include.
+
+    Returns:
+        str: C++ string defining the struct instance.
+    '''
     out_str = '''
 std::vector<{0}Struct> {0}s;
 {0}s.reserve(n{0});
