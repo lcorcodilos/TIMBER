@@ -4,6 +4,7 @@ Home of main classes for TIMBER.
 
 """
 
+from TIMBER.CollectionOrganizer import CollectionOrganizer
 from TIMBER.Utilities.CollectionGen import BuildCollectionDict, GetKeyValForBranch, StructDef, StructObj
 from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags, ExecuteCmd
 from clang import cindex
@@ -94,20 +95,20 @@ class analyzer(object):
 
         super(analyzer, self).__init__()
         self.fileName = fileName 
-        self.__eventsTreeName = eventsTreeName
+        self._eventsTreeName = eventsTreeName
         self.silent = False
 
         # Setup TChains for multiple or single file
-        self.__eventsChain = ROOT.TChain(self.__eventsTreeName) 
+        self._eventsChain = ROOT.TChain(self._eventsTreeName) 
         self.RunChain = ROOT.TChain(runTreeName) 
         if isinstance(self.fileName,list):
             for f in self.fileName:
-                self.__addFile(f)
+                self._addFile(f)
         else:
-            self.__addFile(self.fileName)
+            self._addFile(self.fileName)
         
         # Make base RDataFrame
-        BaseDataFrame = ROOT.RDataFrame(self.__eventsChain) 
+        BaseDataFrame = ROOT.RDataFrame(self._eventsChain) 
         self.BaseNode = Node('base',BaseDataFrame) 
         self.BaseNode.children = [] # protect against memory issue when running over multiple sets in one script
         self.AllNodes = [self.BaseNode] 
@@ -133,7 +134,7 @@ class analyzer(object):
         # Get LHAID from LHEPdfWeights branch
         self.lhaid = "-1"
         if not self.isData:
-            pdfbranch = self.__eventsChain.GetBranch("LHEPdfWeight")
+            pdfbranch = self._eventsChain.GetBranch("LHEPdfWeight")
             if pdfbranch != None:
                 branch_title = pdfbranch.GetTitle()
                 if branch_title != '': 
@@ -151,10 +152,7 @@ class analyzer(object):
 
         self.ActiveNode = self.BaseNode
         # Auto create collections
-        self.__collectionDict = BuildCollectionDict(BaseDataFrame)
-        self.__builtCollections = []
-        if createAllCollections:
-            self.__createAllCollections(silent=True)
+        self._collectionOrg = CollectionOrganizer(BaseDataFrame)
 
         skipHeaders = []
         if 'CMSSW_BASE' not in os.environ.keys():
@@ -164,7 +162,7 @@ class analyzer(object):
             if f.split('/')[-1] in skipHeaders: continue
             CompileCpp('#include "%s"\n'%f)
  
-    def __addFile(self,f):
+    def _addFile(self,f):
         '''Add file to TChains being tracked.
 
         Args:
@@ -173,13 +171,13 @@ class analyzer(object):
         if f.endswith(".root"): 
             if 'root://' not in f and f.startswith('/store/'):
                 f='root://cms-xrd-global.cern.ch/'+f
-            self.__eventsChain.Add(f)
+            self._eventsChain.Add(f)
             self.RunChain.Add(f)
         elif f.endswith(".txt"): 
             txt_file = open(f,"r")
             for l in txt_file.readlines():
                 thisfile = l.strip()
-                self.__addFile(thisfile)
+                self._addFile(thisfile)
         else:
             raise Exception("File name extension not supported. Please provide a single or list of .root files or a .txt file with a line-separated list of .root files to chain together.")
 
@@ -190,7 +188,7 @@ class analyzer(object):
             None
         '''
         self.BaseNode.Close()
-        self.__eventsChain.Reset()
+        self._eventsChain.Reset()
 
     def __str__(self):
         '''Call with `print(<analyzer>)` to print a nicely formatted description
@@ -253,7 +251,7 @@ class analyzer(object):
         Returns:
             list(str): Collection names.
         '''
-        return self.__collectionDict.keys()
+        return self._collectionOrg.collectionDict.keys()
 
     def SetActiveNode(self,node):
         '''Sets the active node.
@@ -405,12 +403,12 @@ class analyzer(object):
         if isinstance(cuts,CutGroup):
             for c in cuts.keys():
                 cut = cuts[c]
-                newNode = self.__collectionDefCheck(cut, newNode)
+                newNode = self._collectionOrg.CollectionDefCheck(cut, newNode)
                 newNode = newNode.Cut(c,cut,nodetype=nodetype,silent=self.silent)
                 newNode.name = cuts.name+'__'+c
                 self.TrackNode(newNode)
         elif isinstance(cuts,str):
-            newNode = self.__collectionDefCheck(cuts, newNode)
+            newNode = self._collectionOrg.CollectionDefCheck(cuts, newNode)
             newNode = newNode.Cut(name,cuts,nodetype=nodetype,silent=self.silent)
             self.TrackNode(newNode)
         else:
@@ -441,27 +439,20 @@ class analyzer(object):
         if isinstance(variables,VarGroup):
             for v in variables.keys():
                 var = variables[v]
-                newNode = self.__collectionDefCheck(var, newNode)
+                newNode = self._collectionOrg.CollectionDefCheck(var, newNode)
                 newNode = newNode.Define(v,var,nodetype=nodetype,silent=self.silent)
+                self._collectionOrg.AddBranch(v)
                 newNode.name = variables.name+'__'+v
                 self.TrackNode(newNode)
             # newNode.name = variables.name
         elif isinstance(variables,str):
-            newNode = self.__collectionDefCheck(variables, newNode)
+            newNode = self._collectionOrg.CollectionDefCheck(variables, newNode)
             newNode = newNode.Define(name,variables,nodetype=nodetype,silent=self.silent)
+            self._collectionOrg.AddBranch(name, str(newNode.DataFrame.GetColumnType(name)))
             self.TrackNode(newNode)
         else:
             raise TypeError("Second argument to Define method must be a string of a single var or of type VarGroup (which provides an OrderedDict).")
 
-        return self.SetActiveNode(newNode)
-
-    def __collectionDefCheck(self, action_str, node):
-        newNode = node
-        for c in self.__collectionDict.keys():
-            if (c+'s' not in self.__builtCollections) and re.search(r"\b" + re.escape(c+'s') + r"\b", action_str):
-                print ('MAKING %ss for %s'%(c,action_str))
-                newNode = self.__createCollection(c,self.__collectionDict[c],silent=True,node=newNode)
-                self.__builtCollections.append(c+'s')
         return self.SetActiveNode(newNode)
 
     # Applies a bunch of action groups (cut or var) in one-shot in the order they are given
@@ -550,12 +541,6 @@ class analyzer(object):
             else:
                 if condition != '': self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
                 else: self.Define(replacementName,b,nodetype='SubCollDefine')
-            
-        branches_to_track = []
-        for v in collBranches:
-            v_with_type = GetKeyValForBranch(self.DataFrame, v)[1]
-            if v_with_type != '': branches_to_track.append(v_with_type)
-        self.__trackNewCollection(name,branches_to_track)
 
         return self.ActiveNode
 
@@ -629,30 +614,6 @@ class analyzer(object):
                 self.Define(name+'_'+var,concat_str,nodetype='MergeDefine')
 
         self.Define('n'+name,'+'.join(['n'+n for n in collectionNames]),nodetype='MergeDefine')
-
-        self.__trackNewCollection(name,[GetKeyValForBranch(self.DataFrame,collectionNames[0]+'_'+v)[1] for v in vars_to_make])
-
-    def __trackNewCollection(self,name,branches):
-        self.__collectionDict[name] = []
-        for b in branches:
-            self.__collectionDict[name].append(b)
-
-    def __createCollection(self,collection,attributes,silent=True,node=None):
-        init_silent = self.silent
-        self.silent = silent
-        if collection+'s' not in self.__builtCollections:
-            self.__builtCollections.append(collection+'s')
-            CompileCpp(StructDef(collection,attributes))
-            newNode = self.Define(collection+'s', StructObj(collection,attributes),node)
-        else:
-            raise RuntimeError('Collections `%s` already built.'%(collection+'s'))
-        self.silent = init_silent
-        return self.SetActiveNode(newNode)
-
-    def __createAllCollections(self,silent=True):
-        collDict = BuildCollectionDict(self.BaseNode.DataFrame)
-        for c in collDict.keys():
-            self.__createCollection(c,collDict[c],silent)
 
     def CommonVars(self,collections):
         '''Find the common variables between collections.
@@ -751,7 +712,7 @@ class analyzer(object):
 
         return self.SetActiveNode(newNode)
 
-    def __checkCorrections(self,node,correctionNames,dropList):
+    def _checkCorrections(self,node,correctionNames,dropList):
         '''Starting at the provided node, will scale up the tree,
         grabbing all corrections added along the way. This ensures
         corrections from other forks of the analyzer tree are not
@@ -829,7 +790,7 @@ class analyzer(object):
         if name != '': namemod = '_'+name
         else: namemod = ''
 
-        correctionsToApply = self.__checkCorrections(node,correctionNames,dropList)
+        correctionsToApply = self._checkCorrections(node,correctionNames,dropList)
         
         # Build nominal weight first (only "weight", no "uncert")
         weights = {'nominal':''}
@@ -1049,14 +1010,14 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
 
 ```
         This will apply the JES and JER calibrations and their four variations (up,down pair for each) to FatJet_pt and FatJet_mass branches
-        and create a new collection called "CorrectedFatJets" which will be ordered by the new pt values. Note that if you want to correct a different
+        and create a new collection called "CalibratedFatJets" which will be ordered by the new pt values. Note that if you want to correct a different
         collection (ex. AK4 based Jet collection), you need a separate payload and separate call to CalibrateVars because only one collection can be generated at a time.
         Also note that in this example, `jes` and `jer` are initialized with the AK8PFPuppi jets in mind. So if you'd like to apply the JES or JER calibrations to
         AK4 jets, you would also need to define objects like `jesAK4` and `jerAK4`.
 
         The calibrations will always be calculated as a seperate
         column which stores a vector named `<CalibName>__vec` and ordered {nominal, up, down} where "up" and "down" are the absolute weights
-        (ie. not relative to "nominal"). If you'd just like the weights and do not want them applied to any variable, you can provide
+        (ie. "up" and "down" are not relative to "nominal"). If you'd just like the weights and do not want them applied to any variable, you can provide
         an empty dictionary (`{}`) for the varCalibDict argument.
         
         This method will set the new active node to the one with the new collection defined.
@@ -1078,7 +1039,7 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
         '''
         if node == None: node = self.ActiveNode
         # Type checking and create calibration branches
-        newNode = self.__checkCalibrations(node,varCalibDict,evalArgs)      
+        newNode = self._checkCalibrations(node,varCalibDict,evalArgs)      
         
         # Create the product of weights
         new_columns =  OrderedDict()
@@ -1111,7 +1072,7 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
 
         return self.SetActiveNode(newNode)
 
-    def __checkCalibrations(self,node,varCalibDict,evalArgs):
+    def _checkCalibrations(self,node,varCalibDict,evalArgs):
         newNode = node
         # Type checking
         if not isinstance(node,Node): raise TypeError('CalibrateVar() does not support argument of type %s for node. Please provide a Node.'%(type(node)))
@@ -1825,7 +1786,6 @@ class ModuleWorker(object):
         self._constructor = constructor 
         self._objectName = self.name
         self._call = None
-        # self.__funcNames = self.__funcInfo.keys()        
 
         if not isClone:
             if not self._mainFunc.endswith(mainFunc):
