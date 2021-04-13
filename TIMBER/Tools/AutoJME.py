@@ -8,7 +8,7 @@ variations performed as well.
 from TIMBER.Tools.Common import GetJMETag
 from TIMBER.Analyzer import Calibration
 
-def AutoJME(a, jetCollection, year, dataEra=''):
+def AutoJME(a, jetCollection, year, dataEra='',setAlias=True):
     '''Automatic calculation of JES, JER, JMS, and JMR factors and uncertainties
     per-jet per-event and calibration of \f$p_{T}\f$ and mass with associated
     variations performed as well.
@@ -24,10 +24,15 @@ def AutoJME(a, jetCollection, year, dataEra=''):
 
     For data, only recalibrate the jets for the new JECs.
 
+
+
     @param a (analyzer): TIMBER analyzer object which will be manipulated and returned.
     @param jetCollection (str): FatJet or Jet.
     @param year (str): 2016, 2017, 2018, 2017UL, or 2018UL.
     @param dataEra (str, optional): If providing data, include the "era" (A or B or C, etc). Defaults to ''.
+    @param setAlias (bool, optional): If True, then an alias will be created so that any
+        further actions (`Cut` or `Define`) with "<jetCollection>" will be automatically replaced
+        by "Calibrated<jetCollection>". Defaults to True.
 
     Raises:
         ValueError: Provided jet collection is not "FatJet" or "Jet"
@@ -48,14 +53,14 @@ def AutoJME(a, jetCollection, year, dataEra=''):
         raise ValueError("Jet collection name `%s` not supported. Only FatJet or Jet."%jetCollection)
     
     if not a.isData:
-        jes = Calibration("JES","TIMBER/Framework/include/JES_weight.h",
+        jes = Calibration("JES_%s"%jetType,"TIMBER/Framework/include/JES_weight.h",
                 [GetJMETag("JES",year,"MC"),jetType,"",True], corrtype="Calibration")
-        jer = Calibration("JER","TIMBER/Framework/include/JER_weight.h",
+        jer = Calibration("JER_%s"%jetType,"TIMBER/Framework/include/JER_weight.h",
                 [GetJMETag("JER",year,"MC"),jetType], corrtype="Calibration")
         if doMass:
-            jms = Calibration("JMS","TIMBER/Framework/include/JMS_weight.h",
+            jms = Calibration("JMS_%s"%jetType,"TIMBER/Framework/include/JMS_weight.h",
                     [int(year.replace('UL',''))], corrtype="Calibration")
-            jmr = Calibration("JMR","TIMBER/Framework/include/JMR_weight.h",
+            jmr = Calibration("JMR_%s"%jetType,"TIMBER/Framework/include/JMR_weight.h",
                     [int(year.replace('UL',''))], corrtype="Calibration")
 
         calibdict = {"%s_pt"%jetCollection:[jes,jer],"%s_mass"%jetCollection:[jes,jer,jms,jmr]}
@@ -66,7 +71,7 @@ def AutoJME(a, jetCollection, year, dataEra=''):
             jmr: {"jets":"%ss"%jetCollection,"genJets":"%ss"%genJetColl}
         }
     else:
-        jes = Calibration("JES","TIMBER/Framework/include/JES_weight.h",
+        jes = Calibration("JES_%s"%jetType,"TIMBER/Framework/include/JES_weight.h",
                 [GetJMETag("JES",year,dataEraLetter),jetType,"",True], corrtype="Calibration")
         
         calibdict = {"%s_pt"%jetCollection:[jes],"%s_mass"%jetCollection:[jes]}
@@ -75,5 +80,14 @@ def AutoJME(a, jetCollection, year, dataEra=''):
         }
         
     a.CalibrateVars(calibdict,evalargs,"Calibrated%s"%jetCollection,variationsFlag=(not a.isData))
+    if setAlias:
+        aliases = []
+        for v in calibdict.keys():
+            calibnames = [j.name for j in calibdict[v]]
+            for cname in calibnames:
+                for variation in ['nom','up','down']:
+                    aliases.append((v.replace(jetCollection,"Calibrated%s"%jetCollection)+'_'+cname+'__'+variation,v))
+        a.SplitOnAlias(aliases)
+        # a.AddAlias("Calibrated%s"%jetCollection, '\b'+jetCollection)
 
     return a    
