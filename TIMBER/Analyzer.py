@@ -1010,14 +1010,14 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
 
 ```
         This will apply the JES and JER calibrations and their four variations (up,down pair for each) to FatJet_pt and FatJet_mass branches
-        and create a new collection called "CorrectedFatJets" which will be ordered by the new pt values. Note that if you want to correct a different
+        and create a new collection called "CalibratedFatJets" which will be ordered by the new pt values. Note that if you want to correct a different
         collection (ex. AK4 based Jet collection), you need a separate payload and separate call to CalibrateVars because only one collection can be generated at a time.
         Also note that in this example, `jes` and `jer` are initialized with the AK8PFPuppi jets in mind. So if you'd like to apply the JES or JER calibrations to
         AK4 jets, you would also need to define objects like `jesAK4` and `jerAK4`.
 
         The calibrations will always be calculated as a seperate
         column which stores a vector named `<CalibName>__vec` and ordered {nominal, up, down} where "up" and "down" are the absolute weights
-        (ie. not relative to "nominal"). If you'd just like the weights and do not want them applied to any variable, you can provide
+        (ie. "up" and "down" are not relative to "nominal"). If you'd just like the weights and do not want them applied to any variable, you can provide
         an empty dictionary (`{}`) for the varCalibDict argument.
         
         This method will set the new active node to the one with the new collection defined.
