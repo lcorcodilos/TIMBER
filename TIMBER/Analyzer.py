@@ -891,7 +891,7 @@ class analyzer(object):
         '''
         if node == None: node = self.ActiveNode
 
-        weight_cols = [str(cname) for cname in node.DataFrame.GetColumnNames() if str(cname).startswith('weight__')]
+        weight_cols = [str(cname) for cname in node.DataFrame.GetColumnNames() if str(cname).startswith('weight_')]
         baseName = templateHist.GetName()
         baseTitle = templateHist.GetTitle()
         binningTuple,dimension = GetHistBinningTuple(templateHist)
@@ -953,7 +953,7 @@ class analyzer(object):
         canvas = ROOT.TCanvas('c','',800,700)
 
         # Initial setup
-        baseName = list(hGroup.keys())[0].split('__')[0]
+        baseName = [n for n in list(hGroup.keys()) if n.endswith('__nominal')][0].replace('__nominal','')
 
         if isinstance(hGroup[baseName+'__nominal'],ROOT.TH2):
             projectedGroup = hGroup.Do("Projection"+projection.upper(),projectionArgs)
@@ -970,7 +970,7 @@ class analyzer(object):
 
         corrections = []
         for name in projectedGroup.keys():
-            corr = name.split('__')[1].replace('_up','').replace('_down','')
+            corr = name.split('__')[-1].replace('_up','').replace('_down','')
             if corr not in corrections and corr != "nominal":
                 corrections.append(corr)
 
