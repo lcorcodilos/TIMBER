@@ -817,6 +817,7 @@ class analyzer(object):
                         if otherCorrection not in countedByCorrelation:
                             countedByCorrelation.append(otherCorrection)
             
+            if corr.GetType() == 'corr': continue
             weights[corrname+'_up'] = weights['nominal']
             weights[corrname+'_down'] = weights['nominal']
 
