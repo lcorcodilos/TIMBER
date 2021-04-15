@@ -1,3 +1,5 @@
+#ifndef _TIMBER_HEM_DROP
+#define _TIMBER_HEM_DROP
 #include "common.h"
 #include <iostream>
 #include <string>
@@ -32,3 +34,4 @@ class HEM_drop {
          */
         std::vector<float> eval(RVec<float> FatJet_eta, RVec<float> FatJet_phi, int run = 0);
 };
+#endif
