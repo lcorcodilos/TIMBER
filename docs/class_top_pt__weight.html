@@ -81,18 +81,13 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a56b49e7cb8ff3991a8a301a7be3b57e9"><td class="memItemLeft" align="right" valign="top">RVec&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_pt__weight.html#a56b49e7cb8ff3991a8a301a7be3b57e9">corr</a> (RVec&lt; int &gt; GenPart_pdgId, RVec&lt; int &gt; GenPart_statusFlags, RVec&lt; ROOT::Math::PtEtaPhiMVector &gt; GenPart_vects, ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1)</td></tr>
-<tr class="memdesc:a56b49e7cb8ff3991a8a301a7be3b57e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the top \(p_T\) reweighting value for \(t\bar{t}\) simulation based on doing gen particle matching. The weight is calculated as </p><p class="formulaDsp">
-\[ \sqrt{e^{\alpha - \beta \cdot p_{T}^{\textrm{Gen } t}} \cdot e^{\alpha - \beta \cdot p_{T}^{\textrm{Gen } \bar{t}} }} \]
-</p>
-<p>. where \(\alpha = 0.0615\) and \(\beta = 0.0005\). See the <a class="el" href="class_top_pt__weight.html#ab955ab2fc921a56b9e87b2dc615a9296" title="Calculate variations of top  weight by varying the  parameter. The amount of variation can be changed...">alpha()</a> and <a class="el" href="class_top_pt__weight.html#a6aea8fc1b76776540a1991a52be8b7cc" title="Calculate variations of the top  weight by varying the  parameter. The amount of variation can be cha...">beta()</a> functions to calculate the weights with these parameters varied.  <a href="#a56b49e7cb8ff3991a8a301a7be3b57e9">More...</a><br /></td></tr>
-<tr class="separator:a56b49e7cb8ff3991a8a301a7be3b57e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab955ab2fc921a56b9e87b2dc615a9296"><td class="memItemLeft" align="right" valign="top">RVec&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_pt__weight.html#ab955ab2fc921a56b9e87b2dc615a9296">alpha</a> (RVec&lt; int &gt; GenPart_pdgId, RVec&lt; int &gt; GenPart_statusFlags, RVec&lt; ROOT::Math::PtEtaPhiMVector &gt; GenPart_vects, ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1, float scale=0.5)</td></tr>
-<tr class="memdesc:ab955ab2fc921a56b9e87b2dc615a9296"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate variations of top \(p_T\) weight by varying the \(\alpha\) parameter. The amount of variation can be changed via the scale arguement which is a percent change on \(\alpha\). The output is the weight calculated with the variation divided by the nominal value. When using MakeWeightCols(), the nominal will be multiplied by this variation to recover the total weight.  <a href="#ab955ab2fc921a56b9e87b2dc615a9296">More...</a><br /></td></tr>
-<tr class="separator:ab955ab2fc921a56b9e87b2dc615a9296"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6aea8fc1b76776540a1991a52be8b7cc"><td class="memItemLeft" align="right" valign="top">RVec&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_pt__weight.html#a6aea8fc1b76776540a1991a52be8b7cc">beta</a> (RVec&lt; int &gt; GenPart_pdgId, RVec&lt; int &gt; GenPart_statusFlags, RVec&lt; ROOT::Math::PtEtaPhiMVector &gt; GenPart_vects, ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1, float scale=0.5)</td></tr>
-<tr class="memdesc:a6aea8fc1b76776540a1991a52be8b7cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate variations of the top \(p_T\) weight by varying the \(\beta\) parameter. The amount of variation can be changed via the scale arguement which is a percent change on \(\beta\). The output is the weight calculated with the variation divided by the nominal value. When using MakeWeightCols(), the nominal will be multiplied by this variation to recover the total weight.  <a href="#a6aea8fc1b76776540a1991a52be8b7cc">More...</a><br /></td></tr>
-<tr class="separator:a6aea8fc1b76776540a1991a52be8b7cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e163989870f7cef6edecd4b06f47d8e"><td class="memItemLeft" align="right" valign="top"><a id="a7e163989870f7cef6edecd4b06f47d8e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_pt__weight.html#a7e163989870f7cef6edecd4b06f47d8e">TopPt_weight</a> ()</td></tr>
+<tr class="memdesc:a7e163989870f7cef6edecd4b06f47d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="class_top_pt__weight.html" title="C++ class. Handles the top  reweighting value for  simulation based on doing gen particle matching...">TopPt_weight</a> object. No arguments. <br /></td></tr>
+<tr class="separator:a7e163989870f7cef6edecd4b06f47d8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02c04ed5b49c7450fb53ded3a2a9620c"><td class="memItemLeft" align="right" valign="top">RVec&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_top_pt__weight.html#a02c04ed5b49c7450fb53ded3a2a9620c">eval</a> (RVec&lt; int &gt; GenPart_pdgId, RVec&lt; int &gt; GenPart_statusFlags, RVec&lt; ROOT::Math::PtEtaPhiMVector &gt; GenPart_vect, ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1, float scale=0.5)</td></tr>
+<tr class="memdesc:a02c04ed5b49c7450fb53ded3a2a9620c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the top \(p_T\) reweighting value for \(t\bar{t}\) simulation based on doing gen particle matching. Additionally, calculate variations of the top \(p_T\) weight by varying the \(\beta\) parameter. The amount of variation can be changed via the scale arguement which is a percent change on \(\beta\). There is no corresponding function for \(\alpha\) because the effect is only a flat normalization change.  <a href="#a02c04ed5b49c7450fb53ded3a2a9620c">More...</a><br /></td></tr>
+<tr class="separator:a02c04ed5b49c7450fb53ded3a2a9620c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>C++ class. Handles the top \(p_T\) reweighting value for \(t\bar{t}\) simulation based on doing gen particle matching. The weight is calculated as. </p>
@@ -100,17 +95,16 @@ Public Member Functions</h2></td></tr>
 \[ \sqrt{e^{\alpha - \beta \cdot p_{T}^{\textrm{Gen} t}} \cdot e^{\alpha - \beta \cdot p_{T}^{\textrm{Gen} \bar{t}} }} \]
 </p>
 <p>.</p>
-<p>where \(\alpha = 0.0615\) and \(\beta = 0.0005\). See the <a class="el" href="class_top_pt__weight.html#ab955ab2fc921a56b9e87b2dc615a9296" title="Calculate variations of top  weight by varying the  parameter. The amount of variation can be changed...">alpha()</a> and <a class="el" href="class_top_pt__weight.html#a6aea8fc1b76776540a1991a52be8b7cc" title="Calculate variations of the top  weight by varying the  parameter. The amount of variation can be cha...">beta()</a> functions to calculate the weights with these parameters varied.</p>
-<p>WARNING: You MUST run <a class="el" href="class_top_pt__weight.html#a56b49e7cb8ff3991a8a301a7be3b57e9" title="Calculate the top  reweighting value for  simulation based on doing gen particle matching. The weight is calculated as . where  and . See the alpha() and beta() functions to calculate the weights with these parameters varied. ">corr()</a> before <a class="el" href="class_top_pt__weight.html#ab955ab2fc921a56b9e87b2dc615a9296" title="Calculate variations of top  weight by varying the  parameter. The amount of variation can be changed...">alpha()</a> and <a class="el" href="class_top_pt__weight.html#a6aea8fc1b76776540a1991a52be8b7cc" title="Calculate variations of the top  weight by varying the  parameter. The amount of variation can be cha...">beta()</a> since these functions recycle information derived from <a class="el" href="class_top_pt__weight.html#a56b49e7cb8ff3991a8a301a7be3b57e9" title="Calculate the top  reweighting value for  simulation based on doing gen particle matching. The weight is calculated as . where  and . See the alpha() and beta() functions to calculate the weights with these parameters varied. ">corr()</a>. </p>
+<p>where \(\alpha = 0.0615\) and \(\beta = 0.0005\). See the <a class="el" href="class_top_pt__weight.html#a02c04ed5b49c7450fb53ded3a2a9620c" title="Calculate the top  reweighting value for  simulation based on doing gen particle matching. Additionally, calculate variations of the top  weight by varying the  parameter. The amount of variation can be changed via the scale arguement which is a percent change on . There is no corresponding function for  because the effect is only a flat normalization change. ">eval()</a> function to calculate the weight plus variations of the \(\beta\) parameter. The \(\alpha\) parameter is not varied since it would only represent a flat normalization change. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ab955ab2fc921a56b9e87b2dc615a9296"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab955ab2fc921a56b9e87b2dc615a9296">&#9670;&nbsp;</a></span>alpha()</h2>
+<a id="a02c04ed5b49c7450fb53ded3a2a9620c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02c04ed5b49c7450fb53ded3a2a9620c">&#9670;&nbsp;</a></span>eval()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">RVec&lt; float &gt; alpha </td>
+          <td class="memname">RVec&lt; float &gt; eval </td>
           <td>(</td>
           <td class="paramtype">RVec&lt; int &gt;&#160;</td>
           <td class="paramname"><em>GenPart_pdgId</em>, </td>
@@ -125,7 +119,7 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">RVec&lt; ROOT::Math::PtEtaPhiMVector &gt;&#160;</td>
-          <td class="paramname"><em>GenPart_vects</em>, </td>
+          <td class="paramname"><em>GenPart_vect</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -153,147 +147,19 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Calculate variations of top \(p_T\) weight by varying the \(\alpha\) parameter. The amount of variation can be changed via the scale arguement which is a percent change on \(\alpha\). The output is the weight calculated with the variation divided by the nominal value. When using MakeWeightCols(), the nominal will be multiplied by this variation to recover the total weight. </p>
+<p>Calculate the top \(p_T\) reweighting value for \(t\bar{t}\) simulation based on doing gen particle matching. Additionally, calculate variations of the top \(p_T\) weight by varying the \(\beta\) parameter. The amount of variation can be changed via the scale arguement which is a percent change on \(\beta\). There is no corresponding function for \(\alpha\) because the effect is only a flat normalization change. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">GenPart_pdgId</td><td>NanoAOD branch </td></tr>
     <tr><td class="paramname">GenPart_statusFlags</td><td>NanoAOD branch </td></tr>
-    <tr><td class="paramname">GenPart_vects</td><td>Vector of ROOT::Math::PtEtaPhiMVectors (create through <a class="el" href="namespacehardware.html#ac4cf6f794442c05cd45c12422be730d3" title="Create a ROOT::Math::PtEtaPhiMVector. ">hardware::TLvector</a>) </td></tr>
-    <tr><td class="paramname">jet0</td><td></td></tr>
-    <tr><td class="paramname">jet1</td><td></td></tr>
-    <tr><td class="paramname">scale</td><td>Percent variation on \(\alpha\) parameter. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>RVec&lt;float&gt; {up, down} variations of the top \(p_T\) reweighting value divided by the nominal weight. </dd></dl>
-
-</div>
-</div>
-<a id="a6aea8fc1b76776540a1991a52be8b7cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6aea8fc1b76776540a1991a52be8b7cc">&#9670;&nbsp;</a></span>beta()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">RVec&lt; float &gt; beta </td>
-          <td>(</td>
-          <td class="paramtype">RVec&lt; int &gt;&#160;</td>
-          <td class="paramname"><em>GenPart_pdgId</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">RVec&lt; int &gt;&#160;</td>
-          <td class="paramname"><em>GenPart_statusFlags</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">RVec&lt; ROOT::Math::PtEtaPhiMVector &gt;&#160;</td>
-          <td class="paramname"><em>GenPart_vects</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ROOT::Math::PtEtaPhiMVector&#160;</td>
-          <td class="paramname"><em>jet0</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ROOT::Math::PtEtaPhiMVector&#160;</td>
-          <td class="paramname"><em>jet1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>scale</em> = <code>0.5</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculate variations of the top \(p_T\) weight by varying the \(\beta\) parameter. The amount of variation can be changed via the scale arguement which is a percent change on \(\beta\). The output is the weight calculated with the variation divided by the nominal value. When using MakeWeightCols(), the nominal will be multiplied by this variation to recover the total weight. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">GenPart_pdgId</td><td>NanoAOD branch </td></tr>
-    <tr><td class="paramname">GenPart_statusFlags</td><td>NanoAOD branch </td></tr>
-    <tr><td class="paramname">GenPart_vects</td><td>Vector of ROOT::Math::PtEtaPhiMVectors (create through <a class="el" href="namespacehardware.html#ac4cf6f794442c05cd45c12422be730d3" title="Create a ROOT::Math::PtEtaPhiMVector. ">hardware::TLvector</a>) </td></tr>
+    <tr><td class="paramname">GenPart_vect</td><td>Vector of ROOT::Math::PtEtaPhiMVectors (create through <a class="el" href="namespacehardware.html#ac4cf6f794442c05cd45c12422be730d3" title="Create a ROOT::Math::PtEtaPhiMVector. ">hardware::TLvector</a>) </td></tr>
     <tr><td class="paramname">jet0</td><td></td></tr>
     <tr><td class="paramname">jet1</td><td></td></tr>
     <tr><td class="paramname">scale</td><td>Percent variation on \(\beta\) parameter. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>RVec&lt;float&gt; {up, down} variations of the top \(p_T\) reweighting value divided by the nominal weight. </dd></dl>
-
-</div>
-</div>
-<a id="a56b49e7cb8ff3991a8a301a7be3b57e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56b49e7cb8ff3991a8a301a7be3b57e9">&#9670;&nbsp;</a></span>corr()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">RVec&lt; float &gt; corr </td>
-          <td>(</td>
-          <td class="paramtype">RVec&lt; int &gt;&#160;</td>
-          <td class="paramname"><em>GenPart_pdgId</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">RVec&lt; int &gt;&#160;</td>
-          <td class="paramname"><em>GenPart_statusFlags</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">RVec&lt; ROOT::Math::PtEtaPhiMVector &gt;&#160;</td>
-          <td class="paramname"><em>GenPart_vects</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ROOT::Math::PtEtaPhiMVector&#160;</td>
-          <td class="paramname"><em>jet0</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ROOT::Math::PtEtaPhiMVector&#160;</td>
-          <td class="paramname"><em>jet1</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculate the top \(p_T\) reweighting value for \(t\bar{t}\) simulation based on doing gen particle matching. The weight is calculated as </p><p class="formulaDsp">
-\[ \sqrt{e^{\alpha - \beta \cdot p_{T}^{\textrm{Gen } t}} \cdot e^{\alpha - \beta \cdot p_{T}^{\textrm{Gen } \bar{t}} }} \]
-</p>
-<p>. where \(\alpha = 0.0615\) and \(\beta = 0.0005\). See the <a class="el" href="class_top_pt__weight.html#ab955ab2fc921a56b9e87b2dc615a9296" title="Calculate variations of top  weight by varying the  parameter. The amount of variation can be changed...">alpha()</a> and <a class="el" href="class_top_pt__weight.html#a6aea8fc1b76776540a1991a52be8b7cc" title="Calculate variations of the top  weight by varying the  parameter. The amount of variation can be cha...">beta()</a> functions to calculate the weights with these parameters varied. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">GenPart_pdgId</td><td>NanoAOD branch </td></tr>
-    <tr><td class="paramname">GenPart_statusFlags</td><td>NanoAOD branch </td></tr>
-    <tr><td class="paramname">GenPart_vects</td><td>Vector of ROOT::Math::PtEtaPhiMVectors (create through <a class="el" href="namespacehardware.html#ac4cf6f794442c05cd45c12422be730d3" title="Create a ROOT::Math::PtEtaPhiMVector. ">hardware::TLvector</a>) </td></tr>
-    <tr><td class="paramname">jet0</td><td></td></tr>
-    <tr><td class="paramname">jet1</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>RVec&lt;float&gt; Will only be length 1. Stored as vector to satisfy TIMBER Correction() requirements </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>RVec&lt;float&gt; {nom, up, down} variations of the top \(p_T\) reweighting value (absolute). </dd></dl>
 
 </div>
 </div>

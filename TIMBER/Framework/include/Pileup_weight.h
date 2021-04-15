@@ -8,11 +8,10 @@
 #include "common.h"
 #include "../ext/WeightCalculatorFromHistogram.h"
 
+/**
+ * @brief C++ class to handle pileup reweighting. Used in AutoPU.py.
+ */
 class Pileup_weight {
-    /**
-     * @brief C++ class to handle pileup reweighting. Used in AutoPU.py.
-     * 
-     */
     private:
         TFile *_dataFile, *_mcFile;
         TH1 *_dataHist, *_dataHistUp, *_dataHistDown,

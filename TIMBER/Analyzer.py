@@ -1555,6 +1555,10 @@ class Group(object):
         # string
         #
         # Group type - "cut", "var", "hist"
+        ## @var item_meta
+        # OrderedDict()
+        #
+        # Storage container for generic meta information on the group.
         super(Group, self).__init__()
         self.name = name
         self.items = OrderedDict()
@@ -1797,6 +1801,8 @@ class ModuleWorker(object):
                 Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used.
         @param isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
                 not duplicate compile the same script if two functions are needed in one C++ script.
+        @param cloneFuncInfo (dict, optional): For internal use when cloning. Defaults to None. Should be the
+                _funcInfo from the object from which this one is cloned.
         '''
 
         ## @var name
@@ -2093,6 +2099,8 @@ class Correction(ModuleWorker):
                 Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used.
         @param isClone (bool, optional): For internal use when cloning. Defaults to False. If True, will
                 not duplicate compile the same script if two functions are needed in one C++ script.
+        @param cloneFuncInfo (dict, optional): For internal use when cloning. Defaults to None. Should be the
+                _funcInfo from the object from which this one i
         '''
 
         super(Correction,self).__init__(name,script,constructor,mainFunc,columnList,isClone,cloneFuncInfo)

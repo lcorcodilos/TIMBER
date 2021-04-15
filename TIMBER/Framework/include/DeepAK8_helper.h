@@ -8,10 +8,10 @@
 #include <cstdlib>
 #include <sstream>
 
+/**
+ * @brief C++ class to access scale factors associated with DeepAK8 tagging.
+ */
 class DeepAK8_helper {
-    /**
-     * @brief C++ class to access scale factors associated with DeepAK8 tagging.
-     */
     private:
         std::string entry_to_find;
         std::vector<std::vector<float> > _values;
@@ -21,6 +21,7 @@ class DeepAK8_helper {
         /**
          * @brief Construct a new DeepAK8_helper object
          * 
+         * @param particle Either "Top" or "W"
          * @param year 
          * @param workingpoint Ex. "0p5"
          * @param massDecorr 

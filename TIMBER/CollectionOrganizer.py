@@ -13,22 +13,22 @@ class CollectionOrganizer:
 
         @param rdf (RDataFrame): RDataFrame from which to organize.
         '''
-        self.baseBranches = [str(b) for b in rdf.GetColumnNames()]
-        self.generateFromRDF(rdf)
-        self.builtCollections = []
+        self._baseBranches = [str(b) for b in rdf.GetColumnNames()]
+        self._generateFromRDF(rdf)
+        self._builtCollections = []
 
-    def generateFromRDF(self, rdf):
+    def _generateFromRDF(self, rdf):
         '''Generate the collection from the RDataFrame.
 
         @param rdf (RDataFrame): RDataFrame from which to organize.
         '''
-        self.collectionDict = {}
-        self.otherBranches = {}
+        self._collectionDict = {}
+        self._otherBranches = {}
 
-        for b in self.baseBranches:
+        for b in self._baseBranches:
             self.AddBranch(b,rdf.GetColumnType(b))
 
-    def parsetype(self, t):
+    def _parsetype(self, t):
         '''Deduce the type that TIMBER needs to see for the 
         collection structs. If t is an RVec, deduce the internal type
         of the RVec.
@@ -58,8 +58,8 @@ class CollectionOrganizer:
 
         @param c (str): Collection name only.
         '''
-        if c not in self.collectionDict.keys():
-            self.collectionDict[c] = {'alias': False}
+        if c not in self._collectionDict.keys():
+            self._collectionDict[c] = {'alias': False}
 
     def GetCollectionAttributes(self, c):
         '''Get all attributes of a collection. Example, for the 'Electron'
@@ -70,7 +70,7 @@ class CollectionOrganizer:
         Returns:
             list(str): List of attributes for the collection.
         '''
-        return [c for c in self.collectionDict[c] if c != 'alias']
+        return [c for c in self._collectionDict[c] if c != 'alias']
 
     def AddBranch(self, b, btype=''):
         '''Add a branch to track. Will deduce if it is in a collection
@@ -82,16 +82,16 @@ class CollectionOrganizer:
         '''
         collname = b.split('_')[0]
         varname = '_'.join(b.split('_')[1:])
-        typeStr = self.parsetype(btype)
+        typeStr = self._parsetype(btype)
         
-        if typeStr == False or varname == '' or 'n'+collname not in self.baseBranches:
-            self.otherBranches[b] = {
+        if typeStr == False or varname == '' or 'n'+collname not in self._baseBranches:
+            self._otherBranches[b] = {
                 'type': typeStr,
                 'alias': False
             }
         elif varname != '':
             self.AddCollection(collname)
-            self.collectionDict[collname][varname] = {
+            self._collectionDict[collname][varname] = {
                 'type': typeStr,
                 'alias': False
             }
@@ -107,16 +107,16 @@ class CollectionOrganizer:
             ValueError: Entries do not exist so an alias cannot be added.
         '''
         # Name is either in otherBranches, is a collection name, or is a full name <collection>_<attr>
-        if name in self.otherBranches.keys():
-            self.otherBranches[name]['alias'] = alias
-        elif name in self.collectionDict.keys():
-            self.collectionDict[name]['alias'] = alias
+        if name in self._otherBranches.keys():
+            self._otherBranches[name]['alias'] = alias
+        elif name in self._collectionDict.keys():
+            self._collectionDict[name]['alias'] = alias
         else:
             collname = name.split('_')[0]
             varname = '_'.join(name.split('_')[1:])
-            if collname in self.collectionDict.keys():
-                if varname in self.collectionDict[collname].keys():
-                    self.collectionDict[collname][varname]['alias'] = alias
+            if collname in self._collectionDict.keys():
+                if varname in self._collectionDict[collname].keys():
+                    self._collectionDict[collname][varname]['alias'] = alias
                 else:
                     raise ValueError('Cannot add alias `%s` because attribute `%s` does not exist in collection `%s`'%(alias,varname,collname))
             else:
@@ -139,10 +139,10 @@ class CollectionOrganizer:
         newNode = node
         attributes = []
         for aname in self.GetCollectionAttributes(collection):
-            attributes.append('%s %s'%(self.collectionDict[collection][aname]['type'], aname))
+            attributes.append('%s %s'%(self._collectionDict[collection][aname]['type'], aname))
 
-        if collection+'s' not in self.builtCollections:
-            self.builtCollections.append(collection+'s')
+        if collection+'s' not in self._builtCollections:
+            self._builtCollections.append(collection+'s')
             CompileCpp(StructDef(collection,attributes))
             newNode = newNode.Define(collection+'s', StructObj(collection,attributes),silent=silent)
         else:
@@ -162,8 +162,8 @@ class CollectionOrganizer:
             Node: Manipulated node with the C++ struct built (the action string is not applied though).
         '''
         newNode = node
-        for c in self.collectionDict.keys():
-            if re.search(r"\b" + re.escape(c+'s') + r"\b", action_str) and (c+'s' not in self.builtCollections):
+        for c in self._collectionDict.keys():
+            if re.search(r"\b" + re.escape(c+'s') + r"\b", action_str) and (c+'s' not in self._builtCollections):
                 print ('MAKING %ss for %s'%(c,action_str))
                 newNode = self.BuildCppCollection(c,newNode,silent=True)
         return newNode

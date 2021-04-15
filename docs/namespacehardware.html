@@ -80,6 +80,12 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a9a6aa3f5f8cfad794b8ff19fd61a7428"><td class="memItemLeft" align="right" valign="top">TFile *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#a9a6aa3f5f8cfad794b8ff19fd61a7428">Open</a> (std::string file, const char *option=&quot;READ&quot;)</td></tr>
+<tr class="memdesc:a9a6aa3f5f8cfad794b8ff19fd61a7428"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a ROOT file inside the TIMBER path. Thsi function essentially just does the char + string formatting for you.  <a href="#a9a6aa3f5f8cfad794b8ff19fd61a7428">More...</a><br /></td></tr>
+<tr class="separator:a9a6aa3f5f8cfad794b8ff19fd61a7428"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c488de4fccdc04de0b3d82ea5b31f4e"><td class="memItemLeft" align="right" valign="top">TH1 *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#a4c488de4fccdc04de0b3d82ea5b31f4e">LoadHist</a> (std::string filename, std::string histname)</td></tr>
+<tr class="memdesc:a4c488de4fccdc04de0b3d82ea5b31f4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generically open a histogram from a file into memory (closing the file in the process).  <a href="#a4c488de4fccdc04de0b3d82ea5b31f4e">More...</a><br /></td></tr>
+<tr class="separator:a4c488de4fccdc04de0b3d82ea5b31f4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada97dc35a6c86dd103ad7d001a5017a2"><td class="memItemLeft" align="right" valign="top">RVec&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehardware.html#ada97dc35a6c86dd103ad7d001a5017a2">HadamardProduct</a> (RVec&lt; float &gt; v1, RVec&lt; float &gt; v2)</td></tr>
 <tr class="memdesc:ada97dc35a6c86dd103ad7d001a5017a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hadamard product of two vectors (<code>v3[i] = v1[i]*v2[i]</code>)  <a href="#ada97dc35a6c86dd103ad7d001a5017a2">More...</a><br /></td></tr>
 <tr class="separator:ada97dc35a6c86dd103ad7d001a5017a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -351,6 +357,44 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a4c488de4fccdc04de0b3d82ea5b31f4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c488de4fccdc04de0b3d82ea5b31f4e">&#9670;&nbsp;</a></span>LoadHist()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TH1 * LoadHist </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>histname</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generically open a histogram from a file into memory (closing the file in the process). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filename</td><td></td></tr>
+    <tr><td class="paramname">histname</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>TH1* </dd></dl>
+
+</div>
+</div>
 <a id="a12762e8b570c50e94a3d906fa578e698"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a12762e8b570c50e94a3d906fa578e698">&#9670;&nbsp;</a></span>MultiHadamardProduct()</h2>
 
@@ -393,6 +437,44 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>RVec&lt;float&gt; </dd></dl>
+
+</div>
+</div>
+<a id="a9a6aa3f5f8cfad794b8ff19fd61a7428"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a6aa3f5f8cfad794b8ff19fd61a7428">&#9670;&nbsp;</a></span>Open()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TFile * Open </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>file</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>option</em> = <code>&quot;READ&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Open a ROOT file inside the TIMBER path. Thsi function essentially just does the char + string formatting for you. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">file</td><td>Ex. TIMBER/data/example.root </td></tr>
+    <tr><td class="paramname">option</td><td>Defaults to "READ" for read-only. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>TFile* </dd></dl>
 
 </div>
 </div>

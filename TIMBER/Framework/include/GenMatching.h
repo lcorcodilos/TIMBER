@@ -75,7 +75,17 @@ class Particle {
          * @param idx Child index
          */
         void AddChild(int idx);
+        /**
+         * @brief Return the index of the parent.
+         * 
+         * @return int 
+         */
         int GetParent();
+        /**
+         * @brief Get vector of indices of the children.
+         * 
+         * @return std::vector<int> 
+         */
         std::vector<int> GetChild();
         /**
          * @brief Calculate \f$\Delta R\f$ between current particle and input vector.
@@ -123,6 +133,11 @@ class GenParticleTree
         Particle _noneParticle;
 
     public:
+        /**
+         * @brief Construct a new GenParticleTree object
+         * 
+         * @param nParticles 
+         */
         GenParticleTree(int nParticles);
         /**
          * @brief Add particle to tree.
@@ -130,6 +145,14 @@ class GenParticleTree
          * @param particle 
          */
         Particle* AddParticle(Particle particle);
+        /**
+         * @brief Add particle to tree.
+         * 
+         * @tparam T GenPartStruct
+         * @param index Index of the particle in the GenPart collection
+         * @param p A GenPartStruct from TIMBER
+         * @return Particle* 
+         */
         template <class T>
         Particle* AddParticle(int index, T p) {
             Particle particle(index, p);

@@ -81,9 +81,16 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abb1f8139f3e928faf36ad322697fd5af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_tree.html#abb1f8139f3e928faf36ad322697fd5af">AddParticle</a> (<a class="el" href="class_particle.html">Particle</a> *particle)</td></tr>
-<tr class="memdesc:abb1f8139f3e928faf36ad322697fd5af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add particle to tree.  <a href="#abb1f8139f3e928faf36ad322697fd5af">More...</a><br /></td></tr>
-<tr class="separator:abb1f8139f3e928faf36ad322697fd5af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa17f61542cabba86a941d6796bd44c55"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_tree.html#aa17f61542cabba86a941d6796bd44c55">GenParticleTree</a> (int nParticles)</td></tr>
+<tr class="memdesc:aa17f61542cabba86a941d6796bd44c55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="class_gen_particle_tree.html" title="C++ class. Constructs tree by adding particles. Establish relationships between particles (parent...">GenParticleTree</a> object.  <a href="#aa17f61542cabba86a941d6796bd44c55">More...</a><br /></td></tr>
+<tr class="separator:aa17f61542cabba86a941d6796bd44c55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae83cbfb950a4461c53cc6904fca58422"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_particle.html">Particle</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_tree.html#ae83cbfb950a4461c53cc6904fca58422">AddParticle</a> (<a class="el" href="class_particle.html">Particle</a> particle)</td></tr>
+<tr class="memdesc:ae83cbfb950a4461c53cc6904fca58422"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add particle to tree.  <a href="#ae83cbfb950a4461c53cc6904fca58422">More...</a><br /></td></tr>
+<tr class="separator:ae83cbfb950a4461c53cc6904fca58422"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6798eeb72f43d42b07f5cc776a2c68d"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:aa6798eeb72f43d42b07f5cc776a2c68d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="class_particle.html">Particle</a> *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_gen_particle_tree.html#aa6798eeb72f43d42b07f5cc776a2c68d">AddParticle</a> (int index, T p)</td></tr>
+<tr class="memdesc:aa6798eeb72f43d42b07f5cc776a2c68d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add particle to tree.  <a href="#aa6798eeb72f43d42b07f5cc776a2c68d">More...</a><br /></td></tr>
+<tr class="separator:aa6798eeb72f43d42b07f5cc776a2c68d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9867e896c69d44a613ffcb00dd287f1c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_particle.html">Particle</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gen_particle_tree.html#a9867e896c69d44a613ffcb00dd287f1c">GetParticles</a> ()</td></tr>
 <tr class="memdesc:a9867e896c69d44a613ffcb00dd287f1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of particle objects.  <a href="#a9867e896c69d44a613ffcb00dd287f1c">More...</a><br /></td></tr>
 <tr class="separator:a9867e896c69d44a613ffcb00dd287f1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -99,17 +106,44 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>C++ class. Constructs tree by adding particles. Establish relationships between particles (parent, child) and allows you to search for a chain of decays. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="abb1f8139f3e928faf36ad322697fd5af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb1f8139f3e928faf36ad322697fd5af">&#9670;&nbsp;</a></span>AddParticle()</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="aa17f61542cabba86a941d6796bd44c55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa17f61542cabba86a941d6796bd44c55">&#9670;&nbsp;</a></span>GenParticleTree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void AddParticle </td>
+          <td class="memname"><a class="el" href="class_gen_particle_tree.html">GenParticleTree</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_particle.html">Particle</a> *&#160;</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nParticles</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Construct a new <a class="el" href="class_gen_particle_tree.html" title="C++ class. Constructs tree by adding particles. Establish relationships between particles (parent...">GenParticleTree</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nParticles</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae83cbfb950a4461c53cc6904fca58422"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae83cbfb950a4461c53cc6904fca58422">&#9670;&nbsp;</a></span>AddParticle() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_particle.html">Particle</a> * AddParticle </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_particle.html">Particle</a>&#160;</td>
           <td class="paramname"><em>particle</em></td><td>)</td>
           <td></td>
         </tr>
@@ -123,6 +157,50 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="aa6798eeb72f43d42b07f5cc776a2c68d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6798eeb72f43d42b07f5cc776a2c68d">&#9670;&nbsp;</a></span>AddParticle() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_particle.html">Particle</a>* AddParticle </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add particle to tree. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>GenPartStruct </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Index of the particle in the GenPart collection </td></tr>
+    <tr><td class="paramname">p</td><td>A GenPartStruct from TIMBER </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Particle* </dd></dl>
 
 </div>
 </div>
@@ -176,7 +254,7 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>std::vector&lt;Particle*&gt; </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>std::vector&lt;Particle&gt;* </dd></dl>
 
 </div>
 </div>

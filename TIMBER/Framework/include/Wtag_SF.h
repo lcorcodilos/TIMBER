@@ -2,12 +2,11 @@
 #define _TIMBER_WTAG_SF
 #include <ROOT/RVec.hxx>
 
+/**
+ * @brief C++ class to access scale factors associated with tau21+mass
+ * based W tagging. More details provided at [https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging](https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging)
+ */
 class Wtag_SF {
-    /**
-     * @brief C++ class to access scale factors associated with tau21+mass
-     * based W tagging. More details provided at [https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging](https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging)
-     * 
-     */
     private:
         int _year;
         float _HP, _HPunc, _LP, _LPunc;

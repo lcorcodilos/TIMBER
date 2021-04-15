@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['effloader',['EffLoader',['../class_eff_loader.html',1,'']]]
+  ['deepak8_5fhelper',['DeepAK8_helper',['../class_deep_a_k8__helper.html',1,'']]]
 ];

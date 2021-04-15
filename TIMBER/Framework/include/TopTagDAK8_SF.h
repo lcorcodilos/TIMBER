@@ -2,10 +2,10 @@
 #define _TIMBER_TOPTAGDAK8_SF
 #include "DeepAK8_helper.h"
 
+/**
+ * @brief C++ class to access scale factors associated with DeepAK8 top tagging.
+ */
 class TopTagDAK8_SF {
-    /**
-     * @brief C++ class to access scale factors associated with DeepAK8 top tagging.
-     */
     private:
         DeepAK8_helper helper;
 
