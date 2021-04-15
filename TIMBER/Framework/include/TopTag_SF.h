@@ -10,11 +10,11 @@
 #include "GenMatching.h"
 using LVector = ROOT::Math::PtEtaPhiMVector;
 
+/**
+ * @brief C++ class to access scale factors associated with tau32+subjet btag(+mass)
+ * based top tagging. More details provided at https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetTopTagging](https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetTopTagging)
+ */
 class TopTag_SF {
-    /**
-     * @brief C++ class to access scale factors associated with tau32+subjet btag(+mass)
-     * based top tagging. More details provided at https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetTopTagging](https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetTopTagging)
-     */
     private:
         std::string workpoint_name;
         int _year;

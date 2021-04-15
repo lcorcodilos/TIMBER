@@ -8,6 +8,10 @@
 #include <math.h>
 #include "common.h"
 
+/**
+ * @brief C++ class to handle the trigger prefire weighting.
+ * Based off of the equivalent NanoAOD-tools module.
+ */
 class Prefire_weight {
     private:
         std::string _jetmapname, _photonmapname;
@@ -16,10 +20,6 @@ class Prefire_weight {
         std::pair<float,float> _jetPtRange, _jetEtaRange, _photonPtRange, _photonEtaRange;
         std::vector<std::pair<int, std::string>> _variations = {{0,"PrefireWeight"},{1,"PrefireWeight_Up"},{-1,"PrefireWeight_Down"}};
         int _variation;
-
-    public:
-        Prefire_weight(int year, bool UseEMpt=false);
-        ~Prefire_weight();
 
         template <class Photon, class Electron>
         float EGvalue(int jetidx, std::vector<Photon> PhoColl, std::vector<Electron> EleColl) {
@@ -61,6 +61,27 @@ class Prefire_weight {
         bool JetInRange(float pt, float eta);
         bool ObjInRange(float pt, float eta, std::pair<float,float> ptRange, std::pair<float,float> etaRange);
 
+
+    public:
+        /**
+         * @brief Construct a new Prefire_weight object
+         * 
+         * @param year 
+         * @param UseEMpt 
+         */
+        Prefire_weight(int year, bool UseEMpt=false);
+        ~Prefire_weight();
+        /**
+         * @brief Calculate the value of the weight.
+         * 
+         * @tparam Jet 
+         * @tparam Photon 
+         * @tparam Electron 
+         * @param Jets JetStruct from TIMBER
+         * @param Photons PhotonStruct from TIMBER
+         * @param Electrons ElectronStruct from TIMBER
+         * @return ROOT::VecOps::RVec<float> 
+         */
         template <class Jet, class Photon, class Electron>
         ROOT::VecOps::RVec<float> eval(std::vector<Jet> Jets, std::vector<Photon> Photons, std::vector<Electron> Electrons) {
             Jet *jet;
