@@ -214,7 +214,6 @@ for (size_t i = 0; i < n{0}; i++) {{
 return {0}s;
 '''
     attr_assignment_str = ''
-    print (varList)
     for i,v in enumerate(varList):
         varname = v.split(' ')[-1]
         attr_assignment_str += '{0}_{1}[i],'.format(collectionName, varname)
