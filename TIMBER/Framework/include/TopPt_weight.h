@@ -22,7 +22,7 @@ using namespace ROOT::VecOps;
  */
 class TopPt_weight {
     private:
-        std::vector<float> matchingGenPt(RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vects,
+        std::vector<float> matchingGenPt(RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vect,
                 ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1);
 
     public:
@@ -42,14 +42,14 @@ class TopPt_weight {
          * 
          * @param GenPart_pdgId NanoAOD branch
          * @param GenPart_statusFlags NanoAOD branch
-         * @param GenPart_vects Vector of ROOT::Math::PtEtaPhiMVectors (create through hardware::TLvector)
+         * @param GenPart_vect Vector of ROOT::Math::PtEtaPhiMVectors (create through hardware::TLvector)
          * @param jet0 
          * @param jet1 
          * @param scale Percent variation on \f$\beta\f$ parameter.
          * @return RVec<float> {nom, up, down} variations of the top \f$p_T\f$ reweighting value (absolute).
          */
         RVec<float> eval(
-                RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vects,
+                RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vect,
                 ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1, float scale = 0.5);
 };
 #endif

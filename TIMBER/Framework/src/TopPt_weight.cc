@@ -3,7 +3,7 @@
 TopPt_weight::TopPt_weight(){};
 
 std::vector<float> TopPt_weight::matchingGenPt(
-        RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vects,
+        RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vect,
         ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1){
 
     float genTPt = -1.;
@@ -13,12 +13,12 @@ std::vector<float> TopPt_weight::matchingGenPt(
     for (size_t i = 0; i < GenPart_pdgId.size(); i++){
         if (GenPart_statusFlags[i] & (1 << 13)) {
             if (GenPart_pdgId[i] == -6) { 
-                if ((hardware::DeltaR(GenPart_vects[i],jet0) < 0.8) || (hardware::DeltaR(GenPart_vects[i],jet1) < 0.8)) {
-                    genTbarPt = GenPart_vects[i].Pt();
+                if ((hardware::DeltaR(GenPart_vect[i],jet0) < 0.8) || (hardware::DeltaR(GenPart_vect[i],jet1) < 0.8)) {
+                    genTbarPt = GenPart_vect[i].Pt();
                 }
             } else if (GenPart_pdgId[i] == 6) { 
-                if ((hardware::DeltaR(GenPart_vects[i],jet0) < 0.8) || (hardware::DeltaR(GenPart_vects[i],jet1) < 0.8)) {
-                    genTPt = GenPart_vects[i].Pt();
+                if ((hardware::DeltaR(GenPart_vect[i],jet0) < 0.8) || (hardware::DeltaR(GenPart_vect[i],jet1) < 0.8)) {
+                    genTPt = GenPart_vect[i].Pt();
                 }
             }
         }
@@ -27,11 +27,11 @@ std::vector<float> TopPt_weight::matchingGenPt(
 }
 
 RVec<float> TopPt_weight::eval(
-        RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vects,
+        RVec<int> GenPart_pdgId, RVec<int> GenPart_statusFlags, RVec<ROOT::Math::PtEtaPhiMVector> GenPart_vect,
         ROOT::Math::PtEtaPhiMVector jet0, ROOT::Math::PtEtaPhiMVector jet1, float scale){
 
     std::vector<float> matched = matchingGenPt(GenPart_pdgId, GenPart_statusFlags,
-                                          GenPart_vects, jet0, jet1);
+                                          GenPart_vect, jet0, jet1);
     float genTPt = matched[0];
     float genTbarPt = matched[1];
 
