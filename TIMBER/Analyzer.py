@@ -251,7 +251,7 @@ class analyzer(object):
         Returns:
             list(str): Collection names.
         '''
-        return self._collectionOrg.collectionDict.keys()
+        return self._collectionOrg.GetCollectionNames()
 
     def SetActiveNode(self,node):
         '''Sets the active node.

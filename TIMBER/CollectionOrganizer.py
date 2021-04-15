@@ -61,6 +61,14 @@ class CollectionOrganizer:
         if c not in self._collectionDict.keys():
             self._collectionDict[c] = {'alias': False}
 
+    def GetCollectionNames(self):
+        '''Return the list of all collection names.
+
+        Returns:
+            list(str): All tracked collection names.
+        '''
+        return self._collectionDict.keys()
+
     def GetCollectionAttributes(self, c):
         '''Get all attributes of a collection. Example, for the 'Electron'
         collection, will return a list of `['pt', 'eta', ...]`.
