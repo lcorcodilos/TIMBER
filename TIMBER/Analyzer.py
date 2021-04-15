@@ -875,19 +875,23 @@ class analyzer(object):
             raise NameError("The weight name `%s` does not exist in the current columns. Are you sure the correction has been made and MakeWeightCols has been called?"%weightname)
         return weightname
 
-    def MakeTemplateHistos(self,templateHist,variables,node=None):
+    def MakeTemplateHistos(self,templateHist,variables,node=None,lazy=True):
         '''Generates the uncertainty template histograms based on the weights created by #MakeWeightCols(). 
 
-        @param templateHist (TH1,TH2,TH3): A TH1, TH2, or TH3 used as a template to create the histograms.
+        @param templateHist (TH1,TH2,TH3,tuple): A TH1, TH2, TH3, or a tuple describing the TH* options.
+            Used as a template to create the histograms.
         @param variables ([str]): A list of the columns/variables to plot (ex. ["x","y","z"]).
         @param node (Node): Node to plot histograms from. Defaults to #ActiveNode.
+        @param lazy (bool): Make the action lazy which, in this case, means skipping the axis title
+            naming. The axis names will be saved in meta data of the returned group (Group.item_meta).
+            If using HistGroup.Do(), the axis titles will later be applied automatically.
 
         Returns:
             HistGroup: Uncertainty template histograms.
         '''
         if node == None: node = self.ActiveNode
 
-        weight_cols = [str(cname) for cname in node.DataFrame.GetColumnNames() if 'weight__' in str(cname)]
+        weight_cols = [str(cname) for cname in node.DataFrame.GetColumnNames() if str(cname).startswith('weight__')]
         baseName = templateHist.GetName()
         baseTitle = templateHist.GetTitle()
         binningTuple,dimension = GetHistBinningTuple(templateHist)
@@ -904,24 +908,31 @@ class analyzer(object):
 
             if dimension == 1: 
                 thishist = node.DataFrame.Histo1D(template_attr,variables[0],cname)
+                meta_data = {"xtitle":variables[0]}
             elif dimension == 2: 
                 thishist = node.DataFrame.Histo2D(template_attr,variables[0],variables[1],cname)
+                meta_data = {"xtitle":variables[0], "ytitle":variables[1]}
             elif dimension == 3: 
                 thishist = node.DataFrame.Histo3D(template_attr,variables[0],variables[1],variables[2],cname)
+                meta_data = {"xtitle":variables[0], "ytitle":variables[1], "ztitle":variables[2]}
 
-            out.Add(histname,thishist)
+            if lazy:
+                out.Add(histname,thishist,meta_data)
+            else:
+                out.Add(histname,thishist)
 
         # Wait to GetValue and SetTitle so that the histogram filling happens simultaneously
-        for k in out.keys():
-            if dimension == 1: 
-                out[k].GetXaxis().SetTitle(variables[0])
-            elif dimension == 2: 
-                out[k].GetXaxis().SetTitle(variables[0])
-                out[k].GetYaxis().SetTitle(variables[1])
-            elif dimension == 3: 
-                out[k].GetXaxis().SetTitle(variables[0])
-                out[k].GetYaxis().SetTitle(variables[1])
-                out[k].GetZaxis().SetTitle(variables[2])
+        if not lazy:
+            for k in out.keys():
+                if dimension == 1: 
+                    out[k].GetXaxis().SetTitle(variables[0])
+                elif dimension == 2: 
+                    out[k].GetXaxis().SetTitle(variables[0])
+                    out[k].GetYaxis().SetTitle(variables[1])
+                elif dimension == 3: 
+                    out[k].GetXaxis().SetTitle(variables[0])
+                    out[k].GetYaxis().SetTitle(variables[1])
+                    out[k].GetZaxis().SetTitle(variables[2])
 
         return out
 
@@ -1548,12 +1559,14 @@ class Group(object):
         self.name = name
         self.items = OrderedDict()
         self.type = None
+        self.item_meta = OrderedDict()
 
-    def Add(self,name,item,makeCopy=False):
+    def Add(self,name,item,meta={},makeCopy=False):
         '''Add item to Group with a name. Modifies in-place if copy == False.
 
         @param name (str): Name/key for added item.
         @param item (obj): Item to add.
+        @param meta (dict): 
         @param makeCopy (bool, optional): Creates a copy of the group with the item added.
 
         Returns:
@@ -1566,9 +1579,11 @@ class Group(object):
             elif self.type == 'var': newGroup = VarGroup(self.name+'+'+name)
             elif self.type == 'cut': newGroup = CutGroup(self.name+'+'+name)
             newGroup.items = added
+            newGroup.item_meta = meta
             return newGroup
         else:
             self.items[name] = item 
+            self.item_meta[name] = meta
         
     def Drop(self,name,makeCopy=False):
         '''Drop item from Group with provided name/key. Modifies in-place if copy == False.
@@ -1725,7 +1740,16 @@ class HistGroup(Group):
         returnNone = False
         # Loop over hists
         for name,hist in self.items.items():
+            # Handle lazy axis naming
+            if 'xtitle' in self.item_meta.keys():
+                hist.GetXaxis().SetTitle(self.item_meta['xtitle'])
+            if 'ytitle' in self.item_meta.keys():
+                hist.GetYaxis().SetTitle(self.item_meta['ytitle'])
+            if 'ztitle' in self.item_meta.keys():
+                hist.GetZaxis().SetTitle(self.item_meta['ztitle'])
+            
             out = getattr(hist,THmethod)(*argsTuple)
+            
             # If None type, set returnNone = True
             if out == None and returnNone == False: returnNone = True
             # If return is not None, add 
