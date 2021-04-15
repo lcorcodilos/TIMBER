@@ -1,0 +1,3 @@
+root://cmsxrootd.fnal.gov//store/mc/RunIIFall17NanoAODv7/ZprimeToTT_M1000_W10_TuneCP2_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/70000/02869F89-F55D-3846-8D6A-4B4C7319D4A6.root
+root://cmsxrootd.fnal.gov//store/mc/RunIIFall17NanoAODv7/ZprimeToTT_M1000_W10_TuneCP2_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/100000/A1E0A970-92DB-8D4B-BEEE-3B964B1CC24B.root
+root://cmsxrootd.fnal.gov//store/mc/RunIIFall17NanoAODv7/ZprimeToTT_M1000_W10_TuneCP2_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/120000/C027DF7A-1AF3-0A4E-A6C9-2859CB51A0CB.root
