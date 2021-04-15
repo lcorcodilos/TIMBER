@@ -1,23 +1,31 @@
 #ifndef _TIMBER_TOPTAGDAK8_SF
 #define _TIMBER_TOPTAGDAK8_SF
-#include <vector>
-#include <map>
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <cstdlib>
-#include <sstream>
+#include "DeepAK8_helper.h"
 
 class TopTagDAK8_SF {
-
+    /**
+     * @brief C++ class to access scale factors associated with DeepAK8 top tagging.
+     */
     private:
-        std::map<std::pair<int,int>, std::vector<float> > _values;
-        std::string _p = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/DeepAK8V2_Top_W_SFs.csv";
+        DeepAK8_helper helper;
 
     public:
+        /**
+         * @brief Construct a new TopTagDAK8_SF object
+         * 
+         * @param year 
+         * @param workingpoint Ex. "0p5"
+         * @param massDecorr 
+         */
         TopTagDAK8_SF(int year, std::string workingpoint, bool massDecorr);
         ~TopTagDAK8_SF(){};
+        /**
+         * @brief Lookup the scale factor and variations based on the AK8 jet momentum.
+         * Returned values are absolute {nominal, up, down}.
+         * 
+         * @param pt 
+         * @return std::vector<float> {nominal, up, down} (absolute)
+         */
         std::vector<float> eval(float pt);
 };
-
 #endif
