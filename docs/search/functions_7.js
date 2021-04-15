@@ -8,7 +8,7 @@ var searchData=
   ['getchild',['GetChild',['../class_particle.html#af4f83ea77a19a622d616539bbeabec54',1,'Particle']]],
   ['getchildren',['GetChildren',['../class_gen_particle_tree.html#ad4512e01e57691c5498e42064e95227a',1,'GenParticleTree']]],
   ['getcollectionattributes',['GetCollectionAttributes',['../class_t_i_m_b_e_r_1_1_collection_organizer_1_1_collection_organizer.html#a9a03fe04f16bc23893c91f6547b8aafe',1,'TIMBER::CollectionOrganizer::CollectionOrganizer']]],
-  ['getcollectionnames',['GetCollectionNames',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a62e71f7ad8a428d1eb03076a7d72c506',1,'TIMBER::Analyzer::analyzer']]],
+  ['getcollectionnames',['GetCollectionNames',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a62e71f7ad8a428d1eb03076a7d72c506',1,'TIMBER.Analyzer.analyzer.GetCollectionNames()'],['../class_t_i_m_b_e_r_1_1_collection_organizer_1_1_collection_organizer.html#a62e71f7ad8a428d1eb03076a7d72c506',1,'TIMBER.CollectionOrganizer.CollectionOrganizer.GetCollectionNames()']]],
   ['getcorrection',['GetCorrection',['../class_jet_recalibrator.html#a6c792950fda96b05f137c4425b576616',1,'JetRecalibrator']]],
   ['getcorrectionnames',['GetCorrectionNames',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a0fa8abc3c6c72bda1ba5f977ff93c589',1,'TIMBER::Analyzer::analyzer']]],
   ['getfilename',['GetFileName',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#add61011322111cb5adf1cbc721a6e8c6',1,'TIMBER::Analyzer::analyzer']]],
