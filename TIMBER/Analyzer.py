@@ -109,9 +109,9 @@ class analyzer(object):
         
         # Make base RDataFrame
         BaseDataFrame = ROOT.RDataFrame(self._eventsChain) 
-        self.BaseNode = Node('base',BaseDataFrame) 
+        self.BaseNode = Node('base',BaseDataFrame,nodetype='base') 
         self.BaseNode.children = [] # protect against memory issue when running over multiple sets in one script
-        self.AllNodes = [self.BaseNode] 
+        self.__allNodes = [self.BaseNode] 
         self.Corrections = {} 
 
         # Check if dealing with data
@@ -218,7 +218,17 @@ class analyzer(object):
 
     def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='RECREATE'):
         '''@see Node#Snapshot'''
-        self.ActiveNode.Snapshot(columns,outfilename,treename,lazy,openOption)
+        if isinstance(self.ActiveNode, Node):
+            self.ActiveNode.Snapshot(columns,outfilename,treename,lazy,openOption)
+        elif isinstance(self.ActiveNode, dict):
+            outfilename = outfilename.replace('.root','')
+            for i,n in enumerate(self.ActiveNode.keys()):
+                if i == len(self.ActiveNode.keys())-1: # Last: Be <lazy> (the provided option)
+                    self.ActiveNode[n].Snapshot(columns,outfilename+'_'+n,treename,lazy,openOption)
+                else: # Else: Be lazy
+                    self.ActiveNode[n].Snapshot(columns,outfilename+'_'+n,treename,True,openOption)
+        else:
+            raise TypeError("analyzer.ActiveNode is not a Node or dict of Nodes.")
 
     def SaveRunChain(self,filename,merge=True):
         '''Save the Run tree (chain of all input files) to filename.
@@ -264,7 +274,7 @@ class analyzer(object):
         Returns:
             Node: New #ActiveNode.
         '''
-        if not isinstance(node,Node): raise ValueError('SetActiveNode() does not support argument of type %s. Please provide a Node.'%(type(node)))
+        if not isinstance(node,Node) and not isinstance(node,dict): raise ValueError('SetActiveNode() does not support argument of type %s. Please provide a Node.'%(type(node)))
         else: self.ActiveNode = node
 
         return self.ActiveNode
@@ -285,6 +295,19 @@ class analyzer(object):
         '''
         return self.BaseNode
 
+    @property
+    def AllNodes(self):
+        return self.UnpackNodes(self.__allNodes)
+    
+    def UnpackNodes(self,node_list):
+        out = []
+        for n in node_list:
+            if isinstance(n,Node):
+                out.append(n)
+            elif isinstance(n,dict):
+                out.extend(self.UnpackNodes(node_list.values()))
+        return out
+
     def TrackNode(self,node):
         '''Add a node to track.
         Will add the node to #AllNodes dictionary with key node.name.
@@ -298,10 +321,10 @@ class analyzer(object):
         Returns:
             None
         '''        
-        if isinstance(node,Node):
+        if isinstance(node,Node) or isinstance(node,dict):
             if node.name in self.GetTrackedNodeNames():
                 print ('WARNING: Attempting to track a node with the same name as one that is already being tracked (%s).'%(node.name))
-            self.AllNodes.append(node)
+            self.__allNodes.append(node)
         else:
             raise TypeError('TrackNode() does not support arguments of type %s. Please provide a Node.'%(type(node)))
 
@@ -389,7 +412,7 @@ class analyzer(object):
         @param cuts (str, CutGroup): A one-line C++ string that evaluates as a bool or a CutGroup object which contains multiple actions that evaluate as bools.
         @param node (Node, optional): Node on which to apply the cut/filter. Defaults to #ActiveNode.
         @param nodetype (str, optional): Defaults to None in which case the new Node will
-            be type "Define".
+            be type "Cut".
 
         Raises:
             TypeError: If argument type is not Node.
@@ -398,8 +421,21 @@ class analyzer(object):
             Node: New #ActiveNode.
         '''
         if node == None: node = self.ActiveNode
-        newNode = node
+        
+        if isinstance(node,Node):
+            out = self._cutSingle(name,cuts,node,nodetype)
+        elif isinstance(node,dict):
+            newNodes = {}
+            for nkey in node.keys():
+                newNodes[nkey] = self.Cut('%s__%s'%(nkey,name),cuts,node[nkey],nodetype)
+            out = self.SetActiveNode(newNodes)
+        else:
+            raise TypeError('Node argument must be of type Node or dict. Found type `%s`.'%type(node))
 
+        return out
+
+    def _cutSingle(self,name,cuts,node,nodetype=None):
+        newNode = node
         if isinstance(cuts,CutGroup):
             for c in cuts.keys():
                 cut = cuts[c]
@@ -434,8 +470,21 @@ class analyzer(object):
             Node: New ActiveNode.
         '''
         if node == None: node = self.ActiveNode
-        newNode = node
 
+        if isinstance(node,Node):
+            out = self._defineSingle(name,variables,node,nodetype)
+        elif isinstance(node,dict):
+            newNodes = {}
+            for nkey in node.keys():
+                newNodes[nkey] = self.Define('%s__%s'%(nkey,name),variables,node[nkey],nodetype)
+            out = self.SetActiveNode(newNodes)
+        else:
+            raise TypeError('Node argument must be of type Node or dict. Found type `%s`.'%type(node))
+
+        return out
+
+    def _defineSingle(self,name,variables,node,nodetype=None):
+        newNode = node
         if isinstance(variables,VarGroup):
             for v in variables.keys():
                 var = variables[v]
@@ -510,6 +559,29 @@ class analyzer(object):
         elif passAsActiveNode == False: self.SetActiveNode(newNodes['fail'])
 
         return newNodes
+
+    def SplitOnAlias(self,aliasTuples,node=None):
+        if node == None: node = self.ActiveNode
+        newNodes = {}
+
+        checkpoint = node
+        for t in aliasTuples:
+            realname = t[0]
+            alias = t[1]
+            newNode = checkpoint.Clone(realname, inherit=True)
+            newNode.AddAlias(realname,alias)
+            newNodes[realname] = newNode
+
+        return self.SetActiveNode(newNodes)
+
+    def AddAlias(self,name,alias,node=None):
+        if node == None: node = self.ActiveNode
+
+        if isinstance(node,dict):
+            for nkey in node.keys():
+                node[nkey].AddAlias(name,alias)
+        else:   
+            node.AddAlias(name,alias)
 
     def SubCollection(self,name,basecoll,condition,skip=[]):
         '''Creates a collection of a current collection (from a NanoAOD-like format)
@@ -1180,13 +1252,13 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
             this_node_name = node.name
             this_node_label = node.name
             if verbose: this_node_label += '\n%s'%textwrap.fill(node.action,50)
-
             graph.add_node(this_node_name, label=this_node_label, type=node.type)
             for child in node.children:
                 graph.add_edge(this_node_name,child.name)
         # Contract egdes where we want nodes dropped
         for skip in toSkip:
             for node in graph.nodes:
+                print (graph.nodes[node])
                 if skip in graph.nodes[node]["type"]:
                     graph = nx.contracted_edge(graph,(list(graph.pred[node].keys())[0],node),self_loops=False)
         # Write out dot and draw
@@ -1260,7 +1332,7 @@ class Node(object):
     '''Class to represent nodes in the DataFrame processing graph. 
     Can make new nodes via Define, Cut, and Discriminate and setup
     relations between nodes (done automatically via Define, Cut, Discriminate)'''
-    def __init__(self, name, DataFrame, action='', nodetype='', children=[], parent=None):
+    def __init__(self, name, DataFrame, action='', nodetype='', children=[], parent=None, aliases=OrderedDict()):
         '''Constructor. Holds the RDataFrame and other associated information
         for tracking in the {@link analyzer}.
 
@@ -1296,6 +1368,10 @@ class Node(object):
         #
         # The "type" of Node. Can be modified but by default will be either
         # "Define", "Cut", "MergeDefine", "SubCollDefine", or "Correction".
+        ## @var aliases
+        #
+        # Ordered dictionary (collections.OrderedDict) of one-to-one aliases where, if the key
+        # is found on subsequent actions, it will be replaced by the value in the original action string
 
         super(Node, self).__init__()
         self.DataFrame = DataFrame
@@ -1304,6 +1380,10 @@ class Node(object):
         self.children = children
         self.parent = parent
         self.type = nodetype
+        self.aliases = aliases
+        if not isinstance(self.aliases,OrderedDict):
+            print ('WARNING: Casting input alias dict to OrderedDict. The ordering of the key:value pairs will be random.')
+            self.aliases = OrderedDict(self.aliases)
         
     def Close(self):
         '''Safely deletes Node instance and all descendants.
@@ -1330,20 +1410,33 @@ class Node(object):
             if not a.startswith('__') and not callable(getattr(self, a)):
                 if a == 'children':
                     out += '\t {:15s} = {}\n'.format(a,[c.name for c in getattr(self,a)])
+                elif a == 'parent' and self.parent != None:
+                    out += '\t {:15s} = {}\n'.format(a, self.parent.name)
                 else:
                     out += '\t {:15s} = {}\n'.format(a,getattr(self,a))
         return out[:-1]
 
-    def Clone(self,name=''):
+    def Clone(self,name='',inherit=False):
         '''Clones Node instance without child information and with new name if specified.
 
         @param name (str, optional): Name for clone. Defaults to current name.
+        @param inherit (bool, optional): Whether the clone should be a child of the current node. Defaults to False.
 
         Returns:
             Node: Clone of current instance.
         '''
-        if name == '':return Node(self.name,self.DataFrame,children=[],action=self.action)
-        else: return Node(name,self.DataFrame,children=[],action=self.action)
+        if name == '': clone_name = self.name
+        else: clone_name = name
+
+        if inherit:
+            clone = Node(clone_name, self.DataFrame, children=[], parent=self, action=self.action, nodetype=self.type, aliases=self.aliases)
+            self.SetChild(clone)
+        else:
+            clone = Node(clone_name, self.DataFrame, children=[], action=self.action, nodetype=self.type, aliases=self.aliases)
+
+        print (clone)
+
+        return clone
 
     def SetChild(self,child,overwrite=False):
         '''Set one of child for the node.
@@ -1403,9 +1496,10 @@ class Node(object):
         Returns:
             Node: New Node object with new column added.
         '''
+        var = self.ApplyAliases(var)
         if not silent: print('Defining %s: %s' %(name,var))
         newNodeType = 'Define' if nodetype == None else nodetype
-        newNode = Node(name,self.DataFrame.Define(name,var),children=[],parent=self,action=var,nodetype=newNodeType)
+        newNode = Node(name,self.DataFrame.Define(name,var),children=[],parent=self,action=var,nodetype=newNodeType,aliases=self.aliases)
         self.SetChild(newNode)
         return newNode
 
@@ -1421,9 +1515,10 @@ class Node(object):
         Returns:
             Node: New Node object with cut applied.
         '''
+        cut = self.ApplyAliases(cut)
         if not silent: print('Filtering %s: %s' %(name,cut))
         newNodeType = 'Define' if nodetype == None else nodetype
-        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],parent=self,action=cut,nodetype=newNodeType)
+        newNode = Node(name,self.DataFrame.Filter(cut,name),children=[],parent=self,action=cut,nodetype=newNodeType,aliases=self.aliases)
         self.SetChild(newNode)
         return newNode
 
@@ -1436,9 +1531,10 @@ class Node(object):
         Returns:
             dict: Dictionary with keys "pass" and "fail" corresponding to the passing and failing Nodes stored as values.
         '''
+        discriminator = self.ApplyAliases(discriminator)
         passfail = {
-            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),children=[],parent=self,action=discriminator,nodetype='Cut'),
-            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),children=[],parent=self,action="!("+discriminator+")",nodetype='Cut')
+            "pass":Node(name+"_pass",self.DataFrame.Filter(discriminator,name+"_pass"),children=[],parent=self,action=discriminator,nodetype='Cut',aliases=self.aliases),
+            "fail":Node(name+"_fail",self.DataFrame.Filter("!("+discriminator+")",name+"_fail"),children=[],parent=self,action="!("+discriminator+")",nodetype='Cut',aliases=self.aliases)
         }
         self.SetChildren(passfail)
         return passfail
@@ -1481,7 +1577,7 @@ class Node(object):
         '''
         action_name = 'Range(%s)'%(', '.join([str(a) for a in argv]))
         return Node(self.name+'_range', self.DataFrame.Range(*argv),
-                    action=action_name, nodetype='range', children=[], parent=self)
+                    action=action_name, nodetype='range', children=[], parent=self, aliases=self.aliases)
 
     def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='RECREATE'): # columns can be a list or a regular expression or 'all'
         '''Takes a snapshot of the RDataFrame corresponding to this Node.
@@ -1507,18 +1603,20 @@ class Node(object):
         opts.fMode = openOption
         opts.fCompressionAlgorithm =1 
         opts.fCompressionLevel = 1
-        print("Snapshotting columns: %s"%columns)
         print("Saving tree %s to file %s"%(treename,outfilename))
         if columns == 'all':
             self.DataFrame.Snapshot(treename,outfilename,'',opts)
         elif type(columns) == str:
+            columns = self.ApplyAliases(columns)
+            print("Snapshotting columns: %s"%columns)
             self.DataFrame.Snapshot(treename,outfilename,columns,opts)
         else:
             column_vec = ''
             for c in columns:
                 if c == '': continue
-                column_vec += c+'|'
+                column_vec += self.ApplyAliases(c)+'|'
             column_vec = column_vec[:-1]
+            print("Snapshotting columns: %s"%column_vec)
             self.DataFrame.Snapshot(treename,outfilename,column_vec,opts)
 
     def GetBaseNode(self):
@@ -1532,6 +1630,19 @@ class Node(object):
             thisnode = thisnode.parent
         return thisnode
       
+    def AddAlias(self, name, alias):
+        self.aliases[alias] = name
+
+    def ApplyAliases(self,line,regexMatch=''):
+        out = line
+        for alias in self.aliases.keys():
+            if alias in line and len(re.findall(regexMatch,line))>0:
+                print ('\tALIAS: %s -> %s'%(alias,self.aliases[alias]))
+                for i in range(len(re.findall(alias, line))):
+                    out = re.sub(alias,self.aliases[alias],out)
+                
+        return out
+
 ##############################
 # Group class and subclasses #
 ##############################

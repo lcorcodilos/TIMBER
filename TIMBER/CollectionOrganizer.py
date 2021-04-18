@@ -44,6 +44,8 @@ class CollectionOrganizer:
             collType = str(t).replace('ROOT::VecOps::RVec<','')
             if collType.endswith('>'):
                 collType = collType[:-1]
+            elif collType.endswith('> '):
+                collType = collType[:-2]
             collType += '&'
             if 'Bool_t' in collType:
                 collType = collType.replace('Bool_t&','std::_Bit_reference')
