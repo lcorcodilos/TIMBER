@@ -1066,11 +1066,11 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
         
         # Create the product of weights
         new_columns =  OrderedDict()
-        baseCollectionName = varCalibDict.keys()[0].split('_')[0]
+        if len(varCalibDict.keys()) > 0: baseCollectionName = varCalibDict.keys()[0].split('_')[0]
         for var in varCalibDict.keys():
             isRVec = "RVec" in self.DataFrame.GetColumnType(var)
             # nominal first
-            new_var_name = var.replace(baseCollectionName,newCollectionName)
+            new_var_name = var+'_nom'#.replace(baseCollectionName,newCollectionName)
             if not isRVec: 
                 new_columns[new_var_name] = var
                 for calib in varCalibDict[var]:
@@ -1083,16 +1083,14 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
                 if variationsFlag == True:
                     for i,v in enumerate(['up','down']):
                         if not isRVec:
-                            new_columns[new_var_name+'_'+calib.name+'__'+v] = new_columns[new_var_name].replace(calib.name+'__vec[0]',calib.name+'__vec[%s]'%i+1)
+                            new_columns[var+'_'+calib.name+'__'+v] = new_columns[new_var_name].replace(calib.name+'__vec[0]',calib.name+'__vec[%s]'%i+1)
                         else:
                             nom_minus_calib = new_columns[new_var_name].replace(calib.name+'__vec,','').replace(calib.name+'__vec','')
-                            new_columns[new_var_name+'_'+calib.name+'__'+v] = 'hardware::HadamardProduct({0},{1},{2})'.format(nom_minus_calib, calib.name+'__vec',i+1)
+                            new_columns[var+'_'+calib.name+'__'+v] = 'hardware::HadamardProduct({0},{1},{2})'.format(nom_minus_calib, calib.name+'__vec',i+1)
         # Actually define the columns 
         for c in new_columns.keys():
             newNode = self.Define(c, new_columns[c], newNode, nodetype='Calibration')
         
-        newNode = self.SubCollection(newCollectionName,baseCollectionName,'',skip=varCalibDict.keys()+new_columns.keys())
-
         return self.SetActiveNode(newNode)
 
     def _checkCalibrations(self,node,varCalibDict,evalArgs):
