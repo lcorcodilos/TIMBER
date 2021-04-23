@@ -17,7 +17,7 @@ void Pileup_weight::init(std::string filename_mc, std::string filename_data,
 
     if (filename_mc != "auto") {
         _autoPU = false;
-        _mcHist = hardware::LoadHist(filename_mc,histname_mc);
+        _mcHist = hardware::LoadHist(filename_mc,histname_mc,false);
     } else {
         _autoPU = true;
         gROOT->cd();
