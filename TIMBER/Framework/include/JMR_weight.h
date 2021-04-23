@@ -48,8 +48,8 @@ class JMR_weight {
          *  variations for that jet.
          */
         template <class Tjet, class TgenJet>
-        RVec< RVec<float> > eval(std::vector<Tjet> jets, std::vector<TgenJet> genJets){
-            RVec< RVec<float> > out (jets.size());
+        RVec<RVec<float>> eval(std::vector<Tjet> jets, std::vector<TgenJet> genJets){
+            RVec<RVec<float>> out (jets.size());
             
             for (size_t ijet = 0; ijet < jets.size(); ijet++) {
                 RVec<LorentzV> genJetsV = hardware::TLvector(genJets);
