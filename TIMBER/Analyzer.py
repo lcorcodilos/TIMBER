@@ -40,7 +40,7 @@ class analyzer(object):
         branch (#lhaid), if the file is data (#isData), and if the file is before NanoAOD
         version 6 (#preV6).
 
-        @param fileName (str): A ROOT file path, a path to a txt file which contains several ROOT file paths separated by 
+        @param fileName (str, list(str)): A ROOT file path, a path to a txt file which contains several ROOT file paths separated by 
                 new line characters, or a list of either .root and/or .txt files.
         @param eventsTreeName (str, optional): Name of TTree in fileName where events are stored. Defaults to "Events" (for NanoAOD)
         @param runTreeName (str, optional): Name of TTree in fileName where run information is stored (for generated event info in 
@@ -600,7 +600,7 @@ class analyzer(object):
             else:
                 self.Define(replacementName,'%s[%s]'%(b,index),nodetype='SubCollDefine')
             
-        return self.ActiveNode()
+        return self.ActiveNode
 
     def MergeCollections(self,name,collectionNames):
         '''Merge collections (provided by list of names in `collectionNames`) into
@@ -1964,13 +1964,13 @@ class ModuleWorker(object):
             try:
                 if a == "":
                     line += '"", '
-                elif a == "true" or a == "false":
-                    line += '%s, '%(a)
                 elif isinstance(a,bool) and a == True:
                     line += 'true, '
                 elif isinstance(a,bool) and a == False:
                     line += 'false, '
                 elif isinstance(a,int) or isinstance(a,float):
+                    line += '%s, '%(a)
+                elif a.startswith('{') and a.endswith('}'):
                     line += '%s, '%(a)
                 elif isinstance(a,str):
                     line += '"%s", '%(a)
@@ -2048,10 +2048,10 @@ class ModuleWorker(object):
 
         self._call = out
 
-    def GetCall(self,inArgs = {},toCheck = None):
+    def GetCall(self,evalArgs = {},toCheck = None):
         '''Gets the call to the method to be evaluated per-event.
 
-        @param inArgs (list, optional): Args to use for eval if #MakeCall() has not already been called. Defaults to [].
+        @param evalArgs (list, optional): Args to use for eval if #MakeCall() has not already been called. Defaults to [].
                 If #MakeCall() has not already been called and inArgs == [], then the arguments to the method will
                 be deduced from the C++ method definition argument names.
         @param toCheck (Node, ROOT.RDataFrame, list, optional): Object with column information to check argument names exist.
@@ -2061,7 +2061,7 @@ class ModuleWorker(object):
             str: The string that calls the method to evaluate per-event. Pass to Analyzer.Define(), Analyzer.Cut(), etc.
         '''
         if self._call == None:
-            self.MakeCall(inArgs,toCheck)
+            self.MakeCall(evalArgs,toCheck)
         return self._call
 
     def GetMainFunc(self):
