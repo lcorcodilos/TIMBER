@@ -2,12 +2,16 @@
 #include "libarchive/include/archive.h"
 #include "libarchive/include/archive_entry.h"
 
-TFile *hardware::Open(std::string file, const char* option){
-    return new TFile((std::string(std::getenv("TIMBERPATH"))+file).c_str(),option);
+TFile *hardware::Open(std::string file, bool inTIMBER, const char* option){
+    if (inTIMBER) {
+        return new TFile((std::string(std::getenv("TIMBERPATH"))+file).c_str(),option);
+    } else {
+        return new TFile((file).c_str(),option);
+    }
 }
 
-TH1 *hardware::LoadHist(std::string filename, std::string histname){
-    TFile *file = hardware::Open(filename);
+TH1 *hardware::LoadHist(std::string filename, std::string histname, bool inTIMBER){
+    TFile *file = hardware::Open(filename, inTIMBER);
     TH1 *hist = (TH1*)file->Get(histname.c_str());
     hist->SetDirectory(0);
     file->Close();
