@@ -38,17 +38,18 @@ class CollectionOrganizer:
         Returns:
             str: TIMBER-friendly version of the type.
         '''
-        if not t.startswith('ROOT::VecOps::RVec<'):
-            collType = False
+        nRVecs = len(re.findall('ROOT::VecOps::RVec<',t))
+        if nRVecs == 0:
+            collType = t
         else:
-            collType = str(t).replace('ROOT::VecOps::RVec<','')
-            if collType.endswith('>'):
-                collType = collType[:-1]
-            collType += '&'
+            collType = t.strip()
+            collType = re.sub('ROOT::VecOps::RVec<','',collType,count=1)
+            collType = re.sub('>','',collType,count=1)
+            collType += ' &'
             if 'Bool_t' in collType:
                 collType = collType.replace('Bool_t&','std::_Bit_reference')
         
-        if collType == '&':
+        if collType == ' &':
             collType = ''
         
         return collType
