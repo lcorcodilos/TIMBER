@@ -511,7 +511,7 @@ class analyzer(object):
 
         return newNodes
 
-    def SubCollection(self,name,basecoll,condition,skip=[]):
+    def SubCollection(self,name,basecoll,condition,useTake=False,skip=[]):
         '''Creates a collection of a current collection (from a NanoAOD-like format)
         where the array-type branch is slimmed based on some selection.
 
@@ -527,11 +527,17 @@ class analyzer(object):
             SubCollection('TopJets','FatJet','FatJet_msoftdrop > 105 && FatJet_msoftdrop < 220')
         '''
         collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if basecoll in str(cname) and str(cname) not in skip]
-        if condition != '': self.Define(name+'_idx','%s'%(condition))
+        if condition != '' and not useTake:
+            self.Define(name+'_idx','%s'%(condition))
+
         for b in collBranches:
             replacementName = b.replace(basecoll,name)
             if b == 'n'+basecoll:
-                if condition != '': self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name),nodetype='SubCollDefine')
+                if condition != '':
+                    if not useTake:
+                        self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name),nodetype='SubCollDefine')
+                    else:
+                        self.Define(replacementName,'%s.size()'%condition)
                 else: self.Define(replacementName,b)
             elif 'Struct>' in self.DataFrame.GetColumnType(b): # skip internal structs
                 continue
@@ -539,8 +545,13 @@ class analyzer(object):
                 print ('Found type %s during SubCollection'%self.DataFrame.GetColumnType(b))
                 self.Define(replacementName,b,nodetype='SubCollDefine')
             else:
-                if condition != '': self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
-                else: self.Define(replacementName,b,nodetype='SubCollDefine')
+                if condition != '':
+                    if not useTake:
+                        self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
+                    elif useTake:
+                        self.Define(replacementName,'ROOT::VecOps::Take(%s,%s)'%(b,condition))
+                else:
+                    self.Define(replacementName,b,nodetype='SubCollDefine')
 
         return self.ActiveNode
 
