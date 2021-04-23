@@ -449,6 +449,61 @@ def DictToLatexTable(dict2convert,outfilename,roworder=[],columnorder=[]):
     latexout.write('\\end{table}')
     latexout.close()
 
+class MemoryFile():
+    def __init__(self):
+        self.str = ''
+    def write(self,inStr):
+        self.str += inStr
+
+def DictToMarkdownTable(dict2convert,outfilename=None,roworder=[],columnorder=[]):
+    '''Converts a dictionary with two layers (ie. only one set of sub-keys) to 
+    a Markdown table. First set of keys (ie. external) are rows, second (ie. internal) are columns.
+    If the column entry for a given row is not provided (ie. missing key), then '-' is substituted.
+
+    @param dict2convert (dict): Input dictionary.
+    @param outfilename (str): Output .md file name. Defaults to None in which case the markdown as a string is returned.
+    @param roworder (list, optional): Custom ordering of rows. Defaults to [] in which case the sorted keys are used.
+    @param columnorder (list, optional): Custom ordering of columns. Defaults to [] in which case the sorted keys are used.
+    '''
+    # Determine order of rows and columns
+    if len(roworder) == 0:
+        rows = sorted(dict2convert.keys())
+    else:
+        rows = roworder
+    if len(columnorder) == 0:
+        columns = []
+        for r in rows:
+            thesecolumns = dict2convert[r].keys()
+            for c in thesecolumns:
+                if c not in columns:
+                    columns.append(c)
+        columns.sort()
+    else:
+        columns = columnorder
+    # Book output
+    if outfilename == None: mdout = MemoryFile()
+    else: mdout = open(outfilename,'w')
+    # Write first line with column names
+    column_string = '| |'
+    for c in columns:
+        column_string += str(c)+'\t| '
+    column_string = column_string[:-2]+'\n'
+    mdout.write(column_string)
+    # Write rows
+    mdout.write('-'.join(['|' for i in range(len(columns)+2)]) +'\n')
+    for r in rows:
+        row_string = '| '+r+'\t| '
+        for c in columns:
+            if c in dict2convert[r].keys():
+                row_string += str(dict2convert[r][c])+'\t| '
+            else:
+                row_string += '- \t| '
+        row_string = row_string[:-2]+' |\n'
+        mdout.write(row_string)
+
+    if outfilename != None: mdout.close()
+    else: return mdout.str
+
 def FindCommonString(string_list):
     '''Finds a common string between a list of strings.
 
