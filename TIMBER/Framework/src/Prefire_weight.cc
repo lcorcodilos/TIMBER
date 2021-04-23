@@ -56,3 +56,61 @@ bool Prefire_weight::ObjInRange(float pt, float eta, std::pair<float,float> ptRa
     }
     return out;
 }
+
+float Prefire_weight::EGvalue(int jetidx, RVec<float> Photon_pt, RVec<float> Photon_eta, RVec<int> Photon_jetIdx, RVec<int> Photon_electronIdx,
+                          RVec<float> Electron_pt, RVec<float> Electron_eta, RVec<int> Electron_jetIdx, RVec<int> Electron_photonIdx) {
+    float phopf = 1.0;
+    float phopf_temp, elepf_temp;
+    std::vector<int> PhotonInJet;
+    for (size_t pid = 0; pid < Photon_pt.size(); pid++) {
+        if (Photon_jetIdx[pid] == jetidx) {
+            if (PhotonInRange(Photon_pt[pid],Photon_eta[pid])) {
+                phopf_temp = 1 - GetPrefireProbability(_photonmap, Photon_eta[pid], Photon_pt[pid], _photonPtRange.second);
+                elepf_temp = 1.0;
+                if (Photon_electronIdx[pid] > -1) {
+                    int eid = Photon_electronIdx[pid];
+                    if (PhotonInRange(Electron_pt[eid],Electron_eta[eid])) {
+                        elepf_temp = 1 - GetPrefireProbability(_photonmap,Electron_eta[eid],Electron_pt[eid],_photonPtRange.second);
+                    }
+                }
+                phopf *= std::min(phopf_temp,elepf_temp);
+                PhotonInJet.push_back(pid);
+            }
+        }
+    }
+    for (size_t eid = 0; eid < Electron_pt.size(); eid++){
+        if ((Electron_jetIdx[eid] == jetidx) && (Pythonic::InList(Electron_photonIdx[eid], PhotonInJet) == -1)) {
+            if (PhotonInRange(Electron_pt[eid], Electron_eta[eid])) {
+                phopf *= 1 - GetPrefireProbability(_photonmap, Electron_eta[eid], Electron_pt[eid], _photonPtRange.second);
+            }
+        }
+    }
+    return phopf;
+}
+
+ROOT::VecOps::RVec<float> Prefire_weight::eval(RVec<float> Jet_pt, RVec<float> Jet_eta,
+                               RVec<float> Photon_pt, RVec<float> Photon_eta, RVec<int> Photon_jetIdx, RVec<int> Photon_electronIdx,
+                               RVec<float> Electron_pt, RVec<float> Electron_eta, RVec<int> Electron_jetIdx, RVec<int> Electron_photonIdx) {
+    float weight, jetpf, phopf;
+    std::string branchname;
+    ROOT::VecOps::RVec<float> out(3);
+    for (size_t i = 0; i<_variations.size(); i++){
+        _variation = _variations[i].first;
+        branchname = _variations[i].second;
+        weight = 1.0;
+        for (size_t ijet = 0; ijet<Jet_pt.size(); ijet++) {
+            jetpf = 1.0;
+
+            if (JetInRange(Jet_pt[ijet],Jet_eta[ijet])) {
+                jetpf *= 1 - GetPrefireProbability(_jetmap, Jet_eta[ijet], Jet_pt[ijet], _jetPtRange.second);
+            }
+            phopf = EGvalue(ijet, Photon_pt, Photon_eta, Photon_jetIdx, Photon_electronIdx,
+                                  Electron_pt, Electron_eta, Electron_jetIdx, Electron_photonIdx);
+            weight *= std::min(jetpf, phopf);
+        }
+        weight *= EGvalue(-1, Photon_pt, Photon_eta, Photon_jetIdx, Photon_electronIdx,
+                              Electron_pt, Electron_eta, Electron_jetIdx, Electron_photonIdx);
+        out[i] = weight;
+    }
+    return out;
+}
