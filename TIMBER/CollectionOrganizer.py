@@ -94,10 +94,22 @@ class CollectionOrganizer:
         typeStr = self._parsetype(btype)
         
         if typeStr == False or varname == '' or 'n'+collname not in self._baseBranches:
-            self._otherBranches[b] = {
-                'type': typeStr,
-                'alias': False
-            }
+            matches = [m for m in self._otherBranches.keys() if (m.startswith(collname) and '_'.join(m.split('_')[1:]) != '')]
+            if len(matches) == 0:
+                self._otherBranches[b] = {
+                    'type': typeStr,
+                    'alias': False
+                }
+            else:
+                if varname != '':
+                    self.AddCollection(collname)
+                    self._collectionDict[collname][varname] = {
+                        'type': typeStr,
+                        'alias': False
+                    }
+                    for match in matches:
+                        self._collectionDict[collname]['_'.join(match.split('_')[1:])] = self._otherBranches[match]
+                        del self._otherBranches[match]
         elif varname != '':
             self.AddCollection(collname)
             self._collectionDict[collname][varname] = {
