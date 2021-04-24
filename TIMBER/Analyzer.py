@@ -173,7 +173,8 @@ class analyzer(object):
             if 'root://' not in f and f.startswith('/store/'):
                 f='root://cms-xrd-global.cern.ch/'+f
             self._eventsChain.Add(f)
-            self.RunChain.Add(f)
+            if ROOT.TFile.Open(f,'READ').Get(self._runTreeName) != None:
+                self.RunChain.Add(f)
         elif f.endswith(".txt"): 
             txt_file = open(f,"r")
             for l in txt_file.readlines():
