@@ -94,11 +94,13 @@ class analyzer(object):
         super(analyzer, self).__init__()
         self.fileName = fileName 
         self._eventsTreeName = eventsTreeName
+        self._runTreeName = runTreeName
         self.silent = False
 
         # Setup TChains for multiple or single file
         self._eventsChain = ROOT.TChain(self._eventsTreeName) 
         self.RunChain = ROOT.TChain(runTreeName) 
+        print ('Opening files...')
         if isinstance(self.fileName,list):
             for f in self.fileName:
                 self._addFile(f)
@@ -112,14 +114,15 @@ class analyzer(object):
         self.AllNodes = [self.BaseNode] 
         self.Corrections = {} 
 
-        # Check if dealing with data
         if hasattr(self.RunChain,'genEventCount'): 
-            self.isData = False 
             self.preV6 = True 
         elif hasattr(self.RunChain,'genEventCount_'): 
-            self.isData = False
             self.preV6 = False
-        else: self.isData = True
+        # Check if dealing with data
+        if hasattr(self._eventsChain,'genWeight'):
+            self.isData = False
+        else:
+            self.isData = True
  
         # Count number of generated events if not data
         self.genEventCount = 0.0
