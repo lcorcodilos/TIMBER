@@ -3,7 +3,7 @@ Commonly used functions available for use that can be generic or TIMBER specific
 @{
 '''
 
-import json, os, subprocess, sys, glob, ROOT
+import json, os, subprocess, sys, glob, ROOT, random, string
 from ROOT import RDataFrame
 from TIMBER.Tools.CMS import CMS_lumi, tdrstyle
 from contextlib import contextmanager
@@ -566,3 +566,6 @@ def cd(newdir):
     finally:
         os.chdir(prevdir)
 ## @}
+
+def GenerateHash(length=8):
+    return ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for i in range(length))
