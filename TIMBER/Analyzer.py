@@ -218,8 +218,12 @@ class analyzer(object):
         '''        
         return self.ActiveNode.DataFrame
 
-    def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='RECREATE'):
+    def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='UPDATE',saveRunChain=True):
         '''@see Node#Snapshot'''
+        if saveRunChain:
+            self.SaveRunChain(outfilename)
+        else:
+            openOption = 'RECREATE'
         self.ActiveNode.Snapshot(columns,outfilename,treename,lazy,openOption)
 
     def SaveRunChain(self,filename,merge=True):
