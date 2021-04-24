@@ -1800,6 +1800,16 @@ class HistGroup(Group):
                 out.Add(self[key])
         return out
 
+    def Add(self,name,item,meta={}):
+        '''Add histogram to the group. Internal group name
+        will match the histogram name if not otherwise specified
+        but note that this will cause an RDataFrame loop to happen!
+
+        @param item (TH1): Histogram to add.
+        '''
+        nameToPass = item.GetName() if name == '' else name
+        super(HistGroup,self).Add(nameToPass,item,meta)
+
 ###########################
 # Module handling classes #
 ###########################
