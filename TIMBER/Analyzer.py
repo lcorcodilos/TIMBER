@@ -1182,7 +1182,7 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
 
         return nminusones
 
-    def PrintNodeTree(self,outfilename,verbose=False,toSkip=[]):
+    def PrintNodeTree(self,outfilename,verbose=False,toSkip=['SubCollDefine']):
         '''Print a PDF image of the node structure of the analysis.
         Requires python graphviz package which should be an installed dependency.
 
@@ -1191,7 +1191,7 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
         @param toSkip ([], optional): Skip list of types of nodes (with sub-string matching
             so providing "Define" will cut out *all* definitions). Possible options
             are "Define", "Cut", "Correction", "MergeDefine", and "SubCollDefine".
-            Defaults to empty list.
+            Defaults to ["SubCollDefine"].
 
         Returns:
             None
