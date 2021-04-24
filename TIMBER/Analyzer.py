@@ -31,7 +31,7 @@ class analyzer(object):
 
     When using class functions to perform actions, an active node will always be tracked so that the next action uses 
     the active node and assigns the output node as the new #ActiveNode"""
-    def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs", createAllCollections=False):
+    def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs"):
         """Constructor.
         
         Sets up the tracking of actions on an RDataFrame as nodes. Also
@@ -45,8 +45,6 @@ class analyzer(object):
         @param eventsTreeName (str, optional): Name of TTree in fileName where events are stored. Defaults to "Events" (for NanoAOD)
         @param runTreeName (str, optional): Name of TTree in fileName where run information is stored (for generated event info in 
                 simulation). Defaults to "Runs" (for NanoAOD) 
-        @param createAllCollections (str, optional): Create all of the collection structs immediately. This consumes memory no matter what
-                and the collections will increase processing times compared to accessing column values directly. Defaults to False. 
         """
 
         ## @var fileName
