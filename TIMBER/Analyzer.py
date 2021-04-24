@@ -6,7 +6,7 @@ Home of main classes for TIMBER.
 
 from TIMBER.CollectionOrganizer import CollectionOrganizer
 from TIMBER.Utilities.CollectionGen import BuildCollectionDict, GetKeyValForBranch, StructDef, StructObj
-from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags, ExecuteCmd
+from TIMBER.Tools.Common import GenerateHash, GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags, ExecuteCmd
 from clang import cindex
 from collections import OrderedDict
 
@@ -305,8 +305,8 @@ class analyzer(object):
             None
         '''        
         if isinstance(node,Node):
-            if node.name in self.GetTrackedNodeNames():
-                print ('WARNING: Attempting to track a node with the same name as one that is already being tracked (%s).'%(node.name))
+            if node.hash in self._getTrackedNodeHashes():
+                print ('WARNING: Attempting to track a node with the same hash as one that is already being tracked (%s, %s).'%(node.hash, node.name))
             self.AllNodes.append(node)
         else:
             raise TypeError('TrackNode() does not support arguments of type %s. Please provide a Node.'%(type(node)))
@@ -318,6 +318,14 @@ class analyzer(object):
             [str]: List of names of nodes being tracked.
         '''
         return [n.name for n in self.AllNodes]
+    
+    def _getTrackedNodeHashes(self):
+        '''Gets the names of the nodes currently being tracked.
+
+        Returns:
+            [str]: List of names of nodes being tracked.
+        '''
+        return [n.hash for n in self.AllNodes]
 
     def GetCorrectionNames(self):
         '''Get names of all corrections being tracked.
@@ -1192,13 +1200,13 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
         graph = nx.DiGraph(comment='Node processing tree')
         # Build graph with all nodes
         for node in self.AllNodes:
-            this_node_name = node.name
+            this_node_hash = node.hash
             this_node_label = node.name
             if verbose: this_node_label += '\n%s'%textwrap.fill(node.action,50)
 
-            graph.add_node(this_node_name, label=this_node_label, type=node.type)
+            graph.add_node(this_node_hash, label=this_node_label, type=node.type)
             for child in node.children:
-                graph.add_edge(this_node_name,child.name)
+                graph.add_edge(this_node_hash,child.hash)
         # Contract egdes where we want nodes dropped
         for skip in toSkip:
             for node in graph.nodes:
@@ -1319,6 +1327,7 @@ class Node(object):
         self.children = children
         self.parent = parent
         self.type = nodetype
+        self.hash = GenerateHash()
         
     def Close(self):
         '''Safely deletes Node instance and all descendants.
