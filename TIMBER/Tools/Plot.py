@@ -171,7 +171,7 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     CMS_lumi.cmsTextSize = 0.6
     CMS_lumi.CMS_lumi(c, year, 11)
 
-    c.Print(outfilename,'png')
+    c.Print(outfilename,outfilename.split('.')[-1])
 
 def MakeSoverB(stack_of_bkgs,signal):
     '''Makes the SoverB distribution and returns it.
