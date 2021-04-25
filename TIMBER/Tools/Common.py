@@ -84,6 +84,7 @@ def CutflowTxt(name,node,efficiency=False):
     out.close()
 
 def StitchQCD(QCDdict,normDict=None):
+    from TIMBER.Analyzer import HistGroup
     '''Stitches together histograms in QCD hist groups.
 
     @param QCDdict ({string:HistGroup}): Dictionary of HistGroup objects
@@ -98,7 +99,7 @@ def StitchQCD(QCDdict,normDict=None):
             for hkey in QCDdict[k].keys():
                 QCDdict[k][hkey].Scale(normDict[k])
     # Stitch
-    out = TIMBER.Analyzer.HistGroup("QCD")
+    out = HistGroup("QCD")
     for ksample in QCDdict.keys(): 
         for khist in QCDdict[ksample].keys():
             if khist not in out.keys():
