@@ -221,8 +221,8 @@ class analyzer(object):
     def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='UPDATE',saveRunChain=True):
         '''@see Node#Snapshot'''
         if saveRunChain:
-            self.SaveRunChain(outfilename)
-        else:
+            self.SaveRunChain(outfilename,merge=False)
+        elif saveRunChain == False and openOption == 'UPDATE':
             openOption = 'RECREATE'
         self.ActiveNode.Snapshot(columns,outfilename,treename,lazy,openOption)
 
@@ -699,7 +699,10 @@ class analyzer(object):
         if not isinstance(correction,Correction): raise TypeError('AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
         elif isinstance(correction, Calibration): raise TypeError('Attempting to add a Calibration and not a Correction. Corrections weight events while Calibrations weight variables.')
 
-        newNode = self._addModule(correction, evalArgs, 'Correction', node)
+        if not correction.existing: 
+            newNode = self._addModule(correction, evalArgs, 'Correction', node)
+        else:
+            newNode = self.ActiveNode if node == None else node
         # Add correction to track
         self.Corrections[correction.name] = correction
 
@@ -713,11 +716,12 @@ class analyzer(object):
         else:
             raise ValueError('Correction.GetType() returns %s'%correction.GetType())
 
-        for i,v in enumerate(variations):
-            newNode = self.Define(correction.name+'__'+v,correction.name+'__vec[%s]'%i,newNode,nodetype='Correction')
+        if not correction.existing: 
+            for i,v in enumerate(variations):
+                newNode = self.Define(correction.name+'__'+v,correction.name+'__vec[%s]'%i,newNode,nodetype='Correction')
 
         # self.TrackNode(returnNode)
-        return self.SetActiveNode(newNode)
+        return self.SetActiveNode(newNode)       
 
     def AddCorrections(self,correctionList,node=None):
         '''Add multiple Corrections to track. Sets new #ActiveNode with all correction
@@ -760,10 +764,17 @@ class analyzer(object):
             raise ValueError('MakeWeightCols() does not support correctionNames argument of type %s. Please provide a list.'%(type(correctionNames)))
         else: correctionsToCheck = correctionNames
 
+        # First look for anything in the base RDataFrame that matches
+        correctionsInBase = []
+        allBaseCols = [str(c) for c in self.BaseNode.DataFrame.GetColumnNames()]
+        for corr in correctionsToCheck:
+            if (corr+'__nom' in allBaseCols) or (corr+'__up' in allBaseCols):
+                correctionsInBase.append(corr)
+
         # Go up the tree from the current node, only grabbing 
         # those corrections along the path (ie. don't care about
         # corrections on other forks)
-        correctionsToApply = []
+        correctionsToApply = correctionsInBase
         nextNode = node.parent
         while nextNode:
             if nextNode.name.endswith('__vec'):
@@ -1210,7 +1221,7 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
         # Contract egdes where we want nodes dropped
         for skip in toSkip:
             for node in graph.nodes:
-                if skip in graph.nodes[node]["type"]:
+                if graph.nodes[node]["type"] == skip:
                     graph = nx.contracted_edge(graph,(list(graph.pred[node].keys())[0],node),self_loops=False)
         # Write out dot and draw
         dot = nx.nx_pydot.to_pydot(graph)
@@ -2117,11 +2128,12 @@ class Correction(ModuleWorker):
     (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
     <up, down> for "uncert" type.
     '''
-    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False,cloneFuncInfo=None):
+    def __init__(self,name,script='',constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False,cloneFuncInfo=None):
         '''Constructor
 
         @param name (str): Correction name.
-        @param script (str): Path to C++ script with function to calculate correction.
+        @param script (str, optional): Path to C++ script with function to calculate correction. Use an
+            empty string to point to existing columns that do not need to be calculated. Defaults to ''.
         @param constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
         @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
                 and the class will try to deduce it.
@@ -2137,7 +2149,12 @@ class Correction(ModuleWorker):
                 _funcInfo from the object from which this one i
         '''
 
-        super(Correction,self).__init__(name,script,constructor,mainFunc,columnList,isClone,cloneFuncInfo)
+        if script != '':
+            super(Correction,self).__init__(name,script,constructor,mainFunc,columnList,isClone,cloneFuncInfo)
+            self.existing = False
+        else:
+            self.existing = True
+            self.name = name
         self._setType(corrtype)
 
     def Clone(self,name,newMainFunc=None,newType=None):
