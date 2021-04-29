@@ -811,7 +811,7 @@ class analyzer(object):
 
         return correctionsToApply
 
-    def MakeWeightCols(self,name='',node=None,correctionNames=None,dropList=[],correlations=[]):
+    def MakeWeightCols(self,name='',node=None,correctionNames=None,dropList=[],correlations=[],extraNominal=''):
         '''Makes columns/variables to store total weights based on the Corrections that have been added.
 
         This function automates the calculation of the columns that store the nominal weight and the 
@@ -834,6 +834,8 @@ class analyzer(object):
                 are dropped from consideration.
         @param correlations list(tuple of strings): List of tuples of correlations to create. Ex. If you have syst1, syst2, syst3 corrections and you want
                 to correlate syst1 and syst2, provide [("syst1","syst2")]. To anti-correlate, add a "!" infront of the correction name. Ex. [("syst1","!syst2")]
+        @param extraNominal (str): String to prepend to all weight calculations. Will be multiplied by the rest of the pieces
+                put together automatically. Defaults to ''.
 
         Returns:
             Node: New #ActiveNode.
@@ -846,7 +848,7 @@ class analyzer(object):
         correctionsToApply = self._checkCorrections(node,correctionNames,dropList)
         
         # Build nominal weight first (only "weight", no "uncert")
-        weights = {'nominal':''}
+        weights = {'nominal':'' if extraNominal == '' else extraNominal+'*'}
         for corrname in correctionsToApply:
             corr = self.Corrections[corrname] 
             if corr.GetType() in ['weight','corr']:
