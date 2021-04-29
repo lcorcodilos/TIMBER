@@ -68,6 +68,14 @@ namespace hardware {
      */
     RVec<float> HadamardProduct(RVec<float> v1, RVec<RVec<float>> v2, int v2subindex);
     /**
+     * @brief Hadamard product of a base vector and a list of N more vectors (`vout[i] = v1[i]*v2[i]*v3[i]...`).
+     * 
+     * @param v1 
+     * @param Multiv2 
+     * @return RVec<float> 
+     */
+    RVec<float> MultiHadamardProduct(RVec<float> v1, RVec<RVec<float>> Multiv2);
+    /**
      * @brief Hadamard product of a base vector and a list of N more vectors (`vout[i] = v1[i]*v2[i][v2subindex]*v3[i][v2subindex]...`)
      * where v<N> has multiple sub-elements, only one of which should be accessed 
      * (at index of v2subindex).
