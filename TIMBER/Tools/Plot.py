@@ -35,9 +35,9 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
 
     # Initialize
     c = ROOT.TCanvas('c','c',800,700)
-    legend = ROOT.TLegend(0.6,max(0.72,0.8-0.05*(1-len(bkgs.keys()))),0.87,0.88)
+    legend = ROOT.TLegend(0.7,0.8-0.04*(len(bkgs.keys())+len(signals.keys())-1),0.88,0.9)
     legend.SetBorderSize(0)
-    ROOT.gStyle.SetTextFont(42)
+    # ROOT.gStyle.SetTextFont(42)
     ROOT.gStyle.SetOptStat(0)
     tot_bkg_int = 0
     if stackBkg:
@@ -92,12 +92,12 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
                 colors_in_legend.append(colors[pname])
 
     if stackBkg:
-        maximum =  max(bkgStack.GetMaximum(),signals.values()[0].GetMaximum())*1.4
+        maximum =  max(bkgStack.GetMaximum(),max([s.GetMaximum() for s in signals.values()]))*1.4
         bkgStack.SetMaximum(maximum)
     else:
-        if len(bkgs.values()) > 0:    bkgmax = bkgs.values()[0].GetMaximum()
+        if len(bkgs.values()) > 0:    bkgmax = list(bkgs.values())[0].GetMaximum()
         else:                         bkgmax = 0
-        if len(signals.values()) > 0: sigmax = signals.values()[0].GetMaximum()
+        if len(signals.values()) > 0: sigmax = list(signals.values())[0].GetMaximum()
         else:                         sigmax = 0
         
         maximum = max(bkgmax,sigmax)*1.4
@@ -165,11 +165,12 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     c.SetBottomMargin(0.12)
     c.SetTopMargin(0.08)
     c.SetRightMargin(0.11)
-    CMS_lumi.writeExtraText = 1
-    CMS_lumi.extraText = "Preliminary simulation"
-    CMS_lumi.lumi_sqrtS = "13 TeV"
-    CMS_lumi.cmsTextSize = 0.6
-    CMS_lumi.CMS_lumi(c, year, 11)
+    # CMS_lumi.writeExtraText = 1
+    # CMS_lumi.extraText = "Preliminary simulation"
+    # CMS_lumi.cmsTextSize = 0.6
+    # CMS_lumi.lumiTextSize = 0.75
+    # CMS_lumi.cmsTextSize = 0.85
+    CMS_lumi.CMS_lumi(c, iPeriod=year, sim=True)
 
     c.Print(outfilename,outfilename.split('.')[-1])
 
