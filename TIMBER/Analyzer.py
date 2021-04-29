@@ -263,6 +263,19 @@ class analyzer(object):
         '''
         return self._collectionOrg.GetCollectionNames()
 
+    def GetColumnNames(self,node=None):
+        '''Return a list of all column names that currently exist.
+
+        @param node (Node): Defaults to None in which case the ActiveNode is used.
+
+        Returns:
+            list(str): Column names.
+        '''
+        if node == None:
+            return [str(c) for c in self.DataFrame.GetColumnNames()]
+        else:
+            return [str(c) for c in node.DataFrame.GetColumnNames()]
+
     def SetActiveNode(self,node):
         '''Sets the active node.
 
