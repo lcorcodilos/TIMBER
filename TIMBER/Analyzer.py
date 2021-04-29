@@ -114,9 +114,9 @@ class analyzer(object):
         self.AllNodes = [self.BaseNode] 
         self.Corrections = {} 
 
-        if hasattr(self.RunChain,'genEventCount'): 
+        if hasattr(self.RunChain,'genEventSumw'): 
             self.preV6 = True 
-        elif hasattr(self.RunChain,'genEventCount_'): 
+        elif hasattr(self.RunChain,'genEventSumw_'): 
             self.preV6 = False
         # Check if dealing with data
         if hasattr(self._eventsChain,'genWeight'):
@@ -125,12 +125,12 @@ class analyzer(object):
             self.isData = True
  
         # Count number of generated events if not data
-        self.genEventCount = 0.0
+        self.genEventSumw = 0.0
         if not self.isData: 
             for i in range(self.RunChain.GetEntries()): 
                 self.RunChain.GetEntry(i)
-                if self.preV6: self.genEventCount+= self.RunChain.genEventCount
-                else: self.genEventCount+= self.RunChain.genEventCount_
+                if self.preV6: self.genEventSumw+= self.RunChain.genEventSumw
+                else: self.genEventSumw+= self.RunChain.genEventSumw_
 
         # Get LHAID from LHEPdfWeights branch
         self.lhaid = "-1"
