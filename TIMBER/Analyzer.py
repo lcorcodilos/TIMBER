@@ -848,7 +848,7 @@ class analyzer(object):
         correctionsToApply = self._checkCorrections(node,correctionNames,dropList)
         
         # Build nominal weight first (only "weight", no "uncert")
-        weights = {'nominal':'' if extraNominal == '' else extraNominal+'*'}
+        weights = {'nominal':'' if extraNominal == '' else extraNominal+' *'}
         for corrname in correctionsToApply:
             corr = self.Corrections[corrname] 
             if corr.GetType() in ['weight','corr']:
