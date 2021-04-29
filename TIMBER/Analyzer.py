@@ -175,8 +175,10 @@ class analyzer(object):
             self._eventsChain.Add(f)
             if ROOT.TFile.Open(f,'READ') == None:
                 raise ReferenceError('File %s does not exist'%f)
-            if ROOT.TFile.Open(f,'READ').Get(self._runTreeName) != None:
+            tempF = ROOT.TFile.Open(f,'READ')
+            if tempF.Get(self._runTreeName) != None:
                 self.RunChain.Add(f)
+            tempF.Close()
         elif f.endswith(".txt"): 
             txt_file = open(f,"r")
             for l in txt_file.readlines():
