@@ -1840,6 +1840,20 @@ class HistGroup(Group):
         nameToPass = item.GetName() if name == '' else name
         super(HistGroup,self).Add(nameToPass,item,meta)
 
+    def __getitem__(self,key,lazy=False):
+        '''Get value from key as you would with dictionary.
+        If lazy == False and the stored value is a histogram pointer,
+        return the actual histogram.
+        Ex. `val = mygroup["item_name"]`
+
+        @param key (obj): Key for name/key in Group.
+        Returns:
+            obj: Item for given key.
+        '''
+        if lazy == False and not isinstance(self.items[key],ROOT.TH1):
+            self.items[key] = self.items[key].GetValue()
+        return self.items[key]
+
 ###########################
 # Module handling classes #
 ###########################
