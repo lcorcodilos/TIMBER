@@ -36,7 +36,7 @@ RVec<float> hardware::HadamardProduct(RVec<float> v1, RVec<RVec<float>> v2, int 
     return out;
 }
 
-RVec<float> MultiHadamardProduct(RVec<float> v1, RVec<RVec<float>> Multiv2) {
+RVec<float> hardware::MultiHadamardProduct(RVec<float> v1, RVec<RVec<float>> Multiv2) {
     RVec<float> out;
     out.reserve(v1.size());
     for (size_t i = 0; i<v1.size(); i++) {
