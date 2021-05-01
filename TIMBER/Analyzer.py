@@ -620,7 +620,7 @@ class analyzer(object):
         Example:
             ObjectFromCollection('LeadJet','FatJet','0')
         '''
-        collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if basecoll in str(cname) and str(cname) not in skip]
+        collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if ( (basecoll in str(cname)) and (str(cname) not in skip))]
         for b in collBranches:
             replacementName = b.replace(basecoll,name)
             if b == 'n'+basecoll:
