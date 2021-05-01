@@ -92,7 +92,7 @@ possible_trigs = {}
 if options.noTrig:
     all_trigs = []
     for branchObj in tree.GetListOfBranches():
-        if 'HLT_' in branchObj.GetName():            
+        if 'HLT_' in branchObj.GetName():
             all_trigs.append(branchObj.GetName())
 
     nEntries= tree.GetEntries()
@@ -128,7 +128,7 @@ if options.manual == '':
             ignore = False
             if options.ignore != '':
                 for ign in options.ignore.split(','):
-                    if ign.lower() in branchObj.GetName().lower(): 
+                    if ign.lower() in branchObj.GetName().lower():
                         print('Ignoring '+branchObj.GetName())
                         ignore = True
             if ignore: continue
