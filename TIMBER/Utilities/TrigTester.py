@@ -11,6 +11,7 @@
 #####################################################################################################
 
 import ROOT,pprint,sys
+from collections import OrderedDict
 from optparse import OptionParser
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -75,15 +76,23 @@ def drawHere(name,tree,var,cuts,histWbinning=None):
     return outhist
 
 # Open file/tree
-f = ROOT.TFile.Open(options.input)
-tree = f.Get(options.tree)
+if options.input.endswith('.root'):
+    f = ROOT.TFile.Open(options.input)
+    tree = f.Get(options.tree)
+else:
+    tree = ROOT.TChain(options.tree)
+    txt = open(options.input,'r')
+    for f in txt.readlines():
+        if f != '':
+            tree.Add(f.strip())
+    txt.close()
 possible_trigs = {}
 
 # If just checking if there are no trigger bits for any events...
 if options.noTrig:
     all_trigs = []
     for branchObj in tree.GetListOfBranches():
-        if 'HLT_' in branchObj.GetName():
+        if 'HLT_' in branchObj.GetName():            
             all_trigs.append(branchObj.GetName())
 
     nEntries= tree.GetEntries()
@@ -117,10 +126,11 @@ if options.manual == '':
         if 'HLT' in branchObj.GetName():
             # Ignore trigger if requested 
             ignore = False
-            for ign in options.ignore.split(','):
-                if ign.lower() in branchObj.GetName().lower(): 
-                    print('Ignoring '+branchObj.GetName())
-                    ignore = True
+            if options.ignore != '':
+                for ign in options.ignore.split(','):
+                    if ign.lower() in branchObj.GetName().lower(): 
+                        print('Ignoring '+branchObj.GetName())
+                        ignore = True
             if ignore: continue
 
             # Say what's being processed
@@ -128,11 +138,11 @@ if options.manual == '':
 
             # If no comparison against another branch, just count
             if options.vs == '':
-                thisTrigPassCount = float(tree.GetEntries('%s==1 && %s==1 && !%s'%(options.cuts,branchObj.GetName(),options.Not)))
+                thisTrigPassCount = float(tree.GetEntries('(%s)==1 && %s==1 && !(%s)'%(options.cuts,branchObj.GetName(),options.Not)))
                 if thisTrigPassCount/(fullSelection) > options.threshold: possible_trigs[branchObj.GetName()] = '%s/%s = %.2f' % (int(thisTrigPassCount),int(fullSelection),thisTrigPassCount/fullSelection)
             # If comparing against another branch, draw
             else:
-                thisTrigPassCount = drawHere('pass_'+branchObj.GetName(),tree,options.vs,'%s==1 && %s==1 && !%s'%(options.cuts,branchObj.GetName(),options.Not),histWbinning=fullSelection)
+                thisTrigPassCount = drawHere('pass_'+branchObj.GetName(),tree,options.vs,'(%s)==1 && %s==1 && !(%s)'%(options.cuts,branchObj.GetName(),options.Not),histWbinning=fullSelection)
                 ratio = thisTrigPassCount.Clone('ratio_'+branchObj.GetName())
                 ratio.Divide(fullSelection)
                 # ratio.Draw('hist')
@@ -145,19 +155,21 @@ else:
     for trig in options.manual.split(','):
         # If no comparison against another branch, just count
         if options.vs == '':
-            thisTrigPassCount = float(tree.GetEntries('%s==1 && %s==1 && !%s'%(options.cuts,branchObj.GetName(),options.Not)))
+            thisTrigPassCount = float(tree.GetEntries('(%s)==1 && %s==1 && !(%s)'%(options.cuts,branchObj.GetName(),options.Not)))
             if thisTrigPassCount/(fullSelection) > options.threshold: possible_trigs[branchObj.GetName()] = '%s/%s = %.2f' % (int(thisTrigPassCount),int(fullSelection),thisTrigPassCount/fullSelection)
         # If comparing against another branch, draw
         else:
-            thisTrigPassCount = drawHere('pass_'+branchObj.GetName(),tree,options.vs,'%s==1 && %s==1 && !%s'%(options.cuts,branchObj.GetName(),options.Not),histWbinning=fullSelection)
+            thisTrigPassCount = drawHere('pass_'+branchObj.GetName(),tree,options.vs,'(%s)==1 && %s==1 && !(%s)'%(options.cuts,branchObj.GetName(),options.Not),histWbinning=fullSelection)
             ratio = thisTrigPassCount.Clone('ratio_'+branchObj.GetName())
             ratio.Divide(fullSelection)
             possible_trigs[branchObj.GetName()] = ratio
 
 # pp.pprint(possible_trigs)
 # Print out results if just counting
-if options.vs == '': 
-    pp.pprint(possible_trigs)
+if options.vs == '':
+    ordered = OrderedDict(sorted(possible_trigs.items(), key=lambda t: float(t[1].split(' = ')[-1]),reverse=True))
+    for n,v in ordered.items():
+        print ('\t%s: %s'%(n,v))
 
     # Book histogram
     out = ROOT.TH1F('out','out',len(possible_trigs.keys()),0,len(possible_trigs.keys()))
@@ -166,7 +178,7 @@ if options.vs == '':
 
     # Loop over HLTs/bins and set bin label and content
     bincount = 1
-    for k in possible_trigs.keys():
+    for k in ordered.keys():
         out.GetXaxis().SetBinLabel(bincount,k.replace('HLT_','')[:25]) # truncate file name so that it fits in bin label
         out.SetBinContent(bincount,float(possible_trigs[k].split(' = ')[-1]))
         bincount+=1
