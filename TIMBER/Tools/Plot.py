@@ -35,7 +35,7 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
 
     # Initialize
     c = ROOT.TCanvas('c','c',800,700)
-    legend = ROOT.TLegend(0.7,0.8-0.04*(len(bkgs.keys())+len(signals.keys())-1),0.88,0.9)
+    legend = ROOT.TLegend(0.73,0.8-0.04*(len(bkgs.keys())+len(signals.keys())-1),0.9,0.88)
     legend.SetBorderSize(0)
     # ROOT.gStyle.SetTextFont(42)
     ROOT.gStyle.SetOptStat(0)
@@ -459,7 +459,7 @@ def EasyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=Fal
                     mains.append(ROOT.TPad(hist.GetName()+'_main',hist.GetName()+'_main',0, 0.1, 1, 1))
                     subs.append(ROOT.TPad(hist.GetName()+'_sub',hist.GetName()+'_sub',0, 0, 0, 0))
 
-                legends.append(ROOT.TLegend(0.65,0.6,0.95,0.93))
+                legends.append(ROOT.TLegend(0.70,0.6,0.95,0.90))
                 stacks.append(ROOT.THStack(hist.GetName()+'_stack',hist.GetName()+'_stack'))
                 tot_hist = hist.Clone(hist.GetName()+'_tot')
                 tot_hist.Reset()
