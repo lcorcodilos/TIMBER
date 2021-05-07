@@ -138,7 +138,7 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     legend.Draw()
 
     if doSoverB:
-        s_over_b,line_pos = MakeSoverB(bkgStack,signals.values()[0])
+        s_over_b,line_pos,maximums = MakeSoverB(bkgStack,list(signals.values())[0])
         SoverB.cd()
         s_over_b.GetYaxis().SetTitle('S/#sqrt{B}')
         s_over_b.GetXaxis().SetTitle(prettyvarname)
@@ -153,13 +153,28 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
         s_over_b.GetXaxis().SetTitleSize(0.09)
         s_over_b.GetYaxis().SetTitleOffset(0.4)
         s_over_b.Draw('hist')
-        if line_pos:
+        if line_pos: # split line
             line = ROOT.TLine(line_pos,s_over_b.GetMinimum(),line_pos,s_over_b.GetMaximum())
             line.SetLineColor(ROOT.kRed)
             line.SetLineStyle(10)
             line.SetLineWidth(2)
             line.Draw('same')
-
+        # Optimization line
+        temp = []
+        for m in maximums:
+            low = s_over_b.GetMinimum()
+            high = s_over_b.GetMaximum()
+            mline = ROOT.TLine(m,low,m,high)
+            mline.SetLineColor(ROOT.kBlue)
+            mline.SetLineStyle(0)
+            mline.Draw('same')
+            temp.append(mline)
+            text = ROOT.TText(m,low+(high-low)/3," %s "%m)
+            if (s_over_b.GetXaxis().GetXmax() - m) < (0.9*s_over_b.GetXaxis().GetXmax()):
+                text.SetTextAlign(31)
+                text.SetTextSize(0.06)
+            text.Draw()
+            temp.append(text)
     c.cd()
 
     c.SetBottomMargin(0.12)
@@ -266,10 +281,19 @@ def MakeSoverB(stack_of_bkgs,signal):
             print ('WARNING: Background is empty for bin %s'%ix)
         
     peak_bin_edge = False
+    maximum = []
     if peak_bin != False:
         peak_bin_edge = bkg_int.GetBinLowEdge(peak_bin)
+        full_range = [0,s_over_b.GetNbinsX()]
+        s_over_b.GetXaxis().SetRange(full_range[0],peak_bin)
+        maximum.append(s_over_b.GetBinCenter(s_over_b.GetMaximumBin()))
+        s_over_b.GetXaxis().SetRange(peak_bin,full_range[1])
+        maximum.append(s_over_b.GetBinCenter(s_over_b.GetMaximumBin()))
+        s_over_b.GetXaxis().SetRange(full_range[0],full_range[1])
+    else:
+        maximum.append(s_over_b.GetBinCenter(s_over_b.GetMaximumBin()))
 
-    return s_over_b, peak_bin_edge
+    return s_over_b, peak_bin_edge, maximum
 
 def MakeCumulative(hist,low,high,forward=True):
     '''Custom cumulative distribution function which has more predictable
