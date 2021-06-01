@@ -7,7 +7,7 @@ import ROOT, collections, math
 from collections import OrderedDict
 from TIMBER.Analyzer import HistGroup
 
-def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},colors={},scale=True,stackBkg=False,doSoverB=False):
+def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},colors={},scale=True,stackBkg=False,doSoverB=False,forceForward=False,forceBackward=False):
     '''Create a plot that compares the shapes of backgrounds versus signal.
     If stackBkg, backgrounds will be stacked together and signals will be plot separately.
     Total background and signals are scaled to 1 if scale == True. Inputs organized 
@@ -35,6 +35,9 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
 
     # Initialize
     c = ROOT.TCanvas('c','c',800,700)
+    c.SetBottomMargin(0.12)
+    c.SetTopMargin(0.08)
+    c.SetRightMargin(0.05)
     legend = ROOT.TLegend(0.73,0.8-0.04*(len(bkgs.keys())+len(signals.keys())-1),0.9,0.88)
     legend.SetBorderSize(0)
     # ROOT.gStyle.SetTextFont(42)
@@ -138,7 +141,7 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     legend.Draw()
 
     if doSoverB:
-        s_over_b,line_pos,maximums = MakeSoverB(bkgStack,list(signals.values())[0])
+        s_over_b,line_pos,maximums = MakeSoverB(bkgStack,list(signals.values())[0],forceForward,forceBackward)
         SoverB.cd()
         s_over_b.GetYaxis().SetTitle('S/#sqrt{B}')
         s_over_b.GetXaxis().SetTitle(prettyvarname)
@@ -169,17 +172,14 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
             mline.SetLineStyle(0)
             mline.Draw('same')
             temp.append(mline)
-            text = ROOT.TText(m,low+(high-low)/3," %s "%m)
+            text = ROOT.TText(m,low+(high-low)/3," %.2f "%m)
             if (s_over_b.GetXaxis().GetXmax() - m) < (0.9*s_over_b.GetXaxis().GetXmax()):
                 text.SetTextAlign(31)
-                text.SetTextSize(0.06)
+                text.SetTextSize(0.09)
             text.Draw()
             temp.append(text)
     c.cd()
 
-    c.SetBottomMargin(0.12)
-    c.SetTopMargin(0.08)
-    c.SetRightMargin(0.11)
     # CMS_lumi.writeExtraText = 1
     # CMS_lumi.extraText = "Preliminary simulation"
     # CMS_lumi.cmsTextSize = 0.6
@@ -189,7 +189,7 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
 
     c.Print(outfilename,outfilename.split('.')[-1])
 
-def MakeSoverB(stack_of_bkgs,signal):
+def MakeSoverB(stack_of_bkgs,signal,forceForward=False,forceBackward=False):
     '''Makes the SoverB distribution and returns it.
     Assumes that signal and stack_of_bkgs have same binning.
 
@@ -228,37 +228,46 @@ def MakeSoverB(stack_of_bkgs,signal):
     nbins = total_bkgs.GetNbinsX()
     peak_bin = signal.GetMaximumBin()
 
-    if total_bkgs.GetXaxis().GetXmin() == 0:
-        if peak_bin == nbins:
-            forward = False
-        elif peak_bin == 1:
-            forward = True
-        else:
-            forward = True
+    if forceForward and forceBackward:
+        raise ValueError("Cannot forceForward and forceBackward. Please pick one.")
+    elif forceForward:
+        forward = True
         peak_bin = False
-        print ('Not a mass distribution. Forward = %s'%forward)
-    # If peak is non-zero, do background cumulative scan to left of peak
-    # and forward scan to right  
-    else:
-        forward = None
-        print ('Mass-like distribution.')
-        # Clone original distirbution, set new range around peak, get cumulative
-        bkg_int_low  = MakeCumulative(total_bkgs,1,       peak_bin,forward=False)
-        bkg_int_high = MakeCumulative(total_bkgs,peak_bin,nbins+1, forward=True)
+    elif forceBackward:
+        forward = False
+        peak_bin = False
+    else: # Deduce
+        if total_bkgs.GetXaxis().GetXmin() == 0:
+            if peak_bin == nbins:
+                forward = False
+            elif peak_bin == 1:
+                forward = True
+            else:
+                forward = True
+            peak_bin = False
+            print ('Score-like distribution. Forward = %s'%forward)
+        # If peak is non-zero, do background cumulative scan to left of peak
+        # and forward scan to right  
+        else:
+            forward = None
+            print ('Mass-like distribution.')
+            # Clone original distirbution, set new range around peak, get cumulative
+            bkg_int_low  = MakeCumulative(total_bkgs,1,       peak_bin,forward=False)
+            bkg_int_high = MakeCumulative(total_bkgs,peak_bin,nbins+1, forward=True)
 
-        sig_int_low  = MakeCumulative(signal,1,       peak_bin,forward=False)
-        sig_int_high = MakeCumulative(signal,peak_bin,nbins+1, forward=True)
+            sig_int_low  = MakeCumulative(signal,1,       peak_bin,forward=False)
+            sig_int_high = MakeCumulative(signal,peak_bin,nbins+1, forward=True)
 
-        # Make empty versions of original histograms
-        bkg_int = total_bkgs.Clone()
-        bkg_int.Reset()
-        sig_int = signal.Clone()
-        sig_int.Reset()     
+            # Make empty versions of original histograms
+            bkg_int = total_bkgs.Clone()
+            bkg_int.Reset()
+            sig_int = signal.Clone()
+            sig_int.Reset()
 
-        bkg_int.Add(bkg_int_low)
-        bkg_int.Add(bkg_int_high)
-        sig_int.Add(sig_int_low)
-        sig_int.Add(sig_int_high)
+            bkg_int.Add(bkg_int_low)
+            bkg_int.Add(bkg_int_high)
+            sig_int.Add(sig_int_low)
+            sig_int.Add(sig_int_high)
 
     if forward != None:
         # if forward == False:
@@ -286,12 +295,15 @@ def MakeSoverB(stack_of_bkgs,signal):
         peak_bin_edge = bkg_int.GetBinLowEdge(peak_bin)
         full_range = [0,s_over_b.GetNbinsX()]
         s_over_b.GetXaxis().SetRange(full_range[0],peak_bin)
-        maximum.append(s_over_b.GetBinCenter(s_over_b.GetMaximumBin()))
+        maximum.append(s_over_b.GetBinLowEdge(s_over_b.GetMaximumBin()))
         s_over_b.GetXaxis().SetRange(peak_bin,full_range[1])
-        maximum.append(s_over_b.GetBinCenter(s_over_b.GetMaximumBin()))
+        maximum.append(s_over_b.GetBinLowEdge(s_over_b.GetMaximumBin())+s_over_b.GetBinWidth(s_over_b.GetMaximumBin()))
         s_over_b.GetXaxis().SetRange(full_range[0],full_range[1])
     else:
-        maximum.append(s_over_b.GetBinCenter(s_over_b.GetMaximumBin()))
+        bin_edge = s_over_b.GetBinLowEdge(s_over_b.GetMaximumBin())
+        if forward:
+            maximum.append(bin_edge+s_over_b.GetBinWidth(s_over_b.GetMaximumBin()))
+        maximum.append(bin_edge)
 
     return s_over_b, peak_bin_edge, maximum
 
