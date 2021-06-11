@@ -111,7 +111,12 @@ if options.noTrig:
     quit()
 
 # Otherwise, establish what we're looking for
-fullSelection_string = '(%s) && !(%s)'%(options.cuts,options.Not)
+fullSelection_string = ''
+if options.cuts != '': fullSelection_string += '(%s)'%(options.cuts)
+if options.Not != '': 
+    if fullSelection_string == '': fullSelection_string += '!(%s)'%(options.Not)
+    else: fullSelection_string += '&& !(%s)'%(options.Not)
+
 print('Full selection will be evaluated as '+fullSelection_string)
 if options.vs == '': 
     fullSelection = tree.GetEntries(fullSelection_string)
@@ -126,11 +131,10 @@ if options.manual == '':
         if 'HLT' in branchObj.GetName():
             # Ignore trigger if requested 
             ignore = False
-            if options.ignore != '':
-                for ign in options.ignore.split(','):
-                    if ign.lower() in branchObj.GetName().lower():
-                        print('Ignoring '+branchObj.GetName())
-                        ignore = True
+            for ign in options.ignore.split(','):
+                if ign != '' and ign.lower() in branchObj.GetName().lower(): 
+                    print('Ignoring '+branchObj.GetName())
+                    ignore = True
             if ignore: continue
 
             # Say what's being processed
@@ -153,6 +157,9 @@ if options.manual == '':
 # Only consider those triggers manually specified
 else:
     for trig in options.manual.split(','):
+        if trig not in [b.GetName() for b in tree.GetListOfBranches()]:
+            continue
+        branchObj = tree.GetBranch(trig)
         # If no comparison against another branch, just count
         if options.vs == '':
             thisTrigPassCount = float(tree.GetEntries('(%s)==1 && %s==1 && !(%s)'%(options.cuts,branchObj.GetName(),options.Not)))
