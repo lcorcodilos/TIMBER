@@ -5,7 +5,6 @@ Home of main classes for TIMBER.
 """
 
 from TIMBER.CollectionOrganizer import CollectionOrganizer
-from TIMBER.Utilities.CollectionGen import BuildCollectionDict, GetKeyValForBranch, StructDef, StructObj
 from TIMBER.Tools.Common import GenerateHash, GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags, ExecuteCmd
 from clang import cindex
 from collections import OrderedDict
@@ -1041,9 +1040,9 @@ class analyzer(object):
             down.SetLineColor(ROOT.kBlue)
 
             leg = ROOT.TLegend(0.7,0.7,0.9,0.9)
-            leg.AddEntry(nominal.GetValue(),'Nominal','lf')
-            leg.AddEntry(up.GetValue(),'Up','l')
-            leg.AddEntry(down.GetValue(),'Down','l')
+            leg.AddEntry(nominal,'Nominal','lf')
+            leg.AddEntry(up,'Up','l')
+            leg.AddEntry(down,'Down','l')
 
             up.Draw('same hist')
             down.Draw('same hist')
