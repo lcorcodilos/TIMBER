@@ -52,7 +52,6 @@ namespace hardware {
      * 
      * @param v1 
      * @param v2 
-     * @param inTIMBER If file is in TIMBERPATH. Defaults to true.
      * @return RVec<float> 
      */
     RVec<float> HadamardProduct(RVec<float> v1, RVec<float> v2);

@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['index',['index',['../class_particle.html#a750b5d744c39a06bfb13e6eb010e35d0',1,'Particle']]],
-  ['int',['Int',['../struct_collection.html#abfd172928bf450593b9496d28dcabcab',1,'Collection']]],
-  ['isdata',['isData',['../class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a1cbf92036a120cc45e7bb032c3d61296',1,'TIMBER::Analyzer::analyzer']]],
-  ['item_5fmeta',['item_meta',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#a17f43e0c219dbf784aeab3ddbe682efd',1,'TIMBER::Analyzer::Group']]],
-  ['items',['items',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html#afab10e4a2e86e3570796ebef23e8e440',1,'TIMBER::Analyzer::Group']]]
+  ['rvecfloat_222',['RVecFloat',['../struct_collection.html#aa99b31ef8d2531c6ea052a482f95c06e',1,'Collection']]],
+  ['rvecint_223',['RVecInt',['../struct_collection.html#afaab1969951afe78b5ad759bdc1e1e0e',1,'Collection']]]
 ];
