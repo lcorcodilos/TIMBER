@@ -14,9 +14,9 @@ class TestAnalyzer():
         cls.a.Define('sublead_vector','hardware::TLvector(Jet_pt[1],Jet_eta[1],Jet_phi[1],Jet_mass[1])')
         cls.a.Define('invariantMass','hardware::InvariantMass({lead_vector,sublead_vector})')
 
-    def test_genEventCount_None(self):
-        '''Test genEventCount is assigned 0 when branch doesn't exist in test file'''
-        assert self.a.genEventCount == 0
+    def test_genEventSumw_None(self):
+        '''Test genEventSumw is assigned 0 when branch doesn't exist in test file'''
+        assert self.a.genEventSumw == 0
 
     def test_lhaid_None(self):
         '''Test lhaid is assigned 0 when branch doesn't exist in test file'''
