@@ -27,7 +27,7 @@ class LumiFilter {
         LumiFilter(std::string filename);
         /**
          * @brief Construct a new Lumi Filter object for a given year.
-         * Supports formatting as `2017` or `17`. 2016 not needed currently.
+         * Supports formatting as (for example) `2017` or `17`.
          * 
          * @param year 
          */

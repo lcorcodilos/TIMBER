@@ -32,24 +32,27 @@ namespace hardware {
      * just does the char + string formatting for you.
      * 
      * @param file Ex. TIMBER/data/example.root
+     * @param inTIMBER If file is in TIMBERPATH. Defaults to true.
      * @param option Defaults to "READ" for read-only.
      * @return TFile* 
      */
-    TFile *Open(std::string file, const char *option = "READ");
+    TFile *Open(std::string file, bool inTIMBER = true, const char *option = "READ");
     /**
      * @brief Generically open a histogram from a file into memory (closing
      * the file in the process).
      * 
      * @param filename 
      * @param histname 
+     * @param inTIMBER If file is in TIMBERPATH. Defaults to true.
      * @return TH1* 
      */
-    TH1 *LoadHist(std::string filename, std::string histname);
+    TH1 *LoadHist(std::string filename, std::string histname, bool inTIMBER = true);
     /**
      * @brief Hadamard product of two vectors (`v3[i] = v1[i]*v2[i]`)
      * 
      * @param v1 
      * @param v2 
+     * @param inTIMBER If file is in TIMBERPATH. Defaults to true.
      * @return RVec<float> 
      */
     RVec<float> HadamardProduct(RVec<float> v1, RVec<float> v2);
@@ -64,6 +67,14 @@ namespace hardware {
      * @return RVec<float> 
      */
     RVec<float> HadamardProduct(RVec<float> v1, RVec<RVec<float>> v2, int v2subindex);
+    /**
+     * @brief Hadamard product of a base vector and a list of N more vectors (`vout[i] = v1[i]*v2[i]*v3[i]...`).
+     * 
+     * @param v1 
+     * @param Multiv2 
+     * @return RVec<float> 
+     */
+    RVec<float> MultiHadamardProduct(RVec<float> v1, RVec<RVec<float>> Multiv2);
     /**
      * @brief Hadamard product of a base vector and a list of N more vectors (`vout[i] = v1[i]*v2[i][v2subindex]*v3[i][v2subindex]...`)
      * where v<N> has multiple sub-elements, only one of which should be accessed 

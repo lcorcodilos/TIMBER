@@ -32,7 +32,7 @@ def GetKeyValForBranch(rdf, bname, includeType=True):
         collType = str(rdf.GetColumnType(bname)).replace('ROOT::VecOps::RVec<','')
         if collType.endswith('>'): collType = collType[:-1]
         collType += '&'
-        if 'Bool_t' in collType: collType = collType.replace('Bool_t&','std::_Bit_reference')
+        if 'Bool_t' in collType: collType = collType.replace('Bool_t &','Bool_t&').replace('Bool_t&','std::_Bit_reference')
         if includeType:
             out = (collname, collType+' '+varname)
         else:

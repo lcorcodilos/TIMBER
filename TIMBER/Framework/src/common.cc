@@ -2,12 +2,16 @@
 #include "libarchive/include/archive.h"
 #include "libarchive/include/archive_entry.h"
 
-TFile *hardware::Open(std::string file, const char* option){
-    return new TFile((std::string(std::getenv("TIMBERPATH"))+file).c_str(),option);
+TFile *hardware::Open(std::string file, bool inTIMBER, const char* option){
+    if (inTIMBER) {
+        return new TFile((std::string(std::getenv("TIMBERPATH"))+file).c_str(),option);
+    } else {
+        return new TFile((file).c_str(),option);
+    }
 }
 
-TH1 *hardware::LoadHist(std::string filename, std::string histname){
-    TFile *file = hardware::Open(filename);
+TH1 *hardware::LoadHist(std::string filename, std::string histname, bool inTIMBER){
+    TFile *file = hardware::Open(filename, inTIMBER);
     TH1 *hist = (TH1*)file->Get(histname.c_str());
     hist->SetDirectory(0);
     file->Close();
@@ -28,6 +32,19 @@ RVec<float> hardware::HadamardProduct(RVec<float> v1, RVec<RVec<float>> v2, int 
     out.reserve(v1.size());
     for (size_t i = 0; i<v1.size(); i++) {
         out.emplace_back(v1[i]*v2[i][v2subindex]);
+    }
+    return out;
+}
+
+RVec<float> hardware::MultiHadamardProduct(RVec<float> v1, RVec<RVec<float>> Multiv2) {
+    RVec<float> out;
+    out.reserve(v1.size());
+    for (size_t i = 0; i<v1.size(); i++) {
+        float val = v1[i];
+        for (RVec<float>& v2 : Multiv2) {
+            val *= v2[i];
+        }
+        out.push_back(val);
     }
     return out;
 }

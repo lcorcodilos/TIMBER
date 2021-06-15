@@ -17,7 +17,7 @@ lumiTextSize     = 0.6
 lumiTextOffset   = 0.2
 
 cmsTextSize      = 0.75
-cmsTextOffset    = 0.1
+cmsTextOffset    = 0.15
 
 relPosX    = 0.045
 relPosY    = 0.035
@@ -41,11 +41,11 @@ def CMS_lumi(pad,  iPeriod=4,  iPosX=11, sim=False ):
 
     alignY_=3
     alignX_=2
-    if( iPosX/10==0 ): alignX_=1
+    if( int(iPosX/10)==0 ): alignX_=1
     if( iPosX==0    ): alignY_=1
-    if( iPosX/10==1 ): alignX_=1
-    if( iPosX/10==2 ): alignX_=2
-    if( iPosX/10==3 ): alignX_=3
+    if( int(iPosX/10)==1 ): alignX_=1
+    if( int(iPosX/10)==2 ): alignX_=2
+    if( int(iPosX/10)==3 ): alignX_=3
     align_ = 10*alignX_ + alignY_
 
     H = pad.GetWh()
@@ -113,7 +113,7 @@ def CMS_lumi(pad,  iPeriod=4,  iPosX=11, sim=False ):
     extraTextSize = extraOverCmsTextSize*cmsTextSize
     
     latex.SetTextFont(42)
-    latex.SetTextAlign(31) 
+    latex.SetTextAlign(30) 
     latex.SetTextSize(lumiTextSize*t)    
 
     latex.DrawLatex(1-r,1-t+cmsTextOffset*t,lumiText)
@@ -160,8 +160,8 @@ def CMS_lumi(pad,  iPeriod=4,  iPosX=11, sim=False ):
                 latex.SetTextFont(extraTextFont)
                 latex.SetTextAlign(align_)
                 latex.SetTextSize(extraTextSize*t)
-                if not sim: latex.DrawLatex(posX_, posY_- relExtraDY*cmsTextSize*t, extraText)
-                else: latex.DrawLatex(posX_, posY_- relExtraDY*cmsTextSize*t, extraText + ' simulation')
+                latex.DrawLatex(posX_, posY_- relExtraDY*cmsTextSize*t, extraText if not sim else extraText + ' simulation')
+
     elif( writeExtraText ):
         if( iPosX==0):
             posX_ =   l +  relPosX*(1-l-r)

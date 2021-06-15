@@ -35,7 +35,7 @@ def AutoJME(a, jetCollection, year, dataEra=''):
     Returns:
         analyzer: Manipulated version of the input analyzer object.
     '''
-    dataEraLetter = dataEra.lower().replace('data','').upper()
+    dataEraLetter = dataEra.lower().replace('data','').upper().replace('1','').replace('2','')
     if jetCollection == "FatJet":
         jetType = "AK8PFPuppi"
         genJetColl = "GenJetAK8"

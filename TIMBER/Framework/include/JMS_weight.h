@@ -41,6 +41,6 @@ class JMS_weight {
          *  is the jet index and the inner vector is the nominal (0), up (1), and down (2
          *  variations for that jet.
          */
-        RVec< RVec<float>> eval(size_t nJets);
+        RVec<RVec<float>> eval(size_t nJets);
 };
 #endif

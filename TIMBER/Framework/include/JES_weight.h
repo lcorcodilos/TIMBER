@@ -54,8 +54,8 @@ class JES_weight {
          *  variations for that jet.
          */
         template <class T>
-        RVec< RVec<float> > eval(std::vector<T> jets, float fixedGridRhoFastjetAll){
-            RVec< RVec<float> > out (jets.size());
+        RVec<RVec<float>> eval(std::vector<T> jets, float fixedGridRhoFastjetAll){
+            RVec<RVec<float>> out (jets.size());
 
             for (size_t ijet = 0; ijet < jets.size(); ijet++) {
                 RVec<float> ijet_out {1.0, 1.0, 1.0};

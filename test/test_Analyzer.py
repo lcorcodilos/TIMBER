@@ -14,9 +14,9 @@ class TestAnalyzer():
         cls.a.Define('sublead_vector','hardware::TLvector(Jet_pt[1],Jet_eta[1],Jet_phi[1],Jet_mass[1])')
         cls.a.Define('invariantMass','hardware::InvariantMass({lead_vector,sublead_vector})')
 
-    def test_genEventCount_None(self):
-        '''Test genEventCount is assigned 0 when branch doesn't exist in test file'''
-        assert self.a.genEventCount == 0
+    def test_genEventSumw_None(self):
+        '''Test genEventSumw is assigned 0 when branch doesn't exist in test file'''
+        assert self.a.genEventSumw == 0
 
     def test_lhaid_None(self):
         '''Test lhaid is assigned 0 when branch doesn't exist in test file'''
@@ -54,16 +54,14 @@ class TestAnalyzer():
     #     assert True
 
     def test_Correction(self):
-        c = Correction('testWeight','test/test_weight.cc')
+        c = Correction('test_weight','test/test_weight.cc')
         self.a.Define('Jet_pt0','Jet_pt[0]')
         self.a.AddCorrection(c,{'pt':'Jet_pt0'})
         self.a.MakeWeightCols()
         htemplate = ROOT.TH1F('th1','',100,0,1000)
         hgroup = self.a.MakeTemplateHistos(htemplate,'Jet_pt0')
-        print ('TESTING GetWeightName: %s'%(self.a.GetWeightName(c,'up','')))
-        print ([hgroup[h].GetName() for h in hgroup.keys()])
+        assert self.a.GetWeightName(c,'up','') == 'weight__test_weight_up'
         self.a.DrawTemplates(hgroup, './')
-        pass
 
     def test_CommonVars(self):
         assert sorted(self.a.CommonVars(["Muon","Tau"])) == sorted(['phi', 'pt', 'charge', 'eta', 'mass', 'genPartIdx', 'jetIdx'])

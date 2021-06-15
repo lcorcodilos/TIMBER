@@ -38,20 +38,23 @@ class CollectionOrganizer:
         Returns:
             str: TIMBER-friendly version of the type.
         '''
-        if not t.startswith('ROOT::VecOps::RVec<'):
-            collType = False
+        nRVecs = len(re.findall('ROOT::VecOps::RVec<',t))
+        if nRVecs == 0:
+            collType = t
+            isVect = False
         else:
-            collType = str(t).replace('ROOT::VecOps::RVec<','')
-            if collType.endswith('>'):
-                collType = collType[:-1]
-            collType += '&'
+            isVect = True
+            collType = t.strip()
+            collType = re.sub('ROOT::VecOps::RVec<','',collType,count=1)
+            collType = re.sub('>','',collType,count=1)
+            collType += ' &'
             if 'Bool_t' in collType:
-                collType = collType.replace('Bool_t&','std::_Bit_reference')
+                collType = collType.replace('Bool_t &','Bool_t&').replace('Bool_t&','std::_Bit_reference')
         
-        if collType == '&':
+        if collType == ' &':
             collType = ''
         
-        return collType
+        return collType, isVect
 
     def AddCollection(self, c):
         '''Add a collection to tracking.
@@ -90,17 +93,32 @@ class CollectionOrganizer:
         '''
         collname = b.split('_')[0]
         varname = '_'.join(b.split('_')[1:])
-        typeStr = self._parsetype(btype)
+        typeStr, isVect = self._parsetype(btype)
         
         if typeStr == False or varname == '' or 'n'+collname not in self._baseBranches:
-            self._otherBranches[b] = {
-                'type': typeStr,
-                'alias': False
-            }
+            matches = [m for m in self._otherBranches.keys() if (m.startswith(collname) and '_'.join(m.split('_')[1:]) != '')]
+            if len(matches) == 0:
+                self._otherBranches[b] = {
+                    'type': typeStr,
+                    'isVect': isVect,
+                    'alias': False
+                }
+            else:
+                if varname != '':
+                    self.AddCollection(collname)
+                    self._collectionDict[collname][varname] = {
+                        'type': typeStr,
+                        'isVect': isVect,
+                        'alias': False
+                    }
+                    for match in matches:
+                        self._collectionDict[collname]['_'.join(match.split('_')[1:])] = self._otherBranches[match]
+                        del self._otherBranches[match]
         elif varname != '':
             self.AddCollection(collname)
             self._collectionDict[collname][varname] = {
                 'type': typeStr,
+                'isVect': isVect,
                 'alias': False
             }
 
@@ -147,7 +165,8 @@ class CollectionOrganizer:
         newNode = node
         attributes = []
         for aname in self.GetCollectionAttributes(collection):
-            attributes.append('%s %s'%(self._collectionDict[collection][aname]['type'], aname))
+            if self._collectionDict[collection][aname]['isVect']:
+                attributes.append('%s %s'%(self._collectionDict[collection][aname]['type'], aname))
 
         if collection+'s' not in self._builtCollections:
             self._builtCollections.append(collection+'s')

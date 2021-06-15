@@ -1,10 +1,11 @@
 # Ledger of data files and their sources
 
 ## Luminosity "golden" JSONs
-| Year | Date added | Source |
-|------|------------|--------|
-| 2017 | Nov 12, 2020 | [Twiki](https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#CurRec) |
-| 2018 | Nov 12, 2020 | [Twiki](https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#CurRec) |
+| Year | Date added | File | Source |
+|------|------------|------|--------|
+| 2016 | Apr 19. 2021 | Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt | [Twiki](https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#CurRec) |
+| 2017 | Apr 19. 2021 | Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt | [Twiki](https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#CurRec) |
+| 2018 | Apr 19. 2021 | Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt | [Twiki](https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#CurRec) |
 
 ## Scale Factors
 

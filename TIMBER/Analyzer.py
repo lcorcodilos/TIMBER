@@ -5,8 +5,7 @@ Home of main classes for TIMBER.
 """
 
 from TIMBER.CollectionOrganizer import CollectionOrganizer
-from TIMBER.Utilities.CollectionGen import BuildCollectionDict, GetKeyValForBranch, StructDef, StructObj
-from TIMBER.Tools.Common import GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags, ExecuteCmd
+from TIMBER.Tools.Common import GenerateHash, GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags, ExecuteCmd
 from clang import cindex
 from collections import OrderedDict
 
@@ -31,7 +30,7 @@ class analyzer(object):
 
     When using class functions to perform actions, an active node will always be tracked so that the next action uses 
     the active node and assigns the output node as the new #ActiveNode"""
-    def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs", createAllCollections=False):
+    def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs"):
         """Constructor.
         
         Sets up the tracking of actions on an RDataFrame as nodes. Also
@@ -40,13 +39,11 @@ class analyzer(object):
         branch (#lhaid), if the file is data (#isData), and if the file is before NanoAOD
         version 6 (#preV6).
 
-        @param fileName (str): A ROOT file path, a path to a txt file which contains several ROOT file paths separated by 
+        @param fileName (str, list(str)): A ROOT file path, a path to a txt file which contains several ROOT file paths separated by 
                 new line characters, or a list of either .root and/or .txt files.
         @param eventsTreeName (str, optional): Name of TTree in fileName where events are stored. Defaults to "Events" (for NanoAOD)
         @param runTreeName (str, optional): Name of TTree in fileName where run information is stored (for generated event info in 
                 simulation). Defaults to "Runs" (for NanoAOD) 
-        @param createAllCollections (str, optional): Create all of the collection structs immediately. This consumes memory no matter what
-                and the collections will increase processing times compared to accessing column values directly. Defaults to False. 
         """
 
         ## @var fileName
@@ -96,11 +93,13 @@ class analyzer(object):
         super(analyzer, self).__init__()
         self.fileName = fileName 
         self._eventsTreeName = eventsTreeName
+        self._runTreeName = runTreeName
         self.silent = False
 
         # Setup TChains for multiple or single file
         self._eventsChain = ROOT.TChain(self._eventsTreeName) 
         self.RunChain = ROOT.TChain(runTreeName) 
+        print ('Opening files...')
         if isinstance(self.fileName,list):
             for f in self.fileName:
                 self._addFile(f)
@@ -114,22 +113,23 @@ class analyzer(object):
         self.AllNodes = [self.BaseNode] 
         self.Corrections = {} 
 
-        # Check if dealing with data
-        if hasattr(self.RunChain,'genEventCount'): 
-            self.isData = False 
+        if hasattr(self.RunChain,'genEventSumw'): 
             self.preV6 = True 
-        elif hasattr(self.RunChain,'genEventCount_'): 
-            self.isData = False
+        elif hasattr(self.RunChain,'genEventSumw_'): 
             self.preV6 = False
-        else: self.isData = True
+        # Check if dealing with data
+        if hasattr(self._eventsChain,'genWeight'):
+            self.isData = False
+        else:
+            self.isData = True
  
         # Count number of generated events if not data
-        self.genEventCount = 0.0
+        self.genEventSumw = 0.0
         if not self.isData: 
             for i in range(self.RunChain.GetEntries()): 
                 self.RunChain.GetEntry(i)
-                if self.preV6: self.genEventCount+= self.RunChain.genEventCount
-                else: self.genEventCount+= self.RunChain.genEventCount_
+                if self.preV6: self.genEventSumw+= self.RunChain.genEventSumw
+                else: self.genEventSumw+= self.RunChain.genEventSumw_
 
         # Get LHAID from LHEPdfWeights branch
         self.lhaid = "-1"
@@ -172,7 +172,12 @@ class analyzer(object):
             if 'root://' not in f and f.startswith('/store/'):
                 f='root://cms-xrd-global.cern.ch/'+f
             self._eventsChain.Add(f)
-            self.RunChain.Add(f)
+            if ROOT.TFile.Open(f,'READ') == None:
+                raise ReferenceError('File %s does not exist'%f)
+            tempF = ROOT.TFile.Open(f,'READ')
+            if tempF.Get(self._runTreeName) != None:
+                self.RunChain.Add(f)
+            tempF.Close()
         elif f.endswith(".txt"): 
             txt_file = open(f,"r")
             for l in txt_file.readlines():
@@ -216,8 +221,12 @@ class analyzer(object):
         '''        
         return self.ActiveNode.DataFrame
 
-    def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='RECREATE'):
+    def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='UPDATE',saveRunChain=True):
         '''@see Node#Snapshot'''
+        if saveRunChain:
+            self.SaveRunChain(outfilename,merge=False)
+        elif saveRunChain == False and openOption == 'UPDATE':
+            openOption = 'RECREATE'
         self.ActiveNode.Snapshot(columns,outfilename,treename,lazy,openOption)
 
     def SaveRunChain(self,filename,merge=True):
@@ -252,6 +261,19 @@ class analyzer(object):
             list(str): Collection names.
         '''
         return self._collectionOrg.GetCollectionNames()
+
+    def GetColumnNames(self,node=None):
+        '''Return a list of all column names that currently exist.
+
+        @param node (Node): Defaults to None in which case the ActiveNode is used.
+
+        Returns:
+            list(str): Column names.
+        '''
+        if node == None:
+            return [str(c) for c in self.DataFrame.GetColumnNames()]
+        else:
+            return [str(c) for c in node.DataFrame.GetColumnNames()]
 
     def SetActiveNode(self,node):
         '''Sets the active node.
@@ -299,8 +321,8 @@ class analyzer(object):
             None
         '''        
         if isinstance(node,Node):
-            if node.name in self.GetTrackedNodeNames():
-                print ('WARNING: Attempting to track a node with the same name as one that is already being tracked (%s).'%(node.name))
+            if node.hash in self._getTrackedNodeHashes():
+                print ('WARNING: Attempting to track a node with the same hash as one that is already being tracked (%s, %s).'%(node.hash, node.name))
             self.AllNodes.append(node)
         else:
             raise TypeError('TrackNode() does not support arguments of type %s. Please provide a Node.'%(type(node)))
@@ -312,6 +334,14 @@ class analyzer(object):
             [str]: List of names of nodes being tracked.
         '''
         return [n.name for n in self.AllNodes]
+    
+    def _getTrackedNodeHashes(self):
+        '''Gets the names of the nodes currently being tracked.
+
+        Returns:
+            [str]: List of names of nodes being tracked.
+        '''
+        return [n.hash for n in self.AllNodes]
 
     def GetCorrectionNames(self):
         '''Get names of all corrections being tracked.
@@ -511,13 +541,14 @@ class analyzer(object):
 
         return newNodes
 
-    def SubCollection(self,name,basecoll,condition,skip=[]):
+    def SubCollection(self,name,basecoll,condition,useTake=False,skip=[]):
         '''Creates a collection of a current collection (from a NanoAOD-like format)
         where the array-type branch is slimmed based on some selection.
 
         @param name (str): Name of new collection.
         @param basecoll (str): Name of derivative collection.
-        @param condition (str): C++ condition that determines which items to keep.
+        @param condition (str): C++ condition that determines which items to keep or a list of indexes to keep (must useTake for latter).
+        @param useTake (bool): If `condition` is list of indexes, use VecOps::Take to build subcollection.
         @param skip ([str]): List of variable names in the collection to skip.
 
         Returns:
@@ -527,11 +558,17 @@ class analyzer(object):
             SubCollection('TopJets','FatJet','FatJet_msoftdrop > 105 && FatJet_msoftdrop < 220')
         '''
         collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if basecoll in str(cname) and str(cname) not in skip]
-        if condition != '': self.Define(name+'_idx','%s'%(condition))
+        if condition != '' and not useTake:
+            self.Define(name+'_idx','%s'%(condition))
+
         for b in collBranches:
             replacementName = b.replace(basecoll,name)
             if b == 'n'+basecoll:
-                if condition != '': self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name),nodetype='SubCollDefine')
+                if condition != '':
+                    if not useTake:
+                        self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name),nodetype='SubCollDefine')
+                    else:
+                        self.Define(replacementName,'%s.size()'%condition)
                 else: self.Define(replacementName,b)
             elif 'Struct>' in self.DataFrame.GetColumnType(b): # skip internal structs
                 continue
@@ -539,8 +576,13 @@ class analyzer(object):
                 print ('Found type %s during SubCollection'%self.DataFrame.GetColumnType(b))
                 self.Define(replacementName,b,nodetype='SubCollDefine')
             else:
-                if condition != '': self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
-                else: self.Define(replacementName,b,nodetype='SubCollDefine')
+                if condition != '':
+                    if not useTake:
+                        self.Define(replacementName,'%s[%s]'%(b,name+'_idx'),nodetype='SubCollDefine')
+                    elif useTake:
+                        self.Define(replacementName,'ROOT::VecOps::Take(%s,%s)'%(b,condition))
+                else:
+                    self.Define(replacementName,b,nodetype='SubCollDefine')
 
         return self.ActiveNode
 
@@ -578,7 +620,7 @@ class analyzer(object):
         Example:
             ObjectFromCollection('LeadJet','FatJet','0')
         '''
-        collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if basecoll in str(cname) and str(cname) not in skip]
+        collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if ( (basecoll in str(cname)) and (str(cname) not in skip))]
         for b in collBranches:
             replacementName = b.replace(basecoll,name)
             if b == 'n'+basecoll:
@@ -589,7 +631,7 @@ class analyzer(object):
             else:
                 self.Define(replacementName,'%s[%s]'%(b,index),nodetype='SubCollDefine')
             
-        return self.ActiveNode()
+        return self.ActiveNode
 
     def MergeCollections(self,name,collectionNames):
         '''Merge collections (provided by list of names in `collectionNames`) into
@@ -674,7 +716,10 @@ class analyzer(object):
         if not isinstance(correction,Correction): raise TypeError('AddCorrection() does not support argument type %s for correction. Please provide a Correction.'%(type(correction)))
         elif isinstance(correction, Calibration): raise TypeError('Attempting to add a Calibration and not a Correction. Corrections weight events while Calibrations weight variables.')
 
-        newNode = self._addModule(correction, evalArgs, 'Correction', node)
+        if not correction.existing: 
+            newNode = self._addModule(correction, evalArgs, 'Correction', node)
+        else:
+            newNode = self.ActiveNode if node == None else node
         # Add correction to track
         self.Corrections[correction.name] = correction
 
@@ -688,11 +733,12 @@ class analyzer(object):
         else:
             raise ValueError('Correction.GetType() returns %s'%correction.GetType())
 
-        for i,v in enumerate(variations):
-            newNode = self.Define(correction.name+'__'+v,correction.name+'__vec[%s]'%i,newNode,nodetype='Correction')
+        if not correction.existing: 
+            for i,v in enumerate(variations):
+                newNode = self.Define(correction.name+'__'+v,correction.name+'__vec[%s]'%i,newNode,nodetype='Correction')
 
         # self.TrackNode(returnNode)
-        return self.SetActiveNode(newNode)
+        return self.SetActiveNode(newNode)       
 
     def AddCorrections(self,correctionList,node=None):
         '''Add multiple Corrections to track. Sets new #ActiveNode with all correction
@@ -735,10 +781,17 @@ class analyzer(object):
             raise ValueError('MakeWeightCols() does not support correctionNames argument of type %s. Please provide a list.'%(type(correctionNames)))
         else: correctionsToCheck = correctionNames
 
+        # First look for anything in the base RDataFrame that matches
+        correctionsInBase = []
+        allBaseCols = [str(c) for c in self.BaseNode.DataFrame.GetColumnNames()]
+        for corr in correctionsToCheck:
+            if (corr+'__nom' in allBaseCols) or (corr+'__up' in allBaseCols):
+                correctionsInBase.append(corr)
+
         # Go up the tree from the current node, only grabbing 
         # those corrections along the path (ie. don't care about
         # corrections on other forks)
-        correctionsToApply = []
+        correctionsToApply = correctionsInBase
         nextNode = node.parent
         while nextNode:
             if nextNode.name.endswith('__vec'):
@@ -758,7 +811,7 @@ class analyzer(object):
 
         return correctionsToApply
 
-    def MakeWeightCols(self,name='',node=None,correctionNames=None,dropList=[],correlations=[]):
+    def MakeWeightCols(self,name='',node=None,correctionNames=None,dropList=[],correlations=[],extraNominal=''):
         '''Makes columns/variables to store total weights based on the Corrections that have been added.
 
         This function automates the calculation of the columns that store the nominal weight and the 
@@ -781,6 +834,8 @@ class analyzer(object):
                 are dropped from consideration.
         @param correlations list(tuple of strings): List of tuples of correlations to create. Ex. If you have syst1, syst2, syst3 corrections and you want
                 to correlate syst1 and syst2, provide [("syst1","syst2")]. To anti-correlate, add a "!" infront of the correction name. Ex. [("syst1","!syst2")]
+        @param extraNominal (str): String to prepend to all weight calculations. Will be multiplied by the rest of the pieces
+                put together automatically. Defaults to ''.
 
         Returns:
             Node: New #ActiveNode.
@@ -793,7 +848,7 @@ class analyzer(object):
         correctionsToApply = self._checkCorrections(node,correctionNames,dropList)
         
         # Build nominal weight first (only "weight", no "uncert")
-        weights = {'nominal':''}
+        weights = {'nominal':'' if extraNominal == '' else extraNominal+' *'}
         for corrname in correctionsToApply:
             corr = self.Corrections[corrname] 
             if corr.GetType() in ['weight','corr']:
@@ -985,9 +1040,9 @@ class analyzer(object):
             down.SetLineColor(ROOT.kBlue)
 
             leg = ROOT.TLegend(0.7,0.7,0.9,0.9)
-            leg.AddEntry(nominal.GetValue(),'Nominal','lf')
-            leg.AddEntry(up.GetValue(),'Up','l')
-            leg.AddEntry(down.GetValue(),'Down','l')
+            leg.AddEntry(nominal,'Nominal','lf')
+            leg.AddEntry(up,'Up','l')
+            leg.AddEntry(down,'Down','l')
 
             up.Draw('same hist')
             down.Draw('same hist')
@@ -1055,11 +1110,11 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
         
         # Create the product of weights
         new_columns =  OrderedDict()
-        baseCollectionName = varCalibDict.keys()[0].split('_')[0]
+        if len(varCalibDict.keys()) > 0: baseCollectionName = varCalibDict.keys()[0].split('_')[0]
         for var in varCalibDict.keys():
             isRVec = "RVec" in self.DataFrame.GetColumnType(var)
             # nominal first
-            new_var_name = var.replace(baseCollectionName,newCollectionName)
+            new_var_name = var+'_nom'#.replace(baseCollectionName,newCollectionName)
             if not isRVec: 
                 new_columns[new_var_name] = var
                 for calib in varCalibDict[var]:
@@ -1072,16 +1127,14 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
                 if variationsFlag == True:
                     for i,v in enumerate(['up','down']):
                         if not isRVec:
-                            new_columns[new_var_name+'_'+calib.name+'__'+v] = new_columns[new_var_name].replace(calib.name+'__vec[0]',calib.name+'__vec[%s]'%i+1)
+                            new_columns[var+'_'+calib.name+'__'+v] = new_columns[new_var_name].replace(calib.name+'__vec[0]',calib.name+'__vec[%s]'%i+1)
                         else:
                             nom_minus_calib = new_columns[new_var_name].replace(calib.name+'__vec,','').replace(calib.name+'__vec','')
-                            new_columns[new_var_name+'_'+calib.name+'__'+v] = 'hardware::HadamardProduct({0},{1},{2})'.format(nom_minus_calib, calib.name+'__vec',i+1)
+                            new_columns[var+'_'+calib.name+'__'+v] = 'hardware::HadamardProduct({0},{1},{2})'.format(nom_minus_calib, calib.name+'__vec',i+1)
         # Actually define the columns 
         for c in new_columns.keys():
             newNode = self.Define(c, new_columns[c], newNode, nodetype='Calibration')
         
-        newNode = self.SubCollection(newCollectionName,baseCollectionName,'',skip=varCalibDict.keys()+new_columns.keys())
-
         return self.SetActiveNode(newNode)
 
     def _checkCalibrations(self,node,varCalibDict,evalArgs):
@@ -1159,7 +1212,7 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
 
         return nminusones
 
-    def PrintNodeTree(self,outfilename,verbose=False,toSkip=[]):
+    def PrintNodeTree(self,outfilename,verbose=False,toSkip=['SubCollDefine']):
         '''Print a PDF image of the node structure of the analysis.
         Requires python graphviz package which should be an installed dependency.
 
@@ -1168,7 +1221,7 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
         @param toSkip ([], optional): Skip list of types of nodes (with sub-string matching
             so providing "Define" will cut out *all* definitions). Possible options
             are "Define", "Cut", "Correction", "MergeDefine", and "SubCollDefine".
-            Defaults to empty list.
+            Defaults to ["SubCollDefine"].
 
         Returns:
             None
@@ -1177,17 +1230,17 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
         graph = nx.DiGraph(comment='Node processing tree')
         # Build graph with all nodes
         for node in self.AllNodes:
-            this_node_name = node.name
+            this_node_hash = node.hash
             this_node_label = node.name
             if verbose: this_node_label += '\n%s'%textwrap.fill(node.action,50)
 
-            graph.add_node(this_node_name, label=this_node_label, type=node.type)
+            graph.add_node(this_node_hash, label=this_node_label, type=node.type)
             for child in node.children:
-                graph.add_edge(this_node_name,child.name)
+                graph.add_edge(this_node_hash,child.hash)
         # Contract egdes where we want nodes dropped
         for skip in toSkip:
             for node in graph.nodes:
-                if skip in graph.nodes[node]["type"]:
+                if graph.nodes[node]["type"] == skip:
                     graph = nx.contracted_edge(graph,(list(graph.pred[node].keys())[0],node),self_loops=False)
         # Write out dot and draw
         dot = nx.nx_pydot.to_pydot(graph)
@@ -1304,6 +1357,7 @@ class Node(object):
         self.children = children
         self.parent = parent
         self.type = nodetype
+        self.hash = GenerateHash()
         
     def Close(self):
         '''Safely deletes Node instance and all descendants.
@@ -1776,6 +1830,30 @@ class HistGroup(Group):
                 out.Add(self[key])
         return out
 
+    def Add(self,name,item,meta={}):
+        '''Add histogram to the group. Internal group name
+        will match the histogram name if not otherwise specified
+        but note that this will cause an RDataFrame loop to happen!
+
+        @param item (TH1): Histogram to add.
+        '''
+        nameToPass = item.GetName() if name == '' else name
+        super(HistGroup,self).Add(nameToPass,item,meta)
+
+    def __getitem__(self,key,lazy=False):
+        '''Get value from key as you would with dictionary.
+        If lazy == False and the stored value is a histogram pointer,
+        return the actual histogram.
+        Ex. `val = mygroup["item_name"]`
+
+        @param key (obj): Key for name/key in Group.
+        Returns:
+            obj: Item for given key.
+        '''
+        if lazy == False and not isinstance(self.items[key],ROOT.TH1):
+            self.items[key] = self.items[key].GetValue()
+        return self.items[key]
+
 ###########################
 # Module handling classes #
 ###########################
@@ -1953,13 +2031,13 @@ class ModuleWorker(object):
             try:
                 if a == "":
                     line += '"", '
-                elif a == "true" or a == "false":
-                    line += '%s, '%(a)
                 elif isinstance(a,bool) and a == True:
                     line += 'true, '
                 elif isinstance(a,bool) and a == False:
                     line += 'false, '
                 elif isinstance(a,int) or isinstance(a,float):
+                    line += '%s, '%(a)
+                elif a.startswith('{') and a.endswith('}'):
                     line += '%s, '%(a)
                 elif isinstance(a,str):
                     line += '"%s", '%(a)
@@ -2037,10 +2115,10 @@ class ModuleWorker(object):
 
         self._call = out
 
-    def GetCall(self,inArgs = {},toCheck = None):
+    def GetCall(self,evalArgs = {},toCheck = None):
         '''Gets the call to the method to be evaluated per-event.
 
-        @param inArgs (list, optional): Args to use for eval if #MakeCall() has not already been called. Defaults to [].
+        @param evalArgs (list, optional): Args to use for eval if #MakeCall() has not already been called. Defaults to [].
                 If #MakeCall() has not already been called and inArgs == [], then the arguments to the method will
                 be deduced from the C++ method definition argument names.
         @param toCheck (Node, ROOT.RDataFrame, list, optional): Object with column information to check argument names exist.
@@ -2050,7 +2128,7 @@ class ModuleWorker(object):
             str: The string that calls the method to evaluate per-event. Pass to Analyzer.Define(), Analyzer.Cut(), etc.
         '''
         if self._call == None:
-            self.MakeCall(inArgs,toCheck)
+            self.MakeCall(evalArgs,toCheck)
         return self._call
 
     def GetMainFunc(self):
@@ -2083,11 +2161,12 @@ class Correction(ModuleWorker):
     (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
     <up, down> for "uncert" type.
     '''
-    def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False,cloneFuncInfo=None):
+    def __init__(self,name,script='',constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False,cloneFuncInfo=None):
         '''Constructor
 
         @param name (str): Correction name.
-        @param script (str): Path to C++ script with function to calculate correction.
+        @param script (str, optional): Path to C++ script with function to calculate correction. Use an
+            empty string to point to existing columns that do not need to be calculated. Defaults to ''.
         @param constructor ([str], optional): List of arguments to script class constructor. Defaults to [].
         @param mainFunc (str, optional): Name of the function to use inside script. Defaults to None
                 and the class will try to deduce it.
@@ -2103,7 +2182,12 @@ class Correction(ModuleWorker):
                 _funcInfo from the object from which this one i
         '''
 
-        super(Correction,self).__init__(name,script,constructor,mainFunc,columnList,isClone,cloneFuncInfo)
+        if script != '':
+            super(Correction,self).__init__(name,script,constructor,mainFunc,columnList,isClone,cloneFuncInfo)
+            self.existing = False
+        else:
+            self.existing = True
+            self.name = name
         self._setType(corrtype)
 
     def Clone(self,name,newMainFunc=None,newType=None):

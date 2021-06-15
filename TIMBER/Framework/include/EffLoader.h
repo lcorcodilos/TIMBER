@@ -1,3 +1,5 @@
+#ifndef _TIMBER_EFFLOADER
+#define _TIMBER_EFFLOADER
 #include <string>
 #include "TFile.h"
 #include "TEfficiency.h"
@@ -53,5 +55,5 @@ class EffLoader {
          * @return std::vector<float> {nominal value, up error+nominal, down error+nominal}
          */
         std::vector<float> eval(float xval, float yval = 0, float zval = 0);
-            
 };
+#endif
