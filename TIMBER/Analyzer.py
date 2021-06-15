@@ -548,7 +548,8 @@ class analyzer(object):
 
         @param name (str): Name of new collection.
         @param basecoll (str): Name of derivative collection.
-        @param condition (str): C++ condition that determines which items to keep.
+        @param condition (str): C++ condition that determines which items to keep or a list of indexes to keep (must useTake for latter).
+        @param useTake (bool): If `condition` is list of indexes, use VecOps::Take to build subcollection.
         @param skip ([str]): List of variable names in the collection to skip.
 
         Returns:
