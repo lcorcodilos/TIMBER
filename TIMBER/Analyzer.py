@@ -1017,7 +1017,7 @@ class analyzer(object):
 
         if isinstance(hGroup[baseName+'__nominal'],ROOT.TH2):
             projectedGroup = hGroup.Do("Projection"+projection.upper(),projectionArgs)
-        if isinstance(hGroup[baseName+'__nominal'],ROOT.TH3): 
+        elif isinstance(hGroup[baseName+'__nominal'],ROOT.TH3): 
             raise TypeError("DrawTemplates() does not currently support TH3 templates.")
         else:
             projectedGroup = hGroup
@@ -1782,6 +1782,7 @@ class HistGroup(Group):
         #
         # Set to 'hist' so group is treated as histograms.
         self.type = 'hist'
+        self._ptrs = {}
 
     def Do(self,THmethod,argsTuple=()):
         '''Batch act on histograms using ROOT TH1/2/3 methods.
@@ -1856,7 +1857,8 @@ class HistGroup(Group):
             obj: Item for given key.
         '''
         if lazy == False and not isinstance(self.items[key],ROOT.TH1):
-            self.items[key] = self.items[key].GetValue()
+            self._ptrs[key] = self.items[key]
+            self.items[key] = self._ptrs[key].GetValue()
         return self.items[key]
 
 ###########################
