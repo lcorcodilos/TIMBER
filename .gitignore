@@ -12,3 +12,4 @@ experimental/
 examples/*.root
 bin/
 root*
+.pytest_cache/

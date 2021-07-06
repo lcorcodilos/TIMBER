@@ -1,9 +1,4 @@
 var searchData=
 [
-  ['tempdir',['TempDir',['../class_temp_dir.html',1,'']]],
-  ['tmpentry',['TmpEntry',['../struct_b_tag_calibration_reader_1_1_b_tag_calibration_reader_impl_1_1_tmp_entry.html',1,'BTagCalibrationReader::BTagCalibrationReaderImpl']]],
-  ['toppt_5fweight',['TopPt_weight',['../class_top_pt__weight.html',1,'']]],
-  ['toptag_5fsf',['TopTag_SF',['../class_top_tag___s_f.html',1,'']]],
-  ['toptagdak8_5fsf',['TopTagDAK8_SF',['../class_top_tag_d_a_k8___s_f.html',1,'']]],
-  ['trigger_5fweight',['Trigger_weight',['../class_trigger__weight.html',1,'']]]
+  ['vargroup',['VarGroup',['../class_t_i_m_b_e_r_1_1_analyzer_1_1_var_group.html',1,'TIMBER::Analyzer']]]
 ];

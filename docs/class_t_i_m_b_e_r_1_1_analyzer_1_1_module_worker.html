@@ -106,9 +106,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3be2b6d8371dfe648f728b06fa4450d3"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_module_worker.html#a3be2b6d8371dfe648f728b06fa4450d3">Clone</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_module_worker.html#ab74e6bf80237ddc4109968cedc58c151">name</a>, newMainFunc=None)</td></tr>
 <tr class="memdesc:a3be2b6d8371dfe648f728b06fa4450d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a clone of current instance.  <a href="#a3be2b6d8371dfe648f728b06fa4450d3">More...</a><br /></td></tr>
 <tr class="separator:a3be2b6d8371dfe648f728b06fa4450d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d989985f36ca7d2c79c7b51c5cb0bb8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_module_worker.html#a7d989985f36ca7d2c79c7b51c5cb0bb8">GetCall</a> (self, inArgs={}, toCheck=None)</td></tr>
-<tr class="memdesc:a7d989985f36ca7d2c79c7b51c5cb0bb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the call to the method to be evaluated per-event.  <a href="#a7d989985f36ca7d2c79c7b51c5cb0bb8">More...</a><br /></td></tr>
-<tr class="separator:a7d989985f36ca7d2c79c7b51c5cb0bb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06c2533b6b10a82712da184d6a7807e2"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_module_worker.html#a06c2533b6b10a82712da184d6a7807e2">GetCall</a> (self, evalArgs={}, toCheck=None)</td></tr>
+<tr class="memdesc:a06c2533b6b10a82712da184d6a7807e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the call to the method to be evaluated per-event.  <a href="#a06c2533b6b10a82712da184d6a7807e2">More...</a><br /></td></tr>
+<tr class="separator:a06c2533b6b10a82712da184d6a7807e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1bd1760631abbfbdde1169006d685066"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_module_worker.html#a1bd1760631abbfbdde1169006d685066">GetFuncNames</a> (self)</td></tr>
 <tr class="memdesc:a1bd1760631abbfbdde1169006d685066"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets list of function names in C++ script.  <a href="#a1bd1760631abbfbdde1169006d685066">More...</a><br /></td></tr>
 <tr class="separator:a1bd1760631abbfbdde1169006d685066"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,7 +129,7 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class to handle C++ class modules generically. </p>
 <p>Uses clang in python to parse the C++ code and determine function names, namespaces, and argument names and types.</p>
-<p>Writing the C++ modules requires the desired branch/column names must be specified or be used as the argument variable names to allow the framework to automatically determine what branch/column to use in <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_module_worker.html#a7d989985f36ca7d2c79c7b51c5cb0bb8" title="Gets the call to the method to be evaluated per-event. ">GetCall()</a>. </p>
+<p>Writing the C++ modules requires the desired branch/column names must be specified or be used as the argument variable names to allow the framework to automatically determine what branch/column to use in <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_module_worker.html#a06c2533b6b10a82712da184d6a7807e2" title="Gets the call to the method to be evaluated per-event. ">GetCall()</a>. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ac82988398817c57c5457ccbaf6198777"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac82988398817c57c5457ccbaf6198777">&#9670;&nbsp;</a></span>__init__()</h2>
@@ -200,7 +200,7 @@ Public Attributes</h2></td></tr>
     <tr><td class="paramname">script</td><td>(str): Path to C++ script with function to calculate correction. For a TIMBER module, use the header file. </td></tr>
     <tr><td class="paramname">constructor</td><td>([str], optional): List of arguments to script class constructor. Defaults to []. </td></tr>
     <tr><td class="paramname">mainFunc</td><td>(str, optional): Name of the function to use inside script. Defaults to None and the class will try to deduce it. </td></tr>
-    <tr><td class="paramname">columnList</td><td>([str], optional): List of column names to search mainFunc arguments against. Defaults to None and the standard NanoAOD columns from LoadColumnNames() will be used. </td></tr>
+    <tr><td class="paramname">columnList</td><td>([str], optional): List of column names to search mainFunc arguments against. Defaults to None and the standard NanoAOD columns from <a class="el" href="group___common.html#ga665518b008e07fcf1c33a23d6327ed56" title="Loads column names from a text file. ">LoadColumnNames()</a> will be used. </td></tr>
     <tr><td class="paramname">isClone</td><td>(bool, optional): For internal use when cloning. Defaults to False. If True, will not duplicate compile the same script if two functions are needed in one C++ script. </td></tr>
     <tr><td class="paramname">cloneFuncInfo</td><td>(dict, optional): For internal use when cloning. Defaults to None. Should be the _funcInfo from the object from which this one is cloned. </td></tr>
   </table>
@@ -257,8 +257,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a7d989985f36ca7d2c79c7b51c5cb0bb8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d989985f36ca7d2c79c7b51c5cb0bb8">&#9670;&nbsp;</a></span>GetCall()</h2>
+<a id="a06c2533b6b10a82712da184d6a7807e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06c2533b6b10a82712da184d6a7807e2">&#9670;&nbsp;</a></span>GetCall()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -273,7 +273,7 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>inArgs</em> = <code>{}</code>, </td>
+          <td class="paramname"><em>evalArgs</em> = <code>{}</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -292,7 +292,7 @@ Public Attributes</h2></td></tr>
 <p>Gets the call to the method to be evaluated per-event. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">inArgs</td><td>(list, optional): Args to use for eval if <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_module_worker.html#aa6b648587129a1fec783efe1e2c6ecdd" title="Makes the call (stored in class instance) to the method with the branch/column names deduced or added...">MakeCall()</a> has not already been called. Defaults to []. If <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_module_worker.html#aa6b648587129a1fec783efe1e2c6ecdd" title="Makes the call (stored in class instance) to the method with the branch/column names deduced or added...">MakeCall()</a> has not already been called and inArgs == [], then the arguments to the method will be deduced from the C++ method definition argument names. </td></tr>
+    <tr><td class="paramname">evalArgs</td><td>(list, optional): Args to use for eval if <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_module_worker.html#aa6b648587129a1fec783efe1e2c6ecdd" title="Makes the call (stored in class instance) to the method with the branch/column names deduced or added...">MakeCall()</a> has not already been called. Defaults to []. If <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_module_worker.html#aa6b648587129a1fec783efe1e2c6ecdd" title="Makes the call (stored in class instance) to the method with the branch/column names deduced or added...">MakeCall()</a> has not already been called and inArgs == [], then the arguments to the method will be deduced from the C++ method definition argument names. </td></tr>
     <tr><td class="paramname">toCheck</td><td>(<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>, ROOT.RDataFrame, list, optional): Object with column information to check argument names exist. Defaults to None in which case a default NanoAODv6 list is loaded.</td></tr>
   </table>
   </dd>

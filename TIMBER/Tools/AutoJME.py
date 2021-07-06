@@ -76,4 +76,5 @@ def AutoJME(a, jetCollection, year, dataEra=''):
         
     a.CalibrateVars(calibdict,evalargs,"Calibrated%s"%jetCollection,variationsFlag=(not a.isData))
 
-    return a    
+    return a
+## @}

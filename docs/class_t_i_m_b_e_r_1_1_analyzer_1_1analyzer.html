@@ -96,9 +96,9 @@ Collaboration diagram for analyzer:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a49c90c88910bbe9f926fface004e0d53"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a49c90c88910bbe9f926fface004e0d53">__init__</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#acbece2625a541230e9f9091adca38c8c">fileName</a>, eventsTreeName=&quot;Events&quot;, runTreeName=&quot;Runs&quot;, createAllCollections=False)</td></tr>
-<tr class="memdesc:a49c90c88910bbe9f926fface004e0d53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a49c90c88910bbe9f926fface004e0d53">More...</a><br /></td></tr>
-<tr class="separator:a49c90c88910bbe9f926fface004e0d53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe24adb4b40ba81eebc81f2b9c60175a"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#abe24adb4b40ba81eebc81f2b9c60175a">__init__</a> (self, <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#acbece2625a541230e9f9091adca38c8c">fileName</a>, eventsTreeName=&quot;Events&quot;, runTreeName=&quot;Runs&quot;)</td></tr>
+<tr class="memdesc:abe24adb4b40ba81eebc81f2b9c60175a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#abe24adb4b40ba81eebc81f2b9c60175a">More...</a><br /></td></tr>
+<tr class="separator:abe24adb4b40ba81eebc81f2b9c60175a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a23e8041ce1015febe4fdace3225714f9"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a23e8041ce1015febe4fdace3225714f9">__str__</a> (self)</td></tr>
 <tr class="memdesc:a23e8041ce1015febe4fdace3225714f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call with <code>print(&lt;analyzer&gt;)</code> to print a nicely formatted description of the analyzer object for debugging.  <a href="#a23e8041ce1015febe4fdace3225714f9">More...</a><br /></td></tr>
 <tr class="separator:a23e8041ce1015febe4fdace3225714f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -147,6 +147,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a62e71f7ad8a428d1eb03076a7d72c506"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a62e71f7ad8a428d1eb03076a7d72c506">GetCollectionNames</a> (self)</td></tr>
 <tr class="memdesc:a62e71f7ad8a428d1eb03076a7d72c506"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a list of all collections that currently exist (including those that have been added).  <a href="#a62e71f7ad8a428d1eb03076a7d72c506">More...</a><br /></td></tr>
 <tr class="separator:a62e71f7ad8a428d1eb03076a7d72c506"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a072f60b6628c3b281b14bfff6b6176c7"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a072f60b6628c3b281b14bfff6b6176c7">GetColumnNames</a> (self, node=None)</td></tr>
+<tr class="memdesc:a072f60b6628c3b281b14bfff6b6176c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a list of all column names that currently exist.  <a href="#a072f60b6628c3b281b14bfff6b6176c7">More...</a><br /></td></tr>
+<tr class="separator:a072f60b6628c3b281b14bfff6b6176c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fa8abc3c6c72bda1ba5f977ff93c589"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a0fa8abc3c6c72bda1ba5f977ff93c589">GetCorrectionNames</a> (self)</td></tr>
 <tr class="memdesc:a0fa8abc3c6c72bda1ba5f977ff93c589"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get names of all corrections being tracked.  <a href="#a0fa8abc3c6c72bda1ba5f977ff93c589">More...</a><br /></td></tr>
 <tr class="separator:a0fa8abc3c6c72bda1ba5f977ff93c589"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -169,11 +172,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a033c29fbbeb320baadaec86ca25ff829"><td class="mdescLeft">&#160;</td><td class="mdescRight">Batch creates histograms at the current <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a517b5caa6818e1f61b5b742625e575f4" title="Node. ">ActiveNode</a> based on the input <code>histDict</code> which is formatted as <code>{[&lt;column name&gt;]: &lt;binning tuple&gt;}</code> where <code>[&lt;column name&gt;]</code> is a list of column names that you'd like to plot against each other in [x,y,z] order and <code>binning_tuple</code> is the set of arguments that would normally be passed to <code>TH1</code>.  <a href="#a033c29fbbeb320baadaec86ca25ff829">More...</a><br /></td></tr>
 <tr class="separator:a033c29fbbeb320baadaec86ca25ff829"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93c9f38f89679d2426a02c93d1eecf63"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a93c9f38f89679d2426a02c93d1eecf63">MakeTemplateHistos</a> (self, templateHist, variables, node=None, lazy=True)</td></tr>
-<tr class="memdesc:a93c9f38f89679d2426a02c93d1eecf63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the uncertainty template histograms based on the weights created by <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a544fd8b16e23e68a9aa07159c3c6a77d" title="Makes columns/variables to store total weights based on the Corrections that have been added...">MakeWeightCols()</a>.  <a href="#a93c9f38f89679d2426a02c93d1eecf63">More...</a><br /></td></tr>
+<tr class="memdesc:a93c9f38f89679d2426a02c93d1eecf63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the uncertainty template histograms based on the weights created by <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#affd36ec660e32cc4bd273d645d2b272e" title="Makes columns/variables to store total weights based on the Corrections that have been added...">MakeWeightCols()</a>.  <a href="#a93c9f38f89679d2426a02c93d1eecf63">More...</a><br /></td></tr>
 <tr class="separator:a93c9f38f89679d2426a02c93d1eecf63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a544fd8b16e23e68a9aa07159c3c6a77d"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a544fd8b16e23e68a9aa07159c3c6a77d">MakeWeightCols</a> (self, name='', node=None, correctionNames=None, dropList=[], correlations=[])</td></tr>
-<tr class="memdesc:a544fd8b16e23e68a9aa07159c3c6a77d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes columns/variables to store total weights based on the Corrections that have been added.  <a href="#a544fd8b16e23e68a9aa07159c3c6a77d">More...</a><br /></td></tr>
-<tr class="separator:a544fd8b16e23e68a9aa07159c3c6a77d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affd36ec660e32cc4bd273d645d2b272e"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#affd36ec660e32cc4bd273d645d2b272e">MakeWeightCols</a> (self, name='', node=None, correctionNames=None, dropList=[], correlations=[], extraNominal='')</td></tr>
+<tr class="memdesc:affd36ec660e32cc4bd273d645d2b272e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes columns/variables to store total weights based on the Corrections that have been added.  <a href="#affd36ec660e32cc4bd273d645d2b272e">More...</a><br /></td></tr>
+<tr class="separator:affd36ec660e32cc4bd273d645d2b272e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f0e7e0c026da9b2cbc160816a2db28b"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2f0e7e0c026da9b2cbc160816a2db28b">MergeCollections</a> (self, name, collectionNames)</td></tr>
 <tr class="memdesc:a2f0e7e0c026da9b2cbc160816a2db28b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Merge collections (provided by list of names in <code>collectionNames</code>) into one called <code>name</code>.  <a href="#a2f0e7e0c026da9b2cbc160816a2db28b">More...</a><br /></td></tr>
 <tr class="separator:a2f0e7e0c026da9b2cbc160816a2db28b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -183,9 +186,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa933d8e2ef227f994f60ee3b278eb0f6"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#aa933d8e2ef227f994f60ee3b278eb0f6">ObjectFromCollection</a> (self, name, basecoll, index, skip=[])</td></tr>
 <tr class="memdesc:aa933d8e2ef227f994f60ee3b278eb0f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Similar to creating a SubCollection except the newly defined columns are single values (not vectors/arrays) for the object at the provided index.  <a href="#aa933d8e2ef227f994f60ee3b278eb0f6">More...</a><br /></td></tr>
 <tr class="separator:aa933d8e2ef227f994f60ee3b278eb0f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ef44f04939b9ca846de543ef8c8676e"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2ef44f04939b9ca846de543ef8c8676e">PrintNodeTree</a> (self, outfilename, verbose=False, toSkip=[])</td></tr>
-<tr class="memdesc:a2ef44f04939b9ca846de543ef8c8676e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print a PDF image of the node structure of the analysis.  <a href="#a2ef44f04939b9ca846de543ef8c8676e">More...</a><br /></td></tr>
-<tr class="separator:a2ef44f04939b9ca846de543ef8c8676e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c37638801c72653935fe6b7975715f8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a3c37638801c72653935fe6b7975715f8">PrintNodeTree</a> (self, outfilename, verbose=False, toSkip=['SubCollDefine'])</td></tr>
+<tr class="memdesc:a3c37638801c72653935fe6b7975715f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print a PDF image of the node structure of the analysis.  <a href="#a3c37638801c72653935fe6b7975715f8">More...</a><br /></td></tr>
+<tr class="separator:a3c37638801c72653935fe6b7975715f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a361306a468fa48145cf99ee48c82bf25"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a361306a468fa48145cf99ee48c82bf25">Range</a> (self, argv)</td></tr>
 <tr class="separator:a361306a468fa48145cf99ee48c82bf25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c671ab3d2fef88e680beb8299eb4962"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a1c671ab3d2fef88e680beb8299eb4962">ReorderCollection</a> (self, name, basecoll, newOrderCol, skip=[])</td></tr>
@@ -197,11 +200,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3f19f4e3f9344e283f5cf6ae2371fc70"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a3f19f4e3f9344e283f5cf6ae2371fc70">SetActiveNode</a> (self, node)</td></tr>
 <tr class="memdesc:a3f19f4e3f9344e283f5cf6ae2371fc70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the active node.  <a href="#a3f19f4e3f9344e283f5cf6ae2371fc70">More...</a><br /></td></tr>
 <tr class="separator:a3f19f4e3f9344e283f5cf6ae2371fc70"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9396d0acbc67a31bbae81c20944900c"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ac9396d0acbc67a31bbae81c20944900c">Snapshot</a> (self, columns, outfilename, treename, lazy=False, openOption='RECREATE')</td></tr>
-<tr class="separator:ac9396d0acbc67a31bbae81c20944900c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae00326bddf9a3bb23051007674e6cc5b"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ae00326bddf9a3bb23051007674e6cc5b">SubCollection</a> (self, name, basecoll, condition, skip=[])</td></tr>
-<tr class="memdesc:ae00326bddf9a3bb23051007674e6cc5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a collection of a current collection (from a NanoAOD-like format) where the array-type branch is slimmed based on some selection.  <a href="#ae00326bddf9a3bb23051007674e6cc5b">More...</a><br /></td></tr>
-<tr class="separator:ae00326bddf9a3bb23051007674e6cc5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af67602f8a982a0f77c955f7c351f2221"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#af67602f8a982a0f77c955f7c351f2221">Snapshot</a> (self, columns, outfilename, treename, lazy=False, openOption='UPDATE', saveRunChain=True)</td></tr>
+<tr class="separator:af67602f8a982a0f77c955f7c351f2221"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add3798370eecfa3e192ef0f882d2179f"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#add3798370eecfa3e192ef0f882d2179f">SubCollection</a> (self, name, basecoll, condition, useTake=False, skip=[])</td></tr>
+<tr class="memdesc:add3798370eecfa3e192ef0f882d2179f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a collection of a current collection (from a NanoAOD-like format) where the array-type branch is slimmed based on some selection.  <a href="#add3798370eecfa3e192ef0f882d2179f">More...</a><br /></td></tr>
+<tr class="separator:add3798370eecfa3e192ef0f882d2179f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae289711dc0bd4fc64eaf5594cc9a6637"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ae289711dc0bd4fc64eaf5594cc9a6637">TrackNode</a> (self, node)</td></tr>
 <tr class="memdesc:ae289711dc0bd4fc64eaf5594cc9a6637"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a node to track.  <a href="#ae289711dc0bd4fc64eaf5594cc9a6637">More...</a><br /></td></tr>
 <tr class="separator:ae289711dc0bd4fc64eaf5594cc9a6637"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -224,9 +227,9 @@ Public Attributes</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#acbece2625a541230e9f9091adca38c8c">fileName</a></td></tr>
 <tr class="memdesc:acbece2625a541230e9f9091adca38c8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Path of the input file. <br /></td></tr>
 <tr class="separator:acbece2625a541230e9f9091adca38c8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19e1d2137e2e3d5d8c38c35de1b66b0d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a19e1d2137e2e3d5d8c38c35de1b66b0d">genEventCount</a></td></tr>
-<tr class="memdesc:a19e1d2137e2e3d5d8c38c35de1b66b0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">int  <a href="#a19e1d2137e2e3d5d8c38c35de1b66b0d">More...</a><br /></td></tr>
-<tr class="separator:a19e1d2137e2e3d5d8c38c35de1b66b0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1288327072576bc462430714fa1c2d9d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a1288327072576bc462430714fa1c2d9d">genEventSumw</a></td></tr>
+<tr class="memdesc:a1288327072576bc462430714fa1c2d9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">int  <a href="#a1288327072576bc462430714fa1c2d9d">More...</a><br /></td></tr>
+<tr class="separator:a1288327072576bc462430714fa1c2d9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1cbf92036a120cc45e7bb032c3d61296"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a1cbf92036a120cc45e7bb032c3d61296">isData</a></td></tr>
 <tr class="memdesc:a1cbf92036a120cc45e7bb032c3d61296"><td class="mdescLeft">&#160;</td><td class="mdescRight">bool  <a href="#a1cbf92036a120cc45e7bb032c3d61296">More...</a><br /></td></tr>
 <tr class="separator:a1cbf92036a120cc45e7bb032c3d61296"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -248,8 +251,8 @@ Public Attributes</h2></td></tr>
 <p>Implements an interface with ROOT's RDataFrame (RDF). The default values assume the data is in NanoAOD format. However, any TTree can be used. The class works on the basis of nodes and actions where nodes are an RDF instance and an action (or series of actions) can transform the RDF to create a new node(s).</p>
 <p>When using class functions to perform actions, an active node will always be tracked so that the next action uses the active node and assigns the output node as the new <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a517b5caa6818e1f61b5b742625e575f4" title="Node. ">ActiveNode</a> </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a49c90c88910bbe9f926fface004e0d53"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49c90c88910bbe9f926fface004e0d53">&#9670;&nbsp;</a></span>__init__()</h2>
+<a id="abe24adb4b40ba81eebc81f2b9c60175a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe24adb4b40ba81eebc81f2b9c60175a">&#9670;&nbsp;</a></span>__init__()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -276,13 +279,7 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>runTreeName</em> = <code>&quot;Runs&quot;</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>createAllCollections</em> = <code>False</code>&#160;</td>
+          <td class="paramname"><em>runTreeName</em> = <code>&quot;Runs&quot;</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -293,13 +290,12 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Constructor. </p>
-<p>Sets up the tracking of actions on an RDataFrame as nodes. Also looks up and stores common information in NanoAOD such as the number of generated events in a file (<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a19e1d2137e2e3d5d8c38c35de1b66b0d" title="int ">genEventCount</a>), the LHA ID of the PDF set in the <code>LHEPdfWeights</code> branch (<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#aeb0781b4175a60575386701b2ac1cc4d" title="int ">lhaid</a>), if the file is data (<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a1cbf92036a120cc45e7bb032c3d61296" title="bool ">isData</a>), and if the file is before NanoAOD version 6 (<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ae4125cd5a36c17e021b2a6a1af9c4fec" title="bool ">preV6</a>).</p>
+<p>Sets up the tracking of actions on an RDataFrame as nodes. Also looks up and stores common information in NanoAOD such as the number of generated events in a file (<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a1288327072576bc462430714fa1c2d9d" title="int ">genEventSumw</a>), the LHA ID of the PDF set in the <code>LHEPdfWeights</code> branch (<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#aeb0781b4175a60575386701b2ac1cc4d" title="int ">lhaid</a>), if the file is data (<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a1cbf92036a120cc45e7bb032c3d61296" title="bool ">isData</a>), and if the file is before NanoAOD version 6 (<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#ae4125cd5a36c17e021b2a6a1af9c4fec" title="bool ">preV6</a>).</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fileName</td><td>(str): A ROOT file path, a path to a txt file which contains several ROOT file paths separated by new line characters, or a list of either .root and/or .txt files. </td></tr>
+    <tr><td class="paramname">fileName</td><td>(str, list(str)): A ROOT file path, a path to a txt file which contains several ROOT file paths separated by new line characters, or a list of either .root and/or .txt files. </td></tr>
     <tr><td class="paramname">eventsTreeName</td><td>(str, optional): Name of TTree in fileName where events are stored. Defaults to "Events" (for NanoAOD) </td></tr>
     <tr><td class="paramname">runTreeName</td><td>(str, optional): Name of TTree in fileName where run information is stored (for generated event info in simulation). Defaults to "Runs" (for NanoAOD) </td></tr>
-    <tr><td class="paramname">createAllCollections</td><td>(str, optional): Create all of the collection structs immediately. This consumes memory no matter what and the collections will increase processing times compared to accessing column values directly. Defaults to False. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1032,6 +1028,45 @@ list <a class="el" href="struct_collection.html" title="C++ structure to store m
 
 </div>
 </div>
+<a id="a072f60b6628c3b281b14bfff6b6176c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a072f60b6628c3b281b14bfff6b6176c7">&#9670;&nbsp;</a></span>GetColumnNames()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def GetColumnNames </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>node</em> = <code>None</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return a list of all column names that currently exist. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">node</td><td>(<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>): Defaults to None in which case the ActiveNode is used.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd>
+<dd>
+list Column names. </dd></dl>
+
+</div>
+</div>
 <a id="a0fa8abc3c6c72bda1ba5f977ff93c589"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0fa8abc3c6c72bda1ba5f977ff93c589">&#9670;&nbsp;</a></span>GetCorrectionNames()</h2>
 
@@ -1332,7 +1367,7 @@ dict Dictionary with same structure as the input (column names for keys) with ne
       </table>
 </div><div class="memdoc">
 
-<p>Generates the uncertainty template histograms based on the weights created by <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a544fd8b16e23e68a9aa07159c3c6a77d" title="Makes columns/variables to store total weights based on the Corrections that have been added...">MakeWeightCols()</a>. </p>
+<p>Generates the uncertainty template histograms based on the weights created by <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#affd36ec660e32cc4bd273d645d2b272e" title="Makes columns/variables to store total weights based on the Corrections that have been added...">MakeWeightCols()</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">templateHist</td><td>(TH1,TH2,TH3,tuple): A TH1, TH2, TH3, or a tuple describing the TH* options. Used as a template to create the histograms. </td></tr>
@@ -1348,8 +1383,8 @@ dict Dictionary with same structure as the input (column names for keys) with ne
 
 </div>
 </div>
-<a id="a544fd8b16e23e68a9aa07159c3c6a77d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a544fd8b16e23e68a9aa07159c3c6a77d">&#9670;&nbsp;</a></span>MakeWeightCols()</h2>
+<a id="affd36ec660e32cc4bd273d645d2b272e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#affd36ec660e32cc4bd273d645d2b272e">&#9670;&nbsp;</a></span>MakeWeightCols()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1388,7 +1423,13 @@ dict Dictionary with same structure as the input (column names for keys) with ne
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>correlations</em> = <code>[]</code>&#160;</td>
+          <td class="paramname"><em>correlations</em> = <code>[]</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>extraNominal</em> = <code>''</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1408,7 +1449,8 @@ dict Dictionary with same structure as the input (column names for keys) with ne
     <tr><td class="paramname">node</td><td>(<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a>): <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> to calculate weights on top of. Must be of type <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_node.html" title="Class to represent nodes in the DataFrame processing graph. ">Node</a> (not RDataFrame). Defaults to <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a517b5caa6818e1f61b5b742625e575f4" title="Node. ">ActiveNode</a>. </td></tr>
     <tr><td class="paramname">correctionNames</td><td>list(str): List of correction names (strings) to consider. Default is None in which case all corrections being tracked are considered. </td></tr>
     <tr><td class="paramname">dropList</td><td>list(str): List of correction names (strings) to not consider. Default is empty lists in which case no corrections are dropped from consideration. </td></tr>
-    <tr><td class="paramname">correlations</td><td>list(tuple of strings): List of tuples of correlations to create. Ex. If you have syst1, syst2, syst3 corrections and you want to correlate syst1 and syst2, provide [("syst1","syst2")]. To anti-correlate, add a "!" infront of the correction name. Ex. [("syst1","!syst2")]</td></tr>
+    <tr><td class="paramname">correlations</td><td>list(tuple of strings): List of tuples of correlations to create. Ex. If you have syst1, syst2, syst3 corrections and you want to correlate syst1 and syst2, provide [("syst1","syst2")]. To anti-correlate, add a "!" infront of the correction name. Ex. [("syst1","!syst2")] </td></tr>
+    <tr><td class="paramname">extraNominal</td><td>(str): String to prepend to all weight calculations. Will be multiplied by the rest of the pieces put together automatically. Defaults to ''.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1495,7 +1537,7 @@ dict Dictionary with same structure as the input (column names for keys) with ne
 </div><div class="memdoc">
 
 <p>Create an N-1 tree structure of nodes building off of <code>node</code> with the N cuts from <code>cutgroup</code>. </p>
-<p>The structure is optimized so that as many actions are shared as possible so that the N different nodes can be made. Use <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a2ef44f04939b9ca846de543ef8c8676e" title="Print a PDF image of the node structure of the analysis. ">PrintNodeTree()</a> to visualize.</p>
+<p>The structure is optimized so that as many actions are shared as possible so that the N different nodes can be made. Use <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1analyzer.html#a3c37638801c72653935fe6b7975715f8" title="Print a PDF image of the node structure of the analysis. ">PrintNodeTree()</a> to visualize.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cutgroup</td><td>(<a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_cut_group.html" title="Stores Cut actions. ">CutGroup</a>): <a class="el" href="class_t_i_m_b_e_r_1_1_analyzer_1_1_group.html" title="Organizes objects in OrderedDict with basic functionality to add and drop items, add Groups together...">Group</a> of N cuts to apply. </td></tr>
@@ -1567,8 +1609,8 @@ dict N nodes in dictionary with keys indicating the cut that was not applied. </
 <p><b>Examples</b> </p><div class="fragment"><div class="line">ObjectFromCollection(<span class="stringliteral">&#39;LeadJet&#39;</span>,<span class="stringliteral">&#39;FatJet&#39;</span>,<span class="stringliteral">&#39;0&#39;</span>)</div></div><!-- fragment --> 
 </div>
 </div>
-<a id="a2ef44f04939b9ca846de543ef8c8676e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2ef44f04939b9ca846de543ef8c8676e">&#9670;&nbsp;</a></span>PrintNodeTree()</h2>
+<a id="a3c37638801c72653935fe6b7975715f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c37638801c72653935fe6b7975715f8">&#9670;&nbsp;</a></span>PrintNodeTree()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1595,7 +1637,7 @@ dict N nodes in dictionary with keys indicating the cut that was not applied. </
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>toSkip</em> = <code>[]</code>&#160;</td>
+          <td class="paramname"><em>toSkip</em> = <code>['SubCollDefine']</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1611,7 +1653,7 @@ dict N nodes in dictionary with keys indicating the cut that was not applied. </
   <table class="params">
     <tr><td class="paramname">outfilename</td><td>(str): Name of output PDF file. </td></tr>
     <tr><td class="paramname">verbose</td><td>(bool, optional): Turns on verbose node labels. Defaults to False. </td></tr>
-    <tr><td class="paramname">toSkip</td><td>([], optional): Skip list of types of nodes (with sub-string matching so providing "Define" will cut out <em>all</em> definitions). Possible options are "Define", "Cut", "Correction", "MergeDefine", and "SubCollDefine". Defaults to empty list.</td></tr>
+    <tr><td class="paramname">toSkip</td><td>([], optional): Skip list of types of nodes (with sub-string matching so providing "Define" will cut out <em>all</em> definitions). Possible options are "Define", "Cut", "Correction", "MergeDefine", and "SubCollDefine". Defaults to ["SubCollDefine"].</td></tr>
   </table>
   </dd>
 </dl>
@@ -1802,8 +1844,8 @@ None </dd></dl>
 
 </div>
 </div>
-<a id="ac9396d0acbc67a31bbae81c20944900c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9396d0acbc67a31bbae81c20944900c">&#9670;&nbsp;</a></span>Snapshot()</h2>
+<a id="af67602f8a982a0f77c955f7c351f2221"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af67602f8a982a0f77c955f7c351f2221">&#9670;&nbsp;</a></span>Snapshot()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1842,7 +1884,13 @@ None </dd></dl>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>openOption</em> = <code>'RECREATE'</code>&#160;</td>
+          <td class="paramname"><em>openOption</em> = <code>'UPDATE'</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>saveRunChain</em> = <code>True</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1855,8 +1903,8 @@ None </dd></dl>
 
 </div>
 </div>
-<a id="ae00326bddf9a3bb23051007674e6cc5b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae00326bddf9a3bb23051007674e6cc5b">&#9670;&nbsp;</a></span>SubCollection()</h2>
+<a id="add3798370eecfa3e192ef0f882d2179f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add3798370eecfa3e192ef0f882d2179f">&#9670;&nbsp;</a></span>SubCollection()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1889,6 +1937,12 @@ None </dd></dl>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>useTake</em> = <code>False</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
           <td class="paramname"><em>skip</em> = <code>[]</code>&#160;</td>
         </tr>
         <tr>
@@ -1904,8 +1958,9 @@ None </dd></dl>
   <table class="params">
     <tr><td class="paramname">name</td><td>(str): Name of new collection. </td></tr>
     <tr><td class="paramname">basecoll</td><td>(str): Name of derivative collection. </td></tr>
-    <tr><td class="paramname">condition</td><td>(str): C++ condition that determines which items to keep. </td></tr>
-    <tr><td class="paramname">skip</td><td>([str]): List of variable names in the collection to skip.</td></tr>
+    <tr><td class="paramname">condition</td><td>(str): C++ condition that determines which items to keep or a list of indexes to keep (must useTake for latter). </td></tr>
+    <tr><td class="paramname">useTake</td><td>(bool): If <code>condition</code> is list of indexes, use VecOps::Take to build subcollection. </td></tr>
+    <tr><td class="paramname">skip</td><td>([str]): List of variable names in the collection to skip. Note that these do not include the collection name (ex. "pt" not "Jet_pt").</td></tr>
   </table>
   </dd>
 </dl>
@@ -2031,20 +2086,20 @@ None </dd></dl>
 
 </div>
 </div>
-<a id="a19e1d2137e2e3d5d8c38c35de1b66b0d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19e1d2137e2e3d5d8c38c35de1b66b0d">&#9670;&nbsp;</a></span>genEventCount</h2>
+<a id="a1288327072576bc462430714fa1c2d9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1288327072576bc462430714fa1c2d9d">&#9670;&nbsp;</a></span>genEventSumw</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">genEventCount</td>
+          <td class="memname">genEventSumw</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>int </p>
-<p>Number of generated events in imported simulation files. Zero if not found or data. </p>
+<p>Sum of weights of generated events in imported simulation files. Zero if not found or data. </p>
 
 </div>
 </div>
@@ -2061,7 +2116,7 @@ None </dd></dl>
 </div><div class="memdoc">
 
 <p>bool </p>
-<p>Is data (true) or simulation (false) based on existence of _genEventCount branch. </p>
+<p>Is data (true) or simulation (false) based on existence of genEventSumw branch. </p>
 
 </div>
 </div>
@@ -2095,7 +2150,7 @@ None </dd></dl>
 </div><div class="memdoc">
 
 <p>bool </p>
-<p>Is pre-NanoAODv6 (true) or not (false) based on existence of _genEventCount branch. </p>
+<p>Is pre-NanoAODv6 (true) or not (false) based on existence of genEventSumw branch. </p>
 
 </div>
 </div>

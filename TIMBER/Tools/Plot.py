@@ -29,6 +29,11 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     @param stackBkg (bool, optional): If True, backgrounds will be stacked and the total will be
         normalized to 1 (if scale==True). Defaults to False.
     @param doSoverB (bool, optional): If True, add a sub pad with signal/sqrt(background) calculation. Defaults to False.
+    @param forceForward (bool, optional): If True, force define cumulative distribution from left to right. Defaults to False.
+    @param forceBackward (bool, optional): If True, force define cumulative distribution from right to left. Defaults to False.
+
+    Returns:
+        None
     '''
     if not stackBkg and doSoverB:
         raise ValueError('Cannot run without backgrounds stacked or s/sqrt(b) will not be valid.')
@@ -214,11 +219,12 @@ def MakeSoverB(stack_of_bkgs,signal,forceForward=False,forceBackward=False):
     signal peak and build the cumulative distributions backwards
     to the left of the peak and forwards to the right of the peak.
 
-    Args:
-        stack_of_bkgs (THStack): Stack of backgrounds, already normalized
+    @param stack_of_bkgs (THStack): Stack of backgrounds, already normalized
             together, and as a sum normalized to 1.
-        signal (TH1): One histogram for signal. Can only calculate
+    @param signal (TH1): One histogram for signal. Can only calculate
             s/sqrt(b) one signal at a time.
+    @param forceForward (bool, optional): If True, force define cumulative distribution from left to right. Defaults to False.
+    @param forceBackward (bool, optional): If True, force define cumulative distribution from right to left. Defaults to False.
 
     Returns:
         None
