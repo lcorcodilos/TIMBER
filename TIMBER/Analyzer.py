@@ -549,7 +549,7 @@ class analyzer(object):
         @param basecoll (str): Name of derivative collection.
         @param condition (str): C++ condition that determines which items to keep or a list of indexes to keep (must useTake for latter).
         @param useTake (bool): If `condition` is list of indexes, use VecOps::Take to build subcollection.
-        @param skip ([str]): List of variable names in the collection to skip.
+        @param skip ([str]): List of variable names in the collection to skip. Note that these do not include the collection name (ex. "pt" not "Jet_pt").
 
         Returns:
             Node: New #ActiveNode.
@@ -557,7 +557,12 @@ class analyzer(object):
         Example:
             SubCollection('TopJets','FatJet','FatJet_msoftdrop > 105 && FatJet_msoftdrop < 220')
         '''
-        collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if basecoll in str(cname) and str(cname) not in skip]
+        collBranches = ['n'+basecoll]
+        for a in self._collectionOrg.GetCollectionAttributes(basecoll):
+            if any([re.match(toskip,a) for toskip in skip]): 
+                print ('Skipping %s...'%(basecoll+'_'+a))
+            else: collBranches.append(basecoll+'_'+a)
+
         if condition != '' and not useTake:
             self.Define(name+'_idx','%s'%(condition))
 
@@ -566,7 +571,7 @@ class analyzer(object):
             if b == 'n'+basecoll:
                 if condition != '':
                     if not useTake:
-                        self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name),nodetype='SubCollDefine')
+                        self.Define(replacementName,'ROOT::VecOps::Sum(%s_idx)'%(name),nodetype='SubCollDefine')
                     else:
                         self.Define(replacementName,'%s.size()'%condition)
                 else: self.Define(replacementName,b)
