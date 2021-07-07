@@ -5,7 +5,7 @@ Home of main classes for TIMBER.
 """
 
 from TIMBER.CollectionOrganizer import CollectionOrganizer
-from TIMBER.Tools.Common import GenerateHash, GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags, ExecuteCmd
+from TIMBER.Tools.Common import GenerateHash, GetHistBinningTuple, CompileCpp, ConcatCols, GetStandardFlags, ExecuteCmd, LoadColumnNames
 from clang import cindex
 from collections import OrderedDict
 
@@ -35,7 +35,7 @@ class analyzer(object):
         
         Sets up the tracking of actions on an RDataFrame as nodes. Also
         looks up and stores common information in NanoAOD such as the number of generated
-        events in a file (#genEventCount), the LHA ID of the PDF set in the `LHEPdfWeights`
+        events in a file (#genEventSumw), the LHA ID of the PDF set in the `LHEPdfWeights`
         branch (#lhaid), if the file is data (#isData), and if the file is before NanoAOD
         version 6 (#preV6).
 
@@ -64,15 +64,15 @@ class analyzer(object):
         ## @var isData
         # bool
         #
-        # Is data (true) or simulation (false) based on existence of _genEventCount branch.
+        # Is data (true) or simulation (false) based on existence of genEventSumw branch.
         ## @var preV6
         # bool
         #
-        # Is pre-NanoAODv6 (true) or not (false) based on existence of _genEventCount branch.
-        ## @var genEventCount
+        # Is pre-NanoAODv6 (true) or not (false) based on existence of genEventSumw branch.
+        ## @var genEventSumw
         # int
         #
-        # Number of generated events in imported simulation files. Zero if not found or data.
+        # Sum of weights of generated events in imported simulation files. Zero if not found or data.
         ## @var lhaid
         # int
         #
@@ -549,7 +549,7 @@ class analyzer(object):
         @param basecoll (str): Name of derivative collection.
         @param condition (str): C++ condition that determines which items to keep or a list of indexes to keep (must useTake for latter).
         @param useTake (bool): If `condition` is list of indexes, use VecOps::Take to build subcollection.
-        @param skip ([str]): List of variable names in the collection to skip.
+        @param skip ([str]): List of variable names in the collection to skip. Note that these do not include the collection name (ex. "pt" not "Jet_pt").
 
         Returns:
             Node: New #ActiveNode.
@@ -557,7 +557,12 @@ class analyzer(object):
         Example:
             SubCollection('TopJets','FatJet','FatJet_msoftdrop > 105 && FatJet_msoftdrop < 220')
         '''
-        collBranches = [str(cname) for cname in self.DataFrame.GetColumnNames() if basecoll in str(cname) and str(cname) not in skip]
+        collBranches = ['n'+basecoll]
+        for a in self._collectionOrg.GetCollectionAttributes(basecoll):
+            if any([re.match(toskip,a) for toskip in skip]): 
+                print ('Skipping %s...'%(basecoll+'_'+a))
+            else: collBranches.append(basecoll+'_'+a)
+
         if condition != '' and not useTake:
             self.Define(name+'_idx','%s'%(condition))
 
@@ -566,7 +571,7 @@ class analyzer(object):
             if b == 'n'+basecoll:
                 if condition != '':
                     if not useTake:
-                        self.Define(replacementName,'std::count(%s_idx.begin(), %s_idx.end(), 1)'%(name,name),nodetype='SubCollDefine')
+                        self.Define(replacementName,'ROOT::VecOps::Sum(%s_idx)'%(name),nodetype='SubCollDefine')
                     else:
                         self.Define(replacementName,'%s.size()'%condition)
                 else: self.Define(replacementName,b)
@@ -1012,7 +1017,7 @@ class analyzer(object):
 
         if isinstance(hGroup[baseName+'__nominal'],ROOT.TH2):
             projectedGroup = hGroup.Do("Projection"+projection.upper(),projectionArgs)
-        if isinstance(hGroup[baseName+'__nominal'],ROOT.TH3): 
+        elif isinstance(hGroup[baseName+'__nominal'],ROOT.TH3): 
             raise TypeError("DrawTemplates() does not currently support TH3 templates.")
         else:
             projectedGroup = hGroup
@@ -1328,27 +1333,30 @@ class Node(object):
         @param action (str, optional): Action performed (the C++ line). Default is '' but should only be used for a base RDataFrame.
         '''
         ## @var DataFrame
-        #
+        # ROOT.RDataFrame
         # DataFrame for the Node.
         ## @var name
-        #
+        # str
         # Name of the Node.
         ## @var action
-        #
+        # str
         # Action performed to create this Node.
         ## @var type
-        #
+        # str
         # Either 'Cut' or 'Define' depending what generated the Node.
         ## @var children
-        #
+        # list(Node)
         # List of child nodes.
         ## @var parent
-        #
+        # Node
         # Parent node.
         ## @var type
-        #
+        # str
         # The "type" of Node. Can be modified but by default will be either
         # "Define", "Cut", "MergeDefine", "SubCollDefine", or "Correction".
+        ## @var hash
+        # str
+        # Unique hash to identify the node.
 
         super(Node, self).__init__()
         self.DataFrame = DataFrame
@@ -1746,7 +1754,7 @@ class CutGroup(Group):
         '''
         super(CutGroup,self).__init__(name)
         ## @var type
-        #
+        # str
         # Set to 'cut' so group is treated as cut/filter actions.
         self.type = 'cut'
         
@@ -1760,7 +1768,7 @@ class VarGroup(Group):
         '''
         super(VarGroup,self).__init__(name)
         ## @var type
-        #
+        # str
         # Set to 'var' so group is treated as column definition actions.
         self.type = 'var'
 
@@ -1774,9 +1782,10 @@ class HistGroup(Group):
         '''
         super(HistGroup,self).__init__(name)
         ## @var type
-        #
+        # str
         # Set to 'hist' so group is treated as histograms.
         self.type = 'hist'
+        self._ptrs = {}
 
     def Do(self,THmethod,argsTuple=()):
         '''Batch act on histograms using ROOT TH1/2/3 methods.
@@ -1835,10 +1844,15 @@ class HistGroup(Group):
         will match the histogram name if not otherwise specified
         but note that this will cause an RDataFrame loop to happen!
 
+        @param name (str): Name of histogram to use as key. Cannot access name of histogram from the pointer or it will execute the loop.
         @param item (TH1): Histogram to add.
+        @param meta (dict): Meta information to associate with the histogram like "xtitle", "ytitle", "ztitle" that can be shipped
+            for later use so that the loop does not execute.
+        
+        Returns:
+            None
         '''
-        nameToPass = item.GetName() if name == '' else name
-        super(HistGroup,self).Add(nameToPass,item,meta)
+        super(HistGroup,self).Add(name,item,meta)
 
     def __getitem__(self,key,lazy=False):
         '''Get value from key as you would with dictionary.
@@ -1847,11 +1861,14 @@ class HistGroup(Group):
         Ex. `val = mygroup["item_name"]`
 
         @param key (obj): Key for name/key in Group.
+        @param lazy (bool): Access only the pointer, not the histogram (avoids execution of loop).
+
         Returns:
             obj: Item for given key.
         '''
         if lazy == False and not isinstance(self.items[key],ROOT.TH1):
-            self.items[key] = self.items[key].GetValue()
+            self._ptrs[key] = self.items[key]
+            self.items[key] = self._ptrs[key].GetValue()
         return self.items[key]
 
 ###########################
@@ -2158,8 +2175,8 @@ class Correction(ModuleWorker):
     (1) the desired branch/column names must be specified or be used as the argument variable names
     to allow the framework to automatically determine what branch/column to use in GetCall(),
 
-    (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
-    <up, down> for "uncert" type.
+    (2) the return must be a vector ordered as {nominal, up, down} for "weight" type and 
+    {up, down} for "uncert" type.
     '''
     def __init__(self,name,script='',constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False,cloneFuncInfo=None):
         '''Constructor
@@ -2181,7 +2198,12 @@ class Correction(ModuleWorker):
         @param cloneFuncInfo (dict, optional): For internal use when cloning. Defaults to None. Should be the
                 _funcInfo from the object from which this one i
         '''
-
+        ## @var existing
+        # bool
+        # Denotes if associated c++ has already been compiled
+        ## @var name
+        # str
+        # Name of correction 
         if script != '':
             super(Correction,self).__init__(name,script,constructor,mainFunc,columnList,isClone,cloneFuncInfo)
             self.existing = False
@@ -2199,6 +2221,7 @@ class Correction(ModuleWorker):
         @param name (str): Clone name.
         @param newMainFunc (str, optional): Name of the function to use inside script. Defaults to None and the original is used.
         @param newType (str, optional): New type for the cloned correction. Defaults to None and the original is used.
+        
         Returns:
             Correction: Clone of instance with same script but different function (newMainFunc).
         '''
@@ -2258,8 +2281,8 @@ class Calibration(Correction):
     (1) the desired branch/column names must be specified or be used as the argument variable names
     to allow the framework to automatically determine what branch/column to use in GetCall(),
 
-    (2) the return must be a vector ordered as <nominal, up, down> for "weight" type and 
-    <up, down> for "uncert" type.
+    (2) the return must be a vector ordered as {nominal, up, down} for "weight" type and 
+    {up, down} for "uncert" type.
     '''
     def __init__(self,name,script,constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False):
         '''Constructor
@@ -2280,24 +2303,3 @@ class Calibration(Correction):
         '''
 
         super(Calibration,self).__init__(name,script,constructor,mainFunc,columnList,isClone)
-        
-def LoadColumnNames(source=''):
-    '''Loads column names from a text file.
-
-    Args:
-        @param source (str, optional): File location if default TIMBER/data/NanoAODv6_cols.txt
-            is not to be used. Defaults to ''.
-
-    Returns:
-        [str]: List of all column names.
-    '''
-    if source == '': 
-        file = TIMBERPATH+'TIMBER/data/NanoAODv6_cols.txt'
-    else:
-        file = source
-    f = open(file,'r')
-    cols = []
-    for c in f.readlines():
-        cols.append(c.strip('\n'))
-    f.close()
-    return cols

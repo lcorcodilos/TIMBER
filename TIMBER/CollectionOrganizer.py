@@ -127,7 +127,7 @@ class CollectionOrganizer:
 
         @param alias (str): Alias name.
         @param name (str): Full branch name or a collection name. If an alias for a
-            collection attribute is desired, provide the full branch name (ie. <collectionName>_<attributeName>).
+            collection attribute is desired, provide the full branch name (ie. collectionName_attributeName).
 
         Raises:
             ValueError: Entries do not exist so an alias cannot be added.

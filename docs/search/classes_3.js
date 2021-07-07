@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['effloader_109',['EffLoader',['../class_eff_loader.html',1,'']]]
+  ['effloader',['EffLoader',['../class_eff_loader.html',1,'']]]
 ];

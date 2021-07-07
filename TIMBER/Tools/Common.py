@@ -4,8 +4,6 @@ Commonly used functions available for use that can be generic or TIMBER specific
 '''
 
 import json, os, subprocess, sys, glob, ROOT, random, string
-from ROOT import RDataFrame
-from TIMBER.Tools.CMS import CMS_lumi, tdrstyle
 from contextlib import contextmanager
 from collections import OrderedDict
 #-----------------#
@@ -84,7 +82,6 @@ def CutflowTxt(name,node,efficiency=False):
     out.close()
 
 def StitchQCD(QCDdict,normDict=None):
-    from TIMBER.Analyzer import HistGroup
     '''Stitches together histograms in QCD hist groups.
 
     @param QCDdict ({string:HistGroup}): Dictionary of HistGroup objects
@@ -93,6 +90,7 @@ def StitchQCD(QCDdict,normDict=None):
     Returns:
         HistGroup: New HistGroup with histograms in group being the final stitched versions
     '''
+    from TIMBER.Analyzer import HistGroup
     # Normalize first if needed
     if normDict != None:
         for k in normDict.keys():
@@ -108,6 +106,27 @@ def StitchQCD(QCDdict,normDict=None):
                 out[khist].Add(QCDdict[ksample][khist])
 
     return out
+
+def LoadColumnNames(path=os.environ["TIMBERPATH"],source=''):
+    '''Loads column names from a text file.
+
+    @param path (str, optional): Path to TIMBER folder.
+    @param source (str, optional): File location if default TIMBER/data/NanoAODv6_cols.txt
+        is not to be used. Defaults to ''.
+
+    Returns:
+        [str]: List of all column names.
+    '''
+    if source == '': 
+        file = path+'TIMBER/data/NanoAODv6_cols.txt'
+    else:
+        file = source
+    f = open(file,'r')
+    cols = []
+    for c in f.readlines():
+        cols.append(c.strip('\n'))
+    f.close()
+    return cols
 
 #---------#
 # Generic #
@@ -451,9 +470,26 @@ def DictToLatexTable(dict2convert,outfilename,roworder=[],columnorder=[]):
     latexout.close()
 
 class MemoryFile():
+    '''Stores file in memory with access similar to how a file would be written and read on disk.
+        Intention is just to have a string in memory with the same methods as a standard python I/O
+        file so that TIMBER doesn't care which one it is using (ie. they both have "write" methods).
+    '''
     def __init__(self):
+        '''Create empty file.
+        
+        Stores file in memory with access similar to how a file would be written and read on disk.
+        Intention is just to have a string in memory with the same methods as a standard python I/O
+        file so that TIMBER doesn't care which one it is using (ie. they both have "write" methods).
+        '''
+        ## @var str
+        # str
+        # String stored in memory.
         self.str = ''
     def write(self,inStr):
+        '''Write string to the file.
+
+        @param inStr (str): String to write.
+        '''
         self.str += inStr
 
 def DictToMarkdownTable(dict2convert,outfilename=None,roworder=[],columnorder=[]):
@@ -566,7 +602,15 @@ def cd(newdir):
         yield
     finally:
         os.chdir(prevdir)
-## @}
 
 def GenerateHash(length=8):
+    '''Generate a alphanumeric hash of a specified length. Used internally for tracking unique nodes.
+
+    @param length (int, optional): Length of hash. Defaults to 8.
+
+    Returns:
+        str: Hash
+    '''
     return ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for i in range(length))
+
+## @}

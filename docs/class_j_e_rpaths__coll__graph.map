@@ -1,5 +1,4 @@
 <map id="JERpaths" name="JERpaths">
-<area shape="rect" id="node1" title="C++ class to handle the extraction of JER objects starting from the JER tags and jet types." alt="" coords="7,171,86,197"/>
-<area shape="rect" id="node2" href="$class_j_m_epaths.html" title="C++ class. Parent class to handle shared attributes and methods among JESpaths and JERpaths." alt="" coords="5,95,88,121"/>
-<area shape="rect" id="node3" href="$class_temp_dir.html" title="C++ class. Creates a temporary directory that is destroyed on delete." alt="" coords="9,5,85,32"/>
+<area shape="rect" id="node2" href="$class_j_m_epaths.html" title="C++ class. Parent class to handle shared attributes and methods among JESpaths and JERpaths..." alt="" coords="5,95,87,121"/>
+<area shape="rect" id="node3" href="$class_temp_dir.html" title="C++ class. Creates a temporary directory that is destroyed on delete. " alt="" coords="10,5,82,32"/>
 </map>
