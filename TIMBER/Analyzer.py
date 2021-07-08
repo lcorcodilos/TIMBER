@@ -573,7 +573,7 @@ class analyzer(object):
                     if not useTake:
                         self.Define(replacementName,'ROOT::VecOps::Sum(%s_idx)'%(name),nodetype='SubCollDefine')
                     else:
-                        self.Define(replacementName,'%s.size()'%condition)
+                        self.Define(replacementName,'int(%s.size())'%condition)
                 else: self.Define(replacementName,b)
             elif 'Struct>' in self.DataFrame.GetColumnType(b): # skip internal structs
                 continue
