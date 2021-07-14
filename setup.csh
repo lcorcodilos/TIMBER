@@ -9,7 +9,7 @@ if (`command -v dot` == "") then
   return
 endif
 
-# python setup.py install
+python setup.py develop
 set activate_path=$VIRTUAL_ENV/bin/activate.csh
 setenv TIMBERPATH "$PWD/"
 
