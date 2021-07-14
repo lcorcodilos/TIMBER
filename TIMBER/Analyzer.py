@@ -30,7 +30,7 @@ class analyzer(object):
 
     When using class functions to perform actions, an active node will always be tracked so that the next action uses 
     the active node and assigns the output node as the new #ActiveNode"""
-    def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs"):
+    def __init__(self,fileName,eventsTreeName="Events",runTreeName="Runs",multiSampleStr=''):
         """Constructor.
         
         Sets up the tracking of actions on an RDataFrame as nodes. Also
@@ -43,7 +43,10 @@ class analyzer(object):
                 new line characters, or a list of either .root and/or .txt files.
         @param eventsTreeName (str, optional): Name of TTree in fileName where events are stored. Defaults to "Events" (for NanoAOD)
         @param runTreeName (str, optional): Name of TTree in fileName where run information is stored (for generated event info in 
-                simulation). Defaults to "Runs" (for NanoAOD) 
+                simulation). Defaults to "Runs" (for NanoAOD)
+        @param multiSampleStr (str, optional): If a sample was generated with multiple mass points,
+                define the mass which you'd like to analyze in this string. If you're unsure of your options, check the Runs TTree
+                for a branch `genEventSumw_YMass_<mass>`. Defaults to '' which will load `genEventSumw_`.
         """
 
         ## @var fileName
@@ -95,6 +98,9 @@ class analyzer(object):
         self._eventsTreeName = eventsTreeName
         self._runTreeName = runTreeName
         self.silent = False
+        if multiSampleStr != '':
+            multiSampleStr = 'YMass_%s'%multiSampleStr
+            genEventSumw_str = 'genEventSumw_'+multiSampleStr
 
         # Setup TChains for multiple or single file
         self._eventsChain = ROOT.TChain(self._eventsTreeName) 
@@ -115,7 +121,7 @@ class analyzer(object):
 
         if hasattr(self.RunChain,'genEventSumw'): 
             self.preV6 = True 
-        elif hasattr(self.RunChain,'genEventSumw_'): 
+        elif hasattr(self.RunChain,genEventSumw_str): 
             self.preV6 = False
         # Check if dealing with data
         if hasattr(self._eventsChain,'genWeight'):
@@ -129,7 +135,7 @@ class analyzer(object):
             for i in range(self.RunChain.GetEntries()): 
                 self.RunChain.GetEntry(i)
                 if self.preV6: self.genEventSumw+= self.RunChain.genEventSumw
-                else: self.genEventSumw+= self.RunChain.genEventSumw_
+                else: self.genEventSumw+= getattr(self.RunChain,genEventSumw_str)
 
         # Get LHAID from LHEPdfWeights branch
         self.lhaid = "-1"
