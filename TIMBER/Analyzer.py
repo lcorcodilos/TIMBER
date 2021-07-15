@@ -100,7 +100,7 @@ class analyzer(object):
         self.silent = False
         if multiSampleStr != '':
             multiSampleStr = 'YMass_%s'%multiSampleStr
-            genEventSumw_str = 'genEventSumw_'+multiSampleStr
+        genEventSumw_str = 'genEventSumw_'+multiSampleStr
 
         # Setup TChains for multiple or single file
         self._eventsChain = ROOT.TChain(self._eventsTreeName) 
