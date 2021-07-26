@@ -1198,7 +1198,8 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
         thiscutgroup = cutgroup
 
         # Loop over all cuts (`cut` is the name not the string to filter on)
-        for cut in cutgroup.keys():
+        cuts = cutgroup.keys()
+        for cut in cuts:
             # Get the N-1 group of this cut (where N is determined by thiscutgroup)
             minusgroup = thiscutgroup.Drop(cut,makeCopy=True)
             thiscutgroup = minusgroup
@@ -1207,11 +1208,14 @@ a.CalibrateVars(varCalibDict,evalArgs,"CorrectedFatJets")
             nminusones[cut] = self.Apply(minusgroup,thisnode)
             
             # If there are any more cuts left, go to the next node with current cut applied (this is how we keep N as the total N and not just the current N)
-            if len(minusgroup.keys()) > 0:
+            if len(minusgroup.keys()) == 1:
+                thisnode = self.Cut('Minus(%s)_%s'%(cuts[-1],cut),cutgroup[cut],node=thisnode)
+                self.SetActiveNode(thisnode)
+            elif len(minusgroup.keys()) > 0:
                 thisnode = self.Cut(cut,cutgroup[cut],node=thisnode)
                 self.SetActiveNode(thisnode)
             else:
-                nminusones['full'] = self.Cut('full_'+cutgroup.name,cutgroup[cut],node=thisnode)
+                nminusones['full'] = self.Cut(cut,cutgroup[cut],node=thisnode)
 
         self.SetActiveNode(node)
 
