@@ -11,7 +11,7 @@ then
   return
 fi
 
-python setup.py install
+python setup.py develop
 activate_path=$VIRTUAL_ENV/bin/activate
 export TIMBERPATH="$PWD/"
 

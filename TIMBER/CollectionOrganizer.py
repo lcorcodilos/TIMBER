@@ -26,6 +26,7 @@ class CollectionOrganizer:
         self._otherBranches = {}
 
         for b in self._baseBranches:
+            if 'fCoordinates' in b: continue
             self.AddBranch(b,rdf.GetColumnType(b))
 
     def _parsetype(self, t):
