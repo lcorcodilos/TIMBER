@@ -76,9 +76,9 @@ def CutflowTxt(name,node,efficiency=False):
     for filtername in cutflow_dict.keys(): 
         cut = cutflow_dict[filtername]
         if efficiency:
-            out.write('%s %s'%(filtername,cut/cutflow_dict['Initial']))
+            out.write('%s %s\n'%(filtername,cut/cutflow_dict['Initial']))
         else:
-            out.write('%s %s'%(filtername,cut))
+            out.write('%s %s\n'%(filtername,cut))
     out.close()
 
 def StitchQCD(QCDdict,normDict=None):
