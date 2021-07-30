@@ -123,6 +123,9 @@ class analyzer(object):
             self.preV6 = True 
         elif hasattr(self.RunChain,genEventSumw_str): 
             self.preV6 = False
+        else:
+            raise NameError('In attempt to deduce NanoAOD version, could not access branch genEventSumw or %s in TTree %s.'%(genEventSumw_str,self._runTreeName))
+
         # Check if dealing with data
         if hasattr(self._eventsChain,'genWeight'):
             self.isData = False
