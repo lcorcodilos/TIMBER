@@ -231,11 +231,24 @@ class analyzer(object):
         return self.ActiveNode.DataFrame
 
     def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='UPDATE',saveRunChain=True):
-        '''@see Node#Snapshot'''
+        '''@see Node#Snapshot for full description.
+
+        @param columns ([str] or str): List of columns to keep (str) with regex matching.
+                Provide single string 'all' to include all columns.
+        @param outfilename (str): Name of the output file
+        @param treename ([type]): Name of the output TTree
+        @param lazy (bool, optional): If False, the RDataFrame actions until this point will be executed here. Defaults to False.
+        @param openOption (str, optional): TFile opening options. Defaults to 'RECREATE'.
+        @param saveRunChain (bool, optional): Whether to save the TTree specified by runTreeName with the snapshot. Defaults to True.
+
+        Returns:
+            None
+        '''
         if saveRunChain:
+            if openOption != 'RECREATE':
+                raise ValueError('Cannot %s file while also saving Runs TTree. Change openOption to RECREATE.'%openOption)
             self.SaveRunChain(outfilename,merge=False)
-        elif saveRunChain == False and openOption == 'UPDATE':
-            openOption = 'RECREATE'
+            openOption = 'UPDATE' # switch option so snapshot can be saved with RunChain file
         self.ActiveNode.Snapshot(columns,outfilename,treename,lazy,openOption)
 
     def SaveRunChain(self,filename,merge=True):
