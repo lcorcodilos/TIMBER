@@ -36,8 +36,7 @@ class analyzer(object):
         Sets up the tracking of actions on an RDataFrame as nodes. Also
         looks up and stores common information in NanoAOD such as the number of generated
         events in a file (#genEventSumw), the LHA ID of the PDF set in the `LHEPdfWeights`
-        branch (#lhaid), if the file is data (#isData), and if the file is before NanoAOD
-        version 6 (#preV6).
+        branch (#lhaid), and if the file is data (#isData).
 
         @param fileName (str, list(str)): A ROOT file path, a path to a txt file which contains several ROOT file paths separated by 
                 new line characters, or a list of either .root and/or .txt files.
@@ -68,10 +67,6 @@ class analyzer(object):
         # bool
         #
         # Is data (true) or simulation (false) based on existence of genEventSumw branch.
-        ## @var preV6
-        # bool
-        #
-        # Is pre-NanoAODv6 (true) or not (false) based on existence of genEventSumw branch.
         ## @var genEventSumw
         # int
         #
@@ -119,13 +114,6 @@ class analyzer(object):
         self.AllNodes = [self.BaseNode] 
         self.Corrections = {} 
 
-        if hasattr(self.RunChain,'genEventSumw'): 
-            self.preV6 = True 
-        elif hasattr(self.RunChain,genEventSumw_str): 
-            self.preV6 = False
-        else:
-            raise NameError('In attempt to deduce NanoAOD version, could not access branch genEventSumw or %s in TTree %s.'%(genEventSumw_str,self._runTreeName))
-
         # Check if dealing with data
         if hasattr(self._eventsChain,'genWeight'):
             self.isData = False
@@ -137,8 +125,12 @@ class analyzer(object):
         if not self.isData: 
             for i in range(self.RunChain.GetEntries()): 
                 self.RunChain.GetEntry(i)
-                if self.preV6: self.genEventSumw+= self.RunChain.genEventSumw
-                else: self.genEventSumw+= getattr(self.RunChain,genEventSumw_str)
+                if hasattr(self.RunChain,'genEventSumw'):
+                    self.genEventSumw+= self.RunChain.genEventSumw
+                elif hasattr(self.RunChain,genEventSumw_str):
+                    self.genEventSumw+= getattr(self.RunChain,genEventSumw_str)
+                else:
+                    raise NameError('In attempt to deduce sum of event weights, could not access branch genEventSumw or %s in TTree %s.'%(genEventSumw_str,self._runTreeName))
 
         # Get LHAID from LHEPdfWeights branch
         self.lhaid = "-1"
