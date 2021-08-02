@@ -71,6 +71,10 @@ class analyzer(object):
         # int
         #
         # Sum of weights of generated events in imported simulation files. Zero if not found or data.
+        ## @var genEventCount
+        # int
+        #
+        # Number of generated events in imported simulation files. Zero if not found or data.
         ## @var lhaid
         # int
         #
@@ -96,6 +100,7 @@ class analyzer(object):
         if multiSampleStr != '':
             multiSampleStr = 'YMass_%s'%multiSampleStr
         genEventSumw_str = 'genEventSumw_'+multiSampleStr
+        genEventCount_str = 'genEventCount_'+multiSampleStr
 
         # Setup TChains for multiple or single file
         self._eventsChain = ROOT.TChain(self._eventsTreeName) 
@@ -122,13 +127,16 @@ class analyzer(object):
  
         # Count number of generated events if not data
         self.genEventSumw = 0.0
+        self.genEventCount = 0
         if not self.isData: 
             for i in range(self.RunChain.GetEntries()): 
                 self.RunChain.GetEntry(i)
                 if hasattr(self.RunChain,'genEventSumw'):
                     self.genEventSumw+= self.RunChain.genEventSumw
+                    self.genEventCount+= self.RunChain.genEventCount
                 elif hasattr(self.RunChain,genEventSumw_str):
                     self.genEventSumw+= getattr(self.RunChain,genEventSumw_str)
+                    self.genEventCount+= getattr(self.RunChain,genEventCount_str)
                 else:
                     raise NameError('In attempt to deduce sum of event weights, could not access branch genEventSumw or %s in TTree %s.'%(genEventSumw_str,self._runTreeName))
 
