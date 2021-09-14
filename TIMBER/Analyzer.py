@@ -36,8 +36,7 @@ class analyzer(object):
         Sets up the tracking of actions on an RDataFrame as nodes. Also
         looks up and stores common information in NanoAOD such as the number of generated
         events in a file (#genEventSumw), the LHA ID of the PDF set in the `LHEPdfWeights`
-        branch (#lhaid), if the file is data (#isData), and if the file is before NanoAOD
-        version 6 (#preV6).
+        branch (#lhaid), and if the file is data (#isData).
 
         @param fileName (str, list(str)): A ROOT file path, a path to a txt file which contains several ROOT file paths separated by 
                 new line characters, or a list of either .root and/or .txt files.
@@ -68,14 +67,14 @@ class analyzer(object):
         # bool
         #
         # Is data (true) or simulation (false) based on existence of genEventSumw branch.
-        ## @var preV6
-        # bool
-        #
-        # Is pre-NanoAODv6 (true) or not (false) based on existence of genEventSumw branch.
         ## @var genEventSumw
         # int
         #
         # Sum of weights of generated events in imported simulation files. Zero if not found or data.
+        ## @var genEventCount
+        # int
+        #
+        # Number of generated events in imported simulation files. Zero if not found or data.
         ## @var lhaid
         # int
         #
@@ -101,6 +100,7 @@ class analyzer(object):
         if multiSampleStr != '':
             multiSampleStr = 'YMass_%s'%multiSampleStr
         genEventSumw_str = 'genEventSumw_'+multiSampleStr
+        genEventCount_str = 'genEventCount_'+multiSampleStr
 
         # Setup TChains for multiple or single file
         self._eventsChain = ROOT.TChain(self._eventsTreeName) 
@@ -119,10 +119,6 @@ class analyzer(object):
         self.AllNodes = [self.BaseNode] 
         self.Corrections = {} 
 
-        if hasattr(self.RunChain,'genEventSumw'): 
-            self.preV6 = True 
-        elif hasattr(self.RunChain,genEventSumw_str): 
-            self.preV6 = False
         # Check if dealing with data
         if hasattr(self._eventsChain,'genWeight'):
             self.isData = False
@@ -131,11 +127,18 @@ class analyzer(object):
  
         # Count number of generated events if not data
         self.genEventSumw = 0.0
+        self.genEventCount = 0
         if not self.isData: 
             for i in range(self.RunChain.GetEntries()): 
                 self.RunChain.GetEntry(i)
-                if self.preV6: self.genEventSumw+= self.RunChain.genEventSumw
-                else: self.genEventSumw+= getattr(self.RunChain,genEventSumw_str)
+                if hasattr(self.RunChain,'genEventSumw'):
+                    self.genEventSumw+= self.RunChain.genEventSumw
+                    self.genEventCount+= self.RunChain.genEventCount
+                elif hasattr(self.RunChain,genEventSumw_str):
+                    self.genEventSumw+= getattr(self.RunChain,genEventSumw_str)
+                    self.genEventCount+= getattr(self.RunChain,genEventCount_str)
+                else:
+                    raise NameError('In attempt to deduce sum of event weights, could not access branch genEventSumw or %s in TTree %s.'%(genEventSumw_str,self._runTreeName))
 
         # Get LHAID from LHEPdfWeights branch
         self.lhaid = "-1"
@@ -228,11 +231,24 @@ class analyzer(object):
         return self.ActiveNode.DataFrame
 
     def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='UPDATE',saveRunChain=True):
-        '''@see Node#Snapshot'''
+        '''@see Node#Snapshot for full description.
+
+        @param columns ([str] or str): List of columns to keep (str) with regex matching.
+                Provide single string 'all' to include all columns.
+        @param outfilename (str): Name of the output file
+        @param treename ([type]): Name of the output TTree
+        @param lazy (bool, optional): If False, the RDataFrame actions until this point will be executed here. Defaults to False.
+        @param openOption (str, optional): TFile opening options. Defaults to 'RECREATE'.
+        @param saveRunChain (bool, optional): Whether to save the TTree specified by runTreeName with the snapshot. Defaults to True.
+
+        Returns:
+            None
+        '''
         if saveRunChain:
+            if openOption != 'RECREATE':
+                raise ValueError('Cannot %s file while also saving Runs TTree. Change openOption to RECREATE.'%openOption)
             self.SaveRunChain(outfilename,merge=False)
-        elif saveRunChain == False and openOption == 'UPDATE':
-            openOption = 'RECREATE'
+            openOption = 'UPDATE' # switch option so snapshot can be saved with RunChain file
         self.ActiveNode.Snapshot(columns,outfilename,treename,lazy,openOption)
 
     def SaveRunChain(self,filename,merge=True):
