@@ -3,11 +3,12 @@
  @{
 '''
 from TIMBER.Tools.CMS import CMS_lumi, tdrstyle
-import ROOT, collections, math
+import ROOT, math
 from collections import OrderedDict
-from TIMBER.Analyzer import HistGroup
 
-def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},colors={},scale=True,stackBkg=False,doSoverB=False,forceForward=False,forceBackward=False):
+def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},colors={},
+                  scale=True,stackBkg=False,doSoverB=False,forceForward=False,forceBackward=False,
+                  logy=False):
     '''Create a plot that compares the shapes of backgrounds versus signal.
     If stackBkg, backgrounds will be stacked together and signals will be plot separately.
     Total background and signals are scaled to 1 if scale == True. Inputs organized 
@@ -31,6 +32,7 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     @param doSoverB (bool, optional): If True, add a sub pad with signal/sqrt(background) calculation. Defaults to False.
     @param forceForward (bool, optional): If True, force define cumulative distribution from left to right. Defaults to False.
     @param forceBackward (bool, optional): If True, force define cumulative distribution from right to left. Defaults to False.
+    @param logy (bool, optional): If True, set y-axis to log scale. Defaults to False.
 
     Returns:
         None
@@ -135,12 +137,12 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     if len(bkgs.keys()) > 0:
         if stackBkg:
             bkgStack.Draw('hist')
-            bkgStack.GetXaxis().SetTitleOffset(1.1)
+            bkgStack = _axis_sizing(bkgStack,logy)
             bkgStack.Draw('hist')
         else:
-            for bkg in bkgs.values():
-                bkg.GetXaxis().SetTitleOffset(1.1)
-                bkg.Draw('same hist')
+            for k in bkgs.keys():
+                bkgs[k] = _axis_sizing(bkgs[k],logy)
+                bkgs[k].Draw('same hist')
     for h in signals.values():
         h.Draw('same hist')
     legend.Draw()
@@ -154,11 +156,11 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
         s_over_b.SetLineColorAlpha(ROOT.kBlack,1)
         s_over_b.SetLineWidth(2)
         s_over_b.SetFillColorAlpha(ROOT.kWhite,0)
-        s_over_b.GetYaxis().SetLabelSize(0.08)
-        s_over_b.GetYaxis().SetTitleSize(0.08)
+        s_over_b.GetYaxis().SetLabelSize(0.10)
+        s_over_b.GetYaxis().SetTitleSize(0.11)
         s_over_b.GetYaxis().SetNdivisions(306)
-        s_over_b.GetXaxis().SetLabelSize(0.09)
-        s_over_b.GetXaxis().SetTitleSize(0.09)
+        s_over_b.GetXaxis().SetLabelSize(0.11)
+        s_over_b.GetXaxis().SetTitleSize(0.11)
         s_over_b.GetYaxis().SetTitleOffset(0.4)
         s_over_b.Draw('hist')
         if line_pos: # split line
@@ -184,6 +186,8 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
             text.Draw()
             temp.append(text)
     c.cd()
+    if logy:
+        c.SetLogy()
 
     # CMS_lumi.writeExtraText = 1
     # CMS_lumi.extraText = "Preliminary simulation"
@@ -193,6 +197,20 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     CMS_lumi.CMS_lumi(c, iPeriod=year, sim=True)
 
     c.Print(outfilename,outfilename.split('.')[-1])
+
+def _axis_sizing(h,logy):
+    h.GetXaxis().SetTitleOffset(1.1)
+    h.SetLineColor(ROOT.kBlack)
+    h.GetYaxis().SetTitleOffset(1.04)
+    h.GetYaxis().SetLabelSize(0.07)
+    h.GetYaxis().SetTitleSize(0.09)
+    h.GetXaxis().SetLabelSize(0.07)
+    h.GetXaxis().SetTitleSize(0.09)
+    h.GetXaxis().SetLabelOffset(0.05)
+    h.GetYaxis().SetNdivisions(306)
+    if logy == True:
+        h.SetMinimum(1e-3)
+    return h
 
 def MakeSoverB(stack_of_bkgs,signal,forceForward=False,forceBackward=False):
     '''Makes the SoverB distribution and returns it.
