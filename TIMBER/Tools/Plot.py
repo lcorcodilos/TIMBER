@@ -6,6 +6,28 @@ from TIMBER.Tools.CMS import CMS_lumi, tdrstyle
 import ROOT, math
 from collections import OrderedDict
 
+def _doAxisTitles(h,main=True,split=False):
+    h.GetXaxis().SetNdivisions(505)
+    if main:
+        if split:
+            h.GetXaxis().SetTitleSize(0.06)
+            h.GetYaxis().SetTitleSize(0.06)
+            h.GetXaxis().SetLabelSize(0.06)
+            h.GetYaxis().SetLabelSize(0.06)
+            h.GetYaxis().SetTitleOffset(0.85)
+        else:
+            h.GetXaxis().SetTitleSize(0.05)
+            h.GetYaxis().SetTitleSize(0.05)
+            h.GetXaxis().SetLabelSize(0.05)
+            h.GetYaxis().SetLabelSize(0.05)
+            h.GetYaxis().SetTitleOffset(1.2)
+    else:
+        h.GetXaxis().SetTitleSize(0.12)
+        h.GetYaxis().SetTitleSize(0.12)
+        h.GetXaxis().SetLabelSize(0.13)
+        h.GetYaxis().SetLabelSize(0.13)
+        h.GetYaxis().SetTitleOffset(0.4)
+
 def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},colors={},
                   scale=True,stackBkg=False,doSoverB=False,forceForward=False,forceBackward=False,
                   logy=False):
@@ -45,7 +67,10 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     c.SetBottomMargin(0.12)
     c.SetTopMargin(0.08)
     c.SetRightMargin(0.05)
-    legend = ROOT.TLegend(0.73,0.8-0.04*(len(bkgs.keys())+len(signals.keys())-1),0.9,0.88)
+    c.SetLeftMargin(0.13)
+    if logy:
+        c.SetLogy()
+    legend = ROOT.TLegend(0.65,0.70-0.04*(len(bkgs.keys())+len(signals.keys())-1),0.93,0.88)
     legend.SetBorderSize(0)
     # ROOT.gStyle.SetTextFont(42)
     ROOT.gStyle.SetOptStat(0)
@@ -118,6 +143,8 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     if doSoverB: # build sub pads
         main = ROOT.TPad('c_main','c_main',0, 0.3, 1, 1)
         SoverB = ROOT.TPad('c_sub','c_sub',0, 0, 1, 0.3)
+        if logy:
+            main.SetLogy()
 
         main.SetBottomMargin(0.0)
         main.SetLeftMargin(0.1)
@@ -137,12 +164,22 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     if len(bkgs.keys()) > 0:
         if stackBkg:
             bkgStack.Draw('hist')
-            bkgStack = _axis_sizing(bkgStack,logy)
+            bkgStack.GetXaxis().SetTitleOffset(1.1)
+            _doAxisTitles(bkgStack,split=doSoverB)
+            total = bkgStack.GetHists().First().Clone()
+            total.Reset()
+            for stack_hist in bkgStack.GetHists():
+                total.Add(stack_hist)
+            total.SetLineColorAlpha(ROOT.kBlack,1)
+            total.SetLineWidth(1)
+            total.SetFillColorAlpha(ROOT.kBlack,0)
             bkgStack.Draw('hist')
+            total.Draw('histsame')
         else:
-            for k in bkgs.keys():
-                bkgs[k] = _axis_sizing(bkgs[k],logy)
-                bkgs[k].Draw('same hist')
+            for bkg in bkgs.values():
+                bkgStack.GetXaxis().SetTitleOffset(1.1)
+                _doAxisTitles(bkg,split=doSoverB)
+                bkg.Draw('same hist')
     for h in signals.values():
         h.Draw('same hist')
     legend.Draw()
@@ -156,12 +193,8 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
         s_over_b.SetLineColorAlpha(ROOT.kBlack,1)
         s_over_b.SetLineWidth(2)
         s_over_b.SetFillColorAlpha(ROOT.kWhite,0)
-        s_over_b.GetYaxis().SetLabelSize(0.10)
-        s_over_b.GetYaxis().SetTitleSize(0.11)
-        s_over_b.GetYaxis().SetNdivisions(306)
-        s_over_b.GetXaxis().SetLabelSize(0.11)
-        s_over_b.GetXaxis().SetTitleSize(0.11)
-        s_over_b.GetYaxis().SetTitleOffset(0.4)
+        s_over_b.GetYaxis().SetNdivisions(305)
+        _doAxisTitles(s_over_b,False)
         s_over_b.Draw('hist')
         if line_pos: # split line
             line = ROOT.TLine(line_pos,s_over_b.GetMinimum(),line_pos,s_over_b.GetMaximum())
@@ -182,12 +215,10 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
             text = ROOT.TText(m,low+(high-low)/3," %.2f "%m)
             if (s_over_b.GetXaxis().GetXmax() - m) < (0.9*s_over_b.GetXaxis().GetXmax()):
                 text.SetTextAlign(31)
-                text.SetTextSize(0.09)
+                text.SetTextSize(0.12)
             text.Draw()
             temp.append(text)
     c.cd()
-    if logy:
-        c.SetLogy()
 
     # CMS_lumi.writeExtraText = 1
     # CMS_lumi.extraText = "Preliminary simulation"
@@ -197,20 +228,6 @@ def CompareShapes(outfilename,year,prettyvarname,bkgs={},signals={},names={},col
     CMS_lumi.CMS_lumi(c, iPeriod=year, sim=True)
 
     c.Print(outfilename,outfilename.split('.')[-1])
-
-def _axis_sizing(h,logy):
-    h.GetXaxis().SetTitleOffset(1.1)
-    h.SetLineColor(ROOT.kBlack)
-    h.GetYaxis().SetTitleOffset(1.04)
-    h.GetYaxis().SetLabelSize(0.07)
-    h.GetYaxis().SetTitleSize(0.09)
-    h.GetXaxis().SetLabelSize(0.07)
-    h.GetXaxis().SetTitleSize(0.09)
-    h.GetXaxis().SetLabelOffset(0.05)
-    h.GetYaxis().SetNdivisions(306)
-    if logy == True:
-        h.SetMinimum(1e-3)
-    return h
 
 def MakeSoverB(stack_of_bkgs,signal,forceForward=False,forceBackward=False):
     '''Makes the SoverB distribution and returns it.
@@ -608,7 +625,7 @@ def EasyPlots(name, histlist, bkglist=[],signals=[],colors=[],titles=[],logy=Fal
                              
                 pulls[hist_index].GetYaxis().SetLabelSize(LS)
                 pulls[hist_index].GetYaxis().SetTitleSize(LS)
-                pulls[hist_index].GetYaxis().SetNdivisions(306)
+                pulls[hist_index].GetYaxis().SetNdivisions(305)
                 pulls[hist_index].GetXaxis().SetLabelSize(LS)
                 pulls[hist_index].GetXaxis().SetTitleSize(LS)
 
