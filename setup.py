@@ -21,7 +21,8 @@ setuptools.setup(
         "graphviz==0.14.2",
         "pydot==1.4.1",
         "networkx==2.2",
-        "clang==6.0.0.2"
+        "clang==6.0.0.2",
+        "pandas"
     ]
 )
 
