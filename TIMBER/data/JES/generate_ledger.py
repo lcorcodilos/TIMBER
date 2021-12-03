@@ -11,7 +11,7 @@ def get_run_block(sData,sMC):
 
     return out.replace('_','').replace('Run','')
 
-_columns = ['tag','ver','year','ULflag','APVflag','dataOrMC','filename']
+_columns = ['tag','ver','year','ULflag','dataOrMC','filename']
 
 df = pandas.DataFrame(columns=_columns)
 
@@ -24,19 +24,16 @@ for filename in glob.glob('*MC.tar.gz'):
     elif len(pieces) > 4:
         raise IndexError('Expected at most 3 underscores ("_") in tarball names but found something different (%s). Algorithm assumes at most 3 underscores.'%filename)
 
+    APVflag = True if 'APV' in pieces[0] else False
+
     d_row = {c:None for c in _columns}
 
     d_row['tag']      = pieces[0]
     d_row['ver']      = pieces[1]
     d_row['ULflag']   = True if 'UL' in d_row['tag'] else False
-    d_row['APVflag']  = True if 'APV' in d_row['tag'] else False
     d_row['dataOrMC'] = 'MC'
     d_row['filename'] = filename
-
-    if d_row['APVflag']:
-        d_row['year']     = d_row['tag'][-5:-3]
-    else:
-        d_row['year'] = d_row['tag'].split('_')[0][-2:]
+    d_row['year']     = '20' + (d_row['tag'][-5:] if APVflag else d_row['tag'].split('_')[0][-2:])
 
     df = df.append(d_row, ignore_index=True)
 
