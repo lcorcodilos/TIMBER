@@ -39,7 +39,7 @@ jobs:
         pip install virtualenv
         python -m virtualenv timber-env
         source timber-env/bin/activate
-        pip install pytest gdown
+        python -m pip install pytest gdown
         gdown https://drive.google.com/uc?id=11dXffndcD3OkHqJ3x2iaVZj5C8HVLeg_ -O root_v6-22-00_build.tgz
         tar -xzf root_v6-22-00_build.tgz
     - name: Pytest
