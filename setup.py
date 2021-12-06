@@ -22,7 +22,8 @@ setuptools.setup(
         "pydot==1.4.1",
         "networkx==2.2",
         "clang==6.0.0.2",
-        "pandas==0.24.2" if sys.version_info.major != 3 else "pandas"
+        "numpy==1.16.6",
+        "pandas==0.24.2"
     ]
 )
 

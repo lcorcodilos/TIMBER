@@ -35,7 +35,7 @@ jobs:
         ls /usr/lib/x86_64-linux-gnu/ | grep 'libclang'
         echo "-------END DEBUG-------"
         sudo ln -s /usr/lib/x86_64-linux-gnu/libclang-9.so.1 /usr/lib/x86_64-linux-gnu/libclang.so
-        python -m pip install --upgrade pip
+        python -m pip install --upgrade pip==20.3
         pip install virtualenv
         python -m virtualenv timber-env
         source timber-env/bin/activate
@@ -46,6 +46,7 @@ jobs:
       run: |
         source root_v6.22.00.build/bin/thisroot.sh
         source timber-env/bin/activate
+        python -m pip install --upgrade pip
         source setup.sh
         export TIMBERPATH=$TIMBERPATH
         pytest test/
