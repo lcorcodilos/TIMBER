@@ -29,10 +29,10 @@ The issue can be solved simply by creating a symbolic link in the folder where t
 
 First, your best resource can be found on [this Twiki](https://twiki.cern.ch/twiki/bin/view/CMS/PdmVRun2LegacyAnalysis) which describes legacy Run 2 analyses.
 
-In short and for practical matters, 2016 data and MC now exists in two eras which can be denoted with one of the following acronyms - "APV", "VFP", or "HIPM". However, these acronyms are not simply interchangable but instead follow these rules:
+In short and for practical matters, 2016 data and MC now exists in two eras which can be denoted with one of the following acronyms - "APV", "VFP", or "HIPM". However, these acronyms are not simply interchangeable but instead follow these rules:
 
 - "preVFP" and "APV" in MC/JEC corresponds to data eras B, C, D, and E plus F with HIPM (note that B, C, D, and E are *without* HIPM),
-- "postVFP" (or no "VFP") and no "APV" in MC/JEC corresponds to data eras F, G, and H, all with no HIPM denotion.
+- "postVFP" (or no "VFP") and no "APV" in MC/JEC corresponds to data eras F, G, and H, all with no HIPM.
 
 For the sake of simplicity, TIMBER deals with everything in terms of "APV". When generating the ledgers in `TIMBER/data/`, files are mapped to either the "2016" or "2016APV" eras, depending on how those files follow the two rules above.
 
