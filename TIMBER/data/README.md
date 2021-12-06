@@ -52,4 +52,4 @@ File pdfsets.index downloaded from [https://lhapdfsets.web.cern.ch/current/pdfse
 ## Pileup files
 The derivation of the files in the `TIMBER/data/Pileup/` directory can be found in `TIMBER/data/Pileup/generate_files.sh`. The procedure follows the instructions outlined in [this](https://twiki.cern.ch/twiki/bin/view/CMS/PileupJSONFileforData#Recommended_cross_section) TWiki with .txt file locations from [this](https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#PileupInformation) TWiki.
 
-*(Last updated April 6, 2021)*
+*(Last updated Nov 11, 2021)*
