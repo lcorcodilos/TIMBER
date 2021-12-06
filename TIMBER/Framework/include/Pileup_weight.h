@@ -19,29 +19,29 @@ class Pileup_weight {
         WeightCalculatorFromHistogram _worker, _worker_plus, _worker_minus;
         bool _autoPU;
 
-        void init(std::string filename_mc, std::string filename_data,
+        void init(std::string filename_mc, std::vector<std::string> filenames_data,
                 std::string histname_mc, std::string histname_data);
 
     public:
         /**
-         * @brief Construct a new Pileup_weight object, providing custom MC and 
-         * data histograms to take the ratio of the true number of primary vertices.
+         * @brief Construct a new Pileup_weight object, providing custom MC histograms 
+         * to take the ratio of the true number of primary vertices.
          * 
-         * @param filename_mc Use "auto" to get the number of primary vertices directly from "autoPU" histogram in memory (gDirectory)
-         * @param filename_data 
-         * @param histname_mc 
-         * @param histname_data 
+         * @param filename_mc Use "auto" to get the number of primary vertices directly from "autoPU" histogram in memory (gDirectory).
+         * @param filenames_data Vector of file names holding pileup distributions, ordered as nominal, up, down variations.
+         * @param histname_mc Defaults to "autoPU".
+         * @param histname_data Defaults to "pileup".
          */
-        Pileup_weight(std::string filename_mc, std::string filename_data,
-                      std::string histname_mc, std::string histname_data);
+        Pileup_weight(std::string filename_mc, std::vector<std::string> filenames_data,
+                      std::string histname_mc="autoPU", std::string histname_data="pileup");
         /**
          * @brief Construct a new Pileup_weight object. Assumes "auto" pileup calculation
          * for MC distribution. Calculates the ratio of the true number of primary vertices
          * between data and simulation.
          * 
-         * @param era 2016(UL), 2017(UL), 2018(UL)
+         * @param filenames_data Vector of file names holding pileup distributions, ordered as nominal, up, down variations
          */
-        Pileup_weight(std::string era);
+        Pileup_weight(std::vector<std::string> filenames_data);
         /**
          * @brief Evaluate the pileup weight (value of ratio of data to simulation).
          * 

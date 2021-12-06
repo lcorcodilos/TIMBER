@@ -24,3 +24,16 @@ Two things could have happened. The first is that you do not have clang installe
 The second is that `libclang.so` is named something else in your operating system. The real location and/or name will depend on the system but for Ubuntu 18.04 for example, the needed library is `/usr/lib/x86_64-linux-gnu/libclang-6.0.so.1`.
 
 The issue can be solved simply by creating a symbolic link in the folder where the true shared object file exists (via ``sudo ln -s libclang.so.1 libclang.so``)
+
+# How do I know when to use "2016" vs "2016APV" when performing a Run 2 analysis?
+
+First, your best resource can be found on [this Twiki](https://twiki.cern.ch/twiki/bin/view/CMS/PdmVRun2LegacyAnalysis) which describes legacy Run 2 analyses.
+
+In short and for practical matters, 2016 data and MC now exists in two eras which can be denoted with one of the following acronyms - "APV", "VFP", or "HIPM". However, these acronyms are not simply interchangable but instead follow these rules:
+
+- "preVFP" and "APV" in MC/JEC corresponds to data eras B, C, D, and E plus F with HIPM (note that B, C, D, and E are *without* HIPM),
+- "postVFP" (or no "VFP") and no "APV" in MC/JEC corresponds to data eras F, G, and H, all with no HIPM denotion.
+
+For the sake of simplicity, TIMBER deals with everything in terms of "APV". When generating the ledgers in `TIMBER/data/`, files are mapped to either the "2016" or "2016APV" eras, depending on how those files follow the two rules above.
+
+TIMBER does not take responsibility to determine whether your input files are 2016 or 2016APV! The user is responsible for determining the the correct files they need and then calling the correct era when setting up, for example, a `Correction` object. We hope this isn't too much of a burden since the user is already responsible for separating 2016, 2017, and 2018 (just think of 2016APV as a new "year").

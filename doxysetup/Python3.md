@@ -43,10 +43,10 @@ of CMSSW but CMSSW_11_1_4 was the newest version of CMSSW (excluding `_pre` vers
 
 Here's the full setup.
 ```
-cmsrel CMSSW_11_4_1 # has python 3.8 (root version we grab will be compiled for python3.8 but not python3.6)
-cd CMSSW_11_4_1/src
+cmsrel CMSSW_11_1_4 # has python 3.8 (root version we grab will be compiled for python3.8 but not python3.6)
+cd CMSSW_11_1_4/src
 cmsenv
-source /cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.22.00/bin/thisroot.sh # compiled for python2.7 and python3.8 (not for python3.6 which is why we need CMSSW_11_4_1)
+source /cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.22.00/bin/thisroot.sh # compiled for python2.7 and python3.8 (not for python3.6 which is why we need CMSSW_11_1_4)
 python3 -c "import ROOT" # test python3 - should return nothing
 python2.7 -c "import ROOT" # test python2.7 - should return nothing
 ```
@@ -69,5 +69,5 @@ virtualenvs are good to use so you can install other python packages via pip.
 3. Combine (1) and (2) so that the alias also does the virtualenv activating.
 
 (optional) If you want to be really cool, also modify the `deactivate` function in `pyroot3/bin/activate` so that it resets
-the root version to the original for `CMSSW_11_4_1`. This is mainly for fun since you could perform the reset by calling `cmsenv`
+the root version to the original for `CMSSW_11_1_4`. This is mainly for fun since you could perform the reset by calling `cmsenv`
 as well.
