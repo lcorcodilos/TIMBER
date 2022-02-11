@@ -22,7 +22,7 @@ setuptools.setup(
         "pydot==1.4.1",
         "networkx==2.2",
         "clang==6.0.0.2",
-        "numpy==1.16.6",
+        "numpy==1.21.0",
         "pandas==0.24.2"
     ]
 )
