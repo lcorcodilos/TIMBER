@@ -13,3 +13,4 @@ examples/*.root
 bin/
 root*
 .pytest_cache/
+TIMBER/data/Pileup/old/

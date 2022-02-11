@@ -230,7 +230,7 @@ class analyzer(object):
         '''        
         return self.ActiveNode.DataFrame
 
-    def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='UPDATE',saveRunChain=True):
+    def Snapshot(self,columns,outfilename,treename,lazy=False,openOption='RECREATE',saveRunChain=False):
         '''@see Node#Snapshot for full description.
 
         @param columns ([str] or str): List of columns to keep (str) with regex matching.

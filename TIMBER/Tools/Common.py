@@ -3,7 +3,7 @@ Commonly used functions available for use that can be generic or TIMBER specific
 @{
 '''
 
-import json, os, subprocess, sys, glob, ROOT, random, string
+import json, os, subprocess, sys, ROOT, random, string, pandas
 from contextlib import contextmanager
 from collections import OrderedDict
 #-----------------#
@@ -137,6 +137,8 @@ JEStags = {
     "2016": "Summer16_07Aug2017_V11",
     "2017": "Fall17_17Nov2017_V32",
     "2018": "Autumn18_V19",
+    "2016UL": "Summer19UL16_V7",
+    "2016ULAPV": "Summer19UL16APV_V7",
     "2017UL": "Summer19UL17_V5",
     "2018UL": "Summer19UL18_V5"
 }
@@ -146,18 +148,21 @@ JERtags = {
     "2016":"Summer16_25nsV1b",
     "2017":"Fall17_V3b",
     "2018":"Autumn18_V7b",
+    "2016UL":"Summer20UL16_JRV3",
+    "2016ULAPV":"Summer20UL16APV_JRV3",
     "2017UL":"Summer19UL17_JRV2",
     "2018UL":"Summer19UL18_JRV2"
 }
 
-def GetJMETag(t,year,setname):
+def GetJMETag(t,year,setname,ULflag=True):
     '''Return the latest JME tag corresponding to the type `t` (JES or JER),
     `year`, and `setname` (MC for simulation and A, B, C, etc for data).
+    If you need the APV version of 2016, make sure to set the year to '2016APV'.
     Returned string is compatible with input needed by JME modules. 
 
     Args:
         t (str): JES or JER
-        year (str): 2016, 2017, 2018, 2017UL, or 2018UL
+        year (str): 2016, 2016APV, 2017, 2018
         setname (str): MC for simulation. A, B, C, D, E, F, G, or H for data.
 
     Raises:
@@ -166,29 +171,57 @@ def GetJMETag(t,year,setname):
     Returns:
         str: JME tarball/tag name compatible with input needed by JME modules.
     '''
-    if setname == 'MC':
-        MCorData = 'MC'
-        subset = ''
-    else:
-        MCorData = 'DATA'
-        subset = setname
-        if year == '2018' or 'UL' in year:
-            subset = '_Run'+setname
+    year = _year_to_thousands_str(year)
 
-    if t == 'JES':
-        tag = JEStags[year]
-        tag_and_version = ['_'.join(tag.split('_')[:-1]),tag.split('_')[-1]]
-        if MCorData == "DATA":
-            fullpath = os.environ["TIMBERPATH"]+"TIMBER/data/JES/{0}*{1}*_{2}_{3}.tar.gz".format(tag_and_version[0],subset,tag_and_version[1],MCorData)
-            out = glob.glob(fullpath)[0].replace(os.environ["TIMBERPATH"]+"TIMBER/data/JES/",'').replace('.tar.gz','')
-        else:
-            out = '{0}{1}_{2}_{3}'.format(tag_and_version[0],subset,tag_and_version[1],MCorData)
-
-    elif t == 'JER':
-        out = '{0}_{1}'.format(JERtags[year],MCorData)
-    else:
-        raise ValueError("Type must be either 'JES' or 'JER'")
+    df = pandas.read_csv(os.environ["TIMBERPATH"]+"TIMBER/data/%s/ledger.csv"%t)
+    files = df[df.year.eq(year) & df.dataOrMC.eq(setname) & df.ULflag.eq(ULflag)].filename.to_list()
+    if len(files) == 0:
+        raise ValueError('Could not find a matching tarball for year==%s, setname==%s, ULflag==%s.'%(year,setname,ULflag))
+    elif len(files) > 1:
+        raise ValueError('Found more than one tarball for year==%s, setname==%s, ULflag==%s.\n%s'%(year,setname,ULflag,files))
     
+    return files[0].replace('.tar.gz','')
+
+def GetPUfile(year,ULflag=True,variation='nominal'):
+    '''Get the path the to the pileup file corresponding to the input year,
+    UL flag, and variation of the total inelastic cross-section.
+
+    Args:
+        year (str): 2016, 2016APV, 2017, 2018
+        ULflag (bool, optional): Defaults to True.
+        variation (str, optional): Can be 'nominal', 'up', or 'down'. Defaults to 'nominal'.
+
+    Raises:
+        ValueError: If a matching tarball cannot be found.
+        ValueError: If more than one tarball is found.
+
+    Returns:
+        str: Path to the file to use.
+    '''
+    year = _year_to_thousands_str(year)
+    df = pandas.read_csv(os.environ["TIMBERPATH"]+"TIMBER/data/Pileup/ledger.csv")
+    file = df[df.year.eq(year) & df.variation.eq(variation) & df.ULflag.eq(ULflag)].filename.to_list()
+    if len(file) == 0:
+        raise ValueError('Could not find a matching tarball for year==%s, variation==%s, ULflag==%s.'%(year,variation,ULflag))
+    elif len(file) > 1:
+        raise ValueError('Found more than one tarball for year==%s, variation==%s, ULflag==%s.\n%s'%(year,variation,ULflag,files))
+    return file[0]
+
+def _year_to_thousands_str(year):
+    '''Converts the input into a string with a base of 2000.'''
+    if isinstance(year, int):
+        if year < 2000:
+            out = str(year + 2000)
+        else:
+            out = str(year)
+    elif isinstance(year, str):
+        if year.startswith('20'):
+            out = year
+        else:
+            out = '20'+year
+    else:
+        raise TypeError('Year must be of type string or int.')
+
     return out
 
 def CompileCpp(blockcode,library=False):

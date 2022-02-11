@@ -93,7 +93,7 @@ std::vector<float> JetSmearer::GetSmearValsPt(LorentzV jet, RVec<LorentzV> genJe
 std::vector<float> JetSmearer::GetSmearValsM(LorentzV jet, RVec<LorentzV> genJets){
     std::vector<float> out(3);
     if (jet.M() <= 0.){
-        printf("WARNING: jet m = %f !!", jet.M());
+        printf("WARNING: jet m = %f !!\n", jet.M());
         out = {1.,1.,1.};
     } else {
         const LorentzV genJet = _genJetMatcher->match(jet, genJets, -1); // -1 removes pt requirement

@@ -1,0 +1,15 @@
+,tag,ver,year,ULflag,dataOrMC,filename
+0,Autumn18,V7b,2018,False,DATA,Autumn18_V7b_DATA.tar.gz
+1,Autumn18,V7b,2018,False,MC,Autumn18_V7b_MC.tar.gz
+2,Fall17,V3b,2017,False,DATA,Fall17_V3b_DATA.tar.gz
+3,Fall17,V3b,2017,False,MC,Fall17_V3b_MC.tar.gz
+4,Summer16,25nsV1b,2016,False,DATA,Summer16_25nsV1b_DATA.tar.gz
+5,Summer16,25nsV1b,2016,False,MC,Summer16_25nsV1b_MC.tar.gz
+6,Summer19UL17,JRV3,2017,True,DATA,Summer19UL17_JRV3_DATA.tar.gz
+7,Summer19UL17,JRV3,2017,True,MC,Summer19UL17_JRV3_MC.tar.gz
+8,Summer19UL18,JRV2,2018,True,DATA,Summer19UL18_JRV2_DATA.tar.gz
+9,Summer19UL18,JRV2,2018,True,MC,Summer19UL18_JRV2_MC.tar.gz
+10,Summer20UL16APV,JRV3,2016APV,True,DATA,Summer20UL16APV_JRV3_DATA.tar.gz
+11,Summer20UL16APV,JRV3,2016APV,True,MC,Summer20UL16APV_JRV3_MC.tar.gz
+12,Summer20UL16,JRV3,2016,True,DATA,Summer20UL16_JRV3_DATA.tar.gz
+13,Summer20UL16,JRV3,2016,True,MC,Summer20UL16_JRV3_MC.tar.gz

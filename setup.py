@@ -1,4 +1,4 @@
-import setuptools, subprocess, os
+import setuptools, sys
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -21,7 +21,9 @@ setuptools.setup(
         "graphviz==0.14.2",
         "pydot==1.4.1",
         "networkx==2.2",
-        "clang==6.0.0.2"
+        "clang==6.0.0.2",
+        "numpy==1.16.6",
+        "pandas==0.24.2"
     ]
 )
 

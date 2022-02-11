@@ -1,19 +1,19 @@
 #include "../include/Pileup_weight.h"
 
-Pileup_weight::Pileup_weight(std::string filename_mc, std::string filename_data,
+Pileup_weight::Pileup_weight(std::string filename_mc, std::vector<std::string> filenames_data,
                       std::string histname_mc, std::string histname_data) {
-    init(filename_mc, filename_data, histname_mc, histname_data);
+    init(filename_mc, filenames_data, histname_mc, histname_data);
 }
 
-Pileup_weight::Pileup_weight(std::string era) {
-    init("auto", "pileup_"+era, "", "pileup");
+Pileup_weight::Pileup_weight(std::vector<std::string> filenames_data) {
+    init("auto", filenames_data, "", "pileup");
 }
 
-void Pileup_weight::init(std::string filename_mc, std::string filename_data,
+void Pileup_weight::init(std::string filename_mc, std::vector<std::string> filenames_data,
                          std::string histname_mc, std::string histname_data) {
-    _dataHist = hardware::LoadHist("TIMBER/data/Pileup/"+filename_data+".root",histname_data);
-    _dataHistUp = hardware::LoadHist("TIMBER/data/Pileup/"+filename_data+"_up.root",histname_data);
-    _dataHistDown = hardware::LoadHist("TIMBER/data/Pileup/"+filename_data+"_down.root",histname_data);
+    _dataHist = hardware::LoadHist("TIMBER/data/Pileup/"+filenames_data[0],histname_data);
+    _dataHistUp = hardware::LoadHist("TIMBER/data/Pileup/"+filenames_data[1],histname_data);
+    _dataHistDown = hardware::LoadHist("TIMBER/data/Pileup/"+filenames_data[2],histname_data);
 
     if (filename_mc != "auto") {
         _autoPU = false;

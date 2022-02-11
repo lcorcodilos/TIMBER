@@ -18,23 +18,27 @@
 | Top and W tagging (DeepAK8) | JME | Apr 14, 2021 | DeepAK8V2_Top_W_SFs.csv | TopTagDAK8_SF.cc | [Twiki](https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAK8Tagging2018WPsSFs) [GitHub](https://github.com/cms-jet/deepAK8ScaleFactors/blob/master/DeepAK8V2_Top_W_SFs.csv) |
 
 ## JEC/JES tarballs
-| Era    | Date added   | Files                                    | Sources |
-|--------|--------------|------------------------------------------|---------|
-| 2016   | Mar 18, 2021 | Summer16_07Aug2017*_V11_DATA(MC).tar.gz  | https://github.com/cms-jet/JRDatabase/tree/master/tarballs |
-| 2017   | Mar 18, 2021 | Fall17_17Nov2017*_V32_DATA(MC).tar.gz    | |
-| 2018   | Mar 18, 2021 | Autumn18*_V19_DATA(MC).tar.gz            | |
-| 2017UL | Mar 18, 2021 | Summer19UL17*_V5_DATA(MC).tar.gz         | |
-| 2018UL | Mar 18, 2021 | Summer19UL18*_V5_DATA(MC).tar.gz         | |
+| Era        | Date added   | Files                                    | Sources |
+|------------|--------------|------------------------------------------|---------|
+| 2016       | Mar 18, 2021 | Summer16_07Aug2017*_V11_DATA(MC).tar.gz  | https://github.com/cms-jet/JECDatabase/tree/master/tarballs |
+| 2017       | Mar 18, 2021 | Fall17_17Nov2017*_V32_DATA(MC).tar.gz    | |
+| 2018       | Mar 18, 2021 | Autumn18*_V19_DATA(MC).tar.gz            | |
+| 2016UL     | Nov 10, 2021 | Summer19UL16*_V7_DATA(MC).tar.gz         | |
+| 2016UL APV | Nov 10, 2021 | Summer19UL16APV*_V7_DATA(MC).tar.gz      | |
+| 2017UL     | Mar 18, 2021 | Summer19UL17*_V5_DATA(MC).tar.gz         | |
+| 2018UL     | Mar 18, 2021 | Summer19UL18*_V5_DATA(MC).tar.gz         | |
 
 ## JER tarballs and files
-| Era    | Date added   | Files                             | Sources |
-|--------|--------------|-----------------------------------|---------|
-| 2016   | Mar 18, 2021 | Summer16_25nsV1b_DATA(MC).tar.gz  | https://github.com/cms-jet/JRDatabase/tree/master/tarballs |
-| 2017   | Mar 18, 2021 | Fall17_V3b_DATA(MC).tar.gz        | |
-| 2018   | Mar 18, 2021 | Autumn18_V7b_DATA(MC).tar.gz      | |
-| 2017UL | Mar 18, 2021 | Summer19UL17_JRV2_DATA(MC).tar.gz | |
-| 2018UL | Mar 18, 2021 | Summer19UL18_JRV2_DATA(MC).tar.gz | |
-| All    | Mar 18, 2021 | puppiSoftdropResol.root           | https://github.com/cms-jet/PuppiSoftdropMassCorrections/tree/80X/weights |
+| Era        | Date added   | Files                             | Sources |
+|------------|--------------|-----------------------------------|---------|
+| 2016       | Mar 18, 2021 | Summer16_25nsV1b_DATA(MC).tar.gz  | https://github.com/cms-jet/JRDatabase/tree/master/tarballs |
+| 2017       | Mar 18, 2021 | Fall17_V3b_DATA(MC).tar.gz        | |
+| 2018       | Mar 18, 2021 | Autumn18_V7b_DATA(MC).tar.gz      | |
+| 2016UL     | Nov 10, 2021 | Summer20UL16_JRV3_DATA(MC).tar.gz | |
+| 2016UL APV | Nov 10, 2021 | Summer20UL16APV_JRV3_DATA(MC).tar.gz | |
+| 2017UL     | Mar 18, 2021 | Summer19UL17_JRV2_DATA(MC).tar.gz | |
+| 2018UL     | Mar 18, 2021 | Summer19UL18_JRV2_DATA(MC).tar.gz | |
+| All        | Mar 18, 2021 | puppiSoftdropResol.root           | https://github.com/cms-jet/PuppiSoftdropMassCorrections/tree/80X/weights |
 
 ## Prefire Maps
 | Era    | Date added   | Files                             | Sources |
@@ -48,4 +52,4 @@ File pdfsets.index downloaded from [https://lhapdfsets.web.cern.ch/current/pdfse
 ## Pileup files
 The derivation of the files in the `TIMBER/data/Pileup/` directory can be found in `TIMBER/data/Pileup/generate_files.sh`. The procedure follows the instructions outlined in [this](https://twiki.cern.ch/twiki/bin/view/CMS/PileupJSONFileforData#Recommended_cross_section) TWiki with .txt file locations from [this](https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#PileupInformation) TWiki.
 
-*(Last updated April 6, 2021)*
+*(Last updated Nov 11, 2021)*
