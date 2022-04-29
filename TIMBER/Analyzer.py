@@ -1909,7 +1909,7 @@ class ModuleWorker(object):
     Writing the C++ modules requires the desired branch/column names must be specified or be used as the argument variable names
     to allow the framework to automatically determine what branch/column to use in GetCall().
     '''
-    def __init__(self,name,script,constructor=[],mainFunc='eval',columnList=None,isClone=False,cloneFuncInfo=None):
+    def __init__(self,name,script,constructor=[],mainFunc='eval',columnList=None,isClone=False,cloneFuncInfo=None,isNewConstr=False):
         '''Constructor
 
         @param name (str): Unique name to identify the instantiated worker object.
@@ -1948,6 +1948,9 @@ class ModuleWorker(object):
                 CompileCpp(self._script)
 
             self._instantiate(constructor)
+
+        if isNewConstr:
+            self._instantiate(constructor)            
 
     def Clone(self,name,newMainFunc=None):
         '''Makes a clone of current instance.
@@ -2204,7 +2207,7 @@ class Correction(ModuleWorker):
     (2) the return must be a vector ordered as {nominal, up, down} for "weight" type and 
     {up, down} for "uncert" type.
     '''
-    def __init__(self,name,script='',constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False,cloneFuncInfo=None):
+    def __init__(self,name,script='',constructor=[],mainFunc='eval',corrtype=None,columnList=None,isClone=False,cloneFuncInfo=None,isNewConstr=False):
         '''Constructor
 
         @param name (str): Correction name.
@@ -2231,7 +2234,7 @@ class Correction(ModuleWorker):
         # str
         # Name of correction 
         if script != '':
-            super(Correction,self).__init__(name,script,constructor,mainFunc,columnList,isClone,cloneFuncInfo)
+            super(Correction,self).__init__(name,script,constructor,mainFunc,columnList,isClone,cloneFuncInfo,isNewConstr)
             self.existing = False
         else:
             self.existing = True
