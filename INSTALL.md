@@ -6,7 +6,7 @@ cd CMSSW_12_3_0
 cmsenv
 cd ..
 python3 -m virtualenv timber-env
-git clone --branch Zbb_branch git@github.com:mroguljic/TIMBER.git
+git clone --branch Zbb_branch_py3 git@github.com:mroguljic/TIMBER.git
 cd TIMBER/
 mkdir bin
 cd bin
