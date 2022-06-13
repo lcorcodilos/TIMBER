@@ -1,4 +1,4 @@
-#TIMBER installation instructions
+TIMBER installation instructions
 
 ```
 cmsrel CMSSW_12_3_0
@@ -8,15 +8,14 @@ cd ..
 python3 -m virtualenv timber-env
 source timber-env/bin/activate
 git clone --branch Zbb_branch git@github.com:mroguljic/TIMBER.git
-```
-```
 cd TIMBER/
 mkdir bin
 cd bin
 git clone git@github.com:fmtlib/fmt.git
 cd ../..
 ```
-#Path may change depending on scram arch (the boost version as well!) so this needs to be modified by hand
+Boost library path (the boost version as well!) may change depending on scram arch and the CMSSW version so this may need to be modified by hand
+Copy the whole multi-line string to activate script
 ```
 cat <<EOT >> timber-env/bin/activate
 
@@ -29,7 +28,10 @@ else
   echo 'BOOSTPATH added to PATH'
 fi
 EOT
+```
 
+This will build the TIMBER binaries
+```
 cd ..
 source setup.sh
 ```
