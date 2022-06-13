@@ -6,7 +6,6 @@ cd CMSSW_12_3_0
 cmsenv
 cd ..
 python3 -m virtualenv timber-env
-source timber-env/bin/activate
 git clone --branch Zbb_branch git@github.com:mroguljic/TIMBER.git
 cd TIMBER/
 mkdir bin
@@ -30,9 +29,10 @@ fi
 EOT
 ```
 
-This will build the TIMBER binaries
+This will activate the python3 environment, set a proper LD_LIBRARY_PATH for boost libraries and build the TIMBER binaries
 ```
-cd ..
+source timber-env/bin/activate
+cd TIMBER
 source setup.sh
 ```
 
