@@ -52,13 +52,13 @@ AK4Btag_SF::AK4Btag_SF(std::string year, std::string tagger, std::string op_stri
         }
 
         if (year == "2016APV") {
-            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/FILENAME.csv";
+            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/reshaping_deepCSV_106XUL16preVFP_v2.csv";
         } else if (year == "2016") {
-            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/FILENAME.csv";
+            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/reshaping_deepCSV_106XUL16postVFP_v3.csv";
         } else if (year == "2017") {
-            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/DeepJet_106XUL17SF_V2.csv";
+            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/reshaping_deepCSV_106XUL17_v3.csv";
         } else if (year == "2018") {
-            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/DeepJet_106XUL18SF.csv";
+            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/reshaping_deepCSV_106XUL18_v2.csv";
         }
 
         std::cout<<csv_file<<"\n";
